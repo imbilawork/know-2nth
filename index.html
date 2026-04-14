@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>know.2nth.ai — The Skills Tree</title>
-<meta name="description" content="Structured knowledge that makes humans sharper and agents smarter. The operational intelligence layer for the modern stack.">
+<title>know.2nth.ai — The Knowledge Tree</title>
+<meta name="description" content="The business and technology domains 2nth brings AI to — structured knowledge humans read and agents load as context.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -427,6 +427,77 @@
     right: 32px;
   }
 
+  /* ── Tier marker (between sub-sections of the tree) ── */
+  .tier-mark {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  .tier-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--sky);
+    white-space: nowrap;
+  }
+  .tier-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-hover), transparent);
+  }
+
+  /* ── Tech Foundations compact cards ── */
+  .foundations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .foundation-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 22px 24px;
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+  }
+  .foundation-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    background: var(--bg-card-hover);
+  }
+  .foundation-card .f-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .foundation-card[data-domain="infra"] .f-icon { background: rgba(37, 99, 235, 0.1); color: var(--blue-glow); }
+  .foundation-card[data-domain="data"] .f-icon { background: rgba(56, 189, 248, 0.1); color: var(--sky); }
+  .foundation-card[data-domain="security"] .f-icon { background: var(--green-soft); color: var(--green); }
+  .foundation-card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+  }
+  .foundation-card p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+
   /* Domain accent colors */
   .domain-card[data-domain="infra"] { --card-accent: var(--blue); }
   .domain-card[data-domain="infra"] .domain-icon { background: rgba(37, 99, 235, 0.1); color: var(--blue-glow); }
@@ -776,12 +847,12 @@
 <!-- ── HERO ── -->
 <section class="hero">
   <div class="container">
-    <div class="hero-eyebrow fade-up">The Knowledge Layer</div>
+    <div class="hero-eyebrow fade-up">The Knowledge Tree</div>
     <h1 class="fade-up" style="transition-delay: 0.1s">
-      Learn faster.<br><span class="gradient">Build smarter.</span>
+      Business domains.<br><span class="gradient">AI compounds them.</span>
     </h1>
     <p class="hero-sub fade-up" style="transition-delay: 0.2s">
-      Structured knowledge that makes humans sharper and agents smarter. Every skill node is context you can read, your AI can use, and your team can operate with.
+      The domains 2nth brings AI to — and the technology foundations that make it run. Every skill node is context you can read, your agent can load, and your team can operate with.
     </p>
     <div class="hero-ctas fade-up" style="transition-delay: 0.3s">
       <a href="#domains" class="btn btn-primary">Explore the Tree</a>
@@ -875,85 +946,106 @@
 <section id="domains">
   <div class="container">
     <div class="section-header fade-up">
-      <div class="section-label">03 · Skill domains</div>
-      <h2 class="section-title">Explore the tree</h2>
-      <p class="section-desc">The skills tree grows across technology and business domains. Each branch connects to the others — that's where the compounding lives.</p>
+      <div class="section-label">03 · The tree</div>
+      <h2 class="section-title">Business domains. Tech foundations.</h2>
+      <p class="section-desc">Five business domains where 2nth deploys AI partners — plus the technology foundations underneath them. Every branch connects to the others, and every new node makes the whole tree sharper.</p>
     </div>
+
+    <div class="tier-mark fade-up">
+      <span class="tier-label">BIZ Skills · where the value lands</span>
+      <span class="tier-rule"></span>
+    </div>
+
     <div class="domains-grid">
-      <div class="domain-card fade-up" data-domain="infra">
-        <span class="domain-count">12 skills</span>
-        <div class="domain-icon">⚙️</div>
-        <h3>Infrastructure</h3>
-        <p>Best-of-breed open source deployment, configuration, and operations. The tools that run modern platforms.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">Kubernetes</span>
-          <span class="skill-tag">Cloudflare</span>
-          <span class="skill-tag">Traefik</span>
-          <span class="skill-tag">Docker</span>
-          <span class="skill-tag">Terraform</span>
-        </div>
-      </div>
-      <div class="domain-card fade-up" data-domain="ai" style="transition-delay: 0.05s">
-        <span class="domain-count">8 skills</span>
-        <div class="domain-icon">🧠</div>
-        <h3>AI & ML</h3>
-        <p>From RAG architectures to agent frameworks to model deployment. The skills tree for building with AI.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">LangChain</span>
-          <span class="skill-tag">RAG</span>
-          <span class="skill-tag">Vector DBs</span>
-          <span class="skill-tag">Fine-tuning</span>
-          <span class="skill-tag">Agents</span>
-        </div>
-      </div>
-      <div class="domain-card fade-up" data-domain="security" style="transition-delay: 0.1s">
-        <span class="domain-count">6 skills</span>
-        <div class="domain-icon">🔐</div>
-        <h3>Security & Identity</h3>
-        <p>Authentication, authorization, secrets management, and zero-trust architectures. The connective tissue of every stack.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">Keycloak</span>
-          <span class="skill-tag">OAuth/OIDC</span>
-          <span class="skill-tag">Vault</span>
-          <span class="skill-tag">Zero Trust</span>
-        </div>
-      </div>
-      <div class="domain-card fade-up" data-domain="data" style="transition-delay: 0.15s">
-        <span class="domain-count">7 skills</span>
-        <div class="domain-icon">📊</div>
-        <h3>Data & Observability</h3>
-        <p>Streaming, storage, pipelines, and the observability stack that makes everything visible.</p>
-        <div class="skill-tags">
-          <span class="skill-tag">ClickHouse</span>
-          <span class="skill-tag">NATS</span>
-          <span class="skill-tag">Grafana</span>
-          <span class="skill-tag">Temporal</span>
-        </div>
-      </div>
-      <div class="domain-card fade-up" data-domain="business" style="transition-delay: 0.2s">
+      <div class="domain-card fade-up" data-domain="data">
         <span class="domain-count">Coming soon</span>
-        <div class="domain-icon">💼</div>
-        <h3>Business Operations</h3>
-        <p>Sales, marketing, strategy, and operations. Domain knowledge structured for AI-powered execution.</p>
+        <div class="domain-icon">☁️</div>
+        <h3>Salesforce Advisory</h3>
+        <p>CRM and customer intelligence. Agentforce, Einstein, Sales &amp; Service Cloud architecture — backed by a verified Salesforce partner, delivered as a 2nth skill.</p>
         <div class="skill-tags">
-          <span class="skill-tag">Sales</span>
-          <span class="skill-tag">Pipeline</span>
-          <span class="skill-tag">Strategy</span>
-          <span class="skill-tag">Proposals</span>
+          <span class="skill-tag">Agentforce</span>
+          <span class="skill-tag">Einstein</span>
+          <span class="skill-tag">Sales Cloud</span>
+          <span class="skill-tag">Service Cloud</span>
         </div>
       </div>
-      <div class="domain-card fade-up" data-domain="legal" style="transition-delay: 0.25s">
+      <div class="domain-card fade-up" data-domain="infra" style="transition-delay: 0.05s">
+        <span class="domain-count">Coming soon</span>
+        <div class="domain-icon">🏗️</div>
+        <h3>Build Partner</h3>
+        <p>Technical architecture, software delivery, and AI integration advisory. The build layer for teams shipping AI-native systems — not the hype, the operational work.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Architecture</span>
+          <span class="skill-tag">Delivery</span>
+          <span class="skill-tag">AI Integration</span>
+          <span class="skill-tag">DevOps</span>
+        </div>
+      </div>
+      <div class="domain-card fade-up" data-domain="ai" style="transition-delay: 0.1s">
+        <span class="domain-count">Coming soon</span>
+        <div class="domain-icon">📞</div>
+        <h3>Contact Centre AI</h3>
+        <p>Smartz-powered contact centre innovation. AI-first customer experience, voice, and service intelligence — built by operators who've run real centres.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Voice</span>
+          <span class="skill-tag">CX</span>
+          <span class="skill-tag">Service</span>
+          <span class="skill-tag">Smartz</span>
+        </div>
+      </div>
+      <div class="domain-card fade-up" data-domain="business" style="transition-delay: 0.15s">
+        <span class="domain-count">Coming soon</span>
+        <div class="domain-icon">🎓</div>
+        <h3>Training Hub</h3>
+        <p>AI-augmented learning platforms and skills development. From micro-courses to enterprise training ecosystems — the infrastructure behind learning that actually compounds.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Courses</span>
+          <span class="skill-tag">Platforms</span>
+          <span class="skill-tag">Skills</span>
+          <span class="skill-tag">Assessment</span>
+        </div>
+      </div>
+      <div class="domain-card fade-up" data-domain="legal" style="transition-delay: 0.2s">
         <span class="domain-count">Coming soon</span>
         <div class="domain-icon">⚖️</div>
-        <h3>Professional Services</h3>
-        <p>Legal, medical, consulting — domain expertise structured as operational skill trees for agent-assisted practice.</p>
+        <h3>Legal &amp; Compliance</h3>
+        <p>Contract intelligence, regulatory advisory, and compliance monitoring. Human-verified, AI-delivered — the practice areas where getting it wrong isn't an option.</p>
         <div class="skill-tags">
-          <span class="skill-tag">Legal</span>
-          <span class="skill-tag">Medical</span>
-          <span class="skill-tag">Consulting</span>
+          <span class="skill-tag">Contracts</span>
+          <span class="skill-tag">Regulatory</span>
           <span class="skill-tag">Compliance</span>
+          <span class="skill-tag">Risk</span>
         </div>
       </div>
+    </div>
+
+    <div class="tier-mark fade-up" style="margin-top: 56px;">
+      <span class="tier-label">Tech Foundations · what makes it run</span>
+      <span class="tier-rule"></span>
+    </div>
+
+    <div class="foundations-grid">
+      <a href="explainers/infra/cloudflare-workers.html" class="foundation-card fade-up" data-domain="infra">
+        <div class="f-icon">⚙️</div>
+        <div class="f-body">
+          <h4>Infrastructure</h4>
+          <p>Deployment, edge compute, and the operational model that runs modern platforms.</p>
+        </div>
+      </a>
+      <a href="#" class="foundation-card fade-up" data-domain="data" style="transition-delay: 0.05s">
+        <div class="f-icon">📊</div>
+        <div class="f-body">
+          <h4>Data &amp; Observability</h4>
+          <p>Streaming, storage, pipelines, and the visibility layer that makes everything debuggable.</p>
+        </div>
+      </a>
+      <a href="#" class="foundation-card fade-up" data-domain="security" style="transition-delay: 0.1s">
+        <div class="f-icon">🔐</div>
+        <div class="f-body">
+          <h4>Security &amp; Identity</h4>
+          <p>Authentication, secrets, and zero-trust patterns — the connective tissue of every stack.</p>
+        </div>
+      </a>
     </div>
   </div>
 </section>
@@ -967,12 +1059,12 @@
       <p class="section-desc">Recently published skill nodes — each one making the tree more connected and every agent more capable.</p>
     </div>
     <div class="explainer-grid fade-up" style="transition-delay: 0.1s">
-      <a href="#" class="explainer-card">
+      <a href="explainers/infra/cloudflare-workers.html" class="explainer-card">
         <div class="explainer-meta">
           <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Infrastructure</span>
           <span class="explainer-tier-tag">Free</span>
         </div>
-        <h4>Cloudflare Workers & Pages</h4>
+        <h4>Cloudflare Workers &amp; Pages</h4>
         <p>Edge compute, deployment patterns, and the operational model for serverless at the edge.</p>
       </a>
       <a href="#" class="explainer-card">
