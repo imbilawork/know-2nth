@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>know.2nth.ai — The Skills Tree</title>
+<meta name="description" content="Structured knowledge that makes humans sharper and agents smarter. The operational intelligence layer for the modern stack.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* 2nth.ai palette */
+    --ink: #0B1120;
+    --ink-deep: #060A14;
+    --navy: #121D33;
+    --blue: #2563EB;
+    --blue-glow: #3B82F6;
+    --sky: #38BDF8;
+    --sky-muted: #7DD3FC;
+    --paper: #F8FAFC;
+    --mist: #E2E8F0;
+    --mist-dark: #334155;
+    --slate: #94A3B8;
+    --warm: #F59E0B;
+    --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981;
+    --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6;
+    --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E;
+    --rose-soft: rgba(244, 63, 94, 0.12);
+    
+    /* Surfaces */
+    --bg: var(--ink);
+    --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7);
+    --bg-card-hover: rgba(37, 99, 235, 0.08);
+    --text-primary: var(--paper);
+    --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1);
+    --border-hover: rgba(56, 189, 248, 0.25);
+    
+    /* Sizing */
+    --max-w: 1200px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-pill: 100px;
+  }
+
+  [data-theme="light"] {
+    --bg: #F1F5F9;
+    --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink);
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08);
+    --border-hover: rgba(37, 99, 235, 0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  html { scroll-behavior: smooth; }
+  
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Grain overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Ambient glow ── */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s ease;
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  
+  .nav-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding-left: 10px;
+    border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .btn-nav {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: var(--radius-pill);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .btn-nav-primary {
+    background: linear-gradient(135deg, var(--blue), var(--blue-glow));
+    color: white;
+  }
+  .btn-nav-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3); }
+
+  /* ── Container ── */
+  .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 100px 0 80px;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--sky);
+    opacity: 0.4;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 72px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 32px;
+    border-radius: var(--radius-pill);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue), var(--blue-glow));
+    color: white;
+    box-shadow: 0 2px 20px rgba(37, 99, 235, 0.2);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(37, 99, 235, 0.35); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+
+  /* ── Section system ── */
+  section { padding: 80px 0; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    line-height: 1.15;
+  }
+  .section-desc {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .section-header {
+    margin-bottom: 48px;
+  }
+
+  /* ── How it works — the 2ⁿ logic ── */
+  .logic-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px;
+  }
+  .logic-step {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+  }
+  .logic-step:first-child { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+  .logic-step:last-child { border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+  .logic-step:hover { background: var(--bg-card-hover); border-color: var(--border-hover); }
+  .logic-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .logic-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .logic-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .logic-arrow {
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--sky);
+    font-size: 18px;
+    z-index: 2;
+    opacity: 0.6;
+  }
+
+  /* ── Skills tree / domain browser ── */
+  .domains-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .domain-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    transition: all 0.35s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .domain-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+  .domain-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 60%, var(--card-accent, transparent));
+    opacity: 0.06;
+    transition: opacity 0.3s;
+  }
+  .domain-card:hover::after { opacity: 0.1; }
+  .domain-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .domain-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .domain-card p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .skill-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .domain-card:hover .skill-tag {
+    border-color: var(--border-hover);
+    color: var(--text-secondary);
+  }
+  .domain-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    position: absolute;
+    top: 32px;
+    right: 32px;
+  }
+
+  /* Domain accent colors */
+  .domain-card[data-domain="infra"] { --card-accent: var(--blue); }
+  .domain-card[data-domain="infra"] .domain-icon { background: rgba(37, 99, 235, 0.1); color: var(--blue-glow); }
+  .domain-card[data-domain="ai"] { --card-accent: var(--violet); }
+  .domain-card[data-domain="ai"] .domain-icon { background: var(--violet-soft); color: var(--violet); }
+  .domain-card[data-domain="security"] { --card-accent: var(--green); }
+  .domain-card[data-domain="security"] .domain-icon { background: var(--green-soft); color: var(--green); }
+  .domain-card[data-domain="data"] { --card-accent: var(--sky); }
+  .domain-card[data-domain="data"] .domain-icon { background: rgba(56, 189, 248, 0.1); color: var(--sky); }
+  .domain-card[data-domain="business"] { --card-accent: var(--warm); }
+  .domain-card[data-domain="business"] .domain-icon { background: var(--warm-soft); color: var(--warm); }
+  .domain-card[data-domain="legal"] { --card-accent: var(--rose); }
+  .domain-card[data-domain="legal"] .domain-icon { background: var(--rose-soft); color: var(--rose); }
+
+  /* ── Dual value proposition ── */
+  .dual-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .dual-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    transition: all 0.3s;
+  }
+  .dual-card:hover { border-color: var(--border-hover); }
+  .dual-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+  }
+  .dual-card p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .dual-card .mono-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+  }
+  .dual-card.human .mono-label { color: var(--sky); background: rgba(56, 189, 248, 0.1); }
+  .dual-card.agent .mono-label { color: var(--violet); background: var(--violet-soft); }
+  .dual-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dual-features li {
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding-left: 20px;
+    position: relative;
+  }
+  .dual-features li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--sky);
+    font-weight: 600;
+  }
+  .dual-card.agent .dual-features li::before { color: var(--violet); }
+
+  /* ── Tiers ── */
+  .tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .tier-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    transition: all 0.35s;
+    position: relative;
+  }
+  .tier-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+  .tier-card.featured {
+    border-color: rgba(37, 99, 235, 0.3);
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.06) 0%, var(--bg-card) 100%);
+  }
+  .tier-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  .tier-card:nth-child(1) .tier-badge { color: var(--green); background: var(--green-soft); }
+  .tier-card:nth-child(2) .tier-badge { color: var(--blue-glow); background: rgba(37, 99, 235, 0.1); }
+  .tier-card:nth-child(3) .tier-badge { color: var(--warm); background: var(--warm-soft); }
+  .tier-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .tier-card .tier-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .tier-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .tier-features li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .tier-features li .check {
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .tier-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .tier-btn:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .tier-card.featured .tier-btn {
+    background: linear-gradient(135deg, var(--blue), var(--blue-glow));
+    color: white;
+    border: none;
+  }
+  .tier-card.featured .tier-btn:hover { box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3); }
+
+  /* ── Compound effect callout ── */
+  .compound-block {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .compound-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(56, 189, 248, 0.04), rgba(139, 92, 246, 0.04));
+  }
+  .compound-formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .compound-block p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+    position: relative;
+  }
+
+  /* ── Example explainer cards (recent/featured) ── */
+  .explainer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .explainer-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    transition: all 0.3s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .explainer-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+  .explainer-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .explainer-domain-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+  }
+  .explainer-tier-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .explainer-card h4 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.2px;
+  }
+  .explainer-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .footer-links a {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── Fade-in ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .hero { padding: 60px 0 50px; }
+    .dual-grid { grid-template-columns: 1fr; }
+    .tiers-grid { grid-template-columns: 1fr; }
+    .logic-flow { grid-template-columns: 1fr; }
+    .logic-step:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .logic-step:last-child { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+    .logic-arrow { display: none; }
+    .domains-grid { grid-template-columns: 1fr; }
+    .nav-link { display: none; }
+    .nav-brand-sub { display: none; }
+  }
+
+  /* ── Transition all themed elements ── */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">Skills Tree</span>
+    </a>
+    <div class="nav-right">
+      <a href="#domains" class="nav-link">Explore</a>
+      <a href="#access" class="nav-link">Access</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+      <a href="#access" class="btn-nav btn-nav-primary">Get Access</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow fade-up">The Knowledge Layer</div>
+    <h1 class="fade-up" style="transition-delay: 0.1s">
+      Learn faster.<br><span class="gradient">Build smarter.</span>
+    </h1>
+    <p class="hero-sub fade-up" style="transition-delay: 0.2s">
+      Structured knowledge that makes humans sharper and agents smarter. Every skill node is context you can read, your AI can use, and your team can operate with.
+    </p>
+    <div class="hero-ctas fade-up" style="transition-delay: 0.3s">
+      <a href="#domains" class="btn btn-primary">Explore the Tree</a>
+      <a href="#how" class="btn btn-ghost">How it works</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">01 · How it works</div>
+      <h2 class="section-title">One asset. Three modes.</h2>
+      <p class="section-desc">Every skill node in the tree serves humans and agents simultaneously — the same knowledge, consumed three different ways.</p>
+    </div>
+    <div class="logic-flow fade-up" style="transition-delay: 0.1s">
+      <div class="logic-step">
+        <div class="logic-num">01</div>
+        <div class="logic-label">Read</div>
+        <div class="logic-detail">Human reads the explainer. Understands the technology, the tradeoffs, and when to use it.</div>
+        <span class="logic-arrow">→</span>
+      </div>
+      <div class="logic-step">
+        <div class="logic-num">02</div>
+        <div class="logic-label">Load</div>
+        <div class="logic-detail">Agent loads the skill node as context. Gets structured knowledge, not generic training data.</div>
+        <span class="logic-arrow">→</span>
+      </div>
+      <div class="logic-step">
+        <div class="logic-num">03</div>
+        <div class="logic-label">Build</div>
+        <div class="logic-detail">Agent uses the skills tree to deploy, configure, and operate — across connected domains.</div>
+        <span class="logic-arrow">→</span>
+      </div>
+      <div class="logic-step">
+        <div class="logic-num">2ⁿ</div>
+        <div class="logic-label">Compound</div>
+        <div class="logic-detail">Each new node multiplies the tree's value. Skills connect, transfer, and compound across domains.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPOUND EFFECT ── -->
+<section>
+  <div class="container">
+    <div class="compound-block fade-up">
+      <div class="compound-formula">skills<sup style="font-size: 0.5em; vertical-align: super;">n</sup></div>
+      <p>Ten skill nodes aren't ten times more useful than one — they're a hundred times more useful. Every node connects to every other node, and your agent can traverse the entire tree.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── DUAL VALUE ── -->
+<section>
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">02 · Dual value</div>
+      <h2 class="section-title">Two readers. One tree.</h2>
+      <p class="section-desc">Every piece of content serves the human learning and the agent operating — simultaneously.</p>
+    </div>
+    <div class="dual-grid fade-up" style="transition-delay: 0.1s">
+      <div class="dual-card human">
+        <div class="mono-label">For Humans</div>
+        <h3>Learn with structure</h3>
+        <p>Explainers built by practitioners, not content farms. Honest tradeoffs, real architecture decisions, and practical guidance.</p>
+        <ul class="dual-features">
+          <li>Technology deep-dives with decision guides</li>
+          <li>Skill decomposition for any domain</li>
+          <li>Role-based learning paths</li>
+          <li>"When to use it, when to skip it"</li>
+        </ul>
+      </div>
+      <div class="dual-card agent">
+        <div class="mono-label">For Agents</div>
+        <h3>Operate with context</h3>
+        <p>Load any branch of the skills tree into your agent's context. Transform a generic model into a domain-aware operator.</p>
+        <ul class="dual-features">
+          <li>Structured context bundles per domain</li>
+          <li>Deployment patterns and integration maps</li>
+          <li>Operational knowledge for infrastructure management</li>
+          <li>Cross-domain skill traversal</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DOMAINS ── -->
+<section id="domains">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">03 · Skill domains</div>
+      <h2 class="section-title">Explore the tree</h2>
+      <p class="section-desc">The skills tree grows across technology and business domains. Each branch connects to the others — that's where the compounding lives.</p>
+    </div>
+    <div class="domains-grid">
+      <div class="domain-card fade-up" data-domain="infra">
+        <span class="domain-count">12 skills</span>
+        <div class="domain-icon">⚙️</div>
+        <h3>Infrastructure</h3>
+        <p>Best-of-breed open source deployment, configuration, and operations. The tools that run modern platforms.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Kubernetes</span>
+          <span class="skill-tag">Cloudflare</span>
+          <span class="skill-tag">Traefik</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">Terraform</span>
+        </div>
+      </div>
+      <div class="domain-card fade-up" data-domain="ai" style="transition-delay: 0.05s">
+        <span class="domain-count">8 skills</span>
+        <div class="domain-icon">🧠</div>
+        <h3>AI & ML</h3>
+        <p>From RAG architectures to agent frameworks to model deployment. The skills tree for building with AI.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">LangChain</span>
+          <span class="skill-tag">RAG</span>
+          <span class="skill-tag">Vector DBs</span>
+          <span class="skill-tag">Fine-tuning</span>
+          <span class="skill-tag">Agents</span>
+        </div>
+      </div>
+      <div class="domain-card fade-up" data-domain="security" style="transition-delay: 0.1s">
+        <span class="domain-count">6 skills</span>
+        <div class="domain-icon">🔐</div>
+        <h3>Security & Identity</h3>
+        <p>Authentication, authorization, secrets management, and zero-trust architectures. The connective tissue of every stack.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Keycloak</span>
+          <span class="skill-tag">OAuth/OIDC</span>
+          <span class="skill-tag">Vault</span>
+          <span class="skill-tag">Zero Trust</span>
+        </div>
+      </div>
+      <div class="domain-card fade-up" data-domain="data" style="transition-delay: 0.15s">
+        <span class="domain-count">7 skills</span>
+        <div class="domain-icon">📊</div>
+        <h3>Data & Observability</h3>
+        <p>Streaming, storage, pipelines, and the observability stack that makes everything visible.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">ClickHouse</span>
+          <span class="skill-tag">NATS</span>
+          <span class="skill-tag">Grafana</span>
+          <span class="skill-tag">Temporal</span>
+        </div>
+      </div>
+      <div class="domain-card fade-up" data-domain="business" style="transition-delay: 0.2s">
+        <span class="domain-count">Coming soon</span>
+        <div class="domain-icon">💼</div>
+        <h3>Business Operations</h3>
+        <p>Sales, marketing, strategy, and operations. Domain knowledge structured for AI-powered execution.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Sales</span>
+          <span class="skill-tag">Pipeline</span>
+          <span class="skill-tag">Strategy</span>
+          <span class="skill-tag">Proposals</span>
+        </div>
+      </div>
+      <div class="domain-card fade-up" data-domain="legal" style="transition-delay: 0.25s">
+        <span class="domain-count">Coming soon</span>
+        <div class="domain-icon">⚖️</div>
+        <h3>Professional Services</h3>
+        <p>Legal, medical, consulting — domain expertise structured as operational skill trees for agent-assisted practice.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Legal</span>
+          <span class="skill-tag">Medical</span>
+          <span class="skill-tag">Consulting</span>
+          <span class="skill-tag">Compliance</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURED EXPLAINERS ── -->
+<section>
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">04 · Latest</div>
+      <h2 class="section-title">From the tree</h2>
+      <p class="section-desc">Recently published skill nodes — each one making the tree more connected and every agent more capable.</p>
+    </div>
+    <div class="explainer-grid fade-up" style="transition-delay: 0.1s">
+      <a href="#" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Infrastructure</span>
+          <span class="explainer-tier-tag">Free</span>
+        </div>
+        <h4>Cloudflare Workers & Pages</h4>
+        <p>Edge compute, deployment patterns, and the operational model for serverless at the edge.</p>
+      </a>
+      <a href="#" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: var(--violet-soft); color: var(--violet);">AI & ML</span>
+          <span class="explainer-tier-tag">Free</span>
+        </div>
+        <h4>LangChain Explained</h4>
+        <p>The orchestration framework for LLM applications — chains, agents, memory, and when to use what.</p>
+      </a>
+      <a href="#" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: var(--green-soft); color: var(--green);">Security</span>
+          <span class="explainer-tier-tag">Member</span>
+        </div>
+        <h4>Keycloak & OIDC</h4>
+        <p>Identity management for modern stacks — SSO, federation, and the configuration patterns that actually work.</p>
+      </a>
+      <a href="#" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: rgba(56, 189, 248, 0.1); color: var(--sky);">Data</span>
+          <span class="explainer-tier-tag">Free</span>
+        </div>
+        <h4>NATS Messaging</h4>
+        <p>High-performance messaging for distributed systems — pub/sub, JetStream, and event-driven architectures.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── ACCESS TIERS ── -->
+<section id="access">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">05 · Access</div>
+      <h2 class="section-title">Choose your depth</h2>
+      <p class="section-desc">Start free. Go deeper as the value compounds for your team and your agents.</p>
+    </div>
+    <div class="tiers-grid fade-up" style="transition-delay: 0.1s">
+      <div class="tier-card">
+        <div class="tier-badge">Open</div>
+        <h3>Explore</h3>
+        <p class="tier-desc">Technology explainers and framework overviews. Read, learn, and load into your agent's context.</p>
+        <ul class="tier-features">
+          <li><span class="check">✓</span> All technology explainers</li>
+          <li><span class="check">✓</span> Framework deep-dives</li>
+          <li><span class="check">✓</span> Decision guides</li>
+          <li><span class="check">✓</span> Agent context format</li>
+        </ul>
+        <a href="#" class="tier-btn">Browse free content</a>
+      </div>
+      <div class="tier-card featured">
+        <div class="tier-badge">Member</div>
+        <h3>Build</h3>
+        <p class="tier-desc">Operational skill nodes, context bundles, deployment templates, and curated learning paths.</p>
+        <ul class="tier-features">
+          <li><span class="check">✓</span> Everything in Explore</li>
+          <li><span class="check">✓</span> Operational skill nodes</li>
+          <li><span class="check">✓</span> Role-based context bundles</li>
+          <li><span class="check">✓</span> Deployment & integration templates</li>
+          <li><span class="check">✓</span> Community access</li>
+        </ul>
+        <a href="#" class="tier-btn">Sign up free</a>
+      </div>
+      <div class="tier-card">
+        <div class="tier-badge">Partner</div>
+        <h3>Compound</h3>
+        <p class="tier-desc">Your IP operationalized as a skills tree. Private branches, co-branded nodes, and agent-ready context for your domain.</p>
+        <ul class="tier-features">
+          <li><span class="check">✓</span> Everything in Build</li>
+          <li><span class="check">✓</span> Private skills tree branches</li>
+          <li><span class="check">✓</span> Co-branded domain nodes</li>
+          <li><span class="check">✓</span> Agent context packages for your IP</li>
+          <li><span class="check">✓</span> Institutional knowledge capture</li>
+        </ul>
+        <a href="#" class="tier-btn">Get in touch</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="https://2nth.ai" target="_blank" rel="noopener">2nth.ai</a>
+      <a href="https://imbila.ai" target="_blank" rel="noopener">Imbila.AI</a>
+      <a href="https://2nth.io" target="_blank" rel="noopener">2nth.io</a>
+      <a href="https://www.linkedin.com/company/imbila-ai" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <p class="footer-copy">© 2025 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  // Theme toggle
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  // Restore theme
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
