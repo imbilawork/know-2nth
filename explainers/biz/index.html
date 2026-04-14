@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business — know.2nth.ai</title>
+<meta name="description" content="The Business domain of the 2nth skill tree — ERP, CRM, HR, sales, accounting, operations. The systems businesses actually run on.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120;
+    --ink-deep: #060A14;
+    --navy: #121D33;
+    --blue: #2563EB;
+    --blue-glow: #3B82F6;
+    --sky: #38BDF8;
+    --sky-muted: #7DD3FC;
+    --paper: #F8FAFC;
+    --slate: #94A3B8;
+    --warm: #F59E0B;
+    --warm-glow: #FBBF24;
+    --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981;
+    --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6;
+    --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E;
+    --rose-soft: rgba(244, 63, 94, 0.12);
+
+    --bg: var(--ink);
+    --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7);
+    --bg-card-hover: rgba(245, 158, 11, 0.06);
+    --text-primary: var(--paper);
+    --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1);
+    --border-hover: rgba(245, 158, 11, 0.3);
+
+    --max-w: 1200px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-pill: 100px;
+
+    --domain: var(--warm);
+    --domain-glow: var(--warm-glow);
+  }
+
+  [data-theme="light"] {
+    --bg: #F1F5F9;
+    --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(245, 158, 11, 0.04);
+    --text-primary: var(--ink);
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08);
+    --border-hover: rgba(245, 158, 11, 0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb.warm { width: 600px; height: 600px; background: var(--warm); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding-left: 10px;
+    border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--warm-glow); }
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--warm-glow); }
+
+  .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Breadcrumb ── */
+  .crumb {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    padding: 28px 0 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .crumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .crumb a:hover { color: var(--warm-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  /* ── Hub hero ── */
+  .hub-hero {
+    padding: 48px 0 64px;
+  }
+  .hub-hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--warm-glow);
+    margin-bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hub-hero .eyebrow .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--warm-glow);
+    box-shadow: 0 0 12px var(--warm-glow);
+  }
+  .hub-hero h1 {
+    font-size: clamp(44px, 7vw, 72px);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+    max-width: 14ch;
+  }
+  .hub-hero h1 .gradient {
+    background: linear-gradient(135deg, var(--warm), var(--warm-glow), #FDE047);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hub-hero .sub {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 680px;
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 32px;
+  }
+  .hub-stats {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hub-stat {
+    padding-right: 32px;
+    border-right: 1px solid var(--border);
+  }
+  .hub-stat:last-child { border-right: none; padding-right: 0; }
+  .hub-stat .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--warm), var(--warm-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hub-stat .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── Hub section ── */
+  section.hub-section { padding: 48px 0 64px; position: relative; }
+  .hub-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--warm-glow);
+    margin-bottom: 14px;
+  }
+  .hub-title {
+    font-size: clamp(26px, 3.4vw, 36px);
+    font-weight: 700;
+    letter-spacing: -0.8px;
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+  .hub-lede {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 680px;
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 36px;
+  }
+
+  /* ── Hub grid ── */
+  .hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  .hub-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 26px 28px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+    display: block;
+  }
+  .hub-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.08);
+  }
+  .hub-card .state {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: var(--radius-pill);
+    display: inline-block;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .hub-card .state.production { background: var(--green-soft); color: var(--green); }
+  .hub-card .state.stub {
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--text-muted);
+  }
+  .hub-card h3 {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 10px;
+  }
+  .hub-card h3 .path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 8px;
+  }
+  .hub-card p {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+  .hub-card .leaves {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .hub-card .leaf {
+    color: var(--text-muted);
+    padding-left: 14px;
+    position: relative;
+  }
+  .hub-card .leaf::before {
+    content: '└';
+    position: absolute;
+    left: 0;
+    color: var(--border-hover);
+  }
+  .hub-card .leaf.prod { color: var(--text-secondary); }
+  .hub-card .leaf.prod::after {
+    content: '✓';
+    margin-left: 8px;
+    color: var(--green);
+    font-size: 10px;
+  }
+  .hub-card .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .hub-card .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .hub-card.soon {
+    cursor: default;
+    opacity: 0.8;
+  }
+  .hub-card.soon:hover {
+    transform: none;
+    border-color: var(--border);
+    box-shadow: none;
+  }
+
+  /* ── Cross-links ── */
+  .cross-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .cross-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    text-decoration: none;
+    color: var(--text-secondary);
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+  }
+  .cross-link:hover {
+    border-color: var(--border-hover);
+    color: var(--warm-glow);
+    transform: translateY(-1px);
+  }
+  .cross-link.soon {
+    opacity: 0.5;
+    cursor: default;
+    border-style: dashed;
+  }
+  .cross-link.soon:hover {
+    transform: none;
+    color: var(--text-muted);
+    border-color: var(--border);
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    margin-top: 60px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--warm-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  /* ── Fade ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    .hub-stats { gap: 20px; }
+    .hub-stat { padding-right: 20px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb warm"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">Business</span>
+    </a>
+    <div class="nav-right">
+      <a href="../../index.html#domains" class="nav-link">← Back to tree</a>
+      <a href="../../index.html#access" class="nav-link">Access</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">Business</span>
+  </div>
+</div>
+
+<!-- ── HUB HERO ── -->
+<section class="hub-hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> Business · Domain Hub</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The <span class="gradient">biz</span> branch.
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      ERP, CRM, HR, sales, accounting, operations. The systems businesses actually run on — integrated, API-first, and built to carry AI inside the workflow instead of bolted on after the fact.
+    </p>
+    <div class="hub-stats fade-up" style="transition-delay: 0.15s">
+      <div class="hub-stat">
+        <div class="num">5</div>
+        <div class="label">Sub-categories</div>
+      </div>
+      <div class="hub-stat">
+        <div class="num">6</div>
+        <div class="label">Production leaves</div>
+      </div>
+      <div class="hub-stat">
+        <div class="num">4</div>
+        <div class="label">ERPs integrated</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SUB-CATEGORIES ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">01 · Sub-categories</div>
+      <h2 class="hub-title">What's in this branch</h2>
+      <p class="hub-lede">Five sub-categories under <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--warm-glow);">biz/</code>. ERP is the deepest today — four production integrations with the API and auth patterns that actually work in production.</p>
+    </div>
+    <div class="hub-grid fade-up" style="transition-delay: 0.05s">
+
+      <div class="hub-card soon">
+        <span class="state production">Production · 4 leaves</span>
+        <h3>ERP <span class="path">biz/erp</span></h3>
+        <p>Enterprise resource planning integrations. All production skills in this subdomain follow the same pattern: authenticate, query, write, webhook — wired so AI agents can act on orders, invoices, and stock without a human in the loop.</p>
+        <div class="leaves">
+          <span class="leaf prod">sage-x3 — GraphQL via Syracuse API</span>
+          <span class="leaf prod">erpnext — REST API over Frappe</span>
+          <span class="leaf prod">shopify — Admin + Storefront API</span>
+          <span class="leaf prod">woocommerce — REST API v3</span>
+        </div>
+        <div class="tags">
+          <span class="tag">Sage X3</span>
+          <span class="tag">ERPNext</span>
+          <span class="tag">Shopify</span>
+          <span class="tag">WooCommerce</span>
+        </div>
+      </div>
+
+      <div class="hub-card soon">
+        <span class="state production">Production · 1 leaf</span>
+        <h3>Accounting <span class="path">biz/accounting</span></h3>
+        <p>Cloud accounting integrations for SMEs — the same platforms dominating SA, Australia, NZ, and the UK. OAuth 2.0, invoicing, reconciliation, reports. Shared with <code style="font-family: 'JetBrains Mono', monospace;">fin/accounting</code>.</p>
+        <div class="leaves">
+          <span class="leaf prod">xero — REST API, OAuth 2.0</span>
+          <span class="leaf">quickbooks — see fin/accounting/quickbooks</span>
+        </div>
+        <div class="tags">
+          <span class="tag">Xero</span>
+          <span class="tag">OAuth 2.0</span>
+          <span class="tag">Invoicing</span>
+          <span class="tag">Reports</span>
+        </div>
+      </div>
+
+      <div class="hub-card soon">
+        <span class="state production">Production · 1 leaf</span>
+        <h3>HR <span class="path">biz/hr</span></h3>
+        <p>Recruitment, onboarding, performance, compliance. The full recruitment value chain is production-ready — six stages from JD through to offer, each producing structured outputs an agent can act on.</p>
+        <div class="leaves">
+          <span class="leaf prod">recruitment — full value chain, JD → offer</span>
+          <span class="leaf">onboarding · stub</span>
+          <span class="leaf">performance · stub</span>
+          <span class="leaf">compliance · stub</span>
+        </div>
+        <div class="tags">
+          <span class="tag">Recruitment</span>
+          <span class="tag">Onboarding</span>
+          <span class="tag">Performance</span>
+          <span class="tag">Compliance</span>
+        </div>
+      </div>
+
+      <div class="hub-card soon">
+        <span class="state stub">Stub · 2 leaves</span>
+        <h3>CRM <span class="path">biz/crm</span></h3>
+        <p>Customer relationship management integrations. HubSpot and Salesforce are stubbed — slotted for real content once the API patterns and agent roles settle. Salesforce specifically maps to Agentforce and Einstein workflows.</p>
+        <div class="leaves">
+          <span class="leaf">hubspot · stub</span>
+          <span class="leaf">salesforce · stub</span>
+        </div>
+        <div class="tags">
+          <span class="tag">HubSpot</span>
+          <span class="tag">Salesforce</span>
+          <span class="tag">Agentforce</span>
+          <span class="tag">Einstein</span>
+        </div>
+      </div>
+
+      <div class="hub-card soon">
+        <span class="state stub">Stub</span>
+        <h3>Operations <span class="path">biz/ops</span></h3>
+        <p>The grab-bag for cross-cutting operational skills — process design, SOP generation, workflow automation, and the plumbing between ERP, CRM, and finance. Empty for now.</p>
+        <div class="tags">
+          <span class="tag">Processes</span>
+          <span class="tag">SOPs</span>
+          <span class="tag">Workflow</span>
+          <span class="tag">Automation</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── AGENT NOTE ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">02 · Agents in this branch</div>
+      <h2 class="hub-title">Who operates here</h2>
+      <p class="hub-lede">The canonical 2nth tree assigns fractional-C-level agents to each domain. Business pulls on several — they compound across the sub-categories rather than sitting under one.</p>
+    </div>
+    <div class="hub-grid fade-up" style="transition-delay: 0.05s">
+
+      <div class="hub-card soon">
+        <span class="state production">Fractional CRO</span>
+        <h3>Katharine <span class="path">agents/katharine</span></h3>
+        <p>Sales-first — prospecting, qualification, discovery, proposal, negotiation, pipeline, forecasting, enablement, revops. Lives across <code style="font-family: 'JetBrains Mono', monospace;">biz/sales/*</code>.</p>
+      </div>
+
+      <div class="hub-card soon">
+        <span class="state production">Fractional COO</span>
+        <h3>Tom <span class="path">agents/tom</span></h3>
+        <p>Operational backbone. Pulls on <code style="font-family: 'JetBrains Mono', monospace;">biz/erp</code> for the ERP integrations and <code style="font-family: 'JetBrains Mono', monospace;">tech/architecture</code> for the cross-system design work.</p>
+      </div>
+
+      <div class="hub-card soon">
+        <span class="state production">Fractional CHRO</span>
+        <h3>Grace <span class="path">agents/grace</span></h3>
+        <p>People ops and CRM. The cross-cut between <code style="font-family: 'JetBrains Mono', monospace;">biz/hr</code> and <code style="font-family: 'JetBrains Mono', monospace;">biz/crm</code> when the customer is also a candidate.</p>
+      </div>
+
+      <div class="hub-card soon">
+        <span class="state production">Fractional CSM Lead</span>
+        <h3>Clara <span class="path">agents/clara</span></h3>
+        <p>Customer success. Post-sale, plays across <code style="font-family: 'JetBrains Mono', monospace;">biz/crm</code> and any ERP integration the customer uses.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CROSS-LINKS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">03 · Related domains</div>
+      <h2 class="hub-title">Where the biz branch connects</h2>
+      <p class="hub-lede">Business doesn't operate alone. ERP integrations lean on Technology for the runtime, Finance for accounting truth, and Data for the analytics layer on top.</p>
+    </div>
+    <div class="cross-links fade-up" style="transition-delay: 0.05s">
+      <a href="../tech/" class="cross-link">← Technology</a>
+      <a href="#" class="cross-link soon">Finance · soon</a>
+      <a href="#" class="cross-link soon">Data · soon</a>
+      <a href="#" class="cross-link soon">Legal · soon</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="https://2nth.ai" target="_blank" rel="noopener">2nth.ai</a>
+      <a href="https://imbila.ai" target="_blank" rel="noopener">Imbila.AI</a>
+      <a href="https://2nth.io" target="_blank" rel="noopener">2nth.io</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
