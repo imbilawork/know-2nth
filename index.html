@@ -473,90 +473,24 @@
     right: 32px;
   }
 
-  /* ── Tier marker (between sub-sections of the tree) ── */
-  .tier-mark {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    margin-bottom: 22px;
-  }
-  .tier-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-    color: var(--sky);
-    white-space: nowrap;
-  }
-  .tier-rule {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, var(--border-hover), transparent);
-  }
-
-  /* ── Tech Foundations compact cards ── */
-  .foundations-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 12px;
-  }
-  .foundation-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 22px 24px;
-    background: var(--bg-card);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.3s;
-  }
-  .foundation-card:hover {
-    border-color: var(--border-hover);
-    transform: translateY(-2px);
-    background: var(--bg-card-hover);
-  }
-  .foundation-card .f-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-sm);
-    display: grid;
-    place-items: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  .foundation-card[data-domain="infra"] .f-icon { background: rgba(37, 99, 235, 0.1); color: var(--blue-glow); }
-  .foundation-card[data-domain="data"] .f-icon { background: rgba(56, 189, 248, 0.1); color: var(--sky); }
-  .foundation-card[data-domain="security"] .f-icon { background: var(--green-soft); color: var(--green); }
-  .foundation-card h4 {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    letter-spacing: -0.2px;
-  }
-  .foundation-card p {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.55;
-    margin: 0;
-  }
-
-  /* Domain accent colors */
-  .domain-card[data-domain="infra"] { --card-accent: var(--blue); }
-  .domain-card[data-domain="infra"] .domain-icon { background: rgba(37, 99, 235, 0.1); color: var(--blue-glow); }
-  .domain-card[data-domain="ai"] { --card-accent: var(--violet); }
-  .domain-card[data-domain="ai"] .domain-icon { background: var(--violet-soft); color: var(--violet); }
-  .domain-card[data-domain="security"] { --card-accent: var(--green); }
-  .domain-card[data-domain="security"] .domain-icon { background: var(--green-soft); color: var(--green); }
+  /* ── Domain accent colors (canonical 8) ── */
+  .domain-card { text-decoration: none; color: inherit; display: block; }
+  .domain-card[data-domain="tech"] { --card-accent: var(--blue); }
+  .domain-card[data-domain="tech"] .domain-icon { background: rgba(37, 99, 235, 0.1); color: var(--blue-glow); }
+  .domain-card[data-domain="biz"] { --card-accent: var(--warm); }
+  .domain-card[data-domain="biz"] .domain-icon { background: var(--warm-soft); color: var(--warm); }
   .domain-card[data-domain="data"] { --card-accent: var(--sky); }
   .domain-card[data-domain="data"] .domain-icon { background: rgba(56, 189, 248, 0.1); color: var(--sky); }
-  .domain-card[data-domain="business"] { --card-accent: var(--warm); }
-  .domain-card[data-domain="business"] .domain-icon { background: var(--warm-soft); color: var(--warm); }
-  .domain-card[data-domain="legal"] { --card-accent: var(--rose); }
-  .domain-card[data-domain="legal"] .domain-icon { background: var(--rose-soft); color: var(--rose); }
+  .domain-card[data-domain="fin"] { --card-accent: var(--green); }
+  .domain-card[data-domain="fin"] .domain-icon { background: var(--green-soft); color: var(--green); }
+  .domain-card[data-domain="leg"] { --card-accent: var(--rose); }
+  .domain-card[data-domain="leg"] .domain-icon { background: var(--rose-soft); color: var(--rose); }
+  .domain-card[data-domain="health"] { --card-accent: var(--violet); }
+  .domain-card[data-domain="health"] .domain-icon { background: var(--violet-soft); color: var(--violet); }
+  .domain-card[data-domain="iot"] { --card-accent: var(--sky); }
+  .domain-card[data-domain="iot"] .domain-icon { background: rgba(56, 189, 248, 0.08); color: var(--sky-muted); }
+  .domain-card[data-domain="edu"] { --card-accent: var(--warm); }
+  .domain-card[data-domain="edu"] .domain-icon { background: var(--warm-soft); color: var(--warm); }
 
   /* ── Dual value proposition ── */
   .dual-grid {
@@ -926,7 +860,7 @@
       <a href="#how" class="btn btn-ghost">How it works</a>
     </div>
     <div class="fade-up" style="transition-delay: 0.4s">
-      <div class="leonardo-byline">Guided by <strong>Leonardo</strong> · the 2nth agent partner</div>
+      <div class="leonardo-byline">Guided by <strong>Vinci</strong> · the 2nth knowledge partner</div>
     </div>
   </div>
 </section>
@@ -1017,103 +951,110 @@
   <div class="container">
     <div class="section-header fade-up">
       <div class="section-label">03 · The tree</div>
-      <h2 class="section-title">Business domains. Tech foundations.</h2>
-      <p class="section-desc">Five business domains where 2nth deploys AI partners — plus the technology foundations underneath them. Every branch connects to the others, and every new node makes the whole tree sharper.</p>
-    </div>
-
-    <div class="tier-mark fade-up">
-      <span class="tier-label">BIZ Skills · where the value lands</span>
-      <span class="tier-rule"></span>
+      <h2 class="section-title">Eight domains. One knowledge tree.</h2>
+      <p class="section-desc">Canonical 2nth skill domains — the structure every 2nth agent, partner, and build is grounded in. Each card is a branch of the tree, with production skills underneath and more landing every month.</p>
     </div>
 
     <div class="domains-grid">
-      <div class="domain-card fade-up" data-domain="data">
-        <span class="domain-count">Coming soon</span>
-        <div class="domain-icon">☁️</div>
-        <h3>Salesforce Advisory</h3>
-        <p>CRM and customer intelligence. Agentforce, Einstein, Sales &amp; Service Cloud architecture — backed by a verified Salesforce partner, delivered as a 2nth skill.</p>
+      <a href="explainers/tech/" class="domain-card fade-up" data-domain="tech">
+        <span class="domain-count">Deepest branch</span>
+        <div class="domain-icon">⚙️</div>
+        <h3>Technology</h3>
+        <p>Cloudflare, AWS, Cisco, ElevenLabs, GitHub, Zoho, Claude Code, agent protocols, architecture. The infrastructure and integration layer every other domain runs on.</p>
         <div class="skill-tags">
-          <span class="skill-tag">Agentforce</span>
-          <span class="skill-tag">Einstein</span>
-          <span class="skill-tag">Sales Cloud</span>
-          <span class="skill-tag">Service Cloud</span>
-        </div>
-      </div>
-      <div class="domain-card fade-up" data-domain="infra" style="transition-delay: 0.05s">
-        <span class="domain-count">Coming soon</span>
-        <div class="domain-icon">🏗️</div>
-        <h3>Build Partner</h3>
-        <p>Technical architecture, software delivery, and AI integration advisory. The build layer for teams shipping AI-native systems — not the hype, the operational work.</p>
-        <div class="skill-tags">
+          <span class="skill-tag">Cloudflare</span>
+          <span class="skill-tag">AWS</span>
           <span class="skill-tag">Architecture</span>
-          <span class="skill-tag">Delivery</span>
-          <span class="skill-tag">AI Integration</span>
-          <span class="skill-tag">DevOps</span>
+          <span class="skill-tag">Claude Code</span>
+          <span class="skill-tag">MCP</span>
         </div>
-      </div>
-      <div class="domain-card fade-up" data-domain="ai" style="transition-delay: 0.1s">
-        <span class="domain-count">Coming soon</span>
-        <div class="domain-icon">📞</div>
-        <h3>Contact Centre AI</h3>
-        <p>Smartz-powered contact centre innovation. AI-first customer experience, voice, and service intelligence — built by operators who've run real centres.</p>
+      </a>
+      <a href="explainers/biz/" class="domain-card fade-up" data-domain="biz" style="transition-delay: 0.05s">
+        <span class="domain-count">Production</span>
+        <div class="domain-icon">🏢</div>
+        <h3>Business</h3>
+        <p>ERP, CRM, HR, sales, operations. The systems businesses actually run on — integrated, API-first, and built to carry AI inside the workflow, not bolted on.</p>
         <div class="skill-tags">
-          <span class="skill-tag">Voice</span>
-          <span class="skill-tag">CX</span>
-          <span class="skill-tag">Service</span>
-          <span class="skill-tag">Smartz</span>
+          <span class="skill-tag">Sage X3</span>
+          <span class="skill-tag">ERPNext</span>
+          <span class="skill-tag">Shopify</span>
+          <span class="skill-tag">Xero</span>
+          <span class="skill-tag">Recruitment</span>
         </div>
-      </div>
-      <div class="domain-card fade-up" data-domain="business" style="transition-delay: 0.15s">
-        <span class="domain-count">Coming soon</span>
-        <div class="domain-icon">🎓</div>
-        <h3>Training Hub</h3>
-        <p>AI-augmented learning platforms and skills development. From micro-courses to enterprise training ecosystems — the infrastructure behind learning that actually compounds.</p>
+      </a>
+      <a href="#" class="domain-card fade-up" data-domain="data" style="transition-delay: 0.1s">
+        <span class="domain-count">Production</span>
+        <div class="domain-icon">📊</div>
+        <h3>Data</h3>
+        <p>Strategy, engineering, analysis, science, ML ops, visualisation, governance. The layer that turns raw events into decisions — and the one regulators care most about.</p>
         <div class="skill-tags">
-          <span class="skill-tag">Courses</span>
-          <span class="skill-tag">Platforms</span>
-          <span class="skill-tag">Skills</span>
-          <span class="skill-tag">Assessment</span>
+          <span class="skill-tag">Strategy</span>
+          <span class="skill-tag">Engineering</span>
+          <span class="skill-tag">ML Ops</span>
+          <span class="skill-tag">Governance</span>
+          <span class="skill-tag">POPIA</span>
         </div>
-      </div>
-      <div class="domain-card fade-up" data-domain="legal" style="transition-delay: 0.2s">
-        <span class="domain-count">Coming soon</span>
+      </a>
+      <a href="#" class="domain-card fade-up" data-domain="fin" style="transition-delay: 0.15s">
+        <span class="domain-count">Production</span>
+        <div class="domain-icon">💰</div>
+        <h3>Finance</h3>
+        <p>Capital markets, modelling, reporting, accounting, treasury, tax. The practices that move money and risk — with South African FSCA and SARB context where it matters.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Capital Markets</span>
+          <span class="skill-tag">Modelling</span>
+          <span class="skill-tag">QuickBooks</span>
+          <span class="skill-tag">FSCA</span>
+        </div>
+      </a>
+      <a href="#" class="domain-card fade-up" data-domain="leg" style="transition-delay: 0.2s">
+        <span class="domain-count">Production</span>
         <div class="domain-icon">⚖️</div>
-        <h3>Legal &amp; Compliance</h3>
-        <p>Contract intelligence, regulatory advisory, and compliance monitoring. Human-verified, AI-delivered — the practice areas where getting it wrong isn't an option.</p>
+        <h3>Legal</h3>
+        <p>Commercial, disputes, property, employment, IP, corporate, data privacy, fundraising. Contract intelligence and regulatory practice — the domains where getting it wrong isn't an option.</p>
         <div class="skill-tags">
-          <span class="skill-tag">Contracts</span>
-          <span class="skill-tag">Regulatory</span>
-          <span class="skill-tag">Compliance</span>
-          <span class="skill-tag">Risk</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="tier-mark fade-up" style="margin-top: 56px;">
-      <span class="tier-label">Tech Foundations · what makes it run</span>
-      <span class="tier-rule"></span>
-    </div>
-
-    <div class="foundations-grid">
-      <a href="explainers/infra/cloudflare-workers.html" class="foundation-card fade-up" data-domain="infra">
-        <div class="f-icon">⚙️</div>
-        <div class="f-body">
-          <h4>Infrastructure</h4>
-          <p>Deployment, edge compute, and the operational model that runs modern platforms.</p>
+          <span class="skill-tag">Commercial</span>
+          <span class="skill-tag">Employment</span>
+          <span class="skill-tag">POPIA</span>
+          <span class="skill-tag">IP</span>
+          <span class="skill-tag">Corporate</span>
         </div>
       </a>
-      <a href="#" class="foundation-card fade-up" data-domain="data" style="transition-delay: 0.05s">
-        <div class="f-icon">📊</div>
-        <div class="f-body">
-          <h4>Data &amp; Observability</h4>
-          <p>Streaming, storage, pipelines, and the visibility layer that makes everything debuggable.</p>
+      <a href="#" class="domain-card fade-up" data-domain="health" style="transition-delay: 0.25s">
+        <span class="domain-count">Production</span>
+        <div class="domain-icon">🏥</div>
+        <h3>Healthcare</h3>
+        <p>Clinical systems, operations, finance, digital, public health, pharmacy, mental health. The practice areas where the stakes are patient outcomes, not just revenue.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Clinical</span>
+          <span class="skill-tag">HL7 FHIR</span>
+          <span class="skill-tag">Pharmacy</span>
+          <span class="skill-tag">NHI</span>
         </div>
       </a>
-      <a href="#" class="foundation-card fade-up" data-domain="security" style="transition-delay: 0.1s">
-        <div class="f-icon">🔐</div>
-        <div class="f-body">
-          <h4>Security &amp; Identity</h4>
-          <p>Authentication, secrets, and zero-trust patterns — the connective tissue of every stack.</p>
+      <a href="#" class="domain-card fade-up" data-domain="iot" style="transition-delay: 0.3s">
+        <span class="domain-count">Production</span>
+        <div class="domain-icon">📡</div>
+        <h3>IoT</h3>
+        <p>Hardware, firmware, connectivity, sensors, power, platform. The skills for building systems that live outside the cloud — and survive load shedding doing it.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Hardware</span>
+          <span class="skill-tag">Firmware</span>
+          <span class="skill-tag">LoRaWAN</span>
+          <span class="skill-tag">tinyML</span>
+          <span class="skill-tag">ICASA</span>
+        </div>
+      </a>
+      <a href="#" class="domain-card fade-up" data-domain="edu" style="transition-delay: 0.35s">
+        <span class="domain-count">Early</span>
+        <div class="domain-icon">🎓</div>
+        <h3>Education</h3>
+        <p>Curriculum design, assessment, higher ed, K12, corporate training. The infrastructure behind learning that compounds — across CAPS, IEB, Cambridge, IB.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Curriculum</span>
+          <span class="skill-tag">Assessment</span>
+          <span class="skill-tag">Higher Ed</span>
+          <span class="skill-tag">K12</span>
         </div>
       </a>
     </div>
@@ -1129,9 +1070,9 @@
       <p class="section-desc">Recently published skill nodes — each one making the tree more connected and every agent more capable.</p>
     </div>
     <div class="explainer-grid fade-up" style="transition-delay: 0.1s">
-      <a href="explainers/infra/cloudflare-workers.html" class="explainer-card">
+      <a href="explainers/tech/cloudflare/workers.html" class="explainer-card">
         <div class="explainer-meta">
-          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Infrastructure</span>
+          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Technology</span>
           <span class="explainer-tier-tag">Free</span>
         </div>
         <h4>Cloudflare Workers &amp; Pages</h4>
