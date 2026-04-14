@@ -7,6 +7,7 @@
 <meta name="description" content="The business and technology domains 2nth brings AI to — structured knowledge humans read and agents load as context.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
 <style>
   :root {
     /* 2nth.ai palette */
@@ -196,6 +197,51 @@
   .hero {
     padding: 100px 0 80px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .vitruvian {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 560px;
+    height: 560px;
+    transform: translate(-50%, -48%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.09;
+    color: var(--sky);
+  }
+  [data-theme="light"] .vitruvian { opacity: 0.14; color: var(--blue); }
+  .vitruvian svg { width: 100%; height: 100%; display: block; }
+  .hero .container { position: relative; z-index: 1; }
+  @media (max-width: 640px) {
+    .vitruvian { width: 380px; height: 380px; opacity: 0.07; }
+  }
+
+  /* ── Leonardo byline ── */
+  .leonardo-byline {
+    margin-top: 48px;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .leonardo-byline::before,
+  .leonardo-byline::after {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--border);
+  }
+  .leonardo-byline strong {
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: 1.8px;
   }
   .hero-eyebrow {
     font-family: 'JetBrains Mono', monospace;
@@ -846,6 +892,27 @@
 
 <!-- ── HERO ── -->
 <section class="hero">
+  <div class="vitruvian" aria-hidden="true">
+    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
+      <circle cx="200" cy="210" r="160" stroke-width="1"/>
+      <rect x="40" y="50" width="320" height="320" stroke-width="1"/>
+      <line x1="200" y1="50" x2="200" y2="370" stroke-width="0.6" stroke-dasharray="2 6"/>
+      <line x1="40" y1="210" x2="360" y2="210" stroke-width="0.6" stroke-dasharray="2 6"/>
+      <line x1="85" y1="95" x2="315" y2="325" stroke-width="0.5" stroke-dasharray="1 8"/>
+      <line x1="315" y1="95" x2="85" y2="325" stroke-width="0.5" stroke-dasharray="1 8"/>
+      <g stroke-width="1">
+        <line x1="200" y1="48" x2="200" y2="58"/>
+        <line x1="200" y1="362" x2="200" y2="372"/>
+        <line x1="38" y1="210" x2="48" y2="210"/>
+        <line x1="352" y1="210" x2="362" y2="210"/>
+        <line x1="200" y1="98" x2="200" y2="106"/>
+        <line x1="200" y1="314" x2="200" y2="322"/>
+        <line x1="96" y1="210" x2="104" y2="210"/>
+        <line x1="296" y1="210" x2="304" y2="210"/>
+      </g>
+      <circle cx="200" cy="210" r="3" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
   <div class="container">
     <div class="hero-eyebrow fade-up">The Knowledge Tree</div>
     <h1 class="fade-up" style="transition-delay: 0.1s">
@@ -857,6 +924,9 @@
     <div class="hero-ctas fade-up" style="transition-delay: 0.3s">
       <a href="#domains" class="btn btn-primary">Explore the Tree</a>
       <a href="#how" class="btn btn-ghost">How it works</a>
+    </div>
+    <div class="fade-up" style="transition-delay: 0.4s">
+      <div class="leonardo-byline">Guided by <strong>Leonardo</strong> · the 2nth agent partner</div>
     </div>
   </div>
 </section>
