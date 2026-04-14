@@ -660,6 +660,14 @@
     border-color: var(--border-hover);
     background: var(--bg-card-hover);
   }
+  .connect-node.soon {
+    cursor: default;
+    opacity: 0.72;
+  }
+  .connect-node.soon:hover {
+    border-color: var(--border);
+    background: var(--bg-card);
+  }
   .connect-node .domain-tag {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
@@ -1261,36 +1269,36 @@ bucket_name = <span class="tok-str">"uploads"</span></pre>
       <p class="section-lede">A skill node is only as valuable as the other nodes it plugs into. Here's where Workers &amp; Pages touches the rest of the tree — and how an agent loading this context should think about those edges.</p>
     </div>
     <div class="connect-grid fade-up" style="transition-delay: 0.05s">
-      <a href="#" class="connect-node infra">
-        <span class="domain-tag">Technology</span>
+      <div class="connect-node infra soon">
+        <span class="domain-tag">tech/iac</span>
         <div class="skill">Terraform</div>
         <div class="why">Declare Workers, Pages projects, DNS, and Access rules alongside the rest of your infra.</div>
-      </a>
-      <a href="#" class="connect-node infra">
-        <span class="domain-tag">Technology</span>
+      </div>
+      <div class="connect-node infra soon">
+        <span class="domain-tag">tech/architecture</span>
         <div class="skill">Traefik</div>
         <div class="why">The self-hosted routing layer for workloads Workers can't host — typically paired, not replaced.</div>
-      </a>
-      <a href="#" class="connect-node infra">
-        <span class="domain-tag">Technology</span>
+      </div>
+      <div class="connect-node infra soon">
+        <span class="domain-tag">tech/architecture</span>
         <div class="skill">Docker &amp; containers</div>
         <div class="why">The escape hatch for anything that needs Node natives, heavy memory, or long-running processes.</div>
+      </div>
+      <a href="../../biz/" class="connect-node security">
+        <span class="domain-tag">biz</span>
+        <div class="skill">Business domain hub</div>
+        <div class="why">ERP integrations (Sage X3, Shopify, WooCommerce) are the most common 'what runs on Workers' destination in the tree today.</div>
       </a>
-      <a href="#" class="connect-node security">
-        <span class="domain-tag">Security</span>
-        <div class="skill">Keycloak &amp; OIDC</div>
-        <div class="why">Workers in front of a Keycloak realm is the most common "auth at the edge" pattern in this tree.</div>
-      </a>
-      <a href="#" class="connect-node data">
-        <span class="domain-tag">Data</span>
-        <div class="skill">NATS</div>
-        <div class="why">Queues handles in-Cloudflare fan-out; NATS picks up when events need to leave the edge entirely.</div>
-      </a>
-      <a href="#" class="connect-node ai">
-        <span class="domain-tag">AI &amp; ML</span>
-        <div class="skill">RAG &amp; Vector DBs</div>
+      <div class="connect-node data soon">
+        <span class="domain-tag">tech/cloudflare/queues</span>
+        <div class="skill">Queues &amp; messaging</div>
+        <div class="why">In-Cloudflare fan-out with reliable delivery — the lightweight sibling of Workers for event-driven flows.</div>
+      </div>
+      <div class="connect-node ai soon">
+        <span class="domain-tag">tech/cloudflare/ai</span>
+        <div class="skill">Workers AI &amp; Vectorize</div>
         <div class="why">Workers AI + Vectorize is a fully edge-hosted RAG stack when the corpus is small enough to fit the model.</div>
-      </a>
+      </div>
     </div>
     <div class="agent-callout fade-up" style="transition-delay: 0.1s">
       <div class="label">For agents loading this context</div>

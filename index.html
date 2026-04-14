@@ -475,21 +475,28 @@
 
   /* ── Coming-soon placeholder state ── */
   .domain-card.soon,
-  .explainer-card.soon {
+  .explainer-card.soon,
+  .tier-btn.soon {
     cursor: default;
     opacity: 0.72;
   }
   .domain-card.soon:hover,
-  .explainer-card.soon:hover {
+  .explainer-card.soon:hover,
+  .tier-btn.soon:hover {
     transform: none;
     border-color: var(--border);
     box-shadow: none;
+    background: transparent;
   }
   .domain-card.soon .domain-count,
   .explainer-card.soon .explainer-tier-tag {
     color: var(--text-muted);
     border-style: dashed;
     border-color: var(--border);
+  }
+  .tier-btn.soon {
+    border-style: dashed;
+    color: var(--text-muted);
   }
 
   /* ── Domain accent colors (canonical 8) ── */
@@ -1144,7 +1151,7 @@
           <li><span class="check">✓</span> Decision guides</li>
           <li><span class="check">✓</span> Agent context format</li>
         </ul>
-        <a href="#" class="tier-btn">Browse free content</a>
+        <a href="#domains" class="tier-btn">Browse the tree</a>
       </div>
       <div class="tier-card featured">
         <div class="tier-badge">Member</div>
@@ -1157,7 +1164,7 @@
           <li><span class="check">✓</span> Deployment & integration templates</li>
           <li><span class="check">✓</span> Community access</li>
         </ul>
-        <a href="#" class="tier-btn">Sign up free</a>
+        <span class="tier-btn soon">Signup · coming soon</span>
       </div>
       <div class="tier-card">
         <div class="tier-badge">Partner</div>
@@ -1170,7 +1177,7 @@
           <li><span class="check">✓</span> Agent context packages for your IP</li>
           <li><span class="check">✓</span> Institutional knowledge capture</li>
         </ul>
-        <a href="#" class="tier-btn">Get in touch</a>
+        <span class="tier-btn soon">Partner intake · coming soon</span>
       </div>
     </div>
   </div>
