@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sage X3 — know.2nth.ai</title>
+<meta name="description" content="Sage X3 ERP integration via its GraphQL API. Authentication, the Relay query pattern, introspection, and the gotchas that only show up in production.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(245, 158, 11, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(245, 158, 11, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --domain: var(--warm); --domain-glow: var(--warm-glow);
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(245, 158, 11, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(245, 158, 11, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.warm { width: 600px; height: 600px; background: var(--warm); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--warm-glow); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--warm-glow); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--warm-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--warm-glow); box-shadow: 0 0 12px var(--warm-glow);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--warm), var(--warm-glow), #FDE047);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--warm-glow);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--warm-glow);
+    background: rgba(245, 158, 11, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--warm-glow);
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warm-glow); word-break: break-all; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--warm-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb warm"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">biz/erp/sage-x3</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← ERP</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Business</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">biz</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">erp</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">sage-x3</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/erp · Sage X3 · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Sage X3<br><span class="gradient">on GraphQL.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Mid-market ERP (formerly Sage Enterprise Management) exposed via a GraphQL API through the Syracuse web server using Yoga GraphQL. Relay cursor pagination, OData-style filters, and a schema that varies per installation. Introspect first, query second.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Production</span>
+      <span class="pill">GraphQL</span>
+      <span class="pill">Syracuse API</span>
+      <span class="pill">Relay cursors</span>
+      <span class="pill">v1.1.0</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">A GraphQL front door into Sage's mid-market ERP.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Sage X3 is the enterprise management platform most mid-market manufacturers, distributors, and services businesses in South Africa already run. Modern instances expose a <strong>GraphQL API</strong> via the Syracuse web server — the same server that renders the web client. That API is the right door for AI agents: one endpoint, one schema, cursor-based pagination, and server-side filtering.</p>
+      <p>The endpoint pattern is predictable:</p>
+      <pre class="code">https://&lt;host&gt;:&lt;port&gt;/&lt;folder&gt;/api</pre>
+      <p>The schema is organised into five top-level query types — master data, sales, purchasing, stock, accounting — each containing the entities you'd expect: customers, orders, invoices, stock movements, journal entries.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>2nth is middleware, not the system of record.</h4>
+      <p>The canonical skill pattern: read from Sage X3, enrich with AI, write results back or display in a dashboard. Never try to replace X3 as the source of truth for financial or stock data — the audit trail, tax filings, and regulatory obligations all live there.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 AUTH ── -->
+<section id="auth">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Authentication</div>
+      <h2 class="section-title">HTTP Basic, over HTTPS only.</h2>
+      <p class="section-lede">Sage X3's GraphQL endpoint uses plain HTTP Basic Authentication — the same username and password the user would log into the Syracuse web client with. Trivial to implement, impossible to get wrong, provided you never put the credentials in code.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># Authorization header</span>
+Authorization: Basic <span class="s">base64(USERNAME:PASSWORD)</span>
+
+<span class="c"># Cloudflare Worker — store secrets with wrangler</span>
+<span class="k">$</span> wrangler secret put SAGE_USER
+<span class="k">$</span> wrangler secret put SAGE_PASS
+
+<span class="c"># In the Worker</span>
+<span class="k">const</span> auth = <span class="s">'Basic '</span> + btoa(`${env.SAGE_USER}:${env.SAGE_PASS}`);
+<span class="k">const</span> res = <span class="k">await</span> fetch(<span class="s">'https://sage-host/folder/api'</span>, {
+  method: <span class="s">'POST'</span>,
+  headers: { <span class="s">'Authorization'</span>: auth, <span class="s">'Content-Type'</span>: <span class="s">'application/json'</span> },
+  body: JSON.stringify({ query }),
+});</pre>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Never hardcode credentials.</h4>
+      <p>Environment variables for local dev. <code>wrangler secret put</code> for Workers. AWS Secrets Manager for Lambda. If Sage X3 creds ever land in a git commit, rotate them immediately — the operational X3 user usually has write access to master data, which means a leak is a data integrity incident, not just a security one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 CORE PATTERNS ── -->
+<section id="core">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · Core patterns</div>
+      <h2 class="section-title">The schema, the query, the filter.</h2>
+      <p class="section-lede">Three things you need to internalise to use Sage X3's GraphQL effectively: the domain structure, the Relay-style query shape with the odd <code>node.code</code> wrapper, and OData-style filters. Everything else is elaboration on these.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Domain structure.</strong> The top-level schema groups by business domain. Exact fields vary per installation, but the shape is stable.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.08s">x3MasterData          <span class="c">— Master data</span>
+  ├── customer        <span class="c">— Customer business partners</span>
+  ├── supplier        <span class="c">— Supplier business partners</span>
+  ├── product         <span class="c">— Product catalog</span>
+  └── stockSite       <span class="c">— Warehouses / stock sites</span>
+
+x3Sales               <span class="c">— Sales domain</span>
+  ├── salesOrder      <span class="c">— Sales orders</span>
+  ├── salesInvoice    <span class="c">— Sales invoices</span>
+  └── salesDelivery   <span class="c">— Delivery notes</span>
+
+x3Purchasing          <span class="c">— Purchasing domain</span>
+  ├── purchaseOrder   <span class="c">— Purchase orders</span>
+  └── purchaseReceipt <span class="c">— Goods receipt</span>
+
+x3Stock               <span class="c">— Inventory domain</span>
+  ├── stockChange     <span class="c">— Stock movements</span>
+  └── stockCount      <span class="c">— Stock counts</span>
+
+x3Accounting          <span class="c">— Financial domain</span>
+  ├── journalEntry    <span class="c">— Journal entries</span>
+  └── generalLedger   <span class="c">— GL accounts</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Relay cursor pagination.</strong> Every list query uses <code>first</code>/<code>after</code> with <code>edges → node</code>. There's one weird thing about Sage's implementation: fields live inside <code>node.code</code>, not directly on <code>node</code>.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.12s"><span class="k">query</span> {
+  x3MasterData {
+    customer {
+      query(first: <span class="n">10</span>, after: <span class="s">"cursor_value"</span>) {
+        edges {
+          node {
+            code {             <span class="c">← this wrapper matters</span>
+              code
+              companyName1
+              country { code countryName }
+              currency { code localizedDescription }
+              isCustomer
+              isSupplier
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.14s">
+      <p><strong>OData-style filters.</strong> Filter strings are passed through the <code>filter</code> argument and follow OData syntax. This is where most real-world queries happen — server-side filtering, not client-side post-processing.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.16s"><span class="k">query</span>(first: <span class="n">50</span>, filter: <span class="s">"country.code eq 'ZA' and isCustomer eq true"</span>)
+<span class="k">query</span>(first: <span class="n">100</span>, filter: <span class="s">"orderDate ge '2026-01-01'"</span>)</pre>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.18s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Operator</th>
+            <th>Meaning</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>eq</code></td><td>Equals</td><td><code>status eq 'Active'</code></td></tr>
+          <tr><td><code>ne</code></td><td>Not equals</td><td><code>country.code ne 'ZA'</code></td></tr>
+          <tr><td><code>gt</code>/<code>ge</code>/<code>lt</code>/<code>le</code></td><td>Comparison</td><td><code>totalAmount gt 10000</code></td></tr>
+          <tr><td><code>contains()</code></td><td>Substring</td><td><code>contains(companyName1, 'Umbrella')</code></td></tr>
+          <tr><td><code>and</code>/<code>or</code></td><td>Logical</td><td><code>isCustomer eq true and isSupplier eq true</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.2s">
+      <p><strong>Introspection.</strong> Because the schema varies per installation, start every new integration with an introspection query. It's the only reliable way to know what's actually available in a specific X3 instance.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.22s">{
+  __schema {
+    queryType {
+      fields {
+        name
+        description
+        type { name kind ofType { name kind } }
+      }
+    }
+  }
+}
+
+<span class="c">// Discover fields on a specific type</span>
+{
+  __type(name: <span class="s">"X3MasterDataQuery"</span>) {
+    fields {
+      name
+      type { name kind }
+    }
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ── 04 GOTCHAS ── -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · Gotchas</div>
+      <h2 class="section-title">Things that only bite in production.</h2>
+      <p class="section-lede">Seven specific mistakes that waste an afternoon the first time you hit them. Each is lifted directly from the canonical skill — these are the failure modes the skill has seen in real deployments.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Fields live under <code>node.code</code></strong>
+        <p>Data is at <code>node.code.fieldName</code>, not <code>node.fieldName</code>. Every query needs the <code>code</code> wrapper or it returns nothing.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Pagination is required</strong>
+        <p>Omitting <code>first</code> returns zero results — not an error, just zero. Always pass an explicit page size.</p>
+      </div>
+      <div class="gotcha">
+        <strong>CORS blocks browser requests</strong>
+        <p>The Syracuse endpoint rejects cross-origin fetches from browsers. You need a server-side proxy — a Cloudflare Worker is the cheapest option.</p>
+      </div>
+      <div class="gotcha">
+        <strong>No aggregation in GraphQL</strong>
+        <p>There's no <code>GROUP BY</code>. Pull the rows and aggregate client-side, or fall back to a reporting view on the X3 side.</p>
+      </div>
+      <div class="gotcha">
+        <strong>ISO 8601 dates in filters</strong>
+        <p>Dates in filters must be <code>'2026-01-01'</code> format. Other formats parse as strings and filter nothing.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Self-signed certs on dev</strong>
+        <p>Dev X3 instances usually have self-signed TLS. Node needs <code>NODE_TLS_REJECT_UNAUTHORIZED=0</code> to talk to them — never set this in prod.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Schema varies per installation</strong>
+        <p>Custom fields, activated modules, and Sage version all change what's in the schema. Introspect first every time — don't assume the fields from another X3 instance exist in this one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 CONNECTIONS ── -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · How this leaf connects</div>
+      <h2 class="section-title">What sage-x3 pulls on, and what pulls on it.</h2>
+      <p class="section-lede">The canonical skill declares its <code>requires</code> and <code>improves</code> in frontmatter. Here are the nodes in the tree sage-x3 is wired into.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The runtime sage-x3 explicitly requires. Worker hosts the GraphQL proxy, handles CORS, and caches access tokens.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">fin/reporting</span>
+        <div class="skill">Financial reporting</div>
+        <div class="why">Required by sage-x3 for KPI output formats. X3 data feeds directly into the reporting skill's patterns.</div>
+      </div>
+      <a href="./" class="connect-node">
+        <span class="tag">biz/erp</span>
+        <div class="skill">ERP sub-domain</div>
+        <div class="why">sage-x3 <code>improves</code> biz/erp — it contributes its patterns back up to the shared ERP skill.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">biz/accounting</span>
+        <div class="skill">Accounting</div>
+        <div class="why">X3's GL entries and journal data cross over into biz/accounting when the AI is generating management accounts.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/analysis</span>
+        <div class="skill">Data analysis</div>
+        <div class="why">Most X3 reporting work is client-side aggregation — which means the data/analysis skill is the next node once rows are in hand.</div>
+      </div>
+      <a href="./" class="connect-node">
+        <span class="tag">biz/erp · siblings</span>
+        <div class="skill">erpnext · shopify · woocommerce</div>
+        <div class="why">All four ERP leaves follow the same auth/introspect/query/write/webhook shape. Different APIs, identical pattern.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The canonical SKILL.md is the authoritative version and gets updates as the production skill evolves. Everything else here is context.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://github.com/2nth-ai/skills/blob/main/biz/erp/sage-x3/SKILL.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Canonical</span>
+        <span class="r-title">biz/erp/sage-x3 SKILL.md</span>
+        <span class="r-url">github.com/2nth-ai/skills/biz/erp/sage-x3</span>
+      </a>
+      <a href="https://developer.sage.com/erp/sage-x3/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Vendor docs</span>
+        <span class="r-title">Sage X3 developer portal</span>
+        <span class="r-url">developer.sage.com/erp/sage-x3</span>
+      </a>
+      <a href="https://the-guild.dev/graphql/yoga-server" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Upstream</span>
+        <span class="r-title">Yoga GraphQL (Syracuse's engine)</span>
+        <span class="r-url">the-guild.dev/graphql/yoga-server</span>
+      </a>
+      <a href="https://relay.dev/graphql/connections.htm" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec</span>
+        <span class="r-title">Relay cursor connection spec</span>
+        <span class="r-url">relay.dev/graphql/connections.htm</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">ERP sub-hub</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/biz/erp/sage-x3" target="_blank" rel="noopener">Canonical skill</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
