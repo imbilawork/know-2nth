@@ -473,6 +473,25 @@
     right: 32px;
   }
 
+  /* ── Coming-soon placeholder state ── */
+  .domain-card.soon,
+  .explainer-card.soon {
+    cursor: default;
+    opacity: 0.72;
+  }
+  .domain-card.soon:hover,
+  .explainer-card.soon:hover {
+    transform: none;
+    border-color: var(--border);
+    box-shadow: none;
+  }
+  .domain-card.soon .domain-count,
+  .explainer-card.soon .explainer-tier-tag {
+    color: var(--text-muted);
+    border-style: dashed;
+    border-color: var(--border);
+  }
+
   /* ── Domain accent colors (canonical 8) ── */
   .domain-card { text-decoration: none; color: inherit; display: block; }
   .domain-card[data-domain="tech"] { --card-accent: var(--blue); }
@@ -982,8 +1001,8 @@
           <span class="skill-tag">Recruitment</span>
         </div>
       </a>
-      <a href="#" class="domain-card fade-up" data-domain="data" style="transition-delay: 0.1s">
-        <span class="domain-count">Production</span>
+      <div class="domain-card fade-up soon" data-domain="data" style="transition-delay: 0.1s">
+        <span class="domain-count">Coming soon</span>
         <div class="domain-icon">📊</div>
         <h3>Data</h3>
         <p>Strategy, engineering, analysis, science, ML ops, visualisation, governance. The layer that turns raw events into decisions — and the one regulators care most about.</p>
@@ -994,9 +1013,9 @@
           <span class="skill-tag">Governance</span>
           <span class="skill-tag">POPIA</span>
         </div>
-      </a>
-      <a href="#" class="domain-card fade-up" data-domain="fin" style="transition-delay: 0.15s">
-        <span class="domain-count">Production</span>
+      </div>
+      <div class="domain-card fade-up soon" data-domain="fin" style="transition-delay: 0.15s">
+        <span class="domain-count">Coming soon</span>
         <div class="domain-icon">💰</div>
         <h3>Finance</h3>
         <p>Capital markets, modelling, reporting, accounting, treasury, tax. The practices that move money and risk — with South African FSCA and SARB context where it matters.</p>
@@ -1006,9 +1025,9 @@
           <span class="skill-tag">QuickBooks</span>
           <span class="skill-tag">FSCA</span>
         </div>
-      </a>
-      <a href="#" class="domain-card fade-up" data-domain="leg" style="transition-delay: 0.2s">
-        <span class="domain-count">Production</span>
+      </div>
+      <div class="domain-card fade-up soon" data-domain="leg" style="transition-delay: 0.2s">
+        <span class="domain-count">Coming soon</span>
         <div class="domain-icon">⚖️</div>
         <h3>Legal</h3>
         <p>Commercial, disputes, property, employment, IP, corporate, data privacy, fundraising. Contract intelligence and regulatory practice — the domains where getting it wrong isn't an option.</p>
@@ -1019,9 +1038,9 @@
           <span class="skill-tag">IP</span>
           <span class="skill-tag">Corporate</span>
         </div>
-      </a>
-      <a href="#" class="domain-card fade-up" data-domain="health" style="transition-delay: 0.25s">
-        <span class="domain-count">Production</span>
+      </div>
+      <div class="domain-card fade-up soon" data-domain="health" style="transition-delay: 0.25s">
+        <span class="domain-count">Coming soon</span>
         <div class="domain-icon">🏥</div>
         <h3>Healthcare</h3>
         <p>Clinical systems, operations, finance, digital, public health, pharmacy, mental health. The practice areas where the stakes are patient outcomes, not just revenue.</p>
@@ -1031,9 +1050,9 @@
           <span class="skill-tag">Pharmacy</span>
           <span class="skill-tag">NHI</span>
         </div>
-      </a>
-      <a href="#" class="domain-card fade-up" data-domain="iot" style="transition-delay: 0.3s">
-        <span class="domain-count">Production</span>
+      </div>
+      <div class="domain-card fade-up soon" data-domain="iot" style="transition-delay: 0.3s">
+        <span class="domain-count">Coming soon</span>
         <div class="domain-icon">📡</div>
         <h3>IoT</h3>
         <p>Hardware, firmware, connectivity, sensors, power, platform. The skills for building systems that live outside the cloud — and survive load shedding doing it.</p>
@@ -1044,9 +1063,9 @@
           <span class="skill-tag">tinyML</span>
           <span class="skill-tag">ICASA</span>
         </div>
-      </a>
-      <a href="#" class="domain-card fade-up" data-domain="edu" style="transition-delay: 0.35s">
-        <span class="domain-count">Early</span>
+      </div>
+      <div class="domain-card fade-up soon" data-domain="edu" style="transition-delay: 0.35s">
+        <span class="domain-count">Coming soon</span>
         <div class="domain-icon">🎓</div>
         <h3>Education</h3>
         <p>Curriculum design, assessment, higher ed, K12, corporate training. The infrastructure behind learning that compounds — across CAPS, IEB, Cambridge, IB.</p>
@@ -1056,7 +1075,7 @@
           <span class="skill-tag">Higher Ed</span>
           <span class="skill-tag">K12</span>
         </div>
-      </a>
+      </div>
     </div>
   </div>
 </section>
@@ -1078,30 +1097,30 @@
         <h4>Cloudflare Workers &amp; Pages</h4>
         <p>Edge compute, deployment patterns, and the operational model for serverless at the edge.</p>
       </a>
-      <a href="#" class="explainer-card">
+      <div class="explainer-card soon">
         <div class="explainer-meta">
-          <span class="explainer-domain-tag" style="background: var(--violet-soft); color: var(--violet);">AI & ML</span>
-          <span class="explainer-tier-tag">Free</span>
+          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Technology</span>
+          <span class="explainer-tier-tag">Coming soon</span>
         </div>
-        <h4>LangChain Explained</h4>
-        <p>The orchestration framework for LLM applications — chains, agents, memory, and when to use what.</p>
-      </a>
-      <a href="#" class="explainer-card">
+        <h4>Cloudflare D1</h4>
+        <p>SQLite at the edge — migrations, batch ops, and the Hyperdrive-to-Postgres escape hatch when D1 isn't the right shape.</p>
+      </div>
+      <div class="explainer-card soon">
         <div class="explainer-meta">
-          <span class="explainer-domain-tag" style="background: var(--green-soft); color: var(--green);">Security</span>
-          <span class="explainer-tier-tag">Member</span>
+          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Technology</span>
+          <span class="explainer-tier-tag">Coming soon</span>
         </div>
-        <h4>Keycloak & OIDC</h4>
-        <p>Identity management for modern stacks — SSO, federation, and the configuration patterns that actually work.</p>
-      </a>
-      <a href="#" class="explainer-card">
+        <h4>Tech · Architecture</h4>
+        <p>ADRs, C4 diagrams, trade-off matrices, anti-pattern detection — the skill every 2nth build draws on.</p>
+      </div>
+      <div class="explainer-card soon">
         <div class="explainer-meta">
-          <span class="explainer-domain-tag" style="background: rgba(56, 189, 248, 0.1); color: var(--sky);">Data</span>
-          <span class="explainer-tier-tag">Free</span>
+          <span class="explainer-domain-tag" style="background: var(--warm-soft); color: var(--warm);">Business</span>
+          <span class="explainer-tier-tag">Coming soon</span>
         </div>
-        <h4>NATS Messaging</h4>
-        <p>High-performance messaging for distributed systems — pub/sub, JetStream, and event-driven architectures.</p>
-      </a>
+        <h4>Sage X3 Integration</h4>
+        <p>Enterprise ERP via GraphQL — the Syracuse API, authentication patterns, and AI-ready data flows.</p>
+      </div>
     </div>
   </div>
 </section>
