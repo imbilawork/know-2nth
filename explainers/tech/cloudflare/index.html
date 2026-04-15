@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudflare — know.2nth.ai</title>
+<meta name="description" content="The Cloudflare developer platform in the 2nth skill tree. Sixteen services across compute, storage, messaging, data, AI, and networking — all on a single edge network.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hub-hero { padding: 48px 0 64px; }
+  .hub-hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hub-hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow);
+  }
+  .hub-hero h1 {
+    font-size: clamp(44px, 7vw, 72px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 24px; max-width: 16ch;
+  }
+  .hub-hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hub-hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 32px; }
+  .hub-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hub-stat { padding-right: 32px; border-right: 1px solid var(--border); }
+  .hub-stat:last-child { border-right: none; padding-right: 0; }
+  .hub-stat .num {
+    font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700;
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1; margin-bottom: 6px;
+  }
+  .hub-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  section.hub-section { padding: 32px 0 48px; position: relative; }
+  .hub-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 14px;
+  }
+  .hub-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 14px; line-height: 1.2;
+  }
+  .hub-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: 720px;
+    line-height: 1.7; font-weight: 300; margin-bottom: 36px;
+  }
+
+  /* Category band */
+  .category-band {
+    display: flex; align-items: center; gap: 16px;
+    margin: 40px 0 18px;
+  }
+  .category-band:first-of-type { margin-top: 0; }
+  .category-band .c-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: 1.6px; text-transform: uppercase; color: var(--sky);
+    white-space: nowrap;
+  }
+  .category-band .c-rule {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border-hover), transparent);
+  }
+
+  /* Service grid */
+  .svc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .svc-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+    text-decoration: none; color: inherit; display: block;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .svc-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  .svc-card.soon { cursor: default; opacity: 0.74; }
+  .svc-card.soon:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .svc-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; margin-bottom: 10px;
+  }
+  .svc-name {
+    font-size: 16px; font-weight: 700; letter-spacing: -0.3px;
+  }
+  .svc-state {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1.1px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: var(--radius-pill);
+    font-weight: 600; flex-shrink: 0;
+  }
+  .svc-state.live { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); }
+  .svc-state.prod { background: var(--green-soft); color: var(--green); }
+  .svc-state.stub { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
+  .svc-path {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    color: var(--text-muted); margin-bottom: 10px; display: block;
+  }
+  .svc-card p {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+  }
+
+  /* Shared pattern info */
+  .pattern-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--blue-glow);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: 780px;
+    margin-bottom: 20px;
+  }
+  .pattern-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  .pattern-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+  .pattern-card p:last-of-type { margin-bottom: 16px; }
+  .pattern-card pre {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    line-height: 1.65; color: var(--mist);
+    overflow-x: auto;
+  }
+  [data-theme="light"] .pattern-card pre { background: #0F172A; color: #E2E8F0; }
+  .pattern-card pre .c { color: var(--text-muted); font-style: italic; }
+  .pattern-card pre .s { color: #A5F3B8; }
+
+  .cross-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cross-link {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    padding: 10px 20px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); background: var(--bg-card);
+    text-decoration: none; color: var(--text-secondary);
+    transition: all 0.3s; letter-spacing: 0.5px;
+  }
+  .cross-link:hover { border-color: var(--border-hover); color: var(--sky); transform: translateY(-1px); }
+  .cross-link.soon { opacity: 0.5; cursor: default; border-style: dashed; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 60px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    .hub-stats { gap: 20px; }
+    .hub-stat { padding-right: 20px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/cloudflare</span>
+    </a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">← Technology</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">cloudflare</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hub-hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/cloudflare · Sub-domain hub</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Sixteen services.<br><span class="gradient">One edge network.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The deepest sub-tree in the 2nth technology branch. Cloudflare's developer platform moved from "run JavaScript at the edge" to a full small-cloud in roughly seven years — compute, storage, data, messaging, AI, and networking primitives, all bound together by a single wrangler config and one declarative bindings model. This hub is the map.
+    </p>
+    <div class="hub-stats fade-up" style="transition-delay: 0.15s">
+      <div class="hub-stat"><div class="num">16</div><div class="label">Services</div></div>
+      <div class="hub-stat"><div class="num">13</div><div class="label">Production</div></div>
+      <div class="hub-stat"><div class="num">1</div><div class="label">Live explainer</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">01 · Services</div>
+      <h2 class="hub-title">The platform, by what it does.</h2>
+      <p class="hub-lede">Sixteen services grouped into five bands — compute, storage, messaging &amp; data, AI, and networking. Each card maps to a canonical leaf in <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">tech/cloudflare/*</code>. Workers is the only leaf with a full explainer today; the rest land in sequence.</p>
+    </div>
+
+    <!-- Compute & Runtime -->
+    <div class="category-band fade-up">
+      <span class="c-label">Compute &amp; Runtime · 4</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="workers.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Workers</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/workers</span>
+        <p>The V8-isolate runtime that replaced a lot of origin servers. Streaming, service bindings, sub-millisecond cold starts. The first leaf to ship a full know.2nth.ai explainer.</p>
+      </a>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Pages</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/pages</span>
+        <p>Git-driven static hosting with Functions. The "connect a repo, get a deploy" surface that pulls Workers in at the edges. This site runs on it.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Workflows</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/workflows</span>
+        <p>Durable execution with <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">step.do()</code> — the orchestration primitive for long-running agent flows without writing your own retry logic.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Workers for Platforms</div>
+          <span class="svc-state stub">Stub</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/workers-for-platforms</span>
+        <p>Multi-tenant execution — run customer Workers inside your Workers. The "platform-of-platforms" surface for SaaS builders.</p>
+      </div>
+
+    </div>
+
+    <!-- Storage -->
+    <div class="category-band fade-up">
+      <span class="c-label">Storage · 4</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">KV</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/kv</span>
+        <p>Global, eventually consistent key-value. Sessions, feature flags, config — the first real state primitive Workers got.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">R2</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/r2</span>
+        <p>S3-compatible object storage with <strong>zero egress fees</strong>. Presigned URLs, lifecycle rules, the one storage service on this list that pays for itself against peers.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">D1</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/d1</span>
+        <p>SQLite at the edge. Migrations, batch ops, single-primary semantics — and the honest constraints that come with being SQLite rather than Postgres.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Hyperdrive</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/hyperdrive</span>
+        <p>Connection pooling to your real Postgres or MySQL. The escape hatch for when D1 isn't the right shape and you need the client-side SOR.</p>
+      </div>
+
+    </div>
+
+    <!-- Messaging & Data -->
+    <div class="category-band fade-up">
+      <span class="c-label">Messaging &amp; Data · 4</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Queues</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/queues</span>
+        <p>Reliable messaging with dead-letter queues. The async AI fan-out pattern — producer Worker drops a job, consumer Worker processes on its own schedule.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Durable Objects</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/durable-objects</span>
+        <p>Single-writer stateful compute. WebSocket hibernation, strong consistency, the primitive behind real-time collab and game state at the edge.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Analytics Engine</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/analytics-engine</span>
+        <p>Time-series metrics you can write from any Worker. The token-economy telemetry store — cheap, append-only, queryable via SQL.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Email</div>
+          <span class="svc-state stub">Stub</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/email</span>
+        <p>Inbound routing plus MailChannels for outbound. Transactional email that lives on the same network as the code that triggered it.</p>
+      </div>
+
+    </div>
+
+    <!-- AI -->
+    <div class="category-band fade-up">
+      <span class="c-label">AI · 3</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Workers AI</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/ai/workers-ai</span>
+        <p>Edge inference across a catalogue of open models — LLMs, embeddings, vision, speech. JSON schema enforcement, no GPU management.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">AI Gateway</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/ai/ai-gateway</span>
+        <p>Token metering, caching, and fallback routing for LLM calls — a proxy layer that sits between your Worker and OpenAI, Anthropic, or Workers AI.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Vectorize</div>
+          <span class="svc-state prod">Production</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/ai/vectorize</span>
+        <p>Vector database with metadata filtering. The RAG pipeline's retrieval half — pairs with Workers AI embeddings for a fully edge-hosted stack.</p>
+      </div>
+
+    </div>
+
+    <!-- Networking -->
+    <div class="category-band fade-up">
+      <span class="c-label">Networking · 1</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Tunnel</div>
+          <span class="svc-state stub">Stub</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/tunnel</span>
+        <p>Secure outbound connector from on-premise systems to Workers. The right answer when the system of record lives behind someone's firewall.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ── THE SHARED PATTERN ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">02 · The shared pattern</div>
+      <h2 class="hub-title">One binding model holds it all together.</h2>
+      <p class="hub-lede">Sixteen services could look like sixteen different APIs. They don't, because Cloudflare made a deliberate decision: every resource is a <em>binding</em>, declared in <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">wrangler.toml</code>, and arriving on your Worker's <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">env</code> argument at runtime. No client libraries to keep in sync, no credentials to rotate, no URLs to hardcode.</p>
+    </div>
+    <div class="pattern-card fade-up" style="transition-delay: 0.05s">
+      <h4>Bindings, not SDKs</h4>
+      <p>When you need KV, D1, R2, a Durable Object, a Queue, or a Workers AI model, you declare it in config. At runtime the binding appears as a property on <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">env</code>, already authenticated and already pointing at the right namespace. You call methods on it; you don't construct clients.</p>
+      <pre><span class="c"># wrangler.toml — one config, many primitives</span>
+name = <span class="s">"edge-app"</span>
+main = <span class="s">"src/index.ts"</span>
+
+[[kv_namespaces]]
+binding = <span class="s">"CACHE"</span>
+id = <span class="s">"..."</span>
+
+[[d1_databases]]
+binding = <span class="s">"DB"</span>
+database_name = <span class="s">"prod"</span>
+
+[[r2_buckets]]
+binding = <span class="s">"ASSETS"</span>
+bucket_name = <span class="s">"uploads"</span>
+
+[[durable_objects.bindings]]
+name = <span class="s">"ROOM"</span>
+class_name = <span class="s">"ChatRoom"</span>
+
+[[queues.producers]]
+binding = <span class="s">"JOBS"</span>
+queue = <span class="s">"ingest-jobs"</span>
+
+[ai]
+binding = <span class="s">"AI"</span></pre>
+      <p style="margin-top: 14px;">The payoff: you learn this pattern once and every service in this hub fits into it. Workers calls <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">env.CACHE.get()</code>, <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">env.DB.prepare()</code>, <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">env.AI.run()</code>, <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">env.JOBS.send()</code>. Same shape every time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CROSS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">03 · Related branches</div>
+      <h2 class="hub-title">Where the Cloudflare branch connects.</h2>
+      <p class="hub-lede">Cloudflare is the runtime almost every other leaf in the 2nth tree requires. Every ERP explainer points back to Workers for the proxy; every AI flow lands on Workers AI or Vectorize; every SOR integration uses Tunnel or Hyperdrive.</p>
+    </div>
+    <div class="cross-links fade-up" style="transition-delay: 0.05s">
+      <a href="../" class="cross-link">← Technology</a>
+      <a href="../../biz/erp/" class="cross-link">biz/erp →</a>
+      <a href="../../biz/erp/sage-x3.html" class="cross-link">sage-x3 →</a>
+      <a href="../../biz/erp/erpnext.html" class="cross-link">erpnext →</a>
+      <span class="cross-link soon">tech/aws · soon</span>
+      <span class="cross-link soon">tech/agent-protocols · soon</span>
+      <span class="cross-link soon">data/engineering · soon</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Tech hub</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/tech/cloudflare" target="_blank" rel="noopener">Canonical skills</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
