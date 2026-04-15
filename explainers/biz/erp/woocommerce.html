@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WooCommerce — know.2nth.ai</title>
+<meta name="description" content="WooCommerce integration via the WordPress REST API v3. Consumer key auth, core resources, HMAC-signed webhooks, AI workflow patterns, and production gotchas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(245, 158, 11, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(245, 158, 11, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --domain: var(--warm); --domain-glow: var(--warm-glow);
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(245, 158, 11, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(245, 158, 11, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.warm { width: 600px; height: 600px; background: var(--warm); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--warm-glow); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--warm-glow); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--warm-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--warm-glow); box-shadow: 0 0 12px var(--warm-glow);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--warm), var(--warm-glow), #FDE047);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--warm-glow);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare-wrap.wide { max-width: none; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--warm-glow);
+    background: rgba(245, 158, 11, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--warm-glow);
+  }
+
+  /* Workflow pattern cards */
+  .workflows {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .workflow {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+  }
+  .workflow h4 {
+    font-size: 14px; font-weight: 700; margin-bottom: 10px;
+    color: var(--warm-glow);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.3px;
+  }
+  .workflow ol {
+    list-style: none; counter-reset: wf; padding-left: 0; margin-bottom: 8px;
+  }
+  .workflow ol li {
+    counter-increment: wf; padding-left: 24px; position: relative;
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 6px;
+  }
+  .workflow ol li::before {
+    content: counter(wf); position: absolute; left: 0; top: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--warm-soft); color: var(--warm-glow);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .workflow .out {
+    font-size: 12px; color: var(--text-muted); font-style: italic;
+    padding-left: 24px; position: relative;
+  }
+  .workflow .out::before {
+    content: '→'; position: absolute; left: 4px; color: var(--warm);
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warm-glow); word-break: break-all; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--warm-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb warm"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">biz/erp/woocommerce</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← ERP</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Business</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">biz</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">erp</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">woocommerce</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/erp · WooCommerce · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      WooCommerce<br><span class="gradient">on WordPress.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The world's most widely deployed e-commerce platform — WordPress-native and open source. REST API v3 exposes the entire store: products, orders, customers, inventory, coupons, reports. Basic Auth with Consumer Key and Secret, HMAC-signed webhooks, and the flexibility (and chaos) that comes with plugin-land.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Production</span>
+      <span class="pill">REST v3</span>
+      <span class="pill">WordPress</span>
+      <span class="pill">HMAC webhooks</span>
+      <span class="pill">v1.0.0</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">WordPress-native e-commerce, API-first.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>WooCommerce is e-commerce as a WordPress plugin. It powers an estimated third of online stores on the open web — mostly long-tail retailers, content-led brands, and operators who want full control over their stack instead of renting it from a SaaS. Modern installs expose a <strong>REST API v3</strong> over the WordPress REST infrastructure, and that's the surface this skill targets.</p>
+      <p>The scope is wide. Everything the WordPress admin can do through the UI is available through the API — products (simple and variable), orders, customers, inventory, coupons, reports, webhooks, and the usual WordPress plumbing underneath.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>The 2nth model: one person + one AI.</strong> Same frame as Shopify — six human roles, each with an AI partner. The mapping is almost identical because the job is the same. What differs is what's underneath: WooCommerce gives you more flexibility but also more surface area to keep in sync (plugins, themes, hosting, WordPress core).</p>
+    </div>
+    <div class="compare-wrap wide fade-up" style="transition-delay: 0.1s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>The human decides</th>
+            <th>The AI enables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Store Owner</td>
+            <td>Strategy, margins, supplier relationships</td>
+            <td>Revenue dashboards, profitability by category, reorder alerts</td>
+          </tr>
+          <tr>
+            <td class="name">Merchandiser</td>
+            <td>Range planning, pricing, promotions</td>
+            <td>Bulk product updates, auto-tagging, SEO title/description generation</td>
+          </tr>
+          <tr>
+            <td class="name">Content Creator</td>
+            <td>Brand voice, creative direction</td>
+            <td>Product descriptions, meta tags, alt text, blog content</td>
+          </tr>
+          <tr>
+            <td class="name">Customer Service</td>
+            <td>Escalations, refunds, relationship calls</td>
+            <td>Order lookup, draft responses, return eligibility checks</td>
+          </tr>
+          <tr>
+            <td class="name">Operations</td>
+            <td>Exception handling, carrier selection</td>
+            <td>Stock alerts, fulfilment routing, fraud flag review</td>
+          </tr>
+          <tr>
+            <td class="name">Marketing Manager</td>
+            <td>Campaign strategy, budget</td>
+            <td>Coupon performance, customer segmentation, repeat purchase analysis</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.12s">
+      <h4>WordPress is the system of record. Don't fight it.</h4>
+      <p>Product, order, and customer state all live in WordPress's database. The REST API reads and writes through WooCommerce's own hooks — which means your mutations fire the same events plugins expect. Never bypass the API to write directly to <code>wp_posts</code>; you'll skip the hooks and break other plugins silently.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 AUTH ── -->
+<section id="auth">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Authentication</div>
+      <h2 class="section-title">Consumer Key + Secret, over HTTPS only.</h2>
+      <p class="section-lede">WooCommerce authenticates with a Consumer Key and Consumer Secret generated per integration. HTTP Basic over HTTPS — refuses anything else. Simple, effective, easy to scope.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># Generate keys: WooCommerce → Settings → Advanced → REST API → Add key</span>
+<span class="c"># Pick Read, Read/Write, or Read/Write/Delete per key</span>
+
+<span class="c"># Environment variables</span>
+WC_URL=<span class="s">"https://yourstore.com"</span>
+WC_KEY=<span class="s">"ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"</span>
+WC_SECRET=<span class="s">"cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"</span>
+
+<span class="c"># Basic Auth header (HTTPS only)</span>
+Authorization: Basic <span class="s">base64(WC_KEY:WC_SECRET)</span>
+
+<span class="c"># Base URL pattern</span>
+https://{store}/wp-json/wc/v3/{resource}</pre>
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Cloudflare Worker — WooCommerce list call</span>
+<span class="k">const</span> auth = <span class="s">'Basic '</span> + btoa(`${env.WC_KEY}:${env.WC_SECRET}`);
+<span class="k">const</span> res = <span class="k">await</span> fetch(
+  `${env.WC_URL}/wp-json/wc/v3/products?status=publish&per_page=<span class="n">100</span>`,
+  { headers: { <span class="s">'Authorization'</span>: auth } }
+);
+<span class="k">const</span> products = <span class="k">await</span> res.json();</pre>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Scope your keys per agent.</h4>
+      <p>Generate a <strong>Read-only</strong> key for the reporting agent. A <strong>Read/Write</strong> key for fulfilment and stock updates. Never give an agent Read/Write/Delete unless it's literally managing product deletion — and even then, favour soft-delete (change status to trash) over hard-delete. The UI still offers the key as query parameters; don't use that path in production.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 CORE PATTERNS ── -->
+<section id="core">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · Core patterns</div>
+      <h2 class="section-title">Products, orders, batch ops — and HMAC-signed webhooks.</h2>
+      <p class="section-lede">The REST endpoints cover everything. The interesting bits are the variable-product structure (variations are separate resources), the batch endpoint (up to 100 operations per call), and the webhook signature verification that keeps reactive flows honest.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Products.</strong> The central resource. Simple products are single SKUs; variable products own a set of variations with their own stock. Never update stock on the parent of a variable product — you'll silently do nothing.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c"># List active products</span>
+GET /wp-json/wc/v3/products?status=publish&per_page=<span class="n">100</span>
+
+<span class="c"># Create a simple product</span>
+POST /wp-json/wc/v3/products
+{
+  <span class="s">"name"</span>: <span class="s">"Product Name"</span>,
+  <span class="s">"type"</span>: <span class="s">"simple"</span>,           <span class="c"># simple | variable | grouped | external</span>
+  <span class="s">"regular_price"</span>: <span class="s">"299.00"</span>,
+  <span class="s">"description"</span>: <span class="s">"..."</span>,
+  <span class="s">"short_description"</span>: <span class="s">"..."</span>,
+  <span class="s">"categories"</span>: [{<span class="s">"id"</span>: <span class="n">12</span>}],
+  <span class="s">"images"</span>: [{<span class="s">"src"</span>: <span class="s">"https://..."</span>}],
+  <span class="s">"manage_stock"</span>: <span class="k">true</span>,
+  <span class="s">"stock_quantity"</span>: <span class="n">50</span>
+}
+
+<span class="c"># Variable product — variations live at a sub-resource</span>
+GET /wp-json/wc/v3/products/{product_id}/variations
+PUT /wp-json/wc/v3/products/{product_id}/variations/{variation_id}
+{ <span class="s">"stock_quantity"</span>: <span class="n">25</span> }</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Batch operations.</strong> One call, up to 100 updates. This is the right way to do bulk price changes, stock syncs, or status transitions — much faster than iterating per-product and easier on the host.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.12s">POST /wp-json/wc/v3/products/batch
+{
+  <span class="s">"update"</span>: [
+    { <span class="s">"id"</span>: <span class="n">101</span>, <span class="s">"stock_quantity"</span>: <span class="n">0</span>, <span class="s">"stock_status"</span>: <span class="s">"outofstock"</span> },
+    { <span class="s">"id"</span>: <span class="n">102</span>, <span class="s">"stock_quantity"</span>: <span class="n">15</span> },
+    { <span class="s">"id"</span>: <span class="n">103</span>, <span class="s">"regular_price"</span>: <span class="s">"199.00"</span> }
+  ],
+  <span class="s">"delete"</span>: [<span class="n">456</span>]
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.14s">
+      <p><strong>Orders — the full lifecycle.</strong> Plugin-land means order status is a string, not an enum: plugins add custom statuses like <code>wc-awaiting-payment</code>. Always check what statuses the specific store actually uses before assuming.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.16s"><span class="c"># List by status</span>
+GET /wp-json/wc/v3/orders?status=processing&per_page=<span class="n">50</span>
+<span class="c"># pending | processing | on-hold | completed | cancelled | refunded | failed | trash</span>
+
+<span class="c"># Update status</span>
+PUT /wp-json/wc/v3/orders/{id}
+{ <span class="s">"status"</span>: <span class="s">"completed"</span> }
+
+<span class="c"># Add a note (internal or customer-visible)</span>
+POST /wp-json/wc/v3/orders/{id}/notes
+{ <span class="s">"note"</span>: <span class="s">"Dispatched via FastShip, tracking: FS123456"</span>, <span class="s">"customer_note"</span>: <span class="k">true</span> }
+
+<span class="c"># Create refund (partial or full)</span>
+POST /wp-json/wc/v3/orders/{id}/refunds
+{
+  <span class="s">"amount"</span>: <span class="s">"50.00"</span>,
+  <span class="s">"reason"</span>: <span class="s">"Damaged in transit"</span>,
+  <span class="s">"line_items"</span>: [{<span class="s">"id"</span>: <span class="n">1</span>, <span class="s">"refund_total"</span>: <span class="n">50.00</span>}]
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.18s">
+      <p><strong>AI workflow patterns — what the role-tool matrix actually does.</strong> Four patterns lifted straight from the canonical skill that show the shape of day-to-day AI work against a WooCommerce store.</p>
+    </div>
+    <div class="workflows fade-up" style="transition-delay: 0.2s">
+      <div class="workflow">
+        <h4>Daily Ops Brief</h4>
+        <ol>
+          <li><code>wc_list_orders(status=processing)</code> — pending fulfilment count</li>
+          <li><code>wc_low_stock_report()</code> — items needing reorder</li>
+          <li><code>wc_sales_report(period=yesterday)</code> — revenue vs target</li>
+        </ol>
+        <div class="out">Morning summary for the store owner</div>
+      </div>
+      <div class="workflow">
+        <h4>Product Description Generation</h4>
+        <ol>
+          <li><code>wc_get_product(id)</code> — fetch existing data</li>
+          <li>AI drafts SEO-optimised copy using name, category, attributes</li>
+          <li><code>wc_update_product</code> — write description, short_description, SEO meta</li>
+        </ol>
+        <div class="out">Better-ranked pages, same human review loop</div>
+      </div>
+      <div class="workflow">
+        <h4>Customer Win-Back</h4>
+        <ol>
+          <li><code>wc_list_customers(last_active_before=90d)</code></li>
+          <li>Filter: orders_count ≥ 2, total_spent ≥ threshold</li>
+          <li>AI drafts personalised re-engagement per customer</li>
+          <li><code>wc_create_coupon</code> — unique code attached to each email</li>
+        </ol>
+        <div class="out">Targeted, trackable, consent-friendly</div>
+      </div>
+      <div class="workflow">
+        <h4>Abandoned Cart Recovery</h4>
+        <ol>
+          <li>Plugin (Abandoned Cart Lite, Metorik) fires a webhook</li>
+          <li>AI drafts the recovery email</li>
+          <li>Send via Resend, Mailchimp, or the WP mail hook</li>
+        </ol>
+        <div class="out">Requires a plugin — Woo doesn't track cart events natively</div>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.22s">
+      <p><strong>HMAC-signed webhooks — verify every payload.</strong> WooCommerce signs webhook bodies with HMAC-SHA256 using the webhook secret. Verify before trusting. The signature comes through as an <code>X-WC-Webhook-Signature</code> header.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.24s"><span class="c">// Cloudflare Worker — verify a WooCommerce webhook</span>
+<span class="k">const</span> sig = request.headers.get(<span class="s">'X-WC-Webhook-Signature'</span>);
+<span class="k">const</span> body = <span class="k">await</span> request.text();
+
+<span class="k">const</span> key = <span class="k">await</span> crypto.subtle.importKey(
+  <span class="s">'raw'</span>,
+  <span class="k">new</span> TextEncoder().encode(env.WC_WEBHOOK_SECRET),
+  { name: <span class="s">'HMAC'</span>, hash: <span class="s">'SHA-256'</span> },
+  <span class="k">false</span>,
+  [<span class="s">'sign'</span>]
+);
+<span class="k">const</span> mac = <span class="k">await</span> crypto.subtle.sign(<span class="s">'HMAC'</span>, key, <span class="k">new</span> TextEncoder().encode(body));
+<span class="k">const</span> expected = btoa(String.fromCharCode(...<span class="k">new</span> Uint8Array(mac)));
+
+<span class="k">if</span> (sig !== expected) <span class="k">return new</span> Response(<span class="s">'Unauthorized'</span>, { status: <span class="n">401</span> });</pre>
+  </div>
+</section>
+
+<!-- ── 04 GOTCHAS ── -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · Gotchas</div>
+      <h2 class="section-title">Eight things that only bite in production.</h2>
+      <p class="section-lede">Every one of these has cost someone an afternoon. WooCommerce's flexibility is its strength and its trap — plugins add behaviour, themes add filters, hosts add caching. Assume nothing.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>HTTPS required</strong>
+        <p>The REST API rejects every request over plain HTTP — even in local dev. Use ngrok, Local by Flywheel, or a self-signed cert on localhost.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Per-page max is 100</strong>
+        <p>Paginate with <code>?page=2&amp;per_page=100</code>. The <code>X-WP-TotalPages</code> response header tells you how many pages exist. Don't use larger per-page values — WP silently caps them.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Variable products need variation calls</strong>
+        <p>A variable product's stock lives on its variations, not the parent. Updating <code>stock_quantity</code> on the parent does nothing. Always go through <code>/products/{id}/variations</code>.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Batch endpoint caps at 100</strong>
+        <p>Split larger bulk updates into chunks of 100 or fewer. Over 100 ops and the whole batch fails.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Order status is a string, not an enum</strong>
+        <p>Plugins add custom statuses (<code>wc-awaiting-payment</code>, <code>wc-backorder</code>). Always check what the store actually uses before filtering — don't assume the default set.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Consumer keys are scoped</strong>
+        <p>Create a Read-only key for the reporting agent. A Read/Write key for fulfilment. Never give any agent a key with more permissions than it needs — and rotate on personnel changes.</p>
+      </div>
+      <div class="gotcha">
+        <strong><code>wp-json</code> path can be customised</strong>
+        <p>Some WordPress installs change the REST prefix (security through obscurity). Hit <code>https://store.com/wp-json/</code> first to confirm the discovery endpoint resolves.</p>
+      </div>
+      <div class="gotcha">
+        <strong>WooCommerce version matters</strong>
+        <p>v3 requires WooCommerce ≥ 3.5. Check <code>GET /wp-json/wc/v3</code> returns <code>200</code> before assuming any endpoint exists — older installs will surprise you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 CONNECTIONS ── -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · How this leaf connects</div>
+      <h2 class="section-title">What woocommerce pulls on, and what pulls on it.</h2>
+      <p class="section-lede">Unlike the other ERP leaves, woocommerce's canonical skill declares no hard requires — it runs independently. But it still sits inside the tree and compounds with its neighbours.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The natural home for the webhook verifier, the MCP server, and the rate-limiter that protects a WordPress host from its own agent traffic.</div>
+      </a>
+      <a href="shopify.html" class="connect-node">
+        <span class="tag">biz/erp/shopify</span>
+        <div class="skill">Shopify (sibling)</div>
+        <div class="why">Same role model, different runtime. Many teams run Shopify for the flagship and WooCommerce for long-tail — both through the same MCP role pattern.</div>
+      </a>
+      <a href="./" class="connect-node">
+        <span class="tag">biz/erp</span>
+        <div class="skill">ERP sub-domain</div>
+        <div class="why">woocommerce <code>improves</code> biz/erp — contributes the plugin-aware operations playbook back to the shared ERP skill.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">biz/accounting/xero</span>
+        <div class="skill">Xero (accounting)</div>
+        <div class="why">Typical WooCommerce stack: Woo for sales + Xero for accounting. The sync pattern lives between the two.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">mkt/content</span>
+        <div class="skill">Marketing content</div>
+        <div class="why">Product description generation, category copy, coupon campaigns — the marketing-content skill overlaps heavily with the Woo content role.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/analysis</span>
+        <div class="skill">Data analysis</div>
+        <div class="why">Once rows land in hand, the analysis skill does the aggregation — cohort retention, repeat purchase rates, coupon attribution.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The official REST docs are the source of truth for endpoint shapes. The canonical SKILL.md has the opinionated patterns, failure modes, and the role model.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://github.com/2nth-ai/skills/blob/main/biz/erp/woocommerce/SKILL.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Canonical</span>
+        <span class="r-title">biz/erp/woocommerce SKILL.md</span>
+        <span class="r-url">github.com/2nth-ai/skills/biz/erp/woocommerce</span>
+      </a>
+      <a href="https://woocommerce.github.io/woocommerce-rest-api-docs/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">WooCommerce REST API docs</span>
+        <span class="r-url">woocommerce.github.io/woocommerce-rest-api-docs</span>
+      </a>
+      <a href="https://woocommerce.com/document/webhooks/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">WooCommerce webhooks</span>
+        <span class="r-url">woocommerce.com/document/webhooks</span>
+      </a>
+      <a href="https://developer.wordpress.org/rest-api/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Upstream</span>
+        <span class="r-title">WordPress REST API handbook</span>
+        <span class="r-url">developer.wordpress.org/rest-api</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">ERP sub-hub</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/biz/erp/woocommerce" target="_blank" rel="noopener">Canonical skill</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

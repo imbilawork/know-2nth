@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopify — know.2nth.ai</title>
+<meta name="description" content="Shopify integration via the Admin API (REST + GraphQL) and Storefront API. Authentication, the six AI roles, MCP tool patterns, and production gotchas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(245, 158, 11, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(245, 158, 11, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --domain: var(--warm); --domain-glow: var(--warm-glow);
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(245, 158, 11, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(245, 158, 11, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.warm { width: 600px; height: 600px; background: var(--warm); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--warm-glow); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--warm-glow); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--warm-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--warm-glow); box-shadow: 0 0 12px var(--warm-glow);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--warm), var(--warm-glow), #FDE047);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--warm-glow);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare-wrap.wide { max-width: none; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--warm-glow);
+    background: rgba(245, 158, 11, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--warm-glow);
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warm-glow); word-break: break-all; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--warm-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb warm"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">biz/erp/shopify</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← ERP</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Business</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">biz</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">erp</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">shopify</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/erp · Shopify · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Shopify<br><span class="gradient">with six AI roles.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Hosted e-commerce with two APIs: Admin (REST + GraphQL) for store management, Storefront (GraphQL) for headless customer experiences. The canonical 2nth skill codifies six human roles — owner, merchandiser, content, support, marketing, operations — and gives each one its own AI tool set.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Production</span>
+      <span class="pill">Admin REST + GraphQL</span>
+      <span class="pill">Storefront GraphQL</span>
+      <span class="pill">Webhooks</span>
+      <span class="pill">v1.1.0</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">Two APIs, one store — and a role model for the humans using it.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Shopify is the hosted e-commerce platform most direct-to-consumer retailers end up on. Modern instances expose <strong>two distinct APIs</strong> for different audiences: the Admin API for everyone inside the store, and the Storefront API for the shoppers facing it. You use them differently, authenticate them differently, and almost never on the same Worker.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>API</th>
+            <th>Shape</th>
+            <th>Use when</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Admin API</td>
+            <td>REST + GraphQL</td>
+            <td>Store management — products, orders, customers, inventory, reporting. Anything the human team touches in the admin UI.</td>
+          </tr>
+          <tr>
+            <td class="name">Storefront API</td>
+            <td>GraphQL</td>
+            <td>Headless customer experiences — custom storefronts, mobile apps, kiosks. What the shopper sees.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>The 2nth model: one person + one AI.</strong> What makes this skill distinct from a generic Shopify SDK wrapper is the <em>role model</em>. The canonical skill defines six humans you're likely to find in a Shopify-backed business, and gives each one an AI partner with its own tool set — the human decides, the AI enables. This is the frame to keep in your head when you're deciding which tools to expose on an MCP server.</p>
+    </div>
+    <div class="compare-wrap wide fade-up" style="transition-delay: 0.12s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>The human decides</th>
+            <th>The AI enables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Store Owner</td>
+            <td>Strategy, pricing, brand direction</td>
+            <td>Revenue dashboards, trend analysis, competitor monitoring</td>
+          </tr>
+          <tr>
+            <td class="name">Merchandiser</td>
+            <td>Collection curation, product selection</td>
+            <td>Auto-tagging, SEO optimisation, inventory-aware recommendations</td>
+          </tr>
+          <tr>
+            <td class="name">Content Creator</td>
+            <td>Brand voice, creative direction</td>
+            <td>Draft product descriptions, blog posts, alt text, meta tags</td>
+          </tr>
+          <tr>
+            <td class="name">Customer Service</td>
+            <td>Escalations, refunds, relationship calls</td>
+            <td>Order lookup, FAQ answers, draft responses, sentiment analysis</td>
+          </tr>
+          <tr>
+            <td class="name">Marketing Manager</td>
+            <td>Campaign strategy, budget allocation</td>
+            <td>Audience segmentation, A/B copy, performance reporting</td>
+          </tr>
+          <tr>
+            <td class="name">Operations</td>
+            <td>Exception handling, carrier selection</td>
+            <td>Order routing, stock alerts, fulfillment tracking, fraud flags</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.14s">
+      <h4>Shopify is the system of record. 2nth is the partner layer.</h4>
+      <p>Don't try to replace Shopify's internals. Read product, order, inventory, and customer data, enrich it with AI, and write back approved changes as first-class Shopify mutations. The checkout, payment capture, and fulfilment state machine all stay where they are.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 AUTH ── -->
+<section id="auth">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Authentication</div>
+      <h2 class="section-title">Access tokens per API — Admin and Storefront are not the same token.</h2>
+      <p class="section-lede">Shopify's auth is simple once you stop trying to OAuth-everything. For integrations, you generate a custom app, pick scopes, and get a token per API. For public-facing apps you need OAuth — but that's not what this skill covers.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># Admin API — add this header to every request</span>
+X-Shopify-Access-Token: <span class="s">shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+
+<span class="c"># Storefront API — different token, different header</span>
+X-Shopify-Storefront-Access-Token: <span class="s">xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+
+<span class="c"># Admin API base URLs</span>
+https://{store}.myshopify.com/admin/api/<span class="n">2024-10</span>/{resource}.json    <span class="c"># REST</span>
+https://{store}.myshopify.com/admin/api/<span class="n">2024-10</span>/graphql.json       <span class="c"># GraphQL</span></pre>
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Cloudflare Worker — Shopify Admin API call</span>
+<span class="k">const</span> res = <span class="k">await</span> fetch(
+  `https://${env.SHOPIFY_STORE}.myshopify.com/admin/api/2024-10/products.json?limit=50&status=active`,
+  { headers: { <span class="s">'X-Shopify-Access-Token'</span>: env.SHOPIFY_ADMIN_TOKEN } }
+);
+<span class="k">const</span> { products } = <span class="k">await</span> res.json();</pre>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Never commit the store name and token together.</h4>
+      <p>The Admin token is a full "log in as the store" credential. Leaked tokens have been used to exfiltrate entire customer databases. Store tokens in <code>wrangler secret</code>, rotate quarterly, and never pass them to the browser. Storefront tokens are public-safe — that's what they're for.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 CORE PATTERNS ── -->
+<section id="core">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · Core patterns</div>
+      <h2 class="section-title">REST for CRUD, GraphQL for depth, webhooks for events.</h2>
+      <p class="section-lede">Four patterns carry most real Shopify integrations: the Admin REST endpoints for the loop-y workloads, the Admin GraphQL for anything that joins resources, an MCP tool matrix per role, and webhooks for reactive flows.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Admin REST — the resources you'll touch most.</strong></p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c"># Products</span>
+GET  /admin/api/<span class="n">2024-10</span>/products.json?limit=<span class="n">50</span>&status=active
+POST /admin/api/<span class="n">2024-10</span>/products.json
+PUT  /admin/api/<span class="n">2024-10</span>/products/{id}.json
+
+<span class="c"># Orders</span>
+GET  /admin/api/<span class="n">2024-10</span>/orders.json?status=open&limit=<span class="n">50</span>
+POST /admin/api/<span class="n">2024-10</span>/orders/{id}/fulfillments.json
+
+<span class="c"># Customers</span>
+GET /admin/api/<span class="n">2024-10</span>/customers.json?limit=<span class="n">50</span>
+GET /admin/api/<span class="n">2024-10</span>/customers/search.json?query=email:user@example.com
+
+<span class="c"># Inventory</span>
+GET  /admin/api/<span class="n">2024-10</span>/inventory_levels.json?location_ids=<span class="n">1234</span>
+POST /admin/api/<span class="n">2024-10</span>/inventory_levels/set.json</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Admin GraphQL — when you need joins.</strong> REST makes you chain calls to get a product with its variants, SEO metadata, and tags. GraphQL gets it in one round trip. Cost-based rate limiting applies — check <code>extensions.cost</code> in responses to know what you just spent.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.12s">{
+  products(first: <span class="n">10</span>, query: <span class="s">"status:active"</span>) {
+    edges {
+      node {
+        id
+        title
+        variants(first: <span class="n">5</span>) {
+          edges {
+            node { price inventoryQuantity sku }
+          }
+        }
+        seo { title description }
+        tags
+      }
+    }
+  }
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.14s">
+      <p><strong>MCP tool matrix — one role, one tool set.</strong> Mapping the 2nth role model to actual MCP tools. The store owner gets dashboards; merchandising gets product-surface mutations; content gets SEO and description writes; support gets order and customer reads; marketing gets segments and performance; ops gets fulfilment and stock.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.16s"><span class="k">const</span> ROLE_TOOLS = {
+  owner:       [<span class="s">'get_revenue_dashboard'</span>, <span class="s">'get_top_products'</span>, <span class="s">'get_customer_growth'</span>, <span class="s">'get_inventory_value'</span>],
+  merchandiser:[<span class="s">'list_products'</span>, <span class="s">'update_product'</span>, <span class="s">'manage_collection'</span>, <span class="s">'get_seo_audit'</span>, <span class="s">'auto_tag_products'</span>],
+  content:     [<span class="s">'get_product'</span>, <span class="s">'update_product_description'</span>, <span class="s">'generate_alt_text'</span>, <span class="s">'update_seo_metadata'</span>],
+  support:     [<span class="s">'search_orders'</span>, <span class="s">'get_order_status'</span>, <span class="s">'search_customers'</span>, <span class="s">'draft_response'</span>, <span class="s">'create_return'</span>],
+  marketing:   [<span class="s">'get_sales_report'</span>, <span class="s">'get_customer_segments'</span>, <span class="s">'generate_campaign_copy'</span>, <span class="s">'get_channel_performance'</span>],
+  operations:  [<span class="s">'list_unfulfilled_orders'</span>, <span class="s">'get_inventory_levels'</span>, <span class="s">'create_fulfillment'</span>, <span class="s">'flag_fraud_risk'</span>],
+};</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.18s">
+      <p><strong>Webhooks — the reactive layer.</strong> Shopify fires webhooks on every significant event. Subscribe the ones that matter, sign verify the payloads, and route to the right role's AI.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.2s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Webhook</th>
+            <th>Use case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>orders/create</code></td><td>Alert operations, update dashboards</td></tr>
+          <tr><td><code>orders/fulfilled</code></td><td>Notify customer service, update tracking</td></tr>
+          <tr><td><code>products/update</code></td><td>Trigger SEO re-audit</td></tr>
+          <tr><td><code>inventory_levels/update</code></td><td>Check reorder points</td></tr>
+          <tr><td><code>customers/create</code></td><td>Welcome sequence, segment assignment</td></tr>
+          <tr><td><code>refunds/create</code></td><td>Alert customer service, flag patterns</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.22s">
+      <p><strong>Rate limits — plan-aware.</strong> REST is request-per-second, GraphQL is point-per-second. Point cost varies by query complexity — complex queries cost more.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.24s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Plan</th>
+            <th>REST</th>
+            <th>GraphQL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Standard</td><td>2 req/sec</td><td>50 points/sec</td></tr>
+          <tr><td class="name">Advanced / Plus</td><td>4 req/sec</td><td>100 points/sec</td></tr>
+          <tr><td class="name">Shopify Plus</td><td>20 req/sec</td><td>1000 points/sec</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 GOTCHAS ── -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · Gotchas</div>
+      <h2 class="section-title">Things that only bite in production.</h2>
+      <p class="section-lede">Six specific failure modes lifted from the canonical skill — the ones that actually cost time the first time they happen.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Always specify API version</strong>
+        <p>Pin to <code>2024-10</code> (or whatever the current stable is). Deprecated versions return errors — not warnings — after their sunset date. Shopify ships a new version each quarter.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Pagination is different in REST vs GraphQL</strong>
+        <p>REST uses Link headers (<code>next</code>/<code>previous</code> URLs). GraphQL uses cursor-based <code>edges → node</code>. Don't mix client libraries that assume one style.</p>
+      </div>
+      <div class="gotcha">
+        <strong>GraphQL is cost-based, not rate-based</strong>
+        <p>Complex nested queries cost more points. Always check <code>extensions.cost</code> in the response to know what you just spent. A single bad query can stall all subsequent calls.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Metafields need GraphQL</strong>
+        <p>REST support for metafields is limited and inconsistent. Use GraphQL for any metafield work — reading, writing, or listing.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Bulk operations for &gt;250 items</strong>
+        <p>Don't paginate through 10k products with REST. Use the GraphQL Bulk Operations API — kick off a job, poll for completion, download the JSONL file. Much faster, much less rate-limit pressure.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Currency is a string in REST, MoneyV2 in GraphQL</strong>
+        <p>Amounts in REST are strings like <code>"299.00"</code>. GraphQL uses the <code>MoneyV2</code> scalar with <code>amount</code> and <code>currencyCode</code>. Never trust float arithmetic on either — use a decimal library.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 CONNECTIONS ── -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · How this leaf connects</div>
+      <h2 class="section-title">What shopify pulls on, and what pulls on it.</h2>
+      <p class="section-lede">Shopify explicitly requires <code>tech/cloudflare/workers</code> in its frontmatter and <code>improves</code> the biz/erp sub-domain. The MCP role matrix connects it sideways to agent protocols.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The runtime shopify explicitly requires. Workers host the MCP server, batch bulk operations, and rate-limit under Shopify's per-second caps.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/agent-protocols</span>
+        <div class="skill">Agent protocols (MCP)</div>
+        <div class="why">The role-tool matrix in section 03 is an MCP surface. Each role becomes an MCP server exposing exactly the tools it needs — nothing more.</div>
+      </div>
+      <a href="./" class="connect-node">
+        <span class="tag">biz/erp</span>
+        <div class="skill">ERP sub-domain</div>
+        <div class="why">shopify <code>improves</code> biz/erp — the role-based AI pattern contributes back up to the shared ERP skill.</div>
+      </a>
+      <a href="erpnext.html" class="connect-node">
+        <span class="tag">biz/erp/erpnext</span>
+        <div class="skill">ERPNext (sibling)</div>
+        <div class="why">Same auth / query / webhook shape, very different domain. Teams running ERPNext for manufacturing and Shopify for D2C use both in parallel.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">data/analysis</span>
+        <div class="skill">Data analysis</div>
+        <div class="why">Revenue dashboards, top-sellers, customer segmentation — all live in data/analysis once the raw Shopify rows land.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">mkt/content</span>
+        <div class="skill">Marketing content</div>
+        <div class="why">The content role's tools (generate alt text, update SEO) overlap with mkt/content — same AI tasks, different source.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">Shopify's developer docs are good — and quarterly API versions mean the canonical truth moves. Always check the API version you're pinned to before copying code from anywhere.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://github.com/2nth-ai/skills/blob/main/biz/erp/shopify/SKILL.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Canonical</span>
+        <span class="r-title">biz/erp/shopify SKILL.md</span>
+        <span class="r-url">github.com/2nth-ai/skills/biz/erp/shopify</span>
+      </a>
+      <a href="https://shopify.dev/docs/api" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Vendor docs</span>
+        <span class="r-title">Shopify API reference</span>
+        <span class="r-url">shopify.dev/docs/api</span>
+      </a>
+      <a href="https://shopify.dev/docs/api/admin-graphql" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">Admin GraphQL API</span>
+        <span class="r-url">shopify.dev/docs/api/admin-graphql</span>
+      </a>
+      <a href="https://shopify.dev/docs/api/usage/bulk-operations/queries" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">Bulk operations (&gt;250 items)</span>
+        <span class="r-url">shopify.dev/docs/api/usage/bulk-operations</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">ERP sub-hub</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/biz/erp/shopify" target="_blank" rel="noopener">Canonical skill</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
