@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERPNext — know.2nth.ai</title>
+<meta name="description" content="ERPNext integration via the Frappe REST + RPC API. Authentication, the manufacturing flow (BOM → Work Order → Job Card → Stock Entry), filters, and production gotchas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(245, 158, 11, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(245, 158, 11, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --domain: var(--warm); --domain-glow: var(--warm-glow);
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(245, 158, 11, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(245, 158, 11, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.warm { width: 600px; height: 600px; background: var(--warm); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--warm-glow); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--warm-glow); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--warm-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--warm-glow); box-shadow: 0 0 12px var(--warm-glow);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--warm), var(--warm-glow), #FDE047);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--warm-glow);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--warm-glow);
+    background: rgba(245, 158, 11, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--warm-glow);
+  }
+
+  /* Manufacturing flow diagram */
+  .mfg-flow {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 24px; max-width: var(--read-w);
+    margin-bottom: 24px;
+  }
+  .mfg-step {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    color: var(--text-secondary); line-height: 1.8;
+  }
+  .mfg-step .prod {
+    color: var(--warm-glow); font-weight: 600;
+  }
+  .mfg-step .tab { padding-left: 20px; position: relative; }
+  .mfg-step .tab::before {
+    content: '→'; position: absolute; left: 0;
+    color: var(--warm); opacity: 0.5;
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warm-glow); word-break: break-all; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--warm-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb warm"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">biz/erp/erpnext</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← ERP</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Business</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">biz</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">erp</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">erpnext</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/erp · ERPNext · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      ERPNext on<br><span class="gradient">REST + RPC.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The open-source ERP on the Frappe framework. Every doctype is a REST resource, and every server-side method is reachable via RPC. The manufacturing stack — Items, BOMs, Work Orders, Job Cards, Stock Entries — is the strongest part of the tree, backing real factories today.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Production</span>
+      <span class="pill">REST + RPC</span>
+      <span class="pill">Frappe framework</span>
+      <span class="pill">Manufacturing</span>
+      <span class="pill">v1.1.0</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">Open-source ERP built on Frappe, API-first.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>ERPNext is the enterprise resource planning system most open-source-friendly factories, distributors, and professional services firms end up on. It runs on <strong>Frappe</strong> — a metadata-driven Python framework where every business entity is a "doctype" and every doctype gets an automatic REST endpoint for free.</p>
+      <p>You get two APIs for the price of one:</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>API</th>
+            <th>Base path</th>
+            <th>Use when</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/api/resource/&lt;DocType&gt;</code></td>
+            <td>REST</td>
+            <td>CRUD on any document — Item, Sales Order, BOM, Stock Entry</td>
+          </tr>
+          <tr>
+            <td><code>/api/method/&lt;dotted.path&gt;</code></td>
+            <td>RPC</td>
+            <td>Server-side logic — stock balance, BOM explosion, document submission</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>2nth is middleware. Frappe is system of record.</h4>
+      <p>The canonical pattern: read from ERPNext, run an AI-assisted workflow (production planning, reorder suggestions, quality escalations), and write approved decisions back as first-class Frappe documents. Never let the AI be the source of truth for stock or BOMs — the ERP's double-entry and submission semantics exist for reasons a model won't understand.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 AUTH ── -->
+<section id="auth">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Authentication</div>
+      <h2 class="section-title">API Key + Secret — the only auth that belongs in production.</h2>
+      <p class="section-lede">Frappe offers three ways to authenticate. The first is the right one for integrations. The others exist, but use them and you'll regret it.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># 1. API Key + Secret — recommended for agents and integrations</span>
+Authorization: token <span class="s">api_key:api_secret</span>
+
+<span class="c"># 2. Basic Auth — for one-off scripts</span>
+Authorization: Basic <span class="s">base64(user:password)</span>
+
+<span class="c"># 3. Session cookies — for browser-like flows only</span>
+<span class="k">$</span> curl -X POST https://site.example.com/api/method/login \
+    -d <span class="s">'usr=user@example.com&pwd=password'</span>
+<span class="c"># use returned cookies for subsequent requests</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p>Generate the API Key and Secret from <strong>User &gt; API Access</strong> in the ERPNext UI. The secret is only shown once — store it immediately in a secrets manager.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">// Cloudflare Worker — ERPNext list call with token auth</span>
+<span class="k">const</span> token = `${env.ERPNEXT_KEY}:${env.ERPNEXT_SECRET}`;
+<span class="k">const</span> res = <span class="k">await</span> fetch(
+  `${env.ERPNEXT_URL}/api/resource/Item?filters=${filters}&limit_page_length=<span class="n">50</span>`,
+  { headers: { <span class="s">'Authorization'</span>: `token ${token}` } }
+);
+<span class="k">const</span> { data } = <span class="k">await</span> res.json();</pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.12s">
+      <h4>Scope your keys.</h4>
+      <p>Generate a read-only user for reporting agents and a separate read/write user for fulfilment and submission. Frappe enforces role-based permissions per doctype — don't give the AI the site administrator role just to make a demo work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 CORE PATTERNS ── -->
+<section id="core">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · Core patterns</div>
+      <h2 class="section-title">Resources, filters, and the manufacturing flow.</h2>
+      <p class="section-lede">Three things to internalise: how to shape REST requests, how Frappe's JSON filter syntax works, and the document lifecycle that drives the manufacturing flow. Get those right and the rest is typing.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>List, get, create, update.</strong> All four are a single REST verb on <code>/api/resource/&lt;DocType&gt;</code>. Pagination is off-by-default tiny — set it explicitly.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c"># List records with filters and specific fields</span>
+GET /api/resource/Item
+  ?filters=[[<span class="s">"item_group"</span>,<span class="s">"="</span>,<span class="s">"Finished Goods"</span>]]
+  &fields=[<span class="s">"name"</span>,<span class="s">"item_name"</span>,<span class="s">"item_group"</span>,<span class="s">"stock_uom"</span>]
+  &limit_page_length=<span class="n">50</span>
+  &order_by=item_name asc
+
+<span class="c"># Get a single record by name (the ID, not the display name)</span>
+GET /api/resource/Item/ITEM-CODE-<span class="n">001</span>
+
+<span class="c"># Create a new record</span>
+POST /api/resource/Item
+Content-Type: application/json
+
+{
+  <span class="s">"item_code"</span>: <span class="s">"ITEM-001"</span>,
+  <span class="s">"item_name"</span>: <span class="s">"Item Name"</span>,
+  <span class="s">"item_group"</span>: <span class="s">"Finished Goods"</span>,
+  <span class="s">"stock_uom"</span>: <span class="s">"Nos"</span>
+}
+
+<span class="c"># Partial update</span>
+PUT /api/resource/Item/ITEM-<span class="n">001</span>
+{ <span class="s">"description"</span>: <span class="s">"Updated description"</span> }</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Filters are JSON arrays.</strong> Each filter is <code>[field, operator, value]</code>. Multiple filters become an array of arrays. Server-side filtering, not client-side post-processing.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.12s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Operator</th>
+            <th>Meaning</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>=</code></td><td>Equals</td><td><code>["item_group","=","Raw Material"]</code></td></tr>
+          <tr><td><code>!=</code></td><td>Not equals</td><td><code>["status","!=","Cancelled"]</code></td></tr>
+          <tr><td><code>&gt;</code>/<code>&gt;=</code>/<code>&lt;</code>/<code>&lt;=</code></td><td>Comparison</td><td><code>["qty",">",0]</code></td></tr>
+          <tr><td><code>like</code></td><td>Wildcard</td><td><code>["item_name","like","%Oak%"]</code></td></tr>
+          <tr><td><code>in</code></td><td>In list</td><td><code>["status","in",["Open","In Process"]]</code></td></tr>
+          <tr><td><code>between</code></td><td>Range</td><td><code>["posting_date","between",["2026-01-01","2026-03-31"]]</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.14s">
+      <p><strong>Core doctypes.</strong> The ones that come up in every manufacturing integration — not the whole tree, just the load-bearing ones.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.16s">Item                      <span class="c">— Products, raw materials, sub-assemblies</span>
+BOM                       <span class="c">— Bill of Materials — recipe for a manufactured item</span>
+Work Order                <span class="c">— A production order</span>
+Job Card                  <span class="c">— Per-operation tracking on a work order</span>
+Workstation               <span class="c">— Machine or assembly station</span>
+Operation                 <span class="c">— Manufacturing step</span>
+Stock Entry               <span class="c">— Inventory movement (issue, receipt, manufacture)</span>
+Quality Inspection        <span class="c">— QC checks tied to receipts or work orders</span>
+Sales Order               <span class="c">— Customer orders (drives work order creation)</span>
+Purchase Order            <span class="c">— Supplier orders</span>
+Warehouse                 <span class="c">— Storage locations</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.18s">
+      <p><strong>The manufacturing flow.</strong> If you only know one thing about ERPNext, know this chain. Every real manufacturing integration ends up walking it top-to-bottom.</p>
+    </div>
+    <div class="mfg-flow fade-up" style="transition-delay: 0.2s">
+      <div class="mfg-step">
+        <span class="prod">Sales Order</span><br>
+        <span class="tab">Work Order <span style="color: var(--text-muted);">(from BOM)</span></span><br>
+        <span class="tab" style="padding-left: 44px;">Job Card <span style="color: var(--text-muted);">(per operation)</span></span><br>
+        <span class="tab" style="padding-left: 68px;">Stock Entry <span style="color: var(--text-muted);">(material transfer)</span></span><br>
+        <span class="tab" style="padding-left: 68px;">Stock Entry <span style="color: var(--text-muted);">(manufacture → finished goods in)</span></span><br>
+        <span class="tab" style="padding-left: 44px;">Quality Inspection</span><br>
+        <span class="tab">Delivery Note</span><br>
+        <span class="tab">Sales Invoice</span>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.22s">
+      <p><strong>RPC methods.</strong> Some operations aren't exposed as REST resources — stock balances, BOM explosions, document transformations. These live behind Frappe's method RPC.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.24s">POST /api/method/erpnext.manufacturing.doctype.work_order.work_order.make_stock_entry
+Content-Type: application/json
+
+{
+  <span class="s">"work_order"</span>: <span class="s">"WO-00045"</span>,
+  <span class="s">"purpose"</span>: <span class="s">"Material Transfer for Manufacture"</span>,
+  <span class="s">"qty"</span>: <span class="n">30</span>
+}</pre>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.26s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>frappe.client.get_count</code></td><td>Count documents matching filters</td></tr>
+          <tr><td><code>frappe.client.get_list</code></td><td>List with server-side aggregation</td></tr>
+          <tr><td><code>erpnext.stock.utils.get_stock_balance</code></td><td>Real-time stock balance for an item at a warehouse</td></tr>
+          <tr><td><code>erpnext.manufacturing.doctype.bom.bom.get_bom_items</code></td><td>Explode a BOM into its raw material requirements</td></tr>
+          <tr><td><code>...work_order.make_stock_entry</code></td><td>Create a stock entry from a Work Order</td></tr>
+          <tr><td><code>...sales_order.make_work_order</code></td><td>Create Work Orders from a Sales Order</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 GOTCHAS ── -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · Gotchas</div>
+      <h2 class="section-title">Things that only bite in production.</h2>
+      <p class="section-lede">Seven specific failure modes lifted from the canonical skill. Every one of these has cost someone an afternoon at least once.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Docstatus is your source of truth</strong>
+        <p><code>0</code> is draft, <code>1</code> is submitted, <code>2</code> is cancelled. Most queries need <code>["docstatus","=",1]</code>. Forgetting this means your "sales" list includes draft orders that don't actually exist.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Child tables need explicit access</strong>
+        <p>BOM items, Sales Order items, Stock Entry items are child tables on the parent document. Fetch them via the parent <code>GET</code> or with dotted fields like <code>fields=["items.item_code","items.qty"]</code>.</p>
+      </div>
+      <div class="gotcha">
+        <strong>5 req/sec rate limit by default</strong>
+        <p>Frappe's default rate limit for API keys is 5 requests per second. Scheduled syncs need batching or throttling — or you'll spend an hour wondering why every other call fails.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Pagination defaults to 20</strong>
+        <p>Set <code>limit_page_length</code> explicitly. Use <code>limit_page_length=0</code> to fetch everything, but only on small doctypes — on a 50k-item master this will hang the site.</p>
+      </div>
+      <div class="gotcha">
+        <strong><code>name</code> is the ID, not the display name</strong>
+        <p>Every Frappe doctype has a <code>name</code> field that's the record's unique ID. Use <code>name</code> for lookups, not the display-friendly field like <code>item_name</code>.</p>
+      </div>
+      <div class="gotcha">
+        <strong>BOMs are versioned — always filter by active</strong>
+        <p>An item can have many BOMs. For production queries, filter with <code>["is_active","=",1]</code> and <code>["is_default","=",1]</code> — otherwise you might pick up an old recipe that still exists but isn't in use.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Stock Entry types are enum-specific</strong>
+        <p>"Material Issue", "Material Receipt", "Material Transfer for Manufacture", "Manufacture" — exact strings. Typos silently fail or create the wrong kind of movement, which is worse than failing because it breaks the audit trail.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 CONNECTIONS ── -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · How this leaf connects</div>
+      <h2 class="section-title">What erpnext pulls on, and what pulls on it.</h2>
+      <p class="section-lede">The canonical skill declares its <code>requires</code> and <code>improves</code> in frontmatter. Here are the nodes in the tree erpnext is wired into.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The runtime erpnext explicitly requires. Worker hosts the auth proxy, batches API calls under the 5 req/sec limit, and caches read-heavy responses in KV.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">fin/reporting</span>
+        <div class="skill">Financial reporting</div>
+        <div class="why">Required by erpnext for KPI output formats. Work order counts, on-time delivery, and cost variance all feed here.</div>
+      </div>
+      <a href="./" class="connect-node">
+        <span class="tag">biz/erp</span>
+        <div class="skill">ERP sub-domain</div>
+        <div class="why">erpnext <code>improves</code> biz/erp — its manufacturing patterns feed back into the shared ERP skill.</div>
+      </a>
+      <a href="sage-x3.html" class="connect-node">
+        <span class="tag">biz/erp/sage-x3</span>
+        <div class="skill">Sage X3 (sibling)</div>
+        <div class="why">Same auth/introspect/query/write/webhook shape, different API style. Teams migrating from X3 to ERPNext use both skills during the transition.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">data/analysis</span>
+        <div class="skill">Data analysis</div>
+        <div class="why">Manufacturing KPIs (yield, scrap, utilisation) are aggregation problems best solved once rows are in hand.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">iot/platform</span>
+        <div class="skill">IoT platform</div>
+        <div class="why">Real factories feed machine telemetry into ERPNext as Job Card updates. The IoT skill is the other half of that loop.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The canonical SKILL.md is the authoritative version and gets updates as the production skill evolves. Frappe and ERPNext docs are the upstream truth.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://github.com/2nth-ai/skills/blob/main/biz/erp/erpnext/SKILL.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Canonical</span>
+        <span class="r-title">biz/erp/erpnext SKILL.md</span>
+        <span class="r-url">github.com/2nth-ai/skills/biz/erp/erpnext</span>
+      </a>
+      <a href="https://frappeframework.com/docs/user/en/api" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Upstream</span>
+        <span class="r-title">Frappe REST API docs</span>
+        <span class="r-url">frappeframework.com/docs/user/en/api</span>
+      </a>
+      <a href="https://docs.erpnext.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Vendor docs</span>
+        <span class="r-title">ERPNext user manual</span>
+        <span class="r-url">docs.erpnext.com</span>
+      </a>
+      <a href="https://github.com/frappe/erpnext" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">frappe/erpnext on GitHub</span>
+        <span class="r-url">github.com/frappe/erpnext</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">ERP sub-hub</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/biz/erp/erpnext" target="_blank" rel="noopener">Canonical skill</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
