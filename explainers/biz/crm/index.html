@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ERP — know.2nth.ai</title>
-<meta name="description" content="Enterprise resource planning integrations in the 2nth skill tree. Four production skills: Sage X3, ERPNext, Shopify, WooCommerce.">
+<title>CRM — know.2nth.ai</title>
+<meta name="description" content="Customer relationship management integrations in the 2nth skill tree. The six GTM roles, and how each one gets an AI partner that shares the same customer graph.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
@@ -163,10 +163,10 @@
     transform: translateY(-3px);
     box-shadow: 0 14px 42px rgba(0, 0, 0, 0.08);
   }
-  .leaf-card[data-ish="graphql"] { --card-accent: var(--violet); }
-  .leaf-card[data-ish="rest"] { --card-accent: var(--sky); }
-  .leaf-card[data-ish="hybrid"] { --card-accent: var(--warm); }
-  .leaf-card[data-ish="php"] { --card-accent: var(--rose); }
+  .leaf-card.soon { cursor: default; opacity: 0.75; }
+  .leaf-card.soon:hover { transform: none; border-color: var(--border); box-shadow: none; }
+  .leaf-card[data-ish="hubspot"] { --card-accent: var(--warm); }
+  .leaf-card[data-ish="salesforce"] { --card-accent: var(--sky); }
   .leaf-head {
     display: flex; align-items: flex-start; justify-content: space-between;
     gap: 16px; margin-bottom: 14px;
@@ -183,6 +183,9 @@
     padding: 4px 12px; border-radius: var(--radius-pill);
     background: var(--green-soft); color: var(--green);
     font-weight: 600; align-self: flex-start;
+  }
+  .leaf-state.stub {
+    background: rgba(148, 163, 184, 0.1); color: var(--text-muted);
   }
   .leaf-card h3 {
     font-size: 22px; font-weight: 700; letter-spacing: -0.4px;
@@ -205,7 +208,6 @@
     border: 1px solid var(--border); color: var(--text-muted);
   }
 
-  /* Compare table */
   .compare-wrap {
     background: var(--bg-card); backdrop-filter: blur(10px);
     border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -281,7 +283,7 @@
   <div class="nav-inner">
     <a href="../../../index.html" class="nav-brand">
       <span class="nav-brand-mark">know.2nth.ai</span>
-      <span class="nav-brand-sub">Business · ERP</span>
+      <span class="nav-brand-sub">Business · CRM</span>
     </a>
     <div class="nav-right">
       <a href="../" class="nav-link">← Business</a>
@@ -299,24 +301,24 @@
     <span class="crumb-sep">›</span>
     <a href="../">biz</a>
     <span class="crumb-sep">›</span>
-    <span class="crumb-current">ERP</span>
+    <span class="crumb-current">CRM</span>
   </div>
 </div>
 
 <!-- ── HERO ── -->
 <section class="hub-hero">
   <div class="container">
-    <div class="eyebrow fade-up"><span class="dot"></span> biz/erp · Sub-domain hub</div>
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/crm · Sub-domain hub</div>
     <h1 class="fade-up" style="transition-delay: 0.05s">
-      Four ERPs.<br><span class="gradient">One pattern.</span>
+      Two CRMs.<br><span class="gradient">Six GTM roles.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      Enterprise resource planning integrations. All four production skills in this sub-domain follow the same shape — authenticate, introspect, query, write, webhook — wired so AI agents can act on orders, invoices, and stock without a human in the loop. 2nth is middleware, not the system of record: read from the ERP, enrich with AI, write results back.
+      Customer relationship management is where a business keeps its people — contacts, accounts, deals, tickets, conversations. The 2nth CRM skills turn that graph into an operational substrate for AI: one GTM role at a time, one bounded tool set at a time, every mutation a human approves.
     </p>
     <div class="hub-stats fade-up" style="transition-delay: 0.15s">
-      <div class="hub-stat"><div class="num">4</div><div class="label">Production leaves</div></div>
-      <div class="hub-stat"><div class="num">3</div><div class="label">API styles</div></div>
-      <div class="hub-stat"><div class="num">1</div><div class="label">Shared pattern</div></div>
+      <div class="hub-stat"><div class="num">1</div><div class="label">Production leaf</div></div>
+      <div class="hub-stat"><div class="num">1</div><div class="label">Stub</div></div>
+      <div class="hub-stat"><div class="num">6</div><div class="label">GTM roles</div></div>
     </div>
   </div>
 </section>
@@ -326,74 +328,43 @@
   <div class="container">
     <div class="fade-up">
       <div class="hub-label">01 · Skill leaves</div>
-      <h2 class="hub-title">The four ERPs, by API shape</h2>
-      <p class="hub-lede">Each card is a full production skill in the canonical 2nth-ai/skills repo — with working code, rate limits, and the gotchas that only show up in real deployments. Click any to drill in.</p>
+      <h2 class="hub-title">The CRMs that matter — by AI posture</h2>
+      <p class="hub-lede">HubSpot is the single-platform customer graph most mid-market businesses end up on. Salesforce is the enterprise default with its own AI framing in Agentforce and Einstein. The role model and operational pattern are shared — the API shape is not.</p>
     </div>
     <div class="leaf-grid fade-up" style="transition-delay: 0.05s">
 
-      <a href="sage-x3.html" class="leaf-card" data-ish="graphql">
+      <a href="hubspot.html" class="leaf-card" data-ish="hubspot">
         <div class="leaf-head">
-          <div class="leaf-emoji">🧭</div>
+          <div class="leaf-emoji">🧲</div>
           <span class="leaf-state">Production</span>
         </div>
-        <h3>Sage X3</h3>
-        <span class="path">biz/erp/sage-x3</span>
-        <p>Mid-market ERP (formerly Sage Enterprise Management) exposed via a GraphQL API through the Syracuse web server. Relay cursor pagination, OData-style filters, master data through sales, purchasing, stock, and accounting.</p>
+        <h3>HubSpot</h3>
+        <span class="path">biz/crm/hubspot</span>
+        <p>The CRM that grew into a customer platform — sales, marketing, service, CMS, and operations on one object graph. v3 REST API, Private Apps for internal integrations, Associations v4 for the graph edges, Search API for anything that needs filters. The canonical skill maps six GTM roles to bounded MCP tool sets.</p>
         <div class="leaf-meta">
-          <span class="m">GraphQL</span>
-          <span class="m">Syracuse API</span>
-          <span class="m">Relay</span>
-          <span class="m">Basic Auth</span>
-        </div>
-      </a>
-
-      <a href="erpnext.html" class="leaf-card" data-ish="rest">
-        <div class="leaf-head">
-          <div class="leaf-emoji">🏭</div>
-          <span class="leaf-state">Production</span>
-        </div>
-        <h3>ERPNext</h3>
-        <span class="path">biz/erp/erpnext</span>
-        <p>Open-source ERP on the Frappe framework. REST API for every doctype plus RPC for server-side methods. Manufacturing-strong — BOMs, work orders, job cards, stock entries — backing real factories today.</p>
-        <div class="leaf-meta">
-          <span class="m">REST + RPC</span>
-          <span class="m">Frappe</span>
-          <span class="m">Manufacturing</span>
-          <span class="m">BOMs</span>
-        </div>
-      </a>
-
-      <a href="shopify.html" class="leaf-card" data-ish="hybrid">
-        <div class="leaf-head">
-          <div class="leaf-emoji">🛍️</div>
-          <span class="leaf-state">Production</span>
-        </div>
-        <h3>Shopify</h3>
-        <span class="path">biz/erp/shopify</span>
-        <p>Hosted e-commerce with two APIs: Admin (REST + GraphQL) for store management, Storefront (GraphQL) for headless customer experiences. The skill codifies six AI roles — owner, merchandiser, content, support, marketing, ops — and their tool sets.</p>
-        <div class="leaf-meta">
-          <span class="m">Admin REST + GraphQL</span>
-          <span class="m">Storefront</span>
+          <span class="m">CRM API v3</span>
+          <span class="m">Private Apps</span>
+          <span class="m">Associations v4</span>
+          <span class="m">Search API</span>
           <span class="m">Webhooks</span>
-          <span class="m">MCP roles</span>
         </div>
       </a>
 
-      <a href="woocommerce.html" class="leaf-card" data-ish="php">
+      <div class="leaf-card soon" data-ish="salesforce">
         <div class="leaf-head">
-          <div class="leaf-emoji">🛒</div>
-          <span class="leaf-state">Production</span>
+          <div class="leaf-emoji">☁️</div>
+          <span class="leaf-state stub">Stub</span>
         </div>
-        <h3>WooCommerce</h3>
-        <span class="path">biz/erp/woocommerce</span>
-        <p>The world's most widely deployed e-commerce platform — WordPress-based. REST API v3 for products, orders, customers, stock, coupons, reports. Basic Auth with Consumer Key + Secret; HMAC-signed webhooks.</p>
+        <h3>Salesforce</h3>
+        <span class="path">biz/crm/salesforce</span>
+        <p>The enterprise CRM default. Real SObject model, SOQL queries, Apex hooks, and the whole Agentforce + Einstein AI layer baked into the platform. Slotted for real content once the auth patterns, SOQL templates, and Agentforce-vs-2nth-role mapping are ready.</p>
         <div class="leaf-meta">
-          <span class="m">REST v3</span>
-          <span class="m">WordPress</span>
-          <span class="m">HMAC webhooks</span>
-          <span class="m">Batch ops</span>
+          <span class="m">SObjects</span>
+          <span class="m">SOQL</span>
+          <span class="m">Agentforce</span>
+          <span class="m">Einstein</span>
         </div>
-      </a>
+      </div>
 
     </div>
   </div>
@@ -405,7 +376,7 @@
     <div class="fade-up">
       <div class="hub-label">02 · Side by side</div>
       <h2 class="hub-title">Pick the right leaf for the job</h2>
-      <p class="hub-lede">All four follow the same high-level pattern, but the shapes differ. Use this to match your workload to the integration that actually fits.</p>
+      <p class="hub-lede">Both tools solve the same problem, differently. The comparison matters the first time someone has to choose — and matters even more when a business runs both and needs them to agree on who a customer is.</p>
     </div>
     <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
       <table class="compare">
@@ -415,37 +386,23 @@
             <th>API style</th>
             <th>Auth</th>
             <th>Strongest for</th>
-            <th>Rate limits</th>
+            <th>Native AI surface</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="name">Sage X3</td>
-            <td>GraphQL (Relay)</td>
-            <td>HTTP Basic over HTTPS</td>
-            <td>Mid-market ERP with complex master data, multi-site stock, SA financial filings</td>
-            <td>Installation-dependent · introspect first</td>
+            <td class="name">HubSpot</td>
+            <td>REST v3 + Associations v4 + Search API</td>
+            <td>Private App token (internal) / OAuth (marketplace)</td>
+            <td>Mid-market GTM on one platform, five hubs, unified object graph</td>
+            <td>Breeze</td>
           </tr>
           <tr>
-            <td class="name">ERPNext</td>
-            <td>REST + RPC</td>
-            <td>API Key + Secret (or Basic)</td>
-            <td>Discrete manufacturing, BOM-driven production, factories needing open-source cost base</td>
-            <td>~5 req/sec default</td>
-          </tr>
-          <tr>
-            <td class="name">Shopify</td>
-            <td>Admin REST + GraphQL, Storefront GraphQL</td>
-            <td>Access tokens (Admin + Storefront)</td>
-            <td>Direct-to-consumer retail, headless commerce, role-driven AI assistance</td>
-            <td>2–20 req/sec REST · 50–1000 pts/sec GraphQL</td>
-          </tr>
-          <tr>
-            <td class="name">WooCommerce</td>
-            <td>REST v3</td>
-            <td>Consumer Key + Secret (Basic)</td>
-            <td>WordPress-hosted stores, long-tail retailers, full control over customisation</td>
-            <td>Plugin-dependent · host-bound</td>
+            <td class="name">Salesforce</td>
+            <td>REST + SOQL + Bulk API 2.0 + Streaming</td>
+            <td>OAuth 2.0 (Connected App) / JWT Bearer</td>
+            <td>Enterprise CRM with deep customisation, Apex, multi-org complexity</td>
+            <td>Agentforce + Einstein</td>
           </tr>
         </tbody>
       </table>
@@ -458,8 +415,8 @@
   <div class="container">
     <div class="fade-up">
       <div class="hub-label">03 · The shared shape</div>
-      <h2 class="hub-title">Every ERP skill follows this loop</h2>
-      <p class="hub-lede">It's not an accident that the four skills feel the same once you open the hood. They're all built on a deliberate 2nth pattern: middleware between the ERP and the AI agents using it.</p>
+      <h2 class="hub-title">Every CRM skill follows this loop</h2>
+      <p class="hub-lede">CRM is not ERP, but the 2nth shape is close. Read the customer graph, enrich it with AI reasoning, write back only what a human has approved. The value is never in autonomous mutations on pipeline and money — it's in diagnosis, drafting, and hygiene.</p>
     </div>
     <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
       <table class="compare">
@@ -473,28 +430,82 @@
         <tbody>
           <tr>
             <td class="name">1 · Authenticate</td>
-            <td>Token, key, or OAuth — never hardcoded. Secrets in env vars or <code style="font-family: 'JetBrains Mono', monospace;">wrangler secret</code>.</td>
-            <td>Credentials live outside the code path</td>
+            <td>Private App token, JWT, or OAuth — scoped narrowly. One token per role, never one god-token.</td>
+            <td>Scopes are the real security boundary</td>
           </tr>
           <tr>
-            <td class="name">2 · Introspect</td>
-            <td>Discover the real schema — custom fields, plugin doctypes, installation-specific quirks.</td>
-            <td>Schemas vary by installation · never assume</td>
+            <td class="name">2 · Discover</td>
+            <td>List properties, pipelines, custom objects. Internal names differ from UI labels — always fetch first.</td>
+            <td>Every portal is bespoke · never assume schema</td>
           </tr>
           <tr>
             <td class="name">3 · Query</td>
-            <td>Paginate everything. Filter server-side. Never load a full table without cursors.</td>
-            <td>Pagination is required · defaults will lie</td>
+            <td>Use Search APIs (HubSpot) or SOQL (Salesforce). Filter server-side. Cap-aware cursoring.</td>
+            <td>Pagination caps bite hard · split by time window</td>
           </tr>
           <tr>
-            <td class="name">4 · Write</td>
-            <td>Idempotent mutations — upsert by natural key, not by surrogate ID.</td>
-            <td>2nth is middleware, not SOR · the ERP owns truth</td>
+            <td class="name">4 · Enrich</td>
+            <td>AI reasoning on the returned objects — scoring, summarising, drafting, classifying.</td>
+            <td>The AI reads · the human decides · the API writes</td>
           </tr>
           <tr>
-            <td class="name">5 · Webhook</td>
-            <td>Verify signatures. Handle retries. Treat late events as normal, not exceptional.</td>
-            <td>Real-time is eventual consistency in a hurry</td>
+            <td class="name">5 · Write</td>
+            <td>Human-approved mutations only. Log every change. Associations v4, not v3.</td>
+            <td>Pipeline and money need human approval</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE ROLE MODEL ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">04 · The six GTM roles</div>
+      <h2 class="hub-title">One person, one AI, one bounded tool set</h2>
+      <p class="hub-lede">The role model is the thing 2nth contributes on top of the raw CRM APIs. Every leaf in this sub-domain gives each role its own agent with its own narrowly-scoped tools — the human stays accountable, the AI handles the volume.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>The human decides</th>
+            <th>The AI enables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Revenue Leader</td>
+            <td>Forecast, territory, quota, GTM strategy</td>
+            <td>Pipeline health, win-rate drift, stalled-deal triage</td>
+          </tr>
+          <tr>
+            <td class="name">Sales Rep</td>
+            <td>Deal relationships, call priorities, closing moves</td>
+            <td>Next-best action, draft follow-ups, meeting summaries</td>
+          </tr>
+          <tr>
+            <td class="name">Marketing Manager</td>
+            <td>Campaign strategy, positioning, budget</td>
+            <td>Segments, subject-line A/B, attribution reports</td>
+          </tr>
+          <tr>
+            <td class="name">Service / CS Lead</td>
+            <td>Escalations, voice of customer, NPS</td>
+            <td>Ticket routing, sentiment flags, draft replies</td>
+          </tr>
+          <tr>
+            <td class="name">RevOps Engineer</td>
+            <td>Object model, process design, pipeline stages</td>
+            <td>Property audits, workflow review, association mapping</td>
+          </tr>
+          <tr>
+            <td class="name">Executive / Owner</td>
+            <td>GTM priorities, resource allocation, board narrative</td>
+            <td>Revenue dashboards, campaign ROI, churn signals</td>
           </tr>
         </tbody>
       </table>
@@ -506,16 +517,17 @@
 <section class="hub-section">
   <div class="container">
     <div class="fade-up">
-      <div class="hub-label">04 · Related branches</div>
-      <h2 class="hub-title">Where ERP connects in the tree</h2>
-      <p class="hub-lede">ERPs don't run alone. Every skill in this sub-domain <code style="font-family: 'JetBrains Mono', monospace;">requires</code> at least one skill from <code style="font-family: 'JetBrains Mono', monospace;">tech</code> for the runtime, and feeds into <code style="font-family: 'JetBrains Mono', monospace;">fin/reporting</code> for the numbers that get shown to humans.</p>
+      <div class="hub-label">05 · Related branches</div>
+      <h2 class="hub-title">Where CRM connects in the tree</h2>
+      <p class="hub-lede">CRM sits in the middle of the GTM layer. It <code style="font-family: 'JetBrains Mono', monospace;">requires</code> at least one skill from <code style="font-family: 'JetBrains Mono', monospace;">tech</code> for the runtime, borrows customer data from <code style="font-family: 'JetBrains Mono', monospace;">biz/erp</code>, and feeds pipeline numbers up into <code style="font-family: 'JetBrains Mono', monospace;">fin/reporting</code> when that branch goes live.</p>
     </div>
     <div class="cross-links fade-up" style="transition-delay: 0.05s">
       <a href="../../tech/" class="cross-link">Technology →</a>
       <a href="../../tech/cloudflare/workers.html" class="cross-link">tech/cloudflare/workers →</a>
+      <a href="../erp/" class="cross-link">biz/erp →</a>
       <a href="../" class="cross-link">← biz</a>
       <span class="cross-link soon">fin/reporting · soon</span>
-      <a href="../crm/" class="cross-link">biz/crm →</a>
+      <span class="cross-link soon">biz/ops · soon</span>
     </div>
   </div>
 </section>
@@ -527,7 +539,7 @@
     <div class="footer-links">
       <a href="../../../index.html">Skills tree</a>
       <a href="https://2nth.ai" target="_blank" rel="noopener">2nth.ai</a>
-      <a href="https://github.com/2nth-ai/skills/tree/main/biz/erp" target="_blank" rel="noopener">Canonical skills</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/biz/crm" target="_blank" rel="noopener">Canonical skills</a>
     </div>
     <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
   </div>
