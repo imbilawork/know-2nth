@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frappe Framework — know.2nth.ai</title>
+<meta name="description" content="The Frappe Framework — a metadata-driven Python full-stack where every business object is a doctype. Doctypes, hooks, REST + RPC, Bench, the desk, and the patterns that make the entire Frappe ecosystem coherent.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--sky);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky);
+    background: rgba(37, 99, 235, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--sky);
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  /* Decision split */
+  .decision-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    max-width: var(--read-w);
+  }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+  }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+  }
+  .decision-card li:last-child { border-bottom: none; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/frappe/framework</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← Frappe</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">frappe</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">framework</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/frappe · Framework · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      A framework where every<br><span class="gradient">object is a doctype.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Frappe is the Python full-stack that ERPNext, HRMS, CRM, Helpdesk, LMS, Builder, Drive, Wiki, and the rest of the suite all sit on. Its central idea: declare a "doctype" in JSON, and the framework synthesises the database table, the form, the list view, the REST endpoint, the permissions, and the audit trail — without you writing a controller, a migration, or a route.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">Python · Vue · MariaDB/Postgres</span>
+      <span class="pill">AGPL v3</span>
+      <span class="pill">REST + RPC</span>
+      <span class="pill">v15</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">A metadata-driven full-stack with batteries included.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The Frappe Framework is the Python/JavaScript engine the Frappe team built — initially to power ERPNext, then opened up so anyone could build their own apps the same way. Think Django plus admin plus a dynamic form engine plus a permissions system plus a job queue plus a REST/RPC API, all glued together by a single concept: the <strong>doctype</strong>.</p>
+      <p>A doctype is a JSON file that declares fields, links, child tables, and permissions. The framework reads that metadata at runtime and synthesises everything around it — the database schema, the list view, the form view, the API endpoints, the role checks, the audit log. There is no hand-written ORM mapping, no separate API layer, no separate admin scaffolding. One source of truth, many surfaces generated from it.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Why this matters for an AI-native stack</h4>
+      <p>Because every object in the system is described by metadata, an agent can introspect a Frappe site and discover its data model at runtime. <code>frappe.get_meta("Sales Order")</code> returns the full field list, types, options, and links. That makes Frappe one of the friendliest backends for an AI agent to operate against — it can ask the system what exists before doing anything destructive to it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 DOCTYPES ── -->
+<section id="doctypes">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Doctypes</div>
+      <h2 class="section-title">The unit of everything.</h2>
+      <p class="section-lede">A doctype is the framework's atom. Once you understand what a doctype declaration produces, every other Frappe concept slots into place.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># customer_visit.json — a complete custom doctype</span>
+{
+  <span class="s">"doctype"</span>: <span class="s">"DocType"</span>,
+  <span class="s">"name"</span>: <span class="s">"Customer Visit"</span>,
+  <span class="s">"module"</span>: <span class="s">"CRM"</span>,
+  <span class="s">"naming_rule"</span>: <span class="s">"Expression"</span>,
+  <span class="s">"autoname"</span>: <span class="s">"format:CV-{YYYY}-{#####}"</span>,
+  <span class="s">"track_changes"</span>: <span class="n">1</span>,
+  <span class="s">"is_submittable"</span>: <span class="n">1</span>,
+  <span class="s">"fields"</span>: [
+    { <span class="s">"fieldname"</span>: <span class="s">"customer"</span>,    <span class="s">"fieldtype"</span>: <span class="s">"Link"</span>,      <span class="s">"options"</span>: <span class="s">"Customer"</span>, <span class="s">"reqd"</span>: <span class="n">1</span> },
+    { <span class="s">"fieldname"</span>: <span class="s">"visit_date"</span>,  <span class="s">"fieldtype"</span>: <span class="s">"Date"</span>,      <span class="s">"reqd"</span>: <span class="n">1</span> },
+    { <span class="s">"fieldname"</span>: <span class="s">"sales_rep"</span>,   <span class="s">"fieldtype"</span>: <span class="s">"Link"</span>,      <span class="s">"options"</span>: <span class="s">"User"</span> },
+    { <span class="s">"fieldname"</span>: <span class="s">"notes"</span>,       <span class="s">"fieldtype"</span>: <span class="s">"Long Text"</span> },
+    { <span class="s">"fieldname"</span>: <span class="s">"items"</span>,       <span class="s">"fieldtype"</span>: <span class="s">"Table"</span>,     <span class="s">"options"</span>: <span class="s">"Visit Item"</span> }
+  ],
+  <span class="s">"permissions"</span>: [
+    { <span class="s">"role"</span>: <span class="s">"Sales User"</span>,    <span class="s">"read"</span>: <span class="n">1</span>, <span class="s">"write"</span>: <span class="n">1</span>, <span class="s">"create"</span>: <span class="n">1</span>, <span class="s">"submit"</span>: <span class="n">1</span> },
+    { <span class="s">"role"</span>: <span class="s">"Sales Manager"</span>, <span class="s">"read"</span>: <span class="n">1</span>, <span class="s">"write"</span>: <span class="n">1</span>, <span class="s">"create"</span>: <span class="n">1</span>, <span class="s">"submit"</span>: <span class="n">1</span>, <span class="s">"cancel"</span>: <span class="n">1</span> }
+  ]
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>What you get from that one file.</strong> A MariaDB/Postgres table called <code>tabCustomer Visit</code> with the right columns and indices. A list view at <code>/app/customer-visit</code>. A form view with link picker, date picker, and inline child-table editor for the <code>items</code> grid. Auto-incrementing IDs in the format <code>CV-2026-00001</code>. Submit/cancel semantics with <code>docstatus 0/1/2</code>. Role-checked REST and RPC endpoints. A change history. All of it wired up; none of it written by hand.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.12s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Field type</th>
+            <th>What it stores</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Data</code></td><td>Short text</td><td>The default — varchar(140)</td></tr>
+          <tr><td><code>Long Text</code> / <code>Text Editor</code></td><td>Multi-line</td><td>Editor type renders TinyMCE in the form</td></tr>
+          <tr><td><code>Link</code></td><td>FK to another doctype</td><td>Stores the linked doctype's <code>name</code></td></tr>
+          <tr><td><code>Dynamic Link</code></td><td>FK with target chosen at runtime</td><td>Pair with a Link field to a "DocType" doctype</td></tr>
+          <tr><td><code>Table</code></td><td>Child rows</td><td>The child must itself be a doctype with <code>istable: 1</code></td></tr>
+          <tr><td><code>Select</code></td><td>Enum</td><td>Options as newline-separated string</td></tr>
+          <tr><td><code>Currency</code> / <code>Float</code> / <code>Int</code></td><td>Numerics</td><td>Currency respects company default</td></tr>
+          <tr><td><code>Date</code> / <code>Datetime</code> / <code>Time</code></td><td>Time values</td><td>ISO 8601 in the API</td></tr>
+          <tr><td><code>Attach</code> / <code>Attach Image</code></td><td>File reference</td><td>Stores the path; file lives in <code>/files</code></td></tr>
+          <tr><td><code>JSON</code></td><td>Arbitrary JSON</td><td>Use sparingly — defeats the introspection story</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 REST + RPC ── -->
+<section id="api">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · REST + RPC</div>
+      <h2 class="section-title">Two APIs you get for free.</h2>
+      <p class="section-lede">Every doctype is a REST resource. Every server-side Python function decorated <code>@frappe.whitelist()</code> is reachable via RPC. There's no separate API layer to build — the framework exposes both surfaces directly from the same code.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># REST — CRUD on any doctype</span>
+GET    /api/resource/Customer Visit
+GET    /api/resource/Customer Visit/CV-<span class="n">2026</span>-<span class="n">00001</span>
+POST   /api/resource/Customer Visit
+PUT    /api/resource/Customer Visit/CV-<span class="n">2026</span>-<span class="n">00001</span>
+DELETE /api/resource/Customer Visit/CV-<span class="n">2026</span>-<span class="n">00001</span>
+
+<span class="c"># Authentication — API Key + Secret is the production answer</span>
+Authorization: token <span class="s">api_key:api_secret</span>
+
+<span class="c"># RPC — call any whitelisted server function</span>
+POST /api/method/frappe.client.get_count
+{
+  <span class="s">"doctype"</span>: <span class="s">"Customer Visit"</span>,
+  <span class="s">"filters"</span>: [[<span class="s">"docstatus"</span>, <span class="s">"="</span>, <span class="n">1</span>]]
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>Filters are JSON arrays.</strong> Each filter is <code>[field, operator, value]</code>. Multiple filters become an array of arrays. The whole thing is server-side — the database does the work, not your script.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># List with filters, fields, ordering, pagination</span>
+GET /api/resource/Customer Visit
+  ?filters=[[<span class="s">"docstatus"</span>,<span class="s">"="</span>,<span class="n">1</span>],[<span class="s">"visit_date"</span>,<span class="s">"&gt;="</span>,<span class="s">"2026-01-01"</span>]]
+  &fields=[<span class="s">"name"</span>,<span class="s">"customer"</span>,<span class="s">"visit_date"</span>,<span class="s">"sales_rep"</span>]
+  &order_by=visit_date desc
+  &limit_page_length=<span class="n">100</span>
+  &limit_start=<span class="n">0</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.12s">
+      <p><strong>Whitelisted methods.</strong> Any Python function decorated with <code>@frappe.whitelist()</code> becomes callable via <code>/api/method/&lt;dotted.path&gt;</code>. This is the escape hatch when REST CRUD isn't enough — bulk operations, computed reports, document transformations, custom workflows.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.14s"><span class="c"># custom_app/api.py</span>
+<span class="k">import</span> frappe
+
+@frappe.whitelist()
+<span class="k">def</span> upcoming_visits(sales_rep: str, days: int = <span class="n">7</span>):
+    <span class="k">return</span> frappe.get_list(
+        <span class="s">"Customer Visit"</span>,
+        filters={
+            <span class="s">"sales_rep"</span>: sales_rep,
+            <span class="s">"visit_date"</span>: [<span class="s">"between"</span>, [
+                frappe.utils.today(),
+                frappe.utils.add_days(frappe.utils.today(), days)
+            ]]
+        },
+        fields=[<span class="s">"name"</span>, <span class="s">"customer"</span>, <span class="s">"visit_date"</span>, <span class="s">"notes"</span>],
+        order_by=<span class="s">"visit_date asc"</span>,
+    )
+
+<span class="c"># Now reachable as:</span>
+<span class="c"># GET /api/method/custom_app.api.upcoming_visits?sales_rep=alice@example.com&days=14</span></pre>
+  </div>
+</section>
+
+<!-- ── 04 HOOKS ── -->
+<section id="hooks">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · Hooks</div>
+      <h2 class="section-title">Server-side events without writing a controller.</h2>
+      <p class="section-lede">Frappe's hook system is how you attach behaviour to the document lifecycle. Define a function, point a hook at it in <code>hooks.py</code>, and it runs at the right moment in the right transaction.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># custom_app/hooks.py — wire events to handlers</span>
+doc_events = {
+  <span class="s">"Customer Visit"</span>: {
+    <span class="s">"validate"</span>:    <span class="s">"custom_app.events.validate_visit"</span>,
+    <span class="s">"on_submit"</span>:   <span class="s">"custom_app.events.create_followup_task"</span>,
+    <span class="s">"on_cancel"</span>:   <span class="s">"custom_app.events.notify_manager"</span>,
+  },
+  <span class="s">"Sales Order"</span>: {
+    <span class="s">"on_submit"</span>:   <span class="s">"custom_app.events.fan_out_to_warehouse"</span>,
+  }
+}
+
+scheduler_events = {
+  <span class="s">"daily"</span>:   [<span class="s">"custom_app.tasks.send_morning_digest"</span>],
+  <span class="s">"hourly"</span>:  [<span class="s">"custom_app.tasks.sync_external_inventory"</span>],
+  <span class="s">"cron"</span>: {
+    <span class="s">"*/15 * * * *"</span>: [<span class="s">"custom_app.tasks.poll_webhooks"</span>]
+  }
+}</pre>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Hook</th>
+            <th>Fires when</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>validate</code></td><td>Before insert or update — raise to abort</td></tr>
+          <tr><td><code>before_save</code> / <code>after_save</code></td><td>Around the save transaction</td></tr>
+          <tr><td><code>before_insert</code> / <code>after_insert</code></td><td>Around the first save only</td></tr>
+          <tr><td><code>on_submit</code></td><td>On the transition from <code>docstatus 0</code> to <code>1</code></td></tr>
+          <tr><td><code>on_cancel</code></td><td>On the transition from <code>docstatus 1</code> to <code>2</code></td></tr>
+          <tr><td><code>on_trash</code></td><td>Before delete</td></tr>
+          <tr><td><code>on_update_after_submit</code></td><td>Updates to a submitted document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Background jobs ride on the same model.</h4>
+      <p>Anything wrapped in <code>frappe.enqueue("custom_app.tasks.heavy_thing", queue="long")</code> drops onto Frappe's RQ-backed queue and runs out-of-band. The framework ships with three default queues — <code>short</code>, <code>default</code>, and <code>long</code> — and a scheduler that triggers cron and interval jobs declared in <code>hooks.py</code>. There's no Celery to set up, no separate broker config — Bench wires Redis for you on install.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 BENCH ── -->
+<section id="bench">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · Bench</div>
+      <h2 class="section-title">The CLI that runs everything.</h2>
+      <p class="section-lede">Bench is the Python CLI that installs, runs, and operates Frappe sites. One bench can host many sites, each with its own database and its own subset of installed apps. It's the answer to "how do I actually deploy this thing."</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># Initialise a new bench (a directory containing apps and sites)</span>
+<span class="k">$</span> bench init frappe-bench --frappe-branch version-<span class="n">15</span>
+<span class="k">$</span> cd frappe-bench
+
+<span class="c"># Get an app from a Git repo</span>
+<span class="k">$</span> bench get-app erpnext --branch version-<span class="n">15</span>
+<span class="k">$</span> bench get-app https://github.com/frappe/hrms
+
+<span class="c"># Create a new site (separate DB, separate users, shares the bench's apps)</span>
+<span class="k">$</span> bench new-site site1.local --admin-password admin
+
+<span class="c"># Install apps into a site</span>
+<span class="k">$</span> bench --site site1.local install-app erpnext
+<span class="k">$</span> bench --site site1.local install-app hrms
+
+<span class="c"># Run the development server (web + workers + scheduler)</span>
+<span class="k">$</span> bench start
+
+<span class="c"># Create a custom app of your own</span>
+<span class="k">$</span> bench new-app custom_app
+<span class="k">$</span> bench --site site1.local install-app custom_app
+
+<span class="c"># Migrate after schema changes</span>
+<span class="k">$</span> bench --site site1.local migrate
+
+<span class="c"># Production deploy with supervisor + nginx</span>
+<span class="k">$</span> sudo bench setup production frappe</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>One bench, many sites.</strong> The unit of multitenancy in Frappe is the <em>site</em>, not the bench. A bench is a code directory; a site is a database plus a set of installed apps plus a config file. Run ten sites on one bench, or scale horizontally with <a href="https://frappecloud.com" target="_blank" rel="noopener" style="color: var(--sky); text-decoration: none;">Frappe Cloud</a> doing the bench/site management for you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 GOTCHAS ── -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Gotchas</div>
+      <h2 class="section-title">Things that only bite once you ship.</h2>
+      <p class="section-lede">Six failure modes worth internalising before you put a Frappe site in front of agents or customers.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Docstatus is the source of truth</strong>
+        <p><code>0</code> draft, <code>1</code> submitted, <code>2</code> cancelled. Most queries need <code>["docstatus","=",1]</code> or you'll surface drafts that aren't really there. This catches everyone exactly once.</p>
+      </div>
+      <div class="gotcha">
+        <strong>5 req/sec default rate limit</strong>
+        <p>Frappe's API key rate limit defaults to about 5 req/sec per user. Scheduled syncs that don't batch will hit it constantly. Either raise the limit in <code>site_config.json</code> or batch your reads.</p>
+      </div>
+      <div class="gotcha">
+        <strong><code>name</code> is the ID, not the display label</strong>
+        <p>Every document has a <code>name</code> field — that's the primary key, not the human label. Look up by <code>name</code>, not by <code>customer_name</code> or <code>item_name</code>, or you'll silently miss records.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Child tables aren't fetched by default</strong>
+        <p>A list call returns the parent rows only. To pull child-table rows in one shot, use dotted fields like <code>fields=["items.item_code","items.qty"]</code> — or fetch the parent via GET, which returns children embedded.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Custom fields and customisations are per-site</strong>
+        <p>Adding a field via the UI creates a Custom Field document in <em>that site's</em> database. To version-control it, use <code>bench export-fixtures</code> and ship the JSON as part of your custom app — otherwise it'll vanish on a fresh install.</p>
+      </div>
+      <div class="gotcha">
+        <strong>AGPL v3 is the licence</strong>
+        <p>Frappe and the official apps are AGPL-licensed. If you host a Frappe-derived application as a service, you owe users access to the modified source. Read the licence before you build a SaaS on top — most teams are fine with it, but "fine without reading it" is not.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 DECISION ── -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 · Decision guide</div>
+      <h2 class="section-title">Use it for, skip it for.</h2>
+      <p class="section-lede">Frappe is excellent for a specific shape of work and miserable for the wrong one. The honest call.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use Frappe when</h4>
+        <ul>
+          <li>You need an internal tool with forms, lists, role permissions, and an audit trail — and you don't want to build the scaffolding.</li>
+          <li>Your data model has clear nouns (Customer, Order, Visit, Asset) that map cleanly to doctypes.</li>
+          <li>You want REST + RPC + a desk UI from one declaration, not three codebases.</li>
+          <li>You're already on ERPNext or planning to be — Frappe is the substrate, your custom doctypes live alongside the standard ones.</li>
+          <li>You need an open-source backend an AI agent can introspect at runtime.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip Frappe when</h4>
+        <ul>
+          <li>The product is a customer-facing SaaS with bespoke UX — Frappe's desk is for operators, not consumers.</li>
+          <li>The data shape is highly relational with complex joins that don't fit a doctype tree.</li>
+          <li>You're chasing extreme performance — Python plus an introspective ORM has overhead that Go or Rust services don't.</li>
+          <li>The team has zero Python experience and no appetite to learn the doctype model.</li>
+          <li>AGPL v3 is incompatible with your distribution model and you can't afford a commercial relicensing conversation.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 2ⁿ PERSPECTIVE ── -->
+<section id="perspective">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 · 2ⁿ Perspective</div>
+      <h2 class="section-title">How this leaf compounds in the tree.</h2>
+      <p class="section-lede">Frappe is the substrate under multiple business-domain leaves — ERPNext today, HRMS, CRM, Helpdesk, and LMS as the tree fills out. Learning the framework once unlocks the entire ecosystem.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The compounding play is this: every Frappe app is built on the same primitives, so an integration pattern that works on ERPNext works on HRMS, CRM, Helpdesk, and any custom app you build yourself. The auth shape is the same. The filter syntax is the same. The hook system is the same. The doctype introspection is the same. An AI agent that knows how to operate against one Frappe site knows how to operate against all of them.</p>
+      <p>That's why <code>tech/frappe/framework</code> sits in the technology branch, not the business branch — it's not an ERP, it's the engine. The ERP (ERPNext) is one app on top of it. Understand the engine and the apps stop being thirteen different things to learn; they become thirteen instances of one pattern.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 CONNECTIONS ── -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 · How this leaf connects</div>
+      <h2 class="section-title">What framework pulls on, and what pulls on it.</h2>
+      <p class="section-lede">Frappe is the substrate for an entire branch of business apps. Everything in <code>tech/frappe/*</code> requires it; everything Frappe-built in <code>biz/*</code> ultimately depends on it.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../../biz/erp/erpnext.html" class="connect-node">
+        <span class="tag">biz/erp/erpnext</span>
+        <div class="skill">ERPNext</div>
+        <div class="why">The flagship app. Every integration pattern in this leaf — auth, filters, hooks, RPC — is what makes ERPNext addressable from Workers and agents.</div>
+      </a>
+      <a href="./" class="connect-node">
+        <span class="tag">tech/frappe</span>
+        <div class="skill">Frappe sub-hub</div>
+        <div class="why">The hub of the framework's app ecosystem. HRMS, CRM, Helpdesk, LMS, Builder, Drive, Wiki, Raven — all leaves of this same hub.</div>
+      </a>
+      <a href="../cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The runtime the canonical Frappe integrations live on. Worker hosts the auth proxy, batches calls under the rate limit, and caches reads in KV.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/python</span>
+        <div class="skill">Python</div>
+        <div class="why">Frappe is Python-first. A Python skill leaf is required reading for anyone writing custom apps, hooks, or whitelisted methods.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/postgres</span>
+        <div class="skill">Postgres</div>
+        <div class="why">Frappe v15 supports Postgres alongside MariaDB. The data leaf covers the connection patterns and the schema pitfalls that come with running a Frappe doctype model on Postgres.</div>
+      </div>
+      <a href="../../biz/erp/" class="connect-node">
+        <span class="tag">biz/erp</span>
+        <div class="skill">ERP sub-domain</div>
+        <div class="why">The business sub-domain ERPNext lives in. Frappe is what makes the ERPNext leaf inside that sub-domain machine-addressable.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 10 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">10 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The official documentation is unusually good. The source repo is the most trustworthy reference for hook names and field types — read it when the docs are quiet.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://frappe.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Project home</span>
+        <span class="r-title">frappe.io</span>
+        <span class="r-url">frappe.io</span>
+      </a>
+      <a href="https://docs.frappe.io/framework" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Frappe Framework documentation</span>
+        <span class="r-url">docs.frappe.io/framework</span>
+      </a>
+      <a href="https://github.com/frappe/frappe" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">frappe/frappe on GitHub</span>
+        <span class="r-url">github.com/frappe/frappe</span>
+      </a>
+      <a href="https://github.com/frappe/bench" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CLI</span>
+        <span class="r-title">frappe/bench on GitHub</span>
+        <span class="r-url">github.com/frappe/bench</span>
+      </a>
+      <a href="https://frappecloud.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Hosting</span>
+        <span class="r-title">Frappe Cloud — managed hosting</span>
+        <span class="r-url">frappecloud.com</span>
+      </a>
+      <a href="https://frappe.school" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Learning</span>
+        <span class="r-title">Frappe School — official courses</span>
+        <span class="r-url">frappe.school</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Frappe sub-hub</a>
+      <a href="https://frappe.io" target="_blank" rel="noopener">frappe.io ↗</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
