@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudflare Edge: Africa &amp; Middle East — know.2nth.ai</title>
+<meta name="description" content="A regional primer on Cloudflare's points of presence across Africa and the Middle East — twenty-plus African cities, seventeen across the Middle East, and what the footprint means when you're deploying Workers for users in Nairobi, Cairo, or Riyadh.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Carbon stack */
+    --carbon: #0A0A0A;
+    --graphite: #141414;
+    --gunmetal: #1C1C1E;
+    --chassis: #232326;
+
+    /* Metal scale */
+    --steel-900: #27272A;
+    --steel-800: #3F3F46;
+    --steel-700: #52525B;
+    --steel-600: #71717A;
+    --steel-500: #A1A1AA;
+    --steel-400: #C4C4CC;
+    --steel-300: #D4D4D8;
+    --steel-200: #E4E4E7;
+    --titanium: #FAFAFA;
+
+    /* Dual Axis pillars */
+    --design: #6366F1;
+    --software: #0EA5E9;
+    --software-dim: #0284C7;
+    --software-wash: rgba(14,165,233,0.08);
+    --hardware: #06B6D4;
+    --hardware-wash: rgba(6,182,212,0.06);
+    --robotics: #10B981;
+
+    /* Accents — this doc is Software pillar */
+    --accent: var(--software);
+    --accent-dim: var(--software-dim);
+    --accent-wash: var(--software-wash);
+    --brand: var(--hardware);
+
+    /* Status */
+    --live: #22C55E;
+    --caution: #F59E0B;
+
+    /* Geometry */
+    --r-sm: 4px;
+    --r-md: 8px;
+    --r-lg: 12px;
+    --border: rgba(255,255,255,0.06);
+    --border-s: rgba(255,255,255,0.1);
+    --border-m: rgba(255,255,255,0.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Barlow', system-ui, sans-serif;
+    background: var(--carbon);
+    color: var(--steel-300);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--accent); color: var(--carbon); }
+
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 640px) { .container { padding: 0 20px; } }
+
+  /* ─── NAV ─── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,10,0.78);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border-bottom: 1px solid var(--border);
+    height: 60px;
+    display: flex; align-items: center;
+  }
+  .nav-inner {
+    max-width: 1160px; margin: 0 auto;
+    padding: 0 32px;
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand {
+    display: flex; align-items: baseline; gap: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px; font-weight: 600;
+    color: var(--titanium);
+    letter-spacing: -0.02em;
+  }
+  .nav-brand .two { color: var(--brand); font-weight: 700; }
+  .nav-brand .th { font-size: 11px; vertical-align: super; color: var(--steel-500); }
+  .nav-links {
+    display: flex; gap: 4px; align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .nav-links a {
+    font-size: 11px; font-weight: 500; color: var(--steel-500);
+    padding: 6px 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-tag {
+    font-size: 10px;
+    padding: 4px 10px;
+    background: var(--accent-wash);
+    color: var(--accent);
+    border: 1px solid rgba(14,165,233,0.24);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  @media (max-width: 760px) {
+    .nav-links a:not(.nav-tag) { display: none; }
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    padding: 96px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (max-width: 640px) { section { padding: 64px 0; } }
+
+  .sec-head { margin-bottom: 56px; max-width: 720px; }
+  .sec-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.18em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sec-num::before {
+    content: ''; display: inline-block;
+    width: 24px; height: 1px; background: var(--accent);
+  }
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(32px, 4.5vw, 52px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    color: var(--titanium);
+    margin-bottom: 20px;
+  }
+  h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--titanium);
+    margin-bottom: 12px;
+  }
+  h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--steel-500);
+    margin-bottom: 10px;
+  }
+  p { font-size: 15px; line-height: 1.7; color: var(--steel-300); max-width: 68ch; }
+  p + p { margin-top: 12px; }
+  .dim { color: var(--steel-500); }
+  .strong { color: var(--titanium); font-weight: 600; }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 100px 0 120px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle at center, var(--software-wash) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-tag::before {
+    content: ''; width: 32px; height: 1px; background: var(--accent);
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 9vw, 104px);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: 0.005em;
+    color: var(--titanium);
+    margin-bottom: 32px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    font-size: 18px; line-height: 1.55;
+    color: var(--steel-300);
+    max-width: 60ch;
+    margin-bottom: 48px;
+  }
+  .hero-meta {
+    display: flex; gap: 48px; flex-wrap: wrap;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-meta-item .hm-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px; color: var(--titanium);
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .hero-meta-item .hm-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em;
+    color: var(--steel-500);
+    text-transform: uppercase;
+  }
+
+  /* ─── STATS ─── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .stat {
+    padding: 32px 28px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--graphite);
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: 0.01em;
+    margin-bottom: 10px;
+  }
+  .stat-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--steel-500);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .stat-desc { font-size: 13px; color: var(--steel-400); line-height: 1.5; }
+
+  /* ─── PoP TABLE ─── */
+  .pop-region { margin-bottom: 40px; }
+  .pop-region-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding-bottom: 12px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border-s);
+  }
+  .pop-region-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--titanium);
+  }
+  .pop-region-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--steel-500);
+    letter-spacing: 0.08em;
+  }
+  .pop-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0;
+    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+  }
+  .pop {
+    padding: 16px 18px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--graphite);
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.2s;
+  }
+  .pop:hover { background: var(--gunmetal); }
+  .pop-main { display: flex; align-items: center; gap: 10px; }
+  .pop-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--live);
+    box-shadow: 0 0 8px rgba(34,197,94,0.6);
+    flex-shrink: 0;
+  }
+  .pop-name {
+    font-size: 13px; color: var(--steel-200);
+    font-weight: 500;
+  }
+  .pop-country {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--steel-500);
+    margin-left: 2px;
+  }
+  .pop-iata {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    background: var(--accent-wash);
+    border: 1px solid rgba(14,165,233,0.2);
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: ''; position: absolute;
+    top: 8px; bottom: 8px; left: 4px;
+    width: 1px; background: var(--border-s);
+  }
+  .tl-item { position: relative; padding-bottom: 28px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before {
+    content: ''; position: absolute;
+    left: -28px; top: 8px;
+    width: 9px; height: 9px;
+    background: var(--accent);
+    border: 2px solid var(--carbon);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  .tl-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .tl-title { font-size: 15px; color: var(--titanium); font-weight: 600; margin-bottom: 4px; }
+  .tl-desc { font-size: 13px; color: var(--steel-400); max-width: 54ch; line-height: 1.55; }
+
+  /* ─── DECISION GRID ─── */
+  .dec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+  @media (max-width: 720px) { .dec-grid { grid-template-columns: 1fr; } }
+  .dec-col { padding: 32px 28px; }
+  .dec-col.use { background: var(--graphite); border-right: 1px solid var(--border); }
+  .dec-col.skip { background: var(--graphite); }
+  @media (max-width: 720px) {
+    .dec-col.use { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+  .dec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .dec-label.use { color: var(--live); }
+  .dec-label.skip { color: var(--caution); }
+  .dec-label::before {
+    content: ''; width: 24px; height: 1px;
+    background: currentColor;
+  }
+  .dec-list { list-style: none; }
+  .dec-list li {
+    font-size: 14px; color: var(--steel-300);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .dec-list li:last-child { border-bottom: none; }
+
+  /* ─── CALLOUT ─── */
+  .callout {
+    padding: 28px 32px;
+    border: 1px solid var(--border-s);
+    border-left: 3px solid var(--accent);
+    background: var(--graphite);
+    margin: 24px 0;
+  }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .callout p { font-size: 15px; color: var(--steel-300); max-width: 70ch; }
+
+  /* ─── PERSPECTIVE BLOCK ─── */
+  .pers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .pers-card {
+    padding: 28px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--graphite);
+  }
+  .pers-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .pers-dot { width: 8px; height: 8px; flex-shrink: 0; }
+  .pers-card p { font-size: 14px; line-height: 1.6; color: var(--steel-300); }
+
+  /* ─── RESOURCES ─── */
+  .res-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .res-item {
+    padding: 20px 24px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--graphite);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .res-item:hover {
+    background: var(--gunmetal);
+  }
+  .res-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--steel-500);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .res-title {
+    font-size: 14px; color: var(--titanium);
+    font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .res-arrow { color: var(--accent); font-size: 12px; }
+
+  /* ─── TECH BLOCK ─── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .tech-item {
+    padding: 28px 24px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--graphite);
+  }
+  .tech-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  .tech-item h4 { margin-bottom: 10px; color: var(--titanium); }
+  .tech-item p { font-size: 13px; line-height: 1.55; color: var(--steel-400); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 64px 0 48px;
+    text-align: center;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px; font-weight: 600;
+    color: var(--titanium);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .footer-brand .two { color: var(--brand); }
+  .footer-brand .th { font-size: 12px; vertical-align: super; color: var(--steel-500); }
+  .footer-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--steel-500);
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .footer-pos {
+    font-size: 13px;
+    color: var(--steel-400);
+    max-width: 50ch; margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+  .footer-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--steel-600);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ─── FADE-IN ─── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand" style="text-decoration:none;">
+      <span class="two">k</span>now.<span class="two">2</span>nth<span class="th">.ai</span>
+    </a>
+    <div class="nav-links">
+      <a href="./">← Cloudflare</a>
+      <a href="#what">01</a>
+      <a href="#why">02</a>
+      <a href="#africa">03</a>
+      <a href="#me">04</a>
+      <a href="#how">05</a>
+      <a href="#timeline">06</a>
+      <a href="#decision">07</a>
+      <a href="#perspective">08</a>
+      <span class="nav-tag">tech/cloudflare/edge</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">SOFTWARE PILLAR · INFRASTRUCTURE PRIMER</div>
+    <h1>CLOUDFLARE EDGE<br><span>AFRICA &amp; MIDDLE EAST</span></h1>
+    <p class="hero-sub">A regional map of Cloudflare's points of presence across Africa and the Middle East — where Workers execute, where requests terminate, and what the footprint means when you're deploying for users in Nairobi, Cairo, or Riyadh.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hm-num">20+</div>
+        <div class="hm-lbl">African PoPs</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hm-num">17</div>
+        <div class="hm-lbl">Middle East Cities</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hm-num">310+</div>
+        <div class="hm-lbl">Global Cities</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hm-num">120+</div>
+        <div class="hm-lbl">Countries</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 01 · WHAT ═══ -->
+<section id="what">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">01 / THE EDGE NETWORK</div>
+      <h2>EVERY SERVICE, EVERY LOCATION</h2>
+      <p>A Cloudflare point of presence (PoP) is a physical data center — racks of servers in a carrier-neutral facility or ISP cage — that terminates end-user traffic and runs the full Cloudflare stack. Unlike many CDNs where edge locations only handle static caching, Cloudflare runs every service in every data center. Workers, Pages, R2 reads, KV lookups, D1 queries, Zero Trust policy enforcement, DDoS scrubbing — all of it executes at the nearest PoP.</p>
+    </div>
+
+    <div class="tech-grid fade-up">
+      <div class="tech-item">
+        <div class="tech-icon">PoP</div>
+        <h4>Point of Presence</h4>
+        <p>A physical data center running Cloudflare's full software stack. Typically sits inside an ISP's facility or an internet exchange.</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">IATA</div>
+        <h4>Three-Letter Code</h4>
+        <p>Cloudflare uses IATA airport codes to identify each PoP. NBO = Nairobi, JED = Jeddah, CAI = Cairo, JNB = Johannesburg.</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">ANY</div>
+        <h4>Anycast Routing</h4>
+        <p>The same IP addresses are advertised from every PoP. BGP delivers each user's request to the topologically nearest location.</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">CF-RAY</div>
+        <h4>Origin Hints</h4>
+        <p>The CF-Ray response header exposes which PoP served a given request. Useful when debugging regional routing or asymmetric latency.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 02 · WHY ═══ -->
+<section id="why">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">02 / WHY LOCATION MATTERS</div>
+      <h2>LATENCY IS A DEPLOYMENT DECISION</h2>
+      <p>For apps serving African or Middle Eastern users, the difference between a nearby PoP and backhauling to Europe is typically 100–250 milliseconds per round trip. Across a page load that makes 20 requests, that's the difference between a product that feels local and one that feels offshore.</p>
+    </div>
+
+    <div class="stats-grid fade-up">
+      <div class="stat">
+        <div class="stat-num">150–350<span style="font-size:26px;">ms</span></div>
+        <div class="stat-lbl">Pre-PoP RTT</div>
+        <div class="stat-desc">East African traffic was routed to London or Amsterdam before 2015.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">&lt;50<span style="font-size:26px;">ms</span></div>
+        <div class="stat-lbl">Current MENA RTT</div>
+        <div class="stat-desc">A 4× improvement once regional PoPs came online.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">26<span style="font-size:26px;">%</span></div>
+        <div class="stat-lbl">Jeddah Impact</div>
+        <div class="stat-desc">Median TCP RTT dropped from 81ms to 60ms when added alongside Riyadh.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">10<span style="font-size:26px;">M+</span></div>
+        <div class="stat-lbl">Jeddah Requests/Day</div>
+        <div class="stat-desc">Volume served by a single secondary PoP in a country that already had one.</div>
+      </div>
+    </div>
+
+    <div class="callout fade-up">
+      <div class="callout-label">The Workers Consequence</div>
+      <p>Because every PoP runs Workers, serverless compute executes at the edge closest to the user — not in a single origin region. An API hosted on Workers that a Kenyan user calls runs in Nairobi. The same API called from Johannesburg runs in Johannesburg. No configuration, no region pinning, no architectural effort.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 03 · AFRICA ═══ -->
+<section id="africa">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">03 / AFRICA FOOTPRINT</div>
+      <h2>TWENTY-PLUS CITIES, SIX SUB-REGIONS</h2>
+      <p>Cloudflare's first African PoP opened in Johannesburg in December 2014 — the company's 30th globally. The network has since expanded to cover every major sub-region of the continent. Status reflects Cloudflare's public status page.</p>
+    </div>
+
+    <!-- Southern Africa -->
+    <div class="pop-region fade-up">
+      <div class="pop-region-head">
+        <div class="pop-region-name">SOUTHERN AFRICA</div>
+        <div class="pop-region-count">5 cities</div>
+      </div>
+      <div class="pop-list">
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Johannesburg</span><span class="pop-country"> · ZA</span></div></div>
+          <div class="pop-iata">JNB</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Cape Town</span><span class="pop-country"> · ZA</span></div></div>
+          <div class="pop-iata">CPT</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Durban</span><span class="pop-country"> · ZA</span></div></div>
+          <div class="pop-iata">DUR</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Windhoek</span><span class="pop-country"> · NA</span></div></div>
+          <div class="pop-iata">WDH</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Lusaka</span><span class="pop-country"> · ZM</span></div></div>
+          <div class="pop-iata">LUN</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Maputo</span><span class="pop-country"> · MZ</span></div></div>
+          <div class="pop-iata">MPM</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Harare</span><span class="pop-country"> · ZW</span></div></div>
+          <div class="pop-iata">HRE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- East Africa -->
+    <div class="pop-region fade-up">
+      <div class="pop-region-head">
+        <div class="pop-region-name">EAST AFRICA</div>
+        <div class="pop-region-count">9 cities</div>
+      </div>
+      <div class="pop-list">
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Nairobi</span><span class="pop-country"> · KE</span></div></div>
+          <div class="pop-iata">NBO</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Mombasa</span><span class="pop-country"> · KE</span></div></div>
+          <div class="pop-iata">MBA</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Addis Ababa</span><span class="pop-country"> · ET</span></div></div>
+          <div class="pop-iata">ADD</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Dar es Salaam</span><span class="pop-country"> · TZ</span></div></div>
+          <div class="pop-iata">DAR</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Kampala</span><span class="pop-country"> · UG</span></div></div>
+          <div class="pop-iata">EBB</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Kigali</span><span class="pop-country"> · RW</span></div></div>
+          <div class="pop-iata">KGL</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Djibouti</span><span class="pop-country"> · DJ</span></div></div>
+          <div class="pop-iata">JIB</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Port Louis</span><span class="pop-country"> · MU</span></div></div>
+          <div class="pop-iata">MRU</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Saint-Denis</span><span class="pop-country"> · RE</span></div></div>
+          <div class="pop-iata">RUN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- North Africa -->
+    <div class="pop-region fade-up">
+      <div class="pop-region-head">
+        <div class="pop-region-name">NORTH AFRICA</div>
+        <div class="pop-region-count">4 cities</div>
+      </div>
+      <div class="pop-list">
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Cairo</span><span class="pop-country"> · EG</span></div></div>
+          <div class="pop-iata">CAI</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Tunis</span><span class="pop-country"> · TN</span></div></div>
+          <div class="pop-iata">TUN</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Algiers</span><span class="pop-country"> · DZ</span></div></div>
+          <div class="pop-iata">ALG</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Oran</span><span class="pop-country"> · DZ</span></div></div>
+          <div class="pop-iata">ORN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- West & Central Africa -->
+    <div class="pop-region fade-up">
+      <div class="pop-region-head">
+        <div class="pop-region-name">WEST &amp; CENTRAL AFRICA</div>
+        <div class="pop-region-count">6 cities</div>
+      </div>
+      <div class="pop-list">
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Lagos</span><span class="pop-country"> · NG</span></div></div>
+          <div class="pop-iata">LOS</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Dakar</span><span class="pop-country"> · SN</span></div></div>
+          <div class="pop-iata">DKR</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Abidjan</span><span class="pop-country"> · CI</span></div></div>
+          <div class="pop-iata">ABJ</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Ouagadougou</span><span class="pop-country"> · BF</span></div></div>
+          <div class="pop-iata">OUA</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Luanda</span><span class="pop-country"> · AO</span></div></div>
+          <div class="pop-iata">LAD</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Kinshasa</span><span class="pop-country"> · CD</span></div></div>
+          <div class="pop-iata">FIH</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout fade-up">
+      <div class="callout-label">Regional Reading</div>
+      <p><strong class="strong">Kenya has the deepest East African footprint</strong> with both Mombasa (undersea cable landing) and Nairobi (capital / mobile traffic). <strong class="strong">Egypt is served from Cairo only</strong> — Alexandria has been named in expansion plans but isn't live. <strong class="strong">South Africa has three PoPs</strong> providing in-country redundancy across Gauteng, the Western Cape, and KwaZulu-Natal.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 04 · MIDDLE EAST ═══ -->
+<section id="me">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">04 / MIDDLE EAST FOOTPRINT</div>
+      <h2>SEVENTEEN CITIES, GULF-HEAVY</h2>
+      <p>The Middle East has denser Cloudflare coverage per capita than most of Europe. The first wave landed in Doha, Dubai, Kuwait City, and Muscat in 2015. Saudi Arabia now has three in-country PoPs — more than any other country in the region.</p>
+    </div>
+
+    <!-- GCC -->
+    <div class="pop-region fade-up">
+      <div class="pop-region-head">
+        <div class="pop-region-name">GCC STATES</div>
+        <div class="pop-region-count">7 cities</div>
+      </div>
+      <div class="pop-list">
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Riyadh</span><span class="pop-country"> · SA</span></div></div>
+          <div class="pop-iata">RUH</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Jeddah</span><span class="pop-country"> · SA</span></div></div>
+          <div class="pop-iata">JED</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Dammam</span><span class="pop-country"> · SA</span></div></div>
+          <div class="pop-iata">DMM</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Dubai</span><span class="pop-country"> · AE</span></div></div>
+          <div class="pop-iata">DXB</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Doha</span><span class="pop-country"> · QA</span></div></div>
+          <div class="pop-iata">DOH</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Kuwait City</span><span class="pop-country"> · KW</span></div></div>
+          <div class="pop-iata">KWI</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Muscat</span><span class="pop-country"> · OM</span></div></div>
+          <div class="pop-iata">MCT</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Manama</span><span class="pop-country"> · BH</span></div></div>
+          <div class="pop-iata">BAH</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Levant & Iraq -->
+    <div class="pop-region fade-up">
+      <div class="pop-region-head">
+        <div class="pop-region-name">LEVANT &amp; IRAQ</div>
+        <div class="pop-region-count">7 cities</div>
+      </div>
+      <div class="pop-list">
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Tel Aviv</span><span class="pop-country"> · IL</span></div></div>
+          <div class="pop-iata">TLV</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Haifa</span><span class="pop-country"> · IL</span></div></div>
+          <div class="pop-iata">HFA</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Ramallah</span><span class="pop-country"> · PS</span></div></div>
+          <div class="pop-iata">ZDM</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Erbil</span><span class="pop-country"> · IQ</span></div></div>
+          <div class="pop-iata">EBL</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Sulaymaniyah</span><span class="pop-country"> · IQ</span></div></div>
+          <div class="pop-iata">ISU</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Najaf</span><span class="pop-country"> · IQ</span></div></div>
+          <div class="pop-iata">NJF</div>
+        </div>
+        <div class="pop">
+          <div class="pop-main"><div class="pop-dot"></div><div><span class="pop-name">Nasiriyah</span><span class="pop-country"> · IQ</span></div></div>
+          <div class="pop-iata">XNH</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout fade-up">
+      <div class="callout-label">Saudi Specifics</div>
+      <p><strong class="strong">Three PoPs cover Saudi Arabia's three economic axes:</strong> Riyadh (central, capital, government), Jeddah (west coast, Red Sea, Hajj traffic), and Dammam (east coast, Aramco, Gulf). When Jeddah was added to a network that already had Riyadh, median TCP RTT dropped 26% — proof that intra-country PoP density still matters even when in-country coverage exists.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 05 · HOW ═══ -->
+<section id="how">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">05 / HOW ANYCAST ROUTES</div>
+      <h2>BGP DECIDES, NOT CLOUDFLARE</h2>
+      <p>Cloudflare doesn't assign users to PoPs. The internet does. Every PoP announces the same IP prefixes via BGP, and each user's ISP routes to the topologically nearest announcement. This is why the PoP serving a given user can shift — peering disputes, undersea cable cuts, or capacity management can all change which location "wins" for a region.</p>
+    </div>
+
+    <div class="tech-grid fade-up">
+      <div class="tech-item">
+        <div class="tech-icon">01</div>
+        <h4>User Request</h4>
+        <p>A user in Nairobi resolves example.com and gets a Cloudflare anycast IP. Every CF PoP on earth claims to own that IP.</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">02</div>
+        <h4>BGP Selection</h4>
+        <p>The user's ISP selects the shortest AS path. Typically that's a peering connection into the nearest PoP — NBO or MBA in this case.</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">03</div>
+        <h4>TLS + Service</h4>
+        <p>The PoP terminates TLS, runs Workers, serves cached assets, enforces WAF rules, and optionally fetches from origin.</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">04</div>
+        <h4>Failover</h4>
+        <p>If the nearest PoP is overloaded or under maintenance, anycast automatically drains to the next-nearest. Users rarely notice.</p>
+      </div>
+    </div>
+
+    <div class="callout fade-up">
+      <div class="callout-label">Verification Trick</div>
+      <p>The <code style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent); padding:2px 6px; background:var(--accent-wash);">CF-Ray</code> response header returned on any Cloudflare-fronted request ends with the serving PoP's IATA code. <code style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent); padding:2px 6px; background:var(--accent-wash);">curl -sI https://example.com | grep -i cf-ray</code> will tell you where your traffic actually landed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 06 · TIMELINE ═══ -->
+<section id="timeline">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">06 / EVOLUTION</div>
+      <h2>A DECADE OF REGIONAL BUILDOUT</h2>
+      <p>Cloudflare's MEA expansion tracks the maturing of undersea cable capacity and regional peering. The timeline also tracks a shift from one-PoP-per-country coverage to intra-country redundancy.</p>
+    </div>
+
+    <div class="timeline fade-up">
+      <div class="tl-item">
+        <div class="tl-year">DEC 2014</div>
+        <div class="tl-title">Johannesburg — 30th global PoP</div>
+        <div class="tl-desc">First African deployment. Before this, African traffic was served from London, Amsterdam, or Hong Kong with 200–350ms round-trip.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2015</div>
+        <div class="tl-title">First MENA wave</div>
+        <div class="tl-desc">Doha, Dubai, Kuwait City, Muscat (39th–42nd PoPs). Mombasa follows as 43rd, then Cairo as 74th.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2018</div>
+        <div class="tl-title">Cape Town, Durban, Port Louis</div>
+        <div class="tl-desc">South Africa becomes the first African country with three PoPs. Mauritius moves off the Mombasa PoP.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2019</div>
+        <div class="tl-title">East & West Africa fills in</div>
+        <div class="tl-desc">Dar es Salaam, Kigali, Dakar, Maputo, Antananarivo added. Cloudflare crosses 193 cities globally.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2019–2021</div>
+        <div class="tl-title">Nairobi, Riyadh, Tunis, Algiers</div>
+        <div class="tl-desc">Capital-city coverage across the region. Kampala, Kigali, and Addis Ababa added.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2022</div>
+        <div class="tl-title">Jeddah — intra-country density</div>
+        <div class="tl-desc">Saudi Arabia gets a second PoP, proving that in-country redundancy matters even when in-country coverage exists. 26% median latency improvement.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2024</div>
+        <div class="tl-title">17 MENA cities, 310+ globally</div>
+        <div class="tl-desc">Cloudflare formalises its Middle East team expansion. Dammam added, completing Saudi Arabia's three-city coverage.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 07 · DECISION ═══ -->
+<section id="decision">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">07 / DEPLOYMENT IMPLICATIONS</div>
+      <h2>WHEN THIS FOOTPRINT MATTERS</h2>
+      <p>The breadth of Cloudflare's MEA coverage changes the deployment calculus for apps targeting these users. But it's not always the right call.</p>
+    </div>
+
+    <div class="dec-grid fade-up">
+      <div class="dec-col use">
+        <div class="dec-label use">USE CLOUDFLARE EDGE FOR</div>
+        <ul class="dec-list">
+          <li>Consumer apps with users across multiple African or Middle Eastern countries</li>
+          <li>APIs where latency directly affects conversion, like checkout or login</li>
+          <li>Static sites, SPAs, and Jamstack apps via Cloudflare Pages</li>
+          <li>Edge compute for request transformation, A/B tests, geolocation routing</li>
+          <li>Zero Trust access for distributed teams spanning MEA</li>
+          <li>DDoS-exposed workloads — regional scrubbing capacity</li>
+        </ul>
+      </div>
+      <div class="dec-col skip">
+        <div class="dec-label skip">RECONSIDER FOR</div>
+        <ul class="dec-list">
+          <li>Data residency requirements that pin workloads to a specific country (POPIA in SA, PDPL in KSA)</li>
+          <li>GPU-intensive inference where only a few cloud regions have accelerators</li>
+          <li>Heavy stateful workloads where the bottleneck is the database, not the edge</li>
+          <li>Highly regulated financial or health data — check sovereignty rules first</li>
+          <li>Workloads tightly coupled to AWS/Azure/GCP services without egress budget</li>
+          <li>Apps serving one small geographic area where a single origin region is enough</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 08 · PERSPECTIVE ═══ -->
+<section id="perspective">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">08 / 2NTH PERSPECTIVE</div>
+      <h2>WHAT THIS MEANS FOR SOFTWARE</h2>
+      <p>2nth spans four pillars — Design, Software, Hardware, Robotics. Cloudflare's edge network is a Software-pillar concern, but it reaches further than that. Here's how the footprint reshapes what one operator can ship.</p>
+    </div>
+
+    <div class="pers-grid fade-up">
+      <div class="pers-card">
+        <div class="pers-tag" style="color: var(--design);">
+          <div class="pers-dot" style="background: var(--design);"></div>
+          DESIGN
+        </div>
+        <p>Low regional latency changes what's feasible in UX. Real-time collaborative tools, instant search, and optimistic UI patterns work in Lagos the same way they work in London. Designs no longer need to degrade gracefully for "the African market."</p>
+      </div>
+      <div class="pers-card">
+        <div class="pers-tag" style="color: var(--software);">
+          <div class="pers-dot" style="background: var(--software);"></div>
+          SOFTWARE
+        </div>
+        <p>Workers + Pages + D1 + R2 is a complete stack that deploys globally from a single operator's laptop. For MEA-targeted apps, this replaces multi-region AWS setups that would otherwise need a dedicated SRE to maintain.</p>
+      </div>
+      <div class="pers-card">
+        <div class="pers-tag" style="color: var(--hardware);">
+          <div class="pers-dot" style="background: var(--hardware);"></div>
+          HARDWARE
+        </div>
+        <p>IoT devices across the region can authenticate and report to the nearest PoP rather than backhauling to a single origin. Durable Objects provide a coordination primitive for fleet state without a regional database.</p>
+      </div>
+      <div class="pers-card">
+        <div class="pers-tag" style="color: var(--robotics);">
+          <div class="pers-dot" style="background: var(--robotics);"></div>
+          ROBOTICS
+        </div>
+        <p>Edge compute + local PoPs enables hybrid robotic systems — on-device inference for latency-critical control, edge Workers for coordination and telemetry, remote origin only for training data aggregation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 09 · RESOURCES ═══ -->
+<section id="resources">
+  <div class="container">
+    <div class="sec-head fade-up">
+      <div class="sec-num">09 / SOURCES</div>
+      <h2>REFERENCES</h2>
+      <p>All PoP listings verified against Cloudflare's public status page. Historical dates and latency figures drawn from Cloudflare's own engineering blog.</p>
+    </div>
+
+    <div class="res-list fade-up">
+      <a href="https://www.cloudflarestatus.com/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Status</div>
+        <div class="res-title">Cloudflare Status Page <span class="res-arrow">↗</span></div>
+      </a>
+      <a href="https://www.cloudflare.com/network/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Network</div>
+        <div class="res-title">Global Data Center Locations <span class="res-arrow">↗</span></div>
+      </a>
+      <a href="https://blog.cloudflare.com/mombasa-kenya-cloudflares-43rd-data-center/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Blog · 2015</div>
+        <div class="res-title">Mombasa — 43rd Data Center <span class="res-arrow">↗</span></div>
+      </a>
+      <a href="https://blog.cloudflare.com/cairo/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Blog · 2015</div>
+        <div class="res-title">Cairo — 74th Data Center <span class="res-arrow">↗</span></div>
+      </a>
+      <a href="https://blog.cloudflare.com/riyadh/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Blog · 2018</div>
+        <div class="res-title">Riyadh — 126th Data Center <span class="res-arrow">↗</span></div>
+      </a>
+      <a href="https://blog.cloudflare.com/durban-and-port-louis/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Blog · 2018</div>
+        <div class="res-title">Durban &amp; Port Louis Launch <span class="res-arrow">↗</span></div>
+      </a>
+      <a href="https://blog.cloudflare.com/new-cities-april-2022-edition/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Blog · 2022</div>
+        <div class="res-title">Jeddah — 275 Cities Milestone <span class="res-arrow">↗</span></div>
+      </a>
+      <a href="https://www.cloudflare.com/press/press-releases/2024/cloudflare-expands-presence-and-team-in-middle-east/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Press · 2024</div>
+        <div class="res-title">Middle East Team Expansion <span class="res-arrow">↗</span></div>
+      </a>
+      <a href="https://developers.cloudflare.com/workers/" target="_blank" rel="noopener" class="res-item">
+        <div class="res-label">Docs</div>
+        <div class="res-title">Cloudflare Workers Documentation <span class="res-arrow">↗</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="footer-brand">
+      <a href="../../../index.html" style="text-decoration:none;color:inherit;"><span class="two">k</span>now.<span class="two">2</span>nth<span class="th">.ai</span></a>
+    </div>
+    <div class="footer-tag">tech / cloudflare / edge-africa-me</div>
+    <p class="footer-pos">A leaf in the know.2nth.ai skill tree. <a href="./" style="color:var(--accent);">Back to Cloudflare hub →</a></p>
+    <div class="footer-meta">Regional infrastructure primer · April 2026</div>
+  </div>
+</footer>
+
+<script>
+  // Scroll-triggered fade-up
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

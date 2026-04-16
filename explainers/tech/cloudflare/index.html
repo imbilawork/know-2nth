@@ -313,7 +313,7 @@
     <div class="hub-stats fade-up" style="transition-delay: 0.15s">
       <div class="hub-stat"><div class="num">16</div><div class="label">Services</div></div>
       <div class="hub-stat"><div class="num">13</div><div class="label">Production</div></div>
-      <div class="hub-stat"><div class="num">1</div><div class="label">Live explainer</div></div>
+      <div class="hub-stat"><div class="num">2</div><div class="label">Live explainers</div></div>
     </div>
   </div>
 </section>
@@ -324,7 +324,7 @@
     <div class="fade-up">
       <div class="hub-label">01 · Services</div>
       <h2 class="hub-title">The platform, by what it does.</h2>
-      <p class="hub-lede">Sixteen services grouped into five bands — compute, storage, messaging &amp; data, AI, and networking. Each card maps to a canonical leaf in <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">tech/cloudflare/*</code>. Workers is the only leaf with a full explainer today; the rest land in sequence.</p>
+      <p class="hub-lede">Sixteen services grouped into bands — compute, storage, messaging &amp; data, AI, networking — plus a regional-context leaf for the Africa &amp; Middle East PoP footprint. Each card maps to a canonical leaf in <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">tech/cloudflare/*</code>. Workers and Edge: Africa &amp; ME are live today; the rest land in sequence.</p>
     </div>
 
     <!-- Compute & Runtime -->
@@ -513,6 +513,24 @@
         <span class="svc-path">tech/cloudflare/tunnel</span>
         <p>Secure outbound connector from on-premise systems to Workers. The right answer when the system of record lives behind someone's firewall.</p>
       </div>
+
+    </div>
+
+    <!-- Regional Context -->
+    <div class="category-band fade-up">
+      <span class="c-label">Regional Context · 1</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="edge-africa-me.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Edge: Africa &amp; Middle East</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">tech/cloudflare/edge-africa-me</span>
+        <p>Twenty-plus African PoPs, seventeen across the Middle East. Where Workers actually execute when the user is in Nairobi, Cairo, or Riyadh — and what BGP-driven routing means for latency in regions the major hyperscalers under-serve.</p>
+      </a>
 
     </div>
 
