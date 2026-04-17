@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tokenization — know.2nth.ai</title>
+<meta name="description" content="Payment tokenization for Android HCE — DPAN provisioning, LUK lifecycle, encrypted key storage, Visa VTS and Mastercard MDES integration, and offline-first replenishment for tap-to-pay wallets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6; --blue-soft: rgba(37, 99, 235, 0.12);
+    --sky: #38BDF8; --sky-muted: #7DD3FC; --sky-soft: rgba(56, 189, 248, 0.12);
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24;
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --domain: var(--blue); --domain-glow: var(--blue-glow);
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(56, 189, 248, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--sky); box-shadow: 0 0 12px var(--sky);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue), var(--sky), var(--sky-muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: var(--blue-soft); color: var(--sky); border-color: rgba(56, 189, 248, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--sky);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+  pre.code .a { color: var(--blue-glow); }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky);
+    background: rgba(56, 189, 248, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--sky);
+  }
+
+  .tap-flow {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 24px; max-width: var(--read-w);
+    margin-bottom: 24px;
+  }
+  .tap-step {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    color: var(--text-secondary); line-height: 1.8;
+  }
+  .tap-step .cmd {
+    color: var(--sky); font-weight: 600;
+  }
+  .tap-step .tab { padding-left: 20px; position: relative; }
+  .tap-step .tab::before {
+    content: '\2192'; position: absolute; left: 0;
+    color: var(--blue); opacity: 0.5;
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/android-hce/tokenization</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Android HCE</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#127769;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">android-hce</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">tokenization</span>
+  </div>
+</div>
+
+<!-- == HERO == -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/android-hce &middot; Tokenization &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The real PAN<br><span class="gradient">never touches the phone.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Payment tokenization replaces the cardholder's real PAN with a Device PAN (DPAN) that is worthless outside its bound device. Each transaction uses a single-use Limited Use Key (LUK) to generate a cryptogram that can't authorise a second payment. Even if someone intercepts the full NFC exchange, they get a token and a spent key &mdash; neither is reusable.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Payment</span>
+      <span class="pill">DPAN</span>
+      <span class="pill">LUK</span>
+      <span class="pill">VTS</span>
+      <span class="pill">MDES</span>
+    </div>
+  </div>
+</section>
+
+<!-- == 01 WHAT IT IS == -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">DPAN, LUKs, and why a stolen token is worthless.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>DPAN vs PAN.</strong> The cardholder's real PAN (Primary Account Number) lives at the issuer and in the Token Service Provider's vault. It never reaches the device. Instead, the TSP provisions a Device PAN &mdash; a substitute number in the same BIN range that maps back to the real PAN at the network level. The acquirer, the terminal, and your app only ever see the DPAN.</p>
+      <p><strong>LUK (Limited Use Key).</strong> Each LUK generates exactly one transaction cryptogram. The cryptogram is computed from the LUK, the transaction amount, a terminal-supplied Unpredictable Number, and a transaction counter. Once used, the LUK is discarded. Even if an attacker captures the cryptogram, they cannot compute a new one without the next LUK &mdash; which they don't have.</p>
+      <p><strong>Why this works.</strong> The security model doesn't depend on the device being tamper-proof. It depends on the key material being single-use and the DPAN being device-bound. A stolen DPAN + spent LUK = nothing usable. This is why HCE without a hardware Secure Element is still considered safe enough for contactless payments.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Concept</th>
+            <th>What it is</th>
+            <th>Where it lives</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PAN</td>
+            <td>Real card number. 16&ndash;19 digits. What the issuer knows.</td>
+            <td>Issuer + TSP vault. Never on device.</td>
+          </tr>
+          <tr>
+            <td>DPAN</td>
+            <td>Device PAN / token PAN. Substitute number in the same BIN range.</td>
+            <td>On device (encrypted). Maps to real PAN at the network.</td>
+          </tr>
+          <tr>
+            <td>LUK</td>
+            <td>Limited Use Key. Single-use cryptographic key for generating one transaction cryptogram.</td>
+            <td>On device as encrypted file wrapped by Keystore key.</td>
+          </tr>
+          <tr>
+            <td>Cryptogram</td>
+            <td>ARQC (Authorization Request Cryptogram). Proves the transaction came from a legitimate device with a valid LUK.</td>
+            <td>Generated during tap, sent to acquirer, verified by issuer.</td>
+          </tr>
+          <tr>
+            <td>TSP</td>
+            <td>Token Service Provider. Manages the DPAN-to-PAN mapping and LUK provisioning.</td>
+            <td>Visa VTS or Mastercard MDES &mdash; cloud service.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- == 02 HOW IT WORKS == -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Provisioning, storage, usage, replenishment.</h2>
+      <p class="section-lede">The token lifecycle has five phases. Each phase has its own failure modes, and a bug in any phase can leave the user with a dead wallet.</p>
+    </div>
+
+    <div class="tap-flow fade-up" style="transition-delay: 0.05s">
+      <div class="tap-step">
+        <span class="cmd">1. PROVISIONING</span><br>
+        <span class="tab">User adds card &rarr; biometric enrolment</span><br>
+        <span class="tab">Server verifies identity with issuer</span><br>
+        <span class="tab">App generates attestation-bound EC keypair in Keystore</span><br>
+        <span class="tab">Submit attestation chain + device info to TSP</span><br>
+        <span class="tab">TSP returns DPAN + initial batch of LUKs</span><br><br>
+        <span class="cmd">2. STORAGE</span><br>
+        <span class="tab">DPAN + card metadata encrypted and cached locally</span><br>
+        <span class="tab">LUKs stored as encrypted files, wrapped by Keystore AES key</span><br>
+        <span class="tab">NOT stored as individual Keystore entries (entry limit ~256)</span><br><br>
+        <span class="cmd">3. USAGE</span><br>
+        <span class="tab">User taps &rarr; BiometricPrompt unlocks Keystore wrap-key</span><br>
+        <span class="tab">Decrypt next available LUK</span><br>
+        <span class="tab">Generate cryptogram: LUK + amount + reader UN + counter</span><br>
+        <span class="tab">Return cryptogram in GENERATE AC response</span><br>
+        <span class="tab">Discard used LUK immediately</span><br><br>
+        <span class="cmd">4. REPLENISHMENT</span><br>
+        <span class="tab">LUK count drops below threshold (e.g., 5 remaining)</span><br>
+        <span class="tab">Check Play Integrity &rarr; pass verdict to server</span><br>
+        <span class="tab">Server requests new LUK batch from TSP</span><br>
+        <span class="tab">Encrypt and store new LUKs locally</span><br><br>
+        <span class="cmd">5. DEACTIVATION</span><br>
+        <span class="tab">User removes card / issuer suspends / fraud trigger</span><br>
+        <span class="tab">Delete DPAN + all remaining LUKs from device</span><br>
+        <span class="tab">Notify TSP to deactivate the token</span>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>LUK storage pattern.</strong> Store LUKs as AES-GCM encrypted files in the app's internal storage. The encryption key lives in Keystore. Each file contains one LUK plus metadata (index, creation timestamp, scheme). Use a simple counter-based filename to track inventory.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.12s"><span class="k">class</span> LukStore(
+    <span class="k">private val</span> context: <span class="a">Context</span>,
+    <span class="k">private val</span> wrapKeyAlias: <span class="a">String</span>
+) {
+    <span class="k">private val</span> lukDir = <span class="a">File</span>(context.filesDir, <span class="s">"luks"</span>).also { it.mkdirs() }
+
+    <span class="k">fun</span> storeLuk(index: <span class="a">Int</span>, lukBytes: <span class="a">ByteArray</span>) {
+        <span class="k">val</span> ks = <span class="a">KeyStore</span>.getInstance(<span class="s">"AndroidKeyStore"</span>)
+        ks.load(<span class="n">null</span>)
+        <span class="k">val</span> key = ks.getKey(wrapKeyAlias, <span class="n">null</span>) <span class="k">as</span> <span class="a">SecretKey</span>
+
+        <span class="k">val</span> cipher = <span class="a">Cipher</span>.getInstance(<span class="s">"AES/GCM/NoPadding"</span>)
+        cipher.init(<span class="a">Cipher</span>.ENCRYPT_MODE, key)
+
+        <span class="k">val</span> encrypted = cipher.doFinal(lukBytes)
+        <span class="k">val</span> iv = cipher.iv
+
+        <span class="c">// Store IV + ciphertext together</span>
+        <span class="k">val</span> file = <span class="a">File</span>(lukDir, <span class="s">"luk_$index.enc"</span>)
+        file.writeBytes(iv + encrypted)
+    }
+
+    <span class="k">fun</span> popNextLuk(): <span class="a">ByteArray</span>? {
+        <span class="k">val</span> files = lukDir.listFiles()
+            ?.filter { it.name.startsWith(<span class="s">"luk_"</span>) }
+            ?.sortedBy { it.name }
+            ?: <span class="k">return null</span>
+
+        <span class="k">val</span> file = files.firstOrNull() ?: <span class="k">return null</span>
+        <span class="k">val</span> raw = file.readBytes()
+
+        <span class="c">// First 12 bytes = GCM IV, rest = ciphertext</span>
+        <span class="k">val</span> iv = raw.copyOfRange(<span class="n">0</span>, <span class="n">12</span>)
+        <span class="k">val</span> ciphertext = raw.copyOfRange(<span class="n">12</span>, raw.size)
+
+        <span class="k">val</span> ks = <span class="a">KeyStore</span>.getInstance(<span class="s">"AndroidKeyStore"</span>)
+        ks.load(<span class="n">null</span>)
+        <span class="k">val</span> key = ks.getKey(wrapKeyAlias, <span class="n">null</span>) <span class="k">as</span> <span class="a">SecretKey</span>
+
+        <span class="k">val</span> cipher = <span class="a">Cipher</span>.getInstance(<span class="s">"AES/GCM/NoPadding"</span>)
+        cipher.init(<span class="a">Cipher</span>.DECRYPT_MODE, key, <span class="a">GCMParameterSpec</span>(<span class="n">128</span>, iv))
+        <span class="k">val</span> luk = cipher.doFinal(ciphertext)
+
+        <span class="c">// Delete after retrieval — LUK is single-use</span>
+        file.delete()
+        <span class="k">return</span> luk
+    }
+
+    <span class="k">fun</span> remaining(): <span class="a">Int</span> =
+        lukDir.listFiles()?.count { it.name.startsWith(<span class="s">"luk_"</span>) } ?: <span class="n">0</span>
+
+    <span class="k">fun</span> needsReplenishment(threshold: <span class="a">Int</span> = <span class="n">5</span>): <span class="a">Boolean</span> =
+        remaining() &lt; threshold
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.16s">
+      <p><strong>Scheme integration.</strong> The two Token Service Providers you'll work with in practice.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.18s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>TSP</th>
+            <th>Scheme</th>
+            <th>Integration surface</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>VTS</td>
+            <td>Visa Token Service</td>
+            <td>REST API for provisioning, lifecycle management, and LUK replenishment. Requires Visa Ready certification. Production access gated behind scheme approval.</td>
+          </tr>
+          <tr>
+            <td>MDES</td>
+            <td>Mastercard Digital Enablement Service</td>
+            <td>Similar REST API surface. Requires Mastercard lab certification. Separate sandbox and production environments with distinct credentials.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.2s">
+      <h4>Pre-provision for load-shedding, not just convenience.</h4>
+      <p>Keep 5&ndash;10 LUKs on device at all times. In South Africa, load-shedding can take your replenishment server offline for hours. If the user has zero LUKs when the power goes out, their wallet is dead until the server comes back. Pre-provisioning is your offline insurance policy. Trigger replenishment when you drop below 5, not when you hit zero.</p>
+    </div>
+  </div>
+</section>
+
+<!-- == 03 GOTCHAS == -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Token lifecycle failure modes.</h2>
+      <p class="section-lede">Each phase of the token lifecycle has its own way of failing silently. These are the ones that reach production.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>LUKs stored as Keystore entries hit the entry limit</strong>
+        <p>The Android Keystore has a practical limit of ~256 entries on many devices. If you store each LUK as a separate Keystore key, you'll hit this ceiling after a few replenishment cycles. Use a single wrap-key in Keystore and store LUKs as encrypted files on the filesystem. The Keystore is a vault, not a filing cabinet.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Replenishment fails silently on rooted devices</strong>
+        <p>Play Integrity blocks replenishment on rooted devices or modified frameworks. The existing LUKs still work, but once they're consumed the user can't tap anymore &mdash; and your app shows "payment declined" with no explanation of the actual cause. Detect the integrity failure and surface a clear message.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Concurrent replenishment requests corrupt LUK inventory</strong>
+        <p>If two replenishment triggers fire simultaneously (e.g., after extended offline), you can end up with duplicate LUK indices or missing files. Use a single-threaded executor or a mutex for all LUK storage operations. File system operations are not atomic on Android.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Biometric re-enrolment destroys the wrap-key</strong>
+        <p>If the user adds a new fingerprint, <code>setInvalidatedByBiometricEnrollment(true)</code> permanently invalidates the wrap-key. All locally stored LUKs become undecryptable. Your app must detect <code>KeyPermanentlyInvalidatedException</code>, wipe local state, and re-provision from the TSP. The user experience is "your wallet reset itself" &mdash; design the recovery flow carefully.</p>
+      </div>
+      <div class="gotcha">
+        <strong>TSP provisioning timeouts look like card-not-supported</strong>
+        <p>If the provisioning call to VTS/MDES times out (network issues, load-shedding), your app might show a generic error. The user thinks their card isn't supported. Implement retry with exponential backoff and distinguish between "card not eligible" (permanent) and "network error" (transient) in your error handling.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- == 04 DECISION GUIDE == -->
+<section id="decide">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Token architecture decisions.</h2>
+      <p class="section-lede">Three decisions you make once at the architecture stage. Changing any of them later requires re-provisioning all active devices.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Decision</th>
+            <th>Recommendation</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>LUK batch size</td>
+            <td>10 LUKs per replenishment</td>
+            <td>Covers ~2 days of typical usage. Balances server load against offline resilience. Replenish at threshold 5.</td>
+          </tr>
+          <tr>
+            <td>LUK storage format</td>
+            <td>Encrypted files, not Keystore entries</td>
+            <td>Keystore entry limits (~256) are too low. File-based storage scales to any batch size. One Keystore wrap-key protects all files.</td>
+          </tr>
+          <tr>
+            <td>Replenishment gate</td>
+            <td>Play Integrity + fallback to Key Attestation</td>
+            <td>Play Integrity covers GMS devices. Key Attestation covers Huawei. Both prove the device hasn't been tampered with before issuing new LUKs.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>The DPAN is not secret. The LUK is.</h4>
+      <p>The DPAN can be displayed (last-4), logged (masked), and transmitted. It's a token &mdash; worthless without a valid LUK and the device it's bound to. Your security effort goes into protecting the LUK inventory and the Keystore wrap-key, not the DPAN itself. If you find yourself treating the DPAN like a PAN, you've misunderstood the security model.</p>
+    </div>
+  </div>
+</section>
+
+<!-- == 05 CONNECTIONS == -->
+<section id="connections">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where tokenization fits in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="hce.html" class="connect-node">
+        <span class="tag">tech/android-hce/hce</span>
+        <div class="skill">HCE Framework</div>
+        <div class="why">The tap surface that consumes tokens. processCommandApdu pops a LUK, generates the cryptogram, and returns it in the GENERATE AC response.</div>
+      </a>
+      <a href="keystore.html" class="connect-node">
+        <span class="tag">tech/android-hce/keystore</span>
+        <div class="skill">Keystore &amp; Attestation</div>
+        <div class="why">The wrap-key that protects LUK files. The attestation keypair that proves device integrity during provisioning. Both are Keystore operations.</div>
+      </a>
+      <a href="sa-payments.html" class="connect-node">
+        <span class="tag">tech/android-hce/sa-payments</span>
+        <div class="skill">SA Payments Context</div>
+        <div class="why">Load-shedding drives pre-provisioning requirements. POPIA governs how long token metadata can be retained. The SA context shapes every tokenization decision.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The replenishment backend. Workers handle TSP API calls, Play Integrity validation, and LUK distribution. Edge compute keeps replenishment latency under 100ms for SA users.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- == 06 RESOURCES == -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://developer.visa.com/capabilities/visa-token-service" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Token service</span>
+        <span class="r-title">Visa Token Service (VTS)</span>
+        <span class="r-url">developer.visa.com/.../visa-token-service</span>
+      </a>
+      <a href="https://developer.mastercard.com/mdes-digital-enablement/documentation/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Token service</span>
+        <span class="r-title">Mastercard MDES</span>
+        <span class="r-url">developer.mastercard.com/mdes-digital-enablement</span>
+      </a>
+      <a href="https://www.emvco.com/emv-technologies/payment-tokenisation/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Specification</span>
+        <span class="r-title">EMVCo Payment Tokenisation Specification</span>
+        <span class="r-url">emvco.com/emv-technologies/payment-tokenisation</span>
+      </a>
+      <a href="https://developer.android.com/privacy-and-security/keystore" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Security</span>
+        <span class="r-title">Android Keystore system</span>
+        <span class="r-url">developer.android.com/privacy-and-security/keystore</span>
+      </a>
+      <a href="https://developer.android.com/google/play/integrity" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Security</span>
+        <span class="r-title">Play Integrity API</span>
+        <span class="r-url">developer.android.com/google/play/integrity</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Android HCE sub-hub</a>
+      <a href="https://2nth.ai" target="_blank" rel="noopener">2nth.ai</a>
+      <a href="https://imbila.ai" target="_blank" rel="noopener">imbila.ai</a>
+      <a href="https://2nth.io" target="_blank" rel="noopener">2nth.io</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
