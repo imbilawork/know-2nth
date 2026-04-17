@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle Fusion Cloud SCM — know.2nth.ai</title>
+<meta name="description" content="Oracle Fusion Cloud SCM & Manufacturing integration via REST API. Nine pillars — planning, inventory, manufacturing, maintenance, order management, logistics, PLM, procurement, analytics — with SA context (VAT, B-BBEE, SARS customs, POPIA).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(245, 158, 11, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(245, 158, 11, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --domain: var(--warm); --domain-glow: var(--warm-glow);
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(245, 158, 11, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(245, 158, 11, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.warm { width: 600px; height: 600px; background: var(--warm); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--warm-glow); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--warm-glow); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--warm-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--warm-glow); box-shadow: 0 0 12px var(--warm-glow);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--warm), var(--warm-glow), #FDE047);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--warm-glow);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare-wrap.wide { max-width: 100%; overflow-x: auto; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--warm-glow);
+    background: rgba(245, 158, 11, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--warm-glow);
+  }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warm-glow); word-break: break-all; }
+
+  .sa-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .sa-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+  }
+  .sa-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.2px; }
+  .sa-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+  .sa-card code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    color: var(--warm-glow);
+  }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--warm-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb warm"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">biz/erp/oracle-scm</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← ERP</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Business</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">biz</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">erp</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">oracle-scm</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/erp · Oracle SCM · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Oracle Fusion<br><span class="gradient">Cloud SCM.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The closed-source, multi-tenant SaaS suite covering nine pillars of supply chain and manufacturing. Every pillar shares one REST surface at <code style="font-family:'JetBrains Mono',monospace;font-size:0.85em;color:var(--warm-glow)">/fscmRestApi/resources/11.13.18.05/</code>. Expensive, complex, and the system of record for enterprises that have committed to Oracle. This page covers the integration surface, not the Fusion UI.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Production</span>
+      <span class="pill">REST</span>
+      <span class="pill">9 pillars</span>
+      <span class="pill">Closed-source SaaS</span>
+      <span class="pill">v26B</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">Nine pillars, one REST surface, no open-source equivalent.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Oracle Fusion Cloud SCM is Oracle's cloud-native supply chain and manufacturing suite. It replaced E-Business Suite (EBS) for new deployments and is the canonical choice for enterprises standardised on Oracle Cloud Applications. There is no drop-in open-source equivalent for the full suite — if a customer is on Oracle, the REST APIs documented here are the integration surface.</p>
+      <p><strong>Base URL pattern:</strong></p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.08s">https://&lt;pod&gt;.fa.&lt;region&gt;.oraclecloud.com/fscmRestApi/resources/<span class="n">11.13.18.05</span>/&lt;resource&gt;
+
+<span class="c"># &lt;pod&gt;   — customer-specific, e.g. eabc-dev1, eabc-prod</span>
+<span class="c"># &lt;region&gt; — Oracle Cloud region, e.g. em2 (Frankfurt), ap1 (Sydney)</span>
+<span class="c"># SA customers: hosted em2 or ap1 — no Johannesburg Fusion Apps region</span>
+<span class="c"># The /11.13.18.05/ segment is the resource version, not the app version</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p>Every resource supports GET (list + single), POST (create), PATCH (partial update), DELETE, and in many cases BATCH. The nine pillars share this surface — planning, inventory, manufacturing, maintenance, order management, logistics, PLM, procurement, and analytics.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.12s">
+      <h4>Fusion is SOR. 2nth is middleware.</h4>
+      <p>The canonical pattern: read from Fusion, run AI-assisted workflows (demand planning, reorder suggestions, quality alerts), write approved decisions back. Never replicate Fusion's data model — index against it. Cache on your side, refresh via Business Events or scheduled polls.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 AUTH -->
+<section id="auth">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Authentication</div>
+      <h2 class="section-title">Basic auth for trusted networks. OAuth2 for everything else.</h2>
+      <p class="section-lede">Two mechanisms. Basic auth with a dedicated integration user is simplest for server-to-server in a private network. OAuth2 via IDCS is required for anything public-facing or multi-tenant.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># Basic auth — integration user with Integration Specialist role</span>
+<span class="c"># plus module-specific duty roles (Item Inquiry, PO Entry, etc.)</span>
+
+<span class="k">import</span> os, requests
+<span class="k">from</span> requests.auth <span class="k">import</span> HTTPBasicAuth
+
+POD = <span class="s">"https://eabc-dev1.fa.em2.oraclecloud.com"</span>
+BASE = <span class="k">f</span><span class="s">"{POD}/fscmRestApi/resources/11.13.18.05"</span>
+
+resp = requests.get(
+    <span class="k">f</span><span class="s">"{BASE}/items"</span>,
+    params={<span class="s">"limit"</span>: <span class="n">25</span>,
+            <span class="s">"fields"</span>: <span class="s">"ItemId,ItemNumber,Description,ItemStatusValue"</span>},
+    auth=HTTPBasicAuth(os.environ[<span class="s">"FA_USER"</span>], os.environ[<span class="s">"FA_PASS"</span>]),
+    headers={<span class="s">"REST-Framework-Version"</span>: <span class="s">"4"</span>},
+    timeout=<span class="n">30</span>,
+)
+resp.raise_for_status()
+<span class="k">for</span> it <span class="k">in</span> resp.json()[<span class="s">"items"</span>]:
+    print(it[<span class="s">"ItemNumber"</span>], <span class="s">"-"</span>, it[<span class="s">"Description"</span>])</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c"># OAuth2 — client credentials grant via IDCS / OCI IAM</span>
+
+IDCS_URL = <span class="s">"https://idcs-xxxx.identity.oraclecloud.com"</span>
+CLIENT_ID = os.environ[<span class="s">"IDCS_CLIENT_ID"</span>]
+CLIENT_SECRET = os.environ[<span class="s">"IDCS_CLIENT_SECRET"</span>]
+
+token_resp = requests.post(
+    <span class="k">f</span><span class="s">"{IDCS_URL}/oauth2/v1/token"</span>,
+    data={
+        <span class="s">"grant_type"</span>: <span class="s">"client_credentials"</span>,
+        <span class="s">"scope"</span>: <span class="k">f</span><span class="s">"{POD}/urn:opc:resource:fa:instanceid=xxxx"</span>,
+    },
+    auth=HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET),
+)
+access_token = token_resp.json()[<span class="s">"access_token"</span>]
+<span class="c"># Tokens valid ~1 hour. Cache and refresh before expiry.</span>
+
+<span class="c"># Use the token</span>
+resp = requests.get(
+    <span class="k">f</span><span class="s">"{BASE}/items"</span>,
+    params={<span class="s">"limit"</span>: <span class="n">25</span>, <span class="s">"fields"</span>: <span class="s">"ItemId,ItemNumber"</span>},
+    headers={<span class="s">"Authorization"</span>: <span class="k">f</span><span class="s">"Bearer {access_token}"</span>,
+             <span class="s">"REST-Framework-Version"</span>: <span class="s">"4"</span>},
+)</pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Never put Fusion creds in a browser.</h4>
+      <p>Always proxy through your backend. Never use a privileged user like <code>fa_admin</code> for integrations. Never commit credentials to Git — use OCI Vault, AWS Secrets Manager, or equivalent. Rotate passwords quarterly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 CORE PATTERNS -->
+<section id="patterns">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · Core patterns</div>
+      <h2 class="section-title">Query params, pagination, ETags, and BATCH.</h2>
+      <p class="section-lede">Fusion's REST surface is consistent across all nine pillars. Learn these patterns once and they apply everywhere. The gotchas are in the defaults — verbose responses, unpinned framework versions, and absent pagination.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Param</th>
+            <th>Purpose</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>limit</code></td><td>Page size (max 500)</td><td><code>limit=100</code></td></tr>
+          <tr><td><code>offset</code></td><td>Pagination offset</td><td><code>offset=200</code></td></tr>
+          <tr><td><code>fields</code></td><td>Restrict response fields</td><td><code>fields=ItemId,ItemNumber</code></td></tr>
+          <tr><td><code>onlyData</code></td><td>Strip <code>links</code> arrays</td><td><code>onlyData=true</code></td></tr>
+          <tr><td><code>expand</code></td><td>Inline child collections</td><td><code>expand=ItemRevision</code></td></tr>
+          <tr><td><code>q</code></td><td>Filter expression (SQL-like)</td><td><code>q=ItemStatusValue='Active'</code></td></tr>
+          <tr><td><code>finder</code></td><td>Named query</td><td><code>finder=findByItemNumber;ItemNumber=X</code></td></tr>
+          <tr><td><code>orderBy</code></td><td>Sort</td><td><code>orderBy=CreationDate:desc</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>Pagination loop.</strong> Always set <code>limit</code> and loop on <code>hasMore</code>. Never request <code>totalResults=true</code> unless you need the count — it forces a second aggregate query.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="k">def</span> <span class="n">fetch_all</span>(base, path, params=<span class="k">None</span>, auth=<span class="k">None</span>):
+    params = dict(params <span class="k">or</span> {})
+    params.setdefault(<span class="s">"limit"</span>, <span class="n">500</span>)
+    offset = <span class="n">0</span>
+    <span class="k">while True</span>:
+        params[<span class="s">"offset"</span>] = offset
+        r = requests.get(
+            <span class="k">f</span><span class="s">"{base}/{path}"</span>, params=params, auth=auth,
+            headers={<span class="s">"REST-Framework-Version"</span>: <span class="s">"4"</span>}, timeout=<span class="n">60</span>,
+        )
+        r.raise_for_status()
+        body = r.json()
+        <span class="k">yield from</span> body[<span class="s">"items"</span>]
+        <span class="k">if not</span> body.get(<span class="s">"hasMore"</span>):
+            <span class="k">break</span>
+        offset += params[<span class="s">"limit"</span>]
+
+<span class="c"># Usage</span>
+<span class="k">for</span> item <span class="k">in</span> fetch_all(BASE, <span class="s">"items"</span>,
+        {<span class="s">"fields"</span>: <span class="s">"ItemNumber,Description"</span>,
+         <span class="s">"q"</span>: <span class="s">"ItemStatusValue='Active'"</span>}, auth=AUTH):
+    process(item)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.12s">
+      <p><strong>ETags for optimistic concurrency.</strong> Capture the <code>ETag</code> from GET, pass it as <code>If-Match</code> on PATCH. A <code>412 Precondition Failed</code> means someone else edited the record — re-GET, re-apply, re-PATCH.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.14s"><span class="c"># GET with ETag captured</span>
+r = requests.get(url, auth=auth, headers={<span class="s">"REST-Framework-Version"</span>: <span class="s">"4"</span>})
+etag = r.headers[<span class="s">"ETag"</span>]
+
+<span class="c"># PATCH with If-Match</span>
+resp = requests.patch(
+    url, json=changes, auth=auth,
+    headers={<span class="s">"REST-Framework-Version"</span>: <span class="s">"4"</span>,
+             <span class="s">"If-Match"</span>: etag,
+             <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span>},
+)
+<span class="k">if</span> resp.status_code == <span class="n">412</span>:
+    <span class="c"># re-GET and retry with fresh ETag</span>
+    ...</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.16s">
+      <p><strong>Creating a sales order.</strong> POST to <code>salesOrdersForOrderHub</code> with source system keys for idempotency. Fusion deduplicates on <code>(SourceTransactionSystem, SourceTransactionNumber)</code>.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.18s">order = {
+    <span class="s">"SourceTransactionNumber"</span>: <span class="s">"ECOM-2026-000042"</span>,
+    <span class="s">"SourceTransactionSystem"</span>: <span class="s">"SHOPIFY_ZA"</span>,
+    <span class="s">"TransactionalCurrencyCode"</span>: <span class="s">"ZAR"</span>,
+    <span class="s">"BusinessUnitName"</span>: <span class="s">"Acme ZA Business Unit"</span>,
+    <span class="s">"BuyingPartyNumber"</span>: <span class="s">"CUST-00042"</span>,
+    <span class="s">"RequestedShipDate"</span>: <span class="s">"2026-04-20T08:00:00+02:00"</span>,
+    <span class="s">"lines"</span>: [{
+        <span class="s">"SourceTransactionLineId"</span>: <span class="s">"1"</span>,
+        <span class="s">"ProductNumber"</span>: <span class="s">"WIDGET-ZA-001"</span>,
+        <span class="s">"OrderedQuantity"</span>: <span class="n">2</span>,
+        <span class="s">"OrderedUOMCode"</span>: <span class="s">"Ea"</span>,
+        <span class="s">"UnitSellingPrice"</span>: <span class="n">299.00</span>
+    }]
+}
+
+resp = requests.post(
+    <span class="k">f</span><span class="s">"{BASE}/salesOrdersForOrderHub"</span>,
+    json=order, auth=AUTH,
+    headers={<span class="s">"REST-Framework-Version"</span>: <span class="s">"4"</span>,
+             <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span>},
+)
+<span class="c"># Capture X-ORACLE-DMS-ECID from response for SR troubleshooting</span>
+ecid = resp.headers.get(<span class="s">"X-ORACLE-DMS-ECID"</span>)</pre>
+  </div>
+</section>
+
+<!-- 04 NINE PILLARS -->
+<section id="pillars">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · The nine pillars</div>
+      <h2 class="section-title">What each pillar covers and its key resources.</h2>
+      <p class="section-lede">Every pillar exposes resources under the same <code>/fscmRestApi/</code> base. This is the map. The resources listed are the ones you will actually use — not the full catalog, which runs to hundreds.</p>
+    </div>
+    <div class="compare-wrap wide fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Pillar</th>
+            <th>Key resources</th>
+            <th>Typical integration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Supply Chain Planning</td>
+            <td><code>planningCycles</code>, <code>demandForecasts</code>, <code>salesAndOperationsPlans</code></td>
+            <td>Feed POS/e-com demand signals; read replenishment plans</td>
+          </tr>
+          <tr>
+            <td class="name">Inventory Management</td>
+            <td><code>items</code>, <code>itemsV2</code>, <code>inventoryOnhandBalances</code>, <code>inventoryStagedTransactions</code></td>
+            <td>Master data sync, stock visibility, receipt/issue posting</td>
+          </tr>
+          <tr>
+            <td class="name">Manufacturing</td>
+            <td><code>workOrders</code>, <code>workDefinitions</code>, <code>standardOperations</code></td>
+            <td>MES dispatch, shop floor IoT, WIP tracking</td>
+          </tr>
+          <tr>
+            <td class="name">Maintenance</td>
+            <td><code>maintenanceWorkOrders</code>, <code>assets</code>, <code>maintenancePrograms</code></td>
+            <td>Asset telemetry to preventive maintenance triggers</td>
+          </tr>
+          <tr>
+            <td class="name">Order Management</td>
+            <td><code>salesOrdersForOrderHub</code>, <code>salesOrdersForCreation</code>, <code>holds</code></td>
+            <td>E-com/retail order capture, hold release automation</td>
+          </tr>
+          <tr>
+            <td class="name">Logistics (OTM/OWMS/GTM)</td>
+            <td><code>trips</code>, <code>shipments</code>, <code>receivingReceiptRequests</code>, <code>tradeTransactions</code></td>
+            <td>Carrier booking, 3PL sync, customs declarations</td>
+          </tr>
+          <tr>
+            <td class="name">Product Lifecycle (PLM)</td>
+            <td><code>itemsV2</code> (PLM fields), <code>changeOrders</code>, <code>newItemRequests</code></td>
+            <td>PIM sync, engineering change orchestration</td>
+          </tr>
+          <tr>
+            <td class="name">Procurement</td>
+            <td><code>purchaseOrders</code>, <code>suppliers</code>, <code>requisitions</code>, <code>negotiations</code></td>
+            <td>Supplier onboarding, PO automation, 3-way matching</td>
+          </tr>
+          <tr>
+            <td class="name">Analytics (FDI)</td>
+            <td>Prebuilt subject areas on ADW; OTBI; BI Publisher</td>
+            <td>Downstream BI, nightly extracts to data lake</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 05 SA CONTEXT -->
+<section id="sa">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · SA context</div>
+      <h2 class="section-title">What SA-specific means for Oracle Fusion.</h2>
+      <p class="section-lede">Fusion has no SA-specific localisation (unlike Brazil with NFe/SPED). Getting it right is a configuration and integration-extension exercise. These are the things that matter.</p>
+    </div>
+    <div class="sa-grid fade-up" style="transition-delay: 0.05s">
+      <div class="sa-card">
+        <h4>ZAR currency</h4>
+        <p>Standard precision: 2 decimal places. Extended precision: 4dp for internal unit prices. Always round to 2dp on external-facing fields — Fusion rejects 4dp on some price attributes.</p>
+      </div>
+      <div class="sa-card">
+        <h4>VAT at 15%</h4>
+        <p>Tax regime <code>ZA_VAT</code>, standard rate 15%. SA retail integrations run VAT-inclusive pricing with reverse-calculation. B2B runs VAT-exclusive with tax added at invoice. Confirm which mode your tenant uses before building anything that touches prices.</p>
+      </div>
+      <div class="sa-card">
+        <h4>SARS customs (SAD 500)</h4>
+        <p>Imports require SAD 500 filed with SARS Customs. GTM generates trade transaction data; EDI provider (EasyClear, CIS, Core Freight) converts to SARS format. HS 2022 tariff codes on the item master, updated annually from ITAC.</p>
+      </div>
+      <div class="sa-card">
+        <h4>B-BBEE classification</h4>
+        <p>Stored on the <code>BusinessClassifications</code> child collection of the Supplier resource. Levels 1-8, EME, QSE, Black-Owned, Black Women-Owned. Certificates expire annually — build monitoring for 30/14/7 day warnings.</p>
+      </div>
+      <div class="sa-card">
+        <h4>POPIA compliance</h4>
+        <p>Fusion holds PII (names, addresses, ID numbers). Document it in your processing register. Cross-border transfer (pods in Frankfurt or Sydney) needs a DPA with Oracle. Implement anonymisation for deletion requests — PATCH PII to pseudonyms, keep transaction history for SARS (5-year retention).</p>
+      </div>
+      <div class="sa-card">
+        <h4>Load-shedding resilience</h4>
+        <p>SA grid is unreliable. Never call Fusion directly from request handlers. Use the outbox pattern: write intent locally, worker drains to Fusion with retries. Circuit breakers on all Fusion calls. Persistent retry queues (Redis Streams, Postgres, SQS).</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>B-BBEE supplier query.</strong> Pull suppliers with their classification data for procurement scorecard reporting.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># Query suppliers with B-BBEE classifications</span>
+resp = requests.get(
+    <span class="k">f</span><span class="s">"{BASE}/suppliers"</span>,
+    params={
+        <span class="s">"fields"</span>: <span class="s">"Supplier,TaxpayerId,SupplierTypeCode"</span>,
+        <span class="s">"expand"</span>: <span class="s">"BusinessClassifications"</span>,
+        <span class="s">"q"</span>: <span class="s">"TaxpayerCountry='ZA'"</span>,
+        <span class="s">"onlyData"</span>: <span class="s">"true"</span>,
+        <span class="s">"limit"</span>: <span class="n">500</span>,
+    },
+    auth=AUTH,
+    headers={<span class="s">"REST-Framework-Version"</span>: <span class="s">"4"</span>},
+)
+<span class="k">for</span> s <span class="k">in</span> resp.json()[<span class="s">"items"</span>]:
+    classifications = [c[<span class="s">"Classification"</span>]
+                       <span class="k">for</span> c <span class="k">in</span> s.get(<span class="s">"BusinessClassifications"</span>, [])]
+    print(s[<span class="s">"Supplier"</span>], <span class="s">"|"</span>, <span class="s">", "</span>.join(classifications))</pre>
+  </div>
+</section>
+
+<!-- 06 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Gotchas</div>
+      <h2 class="section-title">Production failure modes.</h2>
+      <p class="section-lede">Six specific ways Oracle Fusion will burn you if you skip the fine print. Every one of these has cost someone a production incident.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>REST-Framework-Version not set</strong>
+        <p>If you omit this header, Fusion defaults to v1 — verbose, inconsistent, and liable to change shape when Oracle ships a quarterly update. Pin to <code>4</code>. Review release readiness notes before bumping. Your integration will silently break otherwise.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Pagination not implemented</strong>
+        <p>Default page size is small and undocumented. Always set <code>limit</code> (max 500) and loop on <code>hasMore</code>. Never request <code>totalResults=true</code> unless you need the count — it forces an expensive second query on every call.</p>
+      </div>
+      <div class="gotcha">
+        <strong>ETag concurrency races</strong>
+        <p>PATCH without <code>If-Match</code> can silently clobber concurrent edits. Always capture ETags from GET and pass them on write. Handle <code>412 Precondition Failed</code> with re-read and retry.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Verbose responses (20 MB for 1000 items)</strong>
+        <p>Default responses include 50+ attributes per record. Always use <code>fields=</code> to restrict. Add <code>onlyData=true</code> to strip the <code>links</code> arrays that bloat every response. Payload drops 5-20x.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Rate limits are unpublished</strong>
+        <p>Oracle does not publish universal limits, but sustained &gt;20 rps from a single user triggers 429s. Bursts of 100+ rps get 503d. Build exponential backoff with jitter. Prefer BATCH for bulk work — it counts as one request.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Date-effective resource duplicates</strong>
+        <p>Items, supplier sites, and customer accounts are date-effective. Forgetting the <code>Effective-Of: RangeMode=CURRENT</code> header returns all versions including expired ones. Confusing duplicates that look like bugs but are just history.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 DECISION GUIDE -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 · Decision guide</div>
+      <h2 class="section-title">Use when / skip when.</h2>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Use Oracle Fusion SCM when</th>
+            <th>Skip it when</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>The customer has standardised on Oracle Cloud Applications</td>
+            <td>The customer is on EBS or JD Edwards (different products, different APIs)</td>
+          </tr>
+          <tr>
+            <td>You need a full suite — planning, manufacturing, procurement, logistics, PLM — under one roof</td>
+            <td>You only need inventory + orders and the budget is tight (ERPNext or a lightweight stack is cheaper)</td>
+          </tr>
+          <tr>
+            <td>Multi-site, multi-currency, complex supply chains across geographies</td>
+            <td>Single-site, single-currency, simple product catalog (Oracle is wildly overspec)</td>
+          </tr>
+          <tr>
+            <td>Regulatory requirements demand an enterprise-grade audit trail</td>
+            <td>You need fast iteration and full control over the codebase (Fusion is closed-source SaaS)</td>
+          </tr>
+          <tr>
+            <td>Fusion Data Intelligence provides out-of-the-box analytics you would otherwise build from scratch</td>
+            <td>You already have a mature data warehouse and BI stack — FDI adds cost without enough incremental value</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>The honest take.</h4>
+      <p>Oracle Fusion is expensive, complex, and slow to configure. Implementation timelines measured in months, not weeks. Licensing is opaque. But for organisations that have committed to Oracle, the REST surface is solid, the data model is well-thought-out, and the nine-pillar coverage means fewer point-to-point integrations. The cost is real; the coverage is also real.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 · 2&#x207F; Perspective</div>
+      <h2 class="section-title">How oracle-scm connects in the tree.</h2>
+      <p class="section-lede">Oracle Fusion is the heavyweight in the ERP sub-domain. It connects to infrastructure for the proxy layer, to open-source alternatives for customers who cannot justify the licensing, and to analytics for the data that lives downstream.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Proxy layer between your frontend and Fusion. Handles auth, caching, rate-limit buffering, and keeps credentials off the client. Workers at the edge reduce latency for SA users hitting em2 (Frankfurt).</div>
+      </a>
+      <a href="erpnext.html" class="connect-node">
+        <span class="tag">biz/erp/erpnext</span>
+        <div class="skill">ERPNext (sibling)</div>
+        <div class="why">The open-source alternative. When Oracle licensing is prohibitive, ERPNext covers manufacturing, inventory, and procurement at a fraction of the cost. Teams migrating between the two use both skills during transition.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">data/analysis/apache-superset</span>
+        <div class="skill">Apache Superset</div>
+        <div class="why">For customers who find Fusion Data Intelligence too expensive or too locked-in. Extract via BIP or OTBI, land in your warehouse, visualise in Superset. Cheaper and more flexible than FDI for many use cases.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">biz/wms/boxer-wms</span>
+        <div class="skill">Boxer WMS</div>
+        <div class="why">SA warehouse management system. Receives goods receipts from Fusion, sends put-away confirmations and pick completions back. The REST integration uses the same patterns documented here.</div>
+      </div>
+      <a href="./" class="connect-node">
+        <span class="tag">biz/erp</span>
+        <div class="skill">ERP sub-domain</div>
+        <div class="why">Oracle SCM <code>improves</code> biz/erp — its enterprise-grade patterns (ETags, BATCH, date-effective resources) raise the bar for the shared ERP skill.</div>
+      </a>
+      <a href="sage-x3.html" class="connect-node">
+        <span class="tag">biz/erp/sage-x3</span>
+        <div class="skill">Sage X3 (sibling)</div>
+        <div class="why">Another mid-market ERP in the tree. Same authenticate/introspect/query/write shape, different API style (GraphQL vs REST). Useful comparison for customers evaluating alternatives.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 09 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">Oracle's docs are extensive. The canonical SKILL.md in the 2nth-ai/skills repo is the integration-focused distillation. Always check the current release (26B) — Fusion ships quarterly and fields do change.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://github.com/2nth-ai/skills/blob/main/biz/erp/oracle-scm/SKILL.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Canonical</span>
+        <span class="r-title">biz/erp/oracle-scm SKILL.md</span>
+        <span class="r-url">github.com/2nth-ai/skills/biz/erp/oracle-scm</span>
+      </a>
+      <a href="https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26b/fasrp/index.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Vendor docs</span>
+        <span class="r-title">REST API reference (26B)</span>
+        <span class="r-url">docs.oracle.com/.../26b/fasrp/</span>
+      </a>
+      <a href="https://docs.oracle.com/en/cloud/saas/supply-chain-and-manufacturing/26b/fasrp/rest-endpoints.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">All REST endpoints (browsable)</span>
+        <span class="r-url">docs.oracle.com/.../rest-endpoints.html</span>
+      </a>
+      <a href="https://docs.oracle.com/en/cloud/saas/supply-chain-management/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">SCM Cloud integration guide</span>
+        <span class="r-url">docs.oracle.com/.../supply-chain-management/</span>
+      </a>
+      <a href="https://cloudcustomerconnect.oracle.com/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Community</span>
+        <span class="r-title">Oracle Cloud Customer Connect</span>
+        <span class="r-url">cloudcustomerconnect.oracle.com</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">ERP sub-hub</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/biz/erp/oracle-scm" target="_blank" rel="noopener">Canonical skill</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

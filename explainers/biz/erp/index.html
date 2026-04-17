@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ERP — know.2nth.ai</title>
-<meta name="description" content="Enterprise resource planning integrations in the 2nth skill tree. Four production skills: Sage X3, ERPNext, Shopify, WooCommerce.">
+<meta name="description" content="Enterprise resource planning integrations in the 2nth skill tree. Five production skills: Sage X3, ERPNext, Shopify, WooCommerce, Oracle Fusion Cloud SCM.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
@@ -308,13 +308,13 @@
   <div class="container">
     <div class="eyebrow fade-up"><span class="dot"></span> biz/erp · Sub-domain hub</div>
     <h1 class="fade-up" style="transition-delay: 0.05s">
-      Four ERPs.<br><span class="gradient">One pattern.</span>
+      Five ERPs.<br><span class="gradient">One pattern.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      Enterprise resource planning integrations. All four production skills in this sub-domain follow the same shape — authenticate, introspect, query, write, webhook — wired so AI agents can act on orders, invoices, and stock without a human in the loop. 2nth is middleware, not the system of record: read from the ERP, enrich with AI, write results back.
+      Enterprise resource planning integrations. All five production skills in this sub-domain follow the same shape — authenticate, introspect, query, write, webhook — wired so AI agents can act on orders, invoices, and stock without a human in the loop. 2nth is middleware, not the system of record: read from the ERP, enrich with AI, write results back.
     </p>
     <div class="hub-stats fade-up" style="transition-delay: 0.15s">
-      <div class="hub-stat"><div class="num">4</div><div class="label">Production leaves</div></div>
+      <div class="hub-stat"><div class="num">5</div><div class="label">Production leaves</div></div>
       <div class="hub-stat"><div class="num">3</div><div class="label">API styles</div></div>
       <div class="hub-stat"><div class="num">1</div><div class="label">Shared pattern</div></div>
     </div>
@@ -326,7 +326,7 @@
   <div class="container">
     <div class="fade-up">
       <div class="hub-label">01 · Skill leaves</div>
-      <h2 class="hub-title">The four ERPs, by API shape</h2>
+      <h2 class="hub-title">The five ERPs, by API shape</h2>
       <p class="hub-lede">Each card is a full production skill in the canonical 2nth-ai/skills repo — with working code, rate limits, and the gotchas that only show up in real deployments. Click any to drill in.</p>
     </div>
     <div class="leaf-grid fade-up" style="transition-delay: 0.05s">
@@ -395,6 +395,22 @@
         </div>
       </a>
 
+      <a href="oracle-scm.html" class="leaf-card" data-ish="rest">
+        <div class="leaf-head">
+          <div class="leaf-emoji">🏢</div>
+          <span class="leaf-state">Production</span>
+        </div>
+        <h3>Oracle Fusion Cloud SCM</h3>
+        <span class="path">biz/erp/oracle-scm</span>
+        <p>Closed-source, multi-tenant SaaS covering nine pillars — planning, inventory, manufacturing, maintenance, order management, logistics, PLM, procurement, analytics. REST API at <code style="font-family:'JetBrains Mono',monospace;font-size:0.9em;color:var(--warm-glow)">/fscmRestApi/</code> with SA context (VAT, B-BBEE, SARS customs, POPIA).</p>
+        <div class="leaf-meta">
+          <span class="m">REST</span>
+          <span class="m">9 pillars</span>
+          <span class="m">OAuth2 / Basic</span>
+          <span class="m">SA context</span>
+        </div>
+      </a>
+
     </div>
   </div>
 </section>
@@ -446,6 +462,13 @@
             <td>Consumer Key + Secret (Basic)</td>
             <td>WordPress-hosted stores, long-tail retailers, full control over customisation</td>
             <td>Plugin-dependent · host-bound</td>
+          </tr>
+          <tr>
+            <td class="name">Oracle Fusion SCM</td>
+            <td>REST</td>
+            <td>Basic / OAuth2 (IDCS)</td>
+            <td>Enterprise supply chain — multi-site, multi-currency, 9-pillar coverage, SA compliance</td>
+            <td>~20 rps sustained · BATCH preferred</td>
           </tr>
         </tbody>
       </table>
