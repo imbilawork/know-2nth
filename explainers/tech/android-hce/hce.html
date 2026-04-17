@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Android HCE — know.2nth.ai</title>
+<meta name="description" content="Android Host Card Emulation — HostApduService, AID routing, APDU processing, tokenization, and the security model for building tap-to-pay wallets without a Secure Element.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6; --blue-soft: rgba(37, 99, 235, 0.12);
+    --sky: #38BDF8; --sky-muted: #7DD3FC; --sky-soft: rgba(56, 189, 248, 0.12);
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24;
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --domain: var(--blue); --domain-glow: var(--blue-glow);
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(56, 189, 248, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--sky); box-shadow: 0 0 12px var(--sky);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue), var(--sky), var(--sky-muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: var(--blue-soft); color: var(--sky); border-color: rgba(56, 189, 248, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--sky);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+  pre.code .a { color: var(--blue-glow); }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky);
+    background: rgba(56, 189, 248, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--sky);
+  }
+
+  /* Tap flow diagram */
+  .tap-flow {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 24px; max-width: var(--read-w);
+    margin-bottom: 24px;
+  }
+  .tap-step {
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    color: var(--text-secondary); line-height: 1.8;
+  }
+  .tap-step .cmd {
+    color: var(--sky); font-weight: 600;
+  }
+  .tap-step .tab { padding-left: 20px; position: relative; }
+  .tap-step .tab::before {
+    content: '\2192'; position: absolute; left: 0;
+    color: var(--blue); opacity: 0.5;
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .rule-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .rule {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--blue);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .rule strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .rule p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .rule code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    color: var(--sky);
+  }
+
+  .split-cards {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; max-width: var(--read-w);
+  }
+  .split-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 24px 28px;
+  }
+  .split-card.use { border-top: 3px solid var(--green); }
+  .split-card.skip { border-top: 3px solid var(--rose); }
+  .split-card h4 {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .split-card.use h4 { color: var(--green); }
+  .split-card.skip h4 { color: var(--rose); }
+  .split-card ul { list-style: none; padding: 0; }
+  .split-card li {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+  }
+  .split-card li:last-child { border-bottom: none; }
+  @media (max-width: 600px) {
+    .split-cards { grid-template-columns: 1fr; }
+  }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/android-hce/hce</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Android HCE</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#127769;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">android-hce</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">hce</span>
+  </div>
+</div>
+
+<!-- == HERO == -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/android-hce &middot; HCE &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Tap-to-pay<br><span class="gradient">without hardware.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Android Host Card Emulation lets your app respond to NFC taps as if it were a physical contactless card. No Secure Element. No carrier deals. Just a <code style="font-family:'JetBrains Mono',monospace;font-size:0.88em;background:rgba(18,29,51,0.7);border:1px solid rgba(148,163,184,0.1);padding:1px 6px;border-radius:4px;color:var(--sky);">HostApduService</code>, AID-based routing, and a cryptographic model that fails catastrophically and silently if you get it wrong.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Payment</span>
+      <span class="pill">NFC</span>
+      <span class="pill">HostApduService</span>
+      <span class="pill">EMV</span>
+      <span class="pill">Android 4.4+</span>
+    </div>
+  </div>
+</section>
+
+<!-- == 01 WHAT IT IS == -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">HostApduService, AID routing, and how a tap works.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Before HCE, contactless payments on Android required a <strong>Secure Element</strong> &mdash; a tamper-resistant chip controlled by the carrier or OEM. HCE removed that dependency. Since Android 4.4, any app can register as a card emulation service and receive APDUs (Application Protocol Data Units) directly from an NFC reader.</p>
+      <p>The architecture is straightforward: you extend <code>HostApduService</code>, declare which AIDs (Application Identifiers) you handle in an XML resource, and the Android NFC stack routes incoming taps to your service based on AID matching. When a POS terminal sends a SELECT command with your AID, Android wakes your service and hands you raw bytes.</p>
+      <p>You process the APDU command, build a response (data + status word), and return it. The reader sends the next command. This ping-pong continues until the transaction completes or the phone leaves the field. The entire exchange typically takes 300&ndash;500ms.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>HostApduService</code></td>
+            <td>Your service. Receives APDU commands, returns APDU responses. Runs in your app process.</td>
+          </tr>
+          <tr>
+            <td><code>apduservice.xml</code></td>
+            <td>Declares AID groups. Tells Android which APDUs to route to your service.</td>
+          </tr>
+          <tr>
+            <td>AID routing</td>
+            <td>Android matches the AID in a SELECT command to registered services. Payment-category AIDs have special rules.</td>
+          </tr>
+          <tr>
+            <td>DPAN</td>
+            <td>Device PAN &mdash; the tokenised card number. The real PAN never touches the device.</td>
+          </tr>
+          <tr>
+            <td>LUK</td>
+            <td>Limited Use Key &mdash; a single-use cryptographic key for generating transaction cryptograms.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Payment-category AIDs require scheme licensing.</h4>
+      <p>You can use <code>category="other"</code> AIDs freely for loyalty cards, transit, access control. But declaring <code>category="payment"</code> AIDs (Visa, Mastercard, etc.) means you need a licence from the payment scheme. Don't ship with payment AIDs you haven't been authorised to use &mdash; the schemes audit, and they will find you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- == 02 THE TAP FLOW == -->
+<section id="flow">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The tap flow</div>
+      <h2 class="section-title">SELECT &rarr; GPO &rarr; READ RECORD &rarr; GENERATE AC.</h2>
+      <p class="section-lede">A contactless EMV transaction is a strict command-response sequence. The reader drives. Your service responds. No room for improvisation.</p>
+    </div>
+
+    <div class="tap-flow fade-up" style="transition-delay: 0.05s">
+      <div class="tap-step">
+        <span class="cmd">SELECT (PPSE)</span> &mdash; Reader asks for Payment Proximity SE<br>
+        <span class="tab">App returns list of supported AIDs</span><br><br>
+        <span class="cmd">SELECT (AID)</span> &mdash; Reader picks a specific application AID<br>
+        <span class="tab">App returns FCI (File Control Information)</span><br><br>
+        <span class="cmd">GET PROCESSING OPTIONS</span> &mdash; Reader sends PDOL data<br>
+        <span class="tab">App returns AIP + AFL (capabilities + file locators)</span><br><br>
+        <span class="cmd">READ RECORD</span> &mdash; Reader reads card data files<br>
+        <span class="tab">App returns DPAN, expiry, cardholder name</span><br><br>
+        <span class="cmd">GENERATE AC</span> &mdash; Reader sends transaction data + unpredictable number<br>
+        <span class="tab">App generates cryptogram using LUK, returns AC</span>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>The minimal HostApduService.</strong> Every command arrives as a byte array. You parse the class, instruction, P1, P2, and data. You return data + a two-byte status word. <code>0x9000</code> means success. Everything else is an error the reader has to interpret.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="k">class</span> PaymentHceService : <span class="a">HostApduService</span>() {
+
+    <span class="k">companion object</span> {
+        <span class="k">private val</span> SELECT_APDU_HEADER = <span class="k">byteArrayOf</span>(
+            <span class="n">0x00</span>.toByte(), <span class="n">0xA4</span>.toByte(),
+            <span class="n">0x04</span>.toByte(), <span class="n">0x00</span>.toByte()
+        )
+        <span class="k">private val</span> SW_OK = <span class="k">byteArrayOf</span>(<span class="n">0x90</span>.toByte(), <span class="n">0x00</span>.toByte())
+        <span class="k">private val</span> SW_UNKNOWN = <span class="k">byteArrayOf</span>(<span class="n">0x6F</span>.toByte(), <span class="n">0x00</span>.toByte())
+        <span class="k">private val</span> SW_NOT_FOUND = <span class="k">byteArrayOf</span>(<span class="n">0x6A</span>.toByte(), <span class="n">0x82</span>.toByte())
+    }
+
+    <span class="k">override fun</span> processCommandApdu(
+        commandApdu: <span class="a">ByteArray</span>,
+        extras: <span class="a">Bundle</span>?
+    ): <span class="a">ByteArray</span> {
+        <span class="k">return try</span> {
+            <span class="k">when</span> {
+                isSelect(commandApdu) -&gt; handleSelect(commandApdu)
+                isGpo(commandApdu)    -&gt; handleGpo(commandApdu)
+                isReadRecord(commandApdu) -&gt; handleReadRecord(commandApdu)
+                isGenerateAc(commandApdu) -&gt; handleGenerateAc(commandApdu)
+                <span class="k">else</span> -&gt; SW_NOT_FOUND
+            }
+        } <span class="k">catch</span> (e: <span class="a">Exception</span>) {
+            <span class="c">// Never let an exception crash the tap</span>
+            SW_UNKNOWN
+        }
+    }
+
+    <span class="k">override fun</span> onDeactivated(reason: <span class="a">Int</span>) {
+        <span class="c">// Clean up session state. reason is either</span>
+        <span class="c">// DEACTIVATION_LINK_LOSS or DEACTIVATION_DESELECTED</span>
+    }
+
+    <span class="k">private fun</span> isSelect(apdu: <span class="a">ByteArray</span>): <span class="a">Boolean</span> =
+        apdu.size &gt;= <span class="n">4</span> &amp;&amp;
+        apdu[<span class="n">0</span>] == <span class="n">0x00</span>.toByte() &amp;&amp;
+        apdu[<span class="n">1</span>] == <span class="n">0xA4</span>.toByte()
+
+    <span class="c">// ... isGpo, isReadRecord, isGenerateAc follow the same pattern</span>
+    <span class="c">// checking CLA + INS bytes against EMV spec values</span>
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.12s">
+      <p><strong>The AID group declaration.</strong> This XML file lives in <code>res/xml/</code> and is referenced from the service declaration in your manifest. The <code>category</code> attribute is critical.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.14s"><span class="c">&lt;!-- res/xml/apduservice.xml --&gt;</span>
+<span class="k">&lt;host-apdu-service</span>
+    <span class="a">xmlns:android</span>=<span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="a">android:description</span>=<span class="s">"@string/hce_service_description"</span>
+    <span class="a">android:requireDeviceUnlock</span>=<span class="s">"true"</span><span class="k">&gt;</span>
+
+    <span class="k">&lt;aid-group</span>
+        <span class="a">android:category</span>=<span class="s">"payment"</span>
+        <span class="a">android:description</span>=<span class="s">"@string/aid_group_description"</span><span class="k">&gt;</span>
+        <span class="c">&lt;!-- Visa AID — requires scheme licence --&gt;</span>
+        <span class="k">&lt;aid-filter</span> <span class="a">android:name</span>=<span class="s">"A0000000031010"</span> <span class="k">/&gt;</span>
+        <span class="c">&lt;!-- Mastercard AID — requires scheme licence --&gt;</span>
+        <span class="k">&lt;aid-filter</span> <span class="a">android:name</span>=<span class="s">"A0000000041010"</span> <span class="k">/&gt;</span>
+    <span class="k">&lt;/aid-group&gt;</span>
+
+<span class="k">&lt;/host-apdu-service&gt;</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.16s">
+      <p><strong>Status words.</strong> Every APDU response ends with two bytes. These are the ones that matter in practice.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.18s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>SW</th>
+            <th>Hex</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>9000</code></td><td>Success</td><td>Command processed. Response data precedes the SW.</td></tr>
+          <tr><td><code>6A82</code></td><td>File not found</td><td>AID not recognised or record not available.</td></tr>
+          <tr><td><code>6A86</code></td><td>Wrong P1/P2</td><td>Parameters don't match what the app supports.</td></tr>
+          <tr><td><code>6985</code></td><td>Conditions not satisfied</td><td>Prerequisite command not issued (e.g., GPO before SELECT).</td></tr>
+          <tr><td><code>6F00</code></td><td>Unknown error</td><td>Your catch-all. Return this from exception handlers.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- == 03 SECURITY == -->
+<section id="security">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Security</div>
+      <h2 class="section-title">Eight hard rules. Break any of them and you ship a liability.</h2>
+      <p class="section-lede">Payment apps don't get second chances. A PAN leak is a breach. A timing side-channel is a vulnerability. These rules aren't guidelines &mdash; they're the minimum for shipping something that handles other people's money.</p>
+    </div>
+    <div class="rule-list fade-up" style="transition-delay: 0.05s">
+      <div class="rule">
+        <strong>1. Never log raw APDU bytes in release</strong>
+        <p>APDU payloads contain the PAN, expiry, and cryptograms. A <code>Log.d()</code> left in a release build is a data breach waiting for someone to plug in ADB. Strip all APDU logging behind <code>BuildConfig.DEBUG</code> checks or use ProGuard to remove log calls entirely.</p>
+      </div>
+      <div class="rule">
+        <strong>2. Never write PAN/CVV/track data to disk</strong>
+        <p>The DPAN (tokenised number) can be persisted. The real PAN must never touch storage, SharedPreferences, or a database. If you're storing "the card number" and it's not a token, you're building a breach report, not an app.</p>
+      </div>
+      <div class="rule">
+        <strong>3. Keystore keys with the right flags</strong>
+        <p>Every payment-related Keystore key must have: <code>userAuthenticationRequired</code>, <code>invalidatedByBiometricEnrollment</code>, <code>unlockedDeviceRequired</code>, and <code>isStrongBoxBacked</code> (with TEE fallback). Miss any one and you've weakened the chain.</p>
+      </div>
+      <div class="rule">
+        <strong>4. No network calls on the tap path</strong>
+        <p><code>processCommandApdu</code> must be fully offline. You have ~300ms total for the entire tap. A network call that takes 200ms on Wi-Fi takes 2000ms on a congested cell tower &mdash; and the reader has already timed out and shown "card declined".</p>
+      </div>
+      <div class="rule">
+        <strong>5. Timing-safe comparisons for MACs and cryptograms</strong>
+        <p>Use <code>MessageDigest.isEqual()</code> for comparing authentication codes. Standard <code>Arrays.equals()</code> or <code>contentEquals()</code> short-circuit on the first differing byte, leaking information about the expected value through timing.</p>
+      </div>
+      <div class="rule">
+        <strong>6. Wrap processCommandApdu in try/catch</strong>
+        <p>An unhandled exception in <code>processCommandApdu</code> crashes the service mid-tap. The reader sees a link loss. The user sees a declined transaction with no error message. Return <code>SW 6F00</code> (unknown error) from the catch block &mdash; at least the reader gets a clean failure.</p>
+      </div>
+      <div class="rule">
+        <strong>7. Play Integrity for provisioning and replenishment</strong>
+        <p>Gate token provisioning, LUK replenishment, and high-value operations behind Play Integrity attestation. A rooted device or one with a modified framework should not be able to provision new tokens without additional verification.</p>
+      </div>
+      <div class="rule">
+        <strong>8. Don't trust device clock alone</strong>
+        <p>Transaction timestamps matter for dispute resolution and cryptogram validation. Include the reader's Unpredictable Number (UN) in your cryptogram input. The device clock can be wrong; the UN from the reader is the reader's contribution to freshness.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Keystore key generation with the required flags.</strong> This is the pattern for creating a key that protects LUK encryption or transaction signing material.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.12s"><span class="k">private fun</span> generatePaymentKey(alias: <span class="a">String</span>): <span class="a">SecretKey</span> {
+    <span class="k">val</span> keyGen = <span class="a">KeyGenerator</span>.getInstance(
+        <span class="a">KeyProperties</span>.KEY_ALGORITHM_AES,
+        <span class="s">"AndroidKeyStore"</span>
+    )
+
+    <span class="k">val</span> specBuilder = <span class="a">KeyGenParameterSpec</span>.Builder(
+        alias,
+        <span class="a">KeyProperties</span>.PURPOSE_ENCRYPT <span class="k">or</span> <span class="a">KeyProperties</span>.PURPOSE_DECRYPT
+    )
+        .setBlockModes(<span class="a">KeyProperties</span>.BLOCK_MODE_GCM)
+        .setEncryptionPaddings(<span class="a">KeyProperties</span>.ENCRYPTION_PADDING_NONE)
+        .setKeySize(<span class="n">256</span>)
+        .setUserAuthenticationRequired(<span class="n">true</span>)
+        .setInvalidatedByBiometricEnrollment(<span class="n">true</span>)
+        .setUnlockedDeviceRequired(<span class="n">true</span>)
+
+    <span class="c">// StrongBox with TEE fallback</span>
+    <span class="k">try</span> {
+        specBuilder.setIsStrongBoxBacked(<span class="n">true</span>)
+        keyGen.init(specBuilder.build())
+        <span class="k">return</span> keyGen.generateKey()
+    } <span class="k">catch</span> (e: <span class="a">StrongBoxUnavailableException</span>) {
+        <span class="c">// Fall back to TEE — still hardware-backed, just not StrongBox</span>
+        <span class="k">val</span> teeSpec = <span class="a">KeyGenParameterSpec</span>.Builder(
+            alias,
+            <span class="a">KeyProperties</span>.PURPOSE_ENCRYPT <span class="k">or</span> <span class="a">KeyProperties</span>.PURPOSE_DECRYPT
+        )
+            .setBlockModes(<span class="a">KeyProperties</span>.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(<span class="a">KeyProperties</span>.ENCRYPTION_PADDING_NONE)
+            .setKeySize(<span class="n">256</span>)
+            .setUserAuthenticationRequired(<span class="n">true</span>)
+            .setInvalidatedByBiometricEnrollment(<span class="n">true</span>)
+            .setUnlockedDeviceRequired(<span class="n">true</span>)
+            .build()
+        keyGen.init(teeSpec)
+        <span class="k">return</span> keyGen.generateKey()
+    }
+}</pre>
+  </div>
+</section>
+
+<!-- == 04 TOKENIZATION == -->
+<section id="tokens">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Tokenisation</div>
+      <h2 class="section-title">DPAN, LUKs, and the provisioning lifecycle.</h2>
+      <p class="section-lede">The real card number never touches the device. Instead, a Device PAN (DPAN) is provisioned through a Token Service Provider, along with Limited Use Keys for generating per-transaction cryptograms.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>DPAN vs PAN.</strong> The DPAN is a token that maps back to the real PAN at the network level. The issuer and the TSP (Token Service Provider &mdash; Visa VTS, Mastercard MDES) maintain this mapping. Your app only ever sees the DPAN. When the acquirer sends the cryptogram upstream, the network de-tokenises and routes to the issuer.</p>
+      <p><strong>LUK lifecycle.</strong> Limited Use Keys are pre-provisioned, single-use cryptographic keys. Each LUK generates exactly one transaction cryptogram. Once used, it's discarded. The app pre-provisions a batch and replenishes from the server before running out.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>What happens</th>
+            <th>Keys involved</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Provisioning</td>
+            <td>Biometric enrolment &rarr; server identity check &rarr; attestation-bound EC keypair &rarr; submit to TSP &rarr; receive DPAN + initial LUK batch</td>
+            <td>Device attestation key, transport key</td>
+          </tr>
+          <tr>
+            <td>Storage</td>
+            <td>LUKs stored as encrypted files wrapped by an AES Keystore key. Not as Keystore keys themselves (Keystore has entry limits).</td>
+            <td>Keystore wrapping key</td>
+          </tr>
+          <tr>
+            <td>Usage</td>
+            <td>On tap: pop next LUK, generate cryptogram with transaction data + reader UN, discard LUK</td>
+            <td>Single LUK (consumed)</td>
+          </tr>
+          <tr>
+            <td>Replenishment</td>
+            <td>When LUK count drops below threshold, request new batch from server. Gate behind Play Integrity.</td>
+            <td>Transport key, new LUK batch</td>
+          </tr>
+          <tr>
+            <td>Deactivation</td>
+            <td>Remote wipe of DPAN + all LUKs. Triggered by user, issuer, or fraud system.</td>
+            <td>All keys deleted</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Pre-provision for resilience, not just convenience.</h4>
+      <p>Keep 5&ndash;10 LUKs on device at all times &mdash; roughly 24 hours of typical usage. In South Africa, load-shedding can take your provisioning server offline for hours. If the user has zero LUKs when the power goes out, their wallet is dead until the server comes back. Pre-provisioning is your offline buffer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- == 05 SA CONTEXT == -->
+<section id="sa">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; SA context</div>
+      <h2 class="section-title">ZAR defaults, POPIA, load-shedding, and the device matrix.</h2>
+      <p class="section-lede">Building a payment app for South Africa has specific constraints that don't show up in the Android docs or EMV specs. These are the ones that bite.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Value</th>
+            <th>Where it goes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Currency code</td>
+            <td><code>0710</code> (ZAR)</td>
+            <td>Tag <code>5F2A</code> &mdash; Transaction Currency Code</td>
+          </tr>
+          <tr>
+            <td>Country code</td>
+            <td><code>0710</code> (ZA)</td>
+            <td>Tag <code>9F1A</code> &mdash; Terminal Country Code</td>
+          </tr>
+          <tr>
+            <td>Timezone</td>
+            <td><code>Africa/Johannesburg</code> (SAST, UTC+2)</td>
+            <td>Hard-coded. SA doesn't observe daylight saving time. Don't use device locale.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>POPIA compliance.</strong> The Protection of Personal Information Act governs how you handle cardholder data in South Africa. The payment-specific rules:</p>
+    </div>
+    <div class="rule-list fade-up" style="transition-delay: 0.1s">
+      <div class="rule">
+        <strong>Last-4 only in UI</strong>
+        <p>Display at most the last four digits of the DPAN in any user-facing screen, notification, or receipt. Full DPAN in logs or analytics is a POPIA violation.</p>
+      </div>
+      <div class="rule">
+        <strong>120-day retention limit</strong>
+        <p>Transaction data older than 120 days must be purged or anonymised unless you have a documented legal basis for longer retention. "We might need it" is not a legal basis.</p>
+      </div>
+      <div class="rule">
+        <strong>72-hour breach notification</strong>
+        <p>If cardholder data is compromised, you have 72 hours to notify the Information Regulator. Build your incident response plan before you launch, not after the breach.</p>
+      </div>
+      <div class="rule">
+        <strong>Cross-border transfer basis</strong>
+        <p>If your provisioning server or TSP is outside South Africa, you need a documented legal basis for transferring personal information across borders. Binding corporate rules or consent &mdash; pick one and document it.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.12s">
+      <p><strong>Load-shedding resilience.</strong> South Africa's rolling blackouts take infrastructure offline unpredictably. For a payment app, this means your provisioning and replenishment servers may be unreachable for 2&ndash;4 hour blocks. The app must degrade gracefully:</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.14s">
+      <h4>Offline-first, always.</h4>
+      <p>Pre-provision 5&ndash;10 LUKs. Cache the DPAN and card metadata locally (encrypted). The tap path is already offline-only. Replenishment should retry with exponential backoff and succeed silently when connectivity returns. Never show the user an error about LUK replenishment unless they're actually out of keys.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.16s">
+      <p><strong>Device testing matrix.</strong> The Android NFC stack behaves differently across OEMs. These are the devices that catch bugs the Pixel won't.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.18s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Device class</th>
+            <th>Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Samsung A-series</td>
+            <td>Highest volume Android phones in SA. NFC antenna placement varies by model &mdash; tap positioning that works on a Pixel may not work on an A15.</td>
+          </tr>
+          <tr>
+            <td>Huawei (without GMS)</td>
+            <td>No Google Play Services means no Play Integrity. You need a fallback attestation path. Huawei's HMS has its own safety detect API.</td>
+          </tr>
+          <tr>
+            <td>Transsion (Tecno, Itel, Infinix)</td>
+            <td>Massive SA market share in entry-level segment. NFC support is inconsistent &mdash; some models have the hardware but ship with NFC disabled in firmware. Test availability at runtime, not just in the manifest.</td>
+          </tr>
+          <tr>
+            <td>Xiaomi / Redmi</td>
+            <td>MIUI's aggressive battery optimization can kill HCE services in the background. Users need to manually exempt your app from battery restrictions.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- == 06 GOTCHAS == -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Gotchas</div>
+      <h2 class="section-title">Things that only bite in production.</h2>
+      <p class="section-lede">Six failure modes discovered by teams that shipped payment apps and then spent weeks debugging silent failures at POS terminals.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Don't use payment-category AIDs you aren't licensed for</strong>
+        <p>Declaring <code>category="payment"</code> with a Visa or Mastercard AID in your manifest without a scheme licence will work in development. It will also trigger a compliance audit in production. Use <code>category="other"</code> for prototyping and testing with your own AIDs.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Don't grab setPreferredService outside a foreground Activity</strong>
+        <p><code>CardEmulation.setPreferredService()</code> only works when called from a foreground Activity. Calling it from a Service or background context silently does nothing. Your app won't be the default tap handler and you'll get no error message telling you why.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Don't put long crypto ops in processCommandApdu synchronously</strong>
+        <p>If your cryptogram generation takes more than ~50ms, the reader may time out before your response arrives. Use <code>sendResponseApdu()</code> for deferred responses &mdash; return null from <code>processCommandApdu</code>, compute the response asynchronously, then call <code>sendResponseApdu()</code> when ready.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Don't trust the device clock for transaction timestamps</strong>
+        <p>Users set their clocks wrong. Timezone databases get stale. Include the reader's Unpredictable Number (UN) in your cryptogram input &mdash; it's the reader's contribution to transaction freshness and doesn't depend on the device clock being correct.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Don't store LUKs as individual Keystore entries</strong>
+        <p>The Android Keystore has practical limits on the number of entries (varies by device, but often ~256). If you store each LUK as a separate Keystore key, you'll hit the limit. Store LUKs as encrypted files wrapped by a single Keystore key instead.</p>
+      </div>
+      <div class="gotcha">
+        <strong>NFC field loss is normal, not exceptional</strong>
+        <p>Users move their phones. The field drops mid-transaction. Your service gets <code>onDeactivated(DEACTIVATION_LINK_LOSS)</code>. Clean up session state, discard any partially-used LUK, and be ready for the user to tap again immediately. Don't show an error for a single field loss &mdash; only after repeated failures.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- == 07 DECISION GUIDE == -->
+<section id="decide">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Decision guide</div>
+      <h2 class="section-title">Use when / skip when.</h2>
+      <p class="section-lede">HCE is the right tool for a specific job. It's not the right tool for every NFC use case.</p>
+    </div>
+    <div class="split-cards fade-up" style="transition-delay: 0.05s">
+      <div class="split-card use">
+        <h4>Use HCE when</h4>
+        <ul>
+          <li>You're building a mobile wallet or tap-to-pay app and have (or will get) payment scheme licensing</li>
+          <li>You need contactless card emulation without carrier/OEM Secure Element dependencies</li>
+          <li>Your target market includes devices without Secure Elements (most mid-range Android phones)</li>
+          <li>You're building loyalty, transit, or access-control tap experiences (category="other" AIDs are free to use)</li>
+          <li>You want full software control over the transaction flow for custom business logic</li>
+          <li>You need to support offline transactions with pre-provisioned cryptographic material</li>
+        </ul>
+      </div>
+      <div class="split-card skip">
+        <h4>Skip HCE when</h4>
+        <ul>
+          <li>You're just reading NFC tags &mdash; use NfcAdapter and NDEF, not HCE</li>
+          <li>You need to emulate a card on iOS &mdash; Apple doesn't expose HCE; use Apple Pay's PassKit</li>
+          <li>Your security model requires hardware-isolated key storage during the transaction itself (HCE keys are in app memory during the tap)</li>
+          <li>You're building peer-to-peer NFC &mdash; use Android Beam (deprecated) or Nearby Connections</li>
+          <li>You can't commit to the certification and compliance overhead of handling payment credentials</li>
+          <li>Your target devices are primarily Huawei without GMS and you can't implement HMS fallbacks</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- == 08 2^n PERSPECTIVE == -->
+<section id="perspective">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; 2&#x207F; Perspective</div>
+      <h2 class="section-title">How this node compounds in the tree.</h2>
+      <p class="section-lede">HCE is the tap surface. Everything behind it &mdash; provisioning, reconciliation, fraud monitoring &mdash; lives in other nodes. The compounding happens at the connections.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <div class="connect-node soon">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The provisioning backend. Workers handle TSP communication, LUK replenishment requests, and Play Integrity validation. Edge compute means the provisioning server is 50ms from any SA user, not 200ms from eu-west-1.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">biz/erp</span>
+        <div class="skill">ERP Integration</div>
+        <div class="why">Transaction reconciliation. Every tap generates a settlement record that flows into the ERP's accounts receivable. The ERP skill handles the Frappe/SAP/Sage side of matching transactions to payments.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">security/identity</span>
+        <div class="skill">Identity &amp; Auth</div>
+        <div class="why">Biometric enrolment, device attestation, and fraud scoring all live here. HCE consumes identity verification during provisioning and continuous authentication during high-value transactions.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/observability</span>
+        <div class="skill">Observability</div>
+        <div class="why">Tap success rates, cryptogram generation latency, LUK consumption rates, field-loss frequency. The observability node provides the monitoring stack that turns silent failures into alerts.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">tech/android-hce/emv</span>
+        <div class="skill">EMV Specification</div>
+        <div class="why">The protocol spec that defines every tag, every APDU structure, every cryptogram format. HCE implements EMV &mdash; reading the spec is non-optional for anyone modifying the transaction flow.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">iot/pos-terminals</span>
+        <div class="skill">POS Terminal Integration</div>
+        <div class="why">The other side of the NFC field. Understanding terminal behaviour, certification requirements, and contactless kernel implementations helps debug the 10% of taps that fail on specific terminal models.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- == 09 RESOURCES == -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The Android HCE guide is the starting point. The EMV specs are the ending point. Everything in between is implementation detail.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://developer.android.com/develop/connectivity/nfc/hce" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Official guide</span>
+        <span class="r-title">Android HCE developer guide</span>
+        <span class="r-url">developer.android.com/develop/connectivity/nfc/hce</span>
+      </a>
+      <a href="https://developer.android.com/reference/android/nfc/cardemulation/HostApduService" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">API reference</span>
+        <span class="r-title">HostApduService class reference</span>
+        <span class="r-url">developer.android.com/.../HostApduService</span>
+      </a>
+      <a href="https://www.emvco.com/emv-technologies/contactless/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Specification</span>
+        <span class="r-title">EMVCo Contactless Specifications</span>
+        <span class="r-url">emvco.com/emv-technologies/contactless</span>
+      </a>
+      <a href="https://developer.android.com/google/play/integrity" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Security</span>
+        <span class="r-title">Play Integrity API</span>
+        <span class="r-url">developer.android.com/google/play/integrity</span>
+      </a>
+      <a href="https://developer.android.com/privacy-and-security/keystore" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Security</span>
+        <span class="r-title">Android Keystore system</span>
+        <span class="r-url">developer.android.com/privacy-and-security/keystore</span>
+      </a>
+      <a href="https://www.popia.co.za/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Compliance</span>
+        <span class="r-title">POPIA &mdash; Protection of Personal Information Act</span>
+        <span class="r-url">popia.co.za</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Android HCE sub-hub</a>
+      <a href="https://2nth.ai" target="_blank" rel="noopener">2nth.ai</a>
+      <a href="https://imbila.ai" target="_blank" rel="noopener">imbila.ai</a>
+      <a href="https://2nth.io" target="_blank" rel="noopener">2nth.io</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
