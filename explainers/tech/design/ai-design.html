@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Design Tools — know.2nth.ai</title>
+<meta name="description" content="AI design tools — image generation, design-to-code, AI-assisted workflows, and why the human with the tokens file is still the last step.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root{--ink:#0B1120;--ink-deep:#060A14;--navy:#121D33;--blue:#2563EB;--blue-glow:#3B82F6;--sky:#38BDF8;--sky-muted:#7DD3FC;--paper:#F8FAFC;--mist:#E2E8F0;--slate:#94A3B8;--warm:#F59E0B;--warm-glow:#FBBF24;--warm-soft:rgba(245,158,11,0.12);--green:#10B981;--green-soft:rgba(16,185,129,0.12);--violet:#8B5CF6;--violet-soft:rgba(139,92,246,0.12);--rose:#F43F5E;--rose-soft:rgba(244,63,94,0.12);--bg:var(--ink);--bg-raised:var(--navy);--bg-card:rgba(18,29,51,0.7);--bg-card-hover:rgba(37,99,235,0.06);--text-primary:var(--paper);--text-secondary:var(--slate);--text-muted:#64748B;--border:rgba(148,163,184,0.1);--border-hover:rgba(56,189,248,0.3);--max-w:1200px;--read-w:760px;--radius-sm:8px;--radius-md:12px;--radius-lg:20px;--radius-pill:100px}
+  [data-theme="light"]{--bg:#F1F5F9;--bg-raised:#FFFFFF;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(37,99,235,0.04);--text-primary:var(--ink);--text-secondary:#475569;--text-muted:#94A3B8;--border:rgba(15,23,42,0.08);--border-hover:rgba(37,99,235,0.25)}
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Outfit',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  body::before{content:'';position:fixed;inset:0;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .glow-orb{position:fixed;border-radius:50%;filter:blur(120px);opacity:0.08;pointer-events:none;z-index:0}.glow-orb.blue{width:600px;height:600px;background:var(--blue);top:-200px;right:-100px}.glow-orb.sky{width:500px;height:500px;background:var(--sky);bottom:20%;left:-150px}[data-theme="light"] .glow-orb{opacity:0.04}
+  nav{position:sticky;top:0;z-index:100;padding:0 24px;backdrop-filter:blur(20px) saturate(1.4);background:rgba(11,17,32,0.75);border-bottom:1px solid var(--border)}[data-theme="light"] nav{background:rgba(241,245,249,0.8)}
+  .nav-inner{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-primary)}.nav-brand-mark{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}.nav-brand-sub{font-size:12px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;padding-left:10px;border-left:1px solid var(--border)}
+  .nav-right{display:flex;align-items:center;gap:16px}.nav-link{font-size:13px;color:var(--text-secondary);text-decoration:none;font-weight:500;transition:color 0.2s}.nav-link:hover{color:var(--sky)}.theme-toggle{background:none;border:1px solid var(--border);color:var(--text-secondary);width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:16px;transition:all 0.2s}.theme-toggle:hover{border-color:var(--border-hover);color:var(--sky)}
+  .container{max-width:var(--max-w);margin:0 auto;padding:0 24px;position:relative;z-index:1}
+  .crumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;padding:28px 0 0;display:flex;gap:10px;flex-wrap:wrap}.crumb a{color:var(--text-muted);text-decoration:none;transition:color 0.2s}.crumb a:hover{color:var(--sky)}.crumb-sep{opacity:0.5}.crumb-current{color:var(--text-secondary)}
+  .hero{padding:48px 0 64px}.hero .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:24px;display:inline-flex;align-items:center;gap:10px}.hero .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-glow);box-shadow:0 0 12px var(--blue-glow)}.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;line-height:1.04;letter-spacing:-2px;margin-bottom:22px;max-width:16ch}.hero h1 .gradient{background:linear-gradient(135deg,var(--blue-glow),var(--sky),var(--sky-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero .sub{font-size:18px;color:var(--text-secondary);max-width:680px;line-height:1.65;font-weight:300;margin-bottom:28px}
+  .hero-meta{display:flex;gap:8px;flex-wrap:wrap}.pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);color:var(--text-secondary);letter-spacing:0.5px}.pill.accent{background:rgba(37,99,235,0.12);color:var(--blue-glow);border-color:rgba(37,99,235,0.25)}
+  section{padding:52px 0;position:relative}.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:14px}.section-title{font-size:clamp(26px,3.4vw,36px);font-weight:700;letter-spacing:-0.8px;margin-bottom:18px;line-height:1.2}.section-lede{font-size:16px;color:var(--text-secondary);max-width:var(--read-w);line-height:1.75;font-weight:300;margin-bottom:32px}
+  .prose p{font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:var(--read-w);margin-bottom:18px}.prose p strong{color:var(--text-primary);font-weight:600}.prose code{font-family:'JetBrains Mono',monospace;font-size:0.88em;background:var(--bg-card);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--sky)}
+  pre.code{background:var(--ink-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px 22px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;color:var(--mist);margin:0 0 20px;max-width:var(--read-w)}[data-theme="light"] pre.code{background:#0F172A;color:#E2E8F0}pre.code .k{color:var(--sky)}pre.code .s{color:#A5F3B8}pre.code .c{color:var(--text-muted);font-style:italic}pre.code .n{color:#FCD34D}
+  .info-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;max-width:var(--read-w);margin-bottom:20px}.info-card h4{font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-0.2px}.info-card p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:10px}.info-card p:last-child{margin-bottom:0}
+  .compare-wrap{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;max-width:var(--read-w);margin-bottom:20px}.compare{width:100%;border-collapse:collapse;font-size:13px}.compare th,.compare td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}.compare thead th{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--sky);background:rgba(37,99,235,0.04)}.compare tbody tr:last-child td{border-bottom:none}.compare td{color:var(--text-secondary)}.compare td code{font-family:'JetBrains Mono',monospace;font-size:0.9em;color:var(--sky)}
+  .gotcha-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}.gotcha{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-left:3px solid var(--rose);border-radius:var(--radius-md);padding:18px 22px}.gotcha strong{display:block;color:var(--text-primary);font-weight:600;font-size:14px;margin-bottom:6px}.gotcha p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+  .connect-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.connect-node{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;transition:all 0.3s;text-decoration:none;color:inherit;display:block}.connect-node:hover{border-color:var(--border-hover);background:var(--bg-card-hover)}.connect-node .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px}.connect-node .skill{font-size:14px;font-weight:600;margin-bottom:4px}.connect-node .why{font-size:12px;color:var(--text-secondary);line-height:1.5}
+  .resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.resource{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;text-decoration:none;transition:all 0.3s;display:flex;flex-direction:column;gap:4px}.resource:hover{border-color:var(--border-hover)}.resource .r-kind{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}.resource .r-title{font-size:14px;font-weight:600;color:var(--text-primary)}.resource .r-url{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);word-break:break-all}
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:var(--read-w)}@media(max-width:720px){.decision-grid{grid-template-columns:1fr}}.decision-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 24px}.decision-card.use{border-left:3px solid var(--green)}.decision-card.skip{border-left:3px solid var(--rose)}.decision-card h4{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}.decision-card.use h4{color:var(--green)}.decision-card.skip h4{color:var(--rose)}.decision-card ul{list-style:none;padding:0}.decision-card li{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:6px 0;border-bottom:1px solid var(--border)}.decision-card li:last-child{border-bottom:none}
+  footer{padding:60px 0 40px;border-top:1px solid var(--border);text-align:center;margin-top:40px}.footer-brand{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}.footer-tagline{font-size:13px;color:var(--text-muted);margin-bottom:24px}.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:24px;flex-wrap:wrap}.footer-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;transition:color 0.2s}.footer-links a:hover{color:var(--sky)}.footer-copy{font-size:12px;color:var(--text-muted)}
+  .fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){.nav-brand-sub{display:none}.nav-link{display:none}pre.code{font-size:11px;padding:14px 16px}.compare{font-size:12px}.compare th,.compare td{padding:10px 12px}}
+  *,*::before,*::after{transition-property:background-color,border-color,color,box-shadow;transition-duration:0.3s;transition-timing-function:ease}
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/design/ai-tools</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Design</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="./">design</a><span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">ai design tools</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; AI Design Tools &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Great at first drafts,<br><span class="gradient">wrong at consistency.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      AI design tools accelerate the early stages &mdash; moodboards, layout exploration, first-pass code generation. But they don't know your tokens, your component inventory, or your accessibility requirements. The human with the design system is still the last step before production.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">v0 &middot; Lovable</span>
+      <span class="pill">Image generation</span>
+      <span class="pill">Design-to-code</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">AI-assisted, not AI-replaced.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>AI design tools fall into three categories. <strong>Image generation</strong> (Midjourney, DALL-E, Stable Diffusion) creates visual concepts &mdash; moodboards, hero illustrations, icon explorations. Useful for ideation. Terrible for production assets without significant post-processing.</p>
+      <p><strong>Design-to-code generators</strong> (v0, Lovable, screenshot-to-code) take a description or image and produce working UI code. They're shockingly good at producing a first-pass component and consistently bad at using your existing design system. The output is a starting point that needs editing, not a finished product.</p>
+      <p><strong>AI-in-Figma plugins</strong> extend the design tool itself &mdash; content generation (realistic placeholder text), layout suggestions, accessibility auditing, image enhancement. These are the most practical category because they augment an existing workflow rather than replacing it.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead><tr><th>Tool category</th><th>Good at</th><th>Bad at</th></tr></thead>
+        <tbody>
+          <tr><td>Image generation</td><td>Moodboards, concepts, hero visuals, icon exploration</td><td>Brand consistency, exact specifications, legal clarity on training data</td></tr>
+          <tr><td>Design-to-code (v0, Lovable)</td><td>First-pass components, rapid prototyping, layout scaffolding</td><td>Using your tokens, matching your component API, accessibility</td></tr>
+          <tr><td>Screenshot-to-code</td><td>Reproducing an existing UI from an image</td><td>Responsive behaviour, semantic HTML, anything beyond visual fidelity</td></tr>
+          <tr><td>Figma AI plugins</td><td>Content generation, layout suggestions, a11y checks</td><td>Replacing design judgment, handling edge cases</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">The practical workflow.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The AI-assisted design loop</strong> works best when you treat AI output as a draft, not a deliverable. Generate a component with v0, then refactor it to use your tokens. Generate a hero image with Midjourney, then post-process it to match your brand palette. Generate placeholder content with an AI plugin, then review it for tone and accuracy.</p>
+      <p><strong>Code generation from designs</strong> is the most practical use case. Give v0 a prompt like "a pricing card with three tiers, dark theme, Tailwind CSS" and you get a working component in seconds. But it will use its own colours, its own spacing, its own border radius. Your job is to replace those with your design tokens &mdash; and that's where the time goes.</p>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>The honest cost calculation</h4>
+      <p>AI generates a component in 30 seconds. Refactoring it to match your design system takes 20 minutes. Building it from scratch using your component library takes 25 minutes. The AI saves 5 minutes &mdash; not 25. The value is in exploration (trying 10 layouts in 5 minutes) not in production (shipping one layout in less time).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Where AI design tools fail.</h2>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Brand drift</strong>
+        <p>Every AI-generated component uses slightly different colours, spacing, and type. If you don't catch it, your product accumulates visual inconsistency faster than a team without a design system. AI accelerates drift unless someone is enforcing tokens.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Accessibility is an afterthought</strong>
+        <p>AI-generated code rarely includes ARIA attributes, focus management, or keyboard navigation. Contrast ratios are hit-or-miss. The output looks right and fails an accessibility audit. Always run axe or Lighthouse on generated code before shipping.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Training data licensing is unresolved</strong>
+        <p>Image generation models trained on copyrighted work present legal risk for commercial use. Midjourney, DALL-E, and Stable Diffusion have different terms of service and different exposure levels. Check the licence before using generated images in a product.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Generated code is not your component API</strong>
+        <p>v0 produces a standalone component with inline styles or arbitrary Tailwind classes. It doesn't know about your <code>Button</code> component, your <code>Card</code> component, or your variant system. The more mature your component library, the less useful raw code generation becomes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">When AI design tools earn their place.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use AI tools when</h4>
+        <ul>
+          <li>You're exploring &mdash; moodboarding, trying layout variations, generating concept art for stakeholder alignment.</li>
+          <li>You need a first-pass prototype to test an idea before investing in production code.</li>
+          <li>The team is small, there's no component library yet, and speed beats consistency for now.</li>
+          <li>You're using AI to augment a Figma workflow (content generation, accessibility audits) rather than replace it.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip AI tools when</h4>
+        <ul>
+          <li>You have a mature design system and component library &mdash; composing existing components is faster than refactoring AI output.</li>
+          <li>Accessibility compliance is non-negotiable and you can't afford to audit every generated component manually.</li>
+          <li>The legal risk of AI-generated imagery is unacceptable for your industry or client.</li>
+          <li>The team treats AI output as finished code rather than a starting point &mdash; this creates more problems than it solves.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where AI design tools link in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">tech/design</span>
+        <div class="skill">Design hub</div>
+        <div class="why">AI tools are one of the two design-to-code skills &mdash; the newest and most volatile.</div>
+      </a>
+      <a href="figma.html" class="connect-node">
+        <span class="tag">tech/design/figma</span>
+        <div class="skill">Figma</div>
+        <div class="why">AI plugins extend Figma. The design-to-code workflow often starts in Figma and goes through AI generation.</div>
+      </a>
+      <a href="design-systems.html" class="connect-node">
+        <span class="tag">tech/design/systems</span>
+        <div class="skill">Design Systems</div>
+        <div class="why">Tokens are the antidote to AI-generated inconsistency. The stronger your system, the faster you can refactor AI output.</div>
+      </a>
+      <a href="accessibility.html" class="connect-node">
+        <span class="tag">tech/design/accessibility</span>
+        <div class="skill">Accessibility</div>
+        <div class="why">AI-generated code almost never meets accessibility standards. Manual a11y review is required on every AI output.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 06 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://v0.dev" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">v0 by Vercel</span>
+        <span class="r-url">v0.dev</span>
+      </a>
+      <a href="https://lovable.dev" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">Lovable</span>
+        <span class="r-url">lovable.dev</span>
+      </a>
+      <a href="https://www.midjourney.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Image gen</span>
+        <span class="r-title">Midjourney</span>
+        <span class="r-url">midjourney.com</span>
+      </a>
+      <a href="https://github.com/abi/screenshot-to-code" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Open source</span>
+        <span class="r-title">screenshot-to-code</span>
+        <span class="r-url">github.com/abi/screenshot-to-code</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Design sub-hub</a>
+      <a href="https://v0.dev" target="_blank" rel="noopener">v0 &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.querySelector('.theme-toggle').textContent=n==='dark'?'\u2600\uFE0F':'\uD83C\uDF19';localStorage.setItem('theme',n)}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'\u2600\uFE0F':'\uD83C\uDF19'}
+  const observer=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

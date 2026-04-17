@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component Libraries — know.2nth.ai</title>
+<meta name="description" content="Component libraries — atomic design, Storybook, composition patterns, visual regression testing, and the craft of building reusable interface parts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root{--ink:#0B1120;--ink-deep:#060A14;--navy:#121D33;--blue:#2563EB;--blue-glow:#3B82F6;--sky:#38BDF8;--sky-muted:#7DD3FC;--paper:#F8FAFC;--mist:#E2E8F0;--slate:#94A3B8;--warm:#F59E0B;--warm-glow:#FBBF24;--warm-soft:rgba(245,158,11,0.12);--green:#10B981;--green-soft:rgba(16,185,129,0.12);--violet:#8B5CF6;--violet-soft:rgba(139,92,246,0.12);--rose:#F43F5E;--rose-soft:rgba(244,63,94,0.12);--bg:var(--ink);--bg-raised:var(--navy);--bg-card:rgba(18,29,51,0.7);--bg-card-hover:rgba(37,99,235,0.06);--text-primary:var(--paper);--text-secondary:var(--slate);--text-muted:#64748B;--border:rgba(148,163,184,0.1);--border-hover:rgba(56,189,248,0.3);--max-w:1200px;--read-w:760px;--radius-sm:8px;--radius-md:12px;--radius-lg:20px;--radius-pill:100px}
+  [data-theme="light"]{--bg:#F1F5F9;--bg-raised:#FFFFFF;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(37,99,235,0.04);--text-primary:var(--ink);--text-secondary:#475569;--text-muted:#94A3B8;--border:rgba(15,23,42,0.08);--border-hover:rgba(37,99,235,0.25)}
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Outfit',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  body::before{content:'';position:fixed;inset:0;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .glow-orb{position:fixed;border-radius:50%;filter:blur(120px);opacity:0.08;pointer-events:none;z-index:0}.glow-orb.blue{width:600px;height:600px;background:var(--blue);top:-200px;right:-100px}.glow-orb.sky{width:500px;height:500px;background:var(--sky);bottom:20%;left:-150px}[data-theme="light"] .glow-orb{opacity:0.04}
+  nav{position:sticky;top:0;z-index:100;padding:0 24px;backdrop-filter:blur(20px) saturate(1.4);background:rgba(11,17,32,0.75);border-bottom:1px solid var(--border)}[data-theme="light"] nav{background:rgba(241,245,249,0.8)}
+  .nav-inner{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-primary)}.nav-brand-mark{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}.nav-brand-sub{font-size:12px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;padding-left:10px;border-left:1px solid var(--border)}
+  .nav-right{display:flex;align-items:center;gap:16px}.nav-link{font-size:13px;color:var(--text-secondary);text-decoration:none;font-weight:500;transition:color 0.2s}.nav-link:hover{color:var(--sky)}.theme-toggle{background:none;border:1px solid var(--border);color:var(--text-secondary);width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:16px;transition:all 0.2s}.theme-toggle:hover{border-color:var(--border-hover);color:var(--sky)}
+  .container{max-width:var(--max-w);margin:0 auto;padding:0 24px;position:relative;z-index:1}
+  .crumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;padding:28px 0 0;display:flex;gap:10px;flex-wrap:wrap}.crumb a{color:var(--text-muted);text-decoration:none;transition:color 0.2s}.crumb a:hover{color:var(--sky)}.crumb-sep{opacity:0.5}.crumb-current{color:var(--text-secondary)}
+  .hero{padding:48px 0 64px}.hero .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:24px;display:inline-flex;align-items:center;gap:10px}.hero .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-glow);box-shadow:0 0 12px var(--blue-glow)}.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;line-height:1.04;letter-spacing:-2px;margin-bottom:22px;max-width:14ch}.hero h1 .gradient{background:linear-gradient(135deg,var(--blue-glow),var(--sky),var(--sky-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero .sub{font-size:18px;color:var(--text-secondary);max-width:680px;line-height:1.65;font-weight:300;margin-bottom:28px}
+  .hero-meta{display:flex;gap:8px;flex-wrap:wrap}.pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);color:var(--text-secondary);letter-spacing:0.5px}.pill.accent{background:rgba(37,99,235,0.12);color:var(--blue-glow);border-color:rgba(37,99,235,0.25)}
+  section{padding:52px 0;position:relative}.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:14px}.section-title{font-size:clamp(26px,3.4vw,36px);font-weight:700;letter-spacing:-0.8px;margin-bottom:18px;line-height:1.2}.section-lede{font-size:16px;color:var(--text-secondary);max-width:var(--read-w);line-height:1.75;font-weight:300;margin-bottom:32px}
+  .prose p{font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:var(--read-w);margin-bottom:18px}.prose p strong{color:var(--text-primary);font-weight:600}.prose code{font-family:'JetBrains Mono',monospace;font-size:0.88em;background:var(--bg-card);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--sky)}
+  pre.code{background:var(--ink-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px 22px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;color:var(--mist);margin:0 0 20px;max-width:var(--read-w)}[data-theme="light"] pre.code{background:#0F172A;color:#E2E8F0}pre.code .k{color:var(--sky)}pre.code .s{color:#A5F3B8}pre.code .c{color:var(--text-muted);font-style:italic}pre.code .n{color:#FCD34D}
+  .info-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;max-width:var(--read-w);margin-bottom:20px}.info-card h4{font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-0.2px}.info-card p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:10px}.info-card p:last-child{margin-bottom:0}
+  .gotcha-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}.gotcha{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-left:3px solid var(--rose);border-radius:var(--radius-md);padding:18px 22px}.gotcha strong{display:block;color:var(--text-primary);font-weight:600;font-size:14px;margin-bottom:6px}.gotcha p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+  .connect-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.connect-node{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;transition:all 0.3s;text-decoration:none;color:inherit;display:block}.connect-node:hover{border-color:var(--border-hover);background:var(--bg-card-hover)}.connect-node .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px}.connect-node .skill{font-size:14px;font-weight:600;margin-bottom:4px}.connect-node .why{font-size:12px;color:var(--text-secondary);line-height:1.5}
+  .resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.resource{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;text-decoration:none;transition:all 0.3s;display:flex;flex-direction:column;gap:4px}.resource:hover{border-color:var(--border-hover)}.resource .r-kind{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}.resource .r-title{font-size:14px;font-weight:600;color:var(--text-primary)}.resource .r-url{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);word-break:break-all}
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:var(--read-w)}@media(max-width:720px){.decision-grid{grid-template-columns:1fr}}.decision-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 24px}.decision-card.use{border-left:3px solid var(--green)}.decision-card.skip{border-left:3px solid var(--rose)}.decision-card h4{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}.decision-card.use h4{color:var(--green)}.decision-card.skip h4{color:var(--rose)}.decision-card ul{list-style:none;padding:0}.decision-card li{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:6px 0;border-bottom:1px solid var(--border)}.decision-card li:last-child{border-bottom:none}
+  footer{padding:60px 0 40px;border-top:1px solid var(--border);text-align:center;margin-top:40px}.footer-brand{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}.footer-tagline{font-size:13px;color:var(--text-muted);margin-bottom:24px}.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:24px;flex-wrap:wrap}.footer-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;transition:color 0.2s}.footer-links a:hover{color:var(--sky)}.footer-copy{font-size:12px;color:var(--text-muted)}
+  .fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){.nav-brand-sub{display:none}.nav-link{display:none}pre.code{font-size:11px;padding:14px 16px}}
+  *,*::before,*::after{transition-property:background-color,border-color,color,box-shadow;transition-duration:0.3s;transition-timing-function:ease}
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/design/components</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Design</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="./">design</a><span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">components</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; Component Libraries &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Build once,<br><span class="gradient">compose everywhere.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      A component library is the practical output of a design system. Atoms combine into molecules, molecules into organisms, organisms into pages. The craft is in the API: how the component exposes its props, handles composition, documents itself, and fails gracefully when used wrong.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">Atomic design</span>
+      <span class="pill">Storybook</span>
+      <span class="pill">Composition</span>
+      <span class="pill">Visual regression</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">Components are contracts, not templates.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>A component is a reusable piece of UI with a defined API &mdash; its props, its slots, its events. <strong>Atomic design</strong> gives you a vocabulary for scale: <strong>atoms</strong> (button, input, badge), <strong>molecules</strong> (search bar = input + button), <strong>organisms</strong> (header = logo + nav + search bar), <strong>templates</strong> (page layout with placeholder content), and <strong>pages</strong> (templates filled with real data).</p>
+      <p>The value is compounding. Every time you use a component instead of writing one-off markup, you get consistency, accessibility, and testability for free. Every time you copy-paste a component and tweak it, you create a maintenance debt that compounds just as fast in the other direction.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Storybook, variants, and composition.</h2>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">// Button.stories.tsx — Storybook documentation</span>
+<span class="k">import</span> type { Meta, StoryObj } <span class="k">from</span> <span class="s">'@storybook/react'</span>
+<span class="k">import</span> { Button } <span class="k">from</span> <span class="s">'./Button'</span>
+
+<span class="k">const</span> meta: Meta&lt;<span class="k">typeof</span> Button&gt; = {
+  component: Button,
+  tags: [<span class="s">'autodocs'</span>],
+  argTypes: {
+    variant: { control: <span class="s">'select'</span>, options: [<span class="s">'primary'</span>, <span class="s">'secondary'</span>, <span class="s">'ghost'</span>] },
+    size:    { control: <span class="s">'select'</span>, options: [<span class="s">'sm'</span>, <span class="s">'md'</span>, <span class="s">'lg'</span>] },
+  },
+}
+<span class="k">export default</span> meta
+
+<span class="k">export const</span> <span class="n">Primary</span>: StoryObj = {
+  args: { variant: <span class="s">'primary'</span>, children: <span class="s">'Deploy'</span> },
+}
+<span class="k">export const</span> <span class="n">Ghost</span>: StoryObj = {
+  args: { variant: <span class="s">'ghost'</span>, children: <span class="s">'Cancel'</span> },
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Component with variant pattern via cva (class-variance-authority)</span>
+<span class="k">import</span> { cva, type VariantProps } <span class="k">from</span> <span class="s">'class-variance-authority'</span>
+
+<span class="k">const</span> <span class="n">buttonVariants</span> = cva(
+  <span class="c">// Base classes shared across all variants</span>
+  <span class="s">'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50'</span>,
+  {
+    variants: {
+      variant: {
+        primary:   <span class="s">'bg-blue text-paper hover:bg-blue-glow'</span>,
+        secondary: <span class="s">'bg-navy text-paper border border-border hover:bg-bg-card'</span>,
+        ghost:     <span class="s">'bg-transparent text-secondary hover:bg-bg-card'</span>,
+      },
+      size: {
+        sm: <span class="s">'h-8 px-3 text-xs'</span>,
+        md: <span class="s">'h-10 px-4 text-sm'</span>,
+        lg: <span class="s">'h-12 px-6 text-base'</span>,
+      },
+    },
+    defaultVariants: { variant: <span class="s">'primary'</span>, size: <span class="s">'md'</span> },
+  }
+)
+
+<span class="k">interface</span> ButtonProps
+  <span class="k">extends</span> React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;,
+    VariantProps&lt;<span class="k">typeof</span> buttonVariants&gt; {}
+
+<span class="k">export function</span> <span class="n">Button</span>({ variant, size, className, ...props }: ButtonProps) {
+  <span class="k">return</span> &lt;button className={buttonVariants({ variant, size, className })} {...props} /&gt;
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">// Composition pattern — compound component for a Card</span>
+<span class="k">function</span> <span class="n">Card</span>({ children, className }) {
+  <span class="k">return</span> &lt;div className={<span class="s">`bg-card border rounded-lg p-6 ${className}`</span>}&gt;{children}&lt;/div&gt;
+}
+
+<span class="n">Card</span>.Header = ({ children }) =&gt; &lt;div className=<span class="s">"mb-4"</span>&gt;{children}&lt;/div&gt;
+<span class="n">Card</span>.Title  = ({ children }) =&gt; &lt;h3 className=<span class="s">"text-lg font-bold"</span>&gt;{children}&lt;/h3&gt;
+<span class="n">Card</span>.Body   = ({ children }) =&gt; &lt;div className=<span class="s">"text-sm text-secondary"</span>&gt;{children}&lt;/div&gt;
+
+<span class="c">// Usage — composable, readable, no prop drilling</span>
+&lt;<span class="n">Card</span>&gt;
+  &lt;<span class="n">Card.Header</span>&gt;
+    &lt;<span class="n">Card.Title</span>&gt;Deployment status&lt;/<span class="n">Card.Title</span>&gt;
+  &lt;/<span class="n">Card.Header</span>&gt;
+  &lt;<span class="n">Card.Body</span>&gt;All services healthy.&lt;/<span class="n">Card.Body</span>&gt;
+&lt;/<span class="n">Card</span>&gt;</pre>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Component library pitfalls.</h2>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Too many props, not enough composition</strong>
+        <p>A Button with 18 props is not a good component &mdash; it's a configuration file. Split it. Use compound components, render props, or slots. If the prop list is growing, the component is doing too much.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Storybook without visual regression is documentation, not testing</strong>
+        <p>Storybook shows you what a component looks like right now. Visual regression (Chromatic, Percy, Playwright screenshots) shows you what changed. Without the diff, you won't catch the subtle breakages.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Building a library before you have patterns</strong>
+        <p>Don't abstract on day one. Build three instances of a pattern in real features, then extract the component. Premature abstraction locks you into the wrong API before you know what the right one is.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Forgetting the "unstyled" escape hatch</strong>
+        <p>Every styled component should accept a <code>className</code> prop and pass it through. If consumers can't override your styles, they'll work around your component instead of using it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Build vs adopt.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Build your own library when</h4>
+        <ul>
+          <li>Your brand has specific visual requirements that no existing library matches.</li>
+          <li>You have a dedicated design systems team (or at least one person) to maintain it.</li>
+          <li>You need cross-platform consistency (web + native) from a single source of truth.</li>
+          <li>You're using shadcn/ui as a starting point &mdash; it's designed to be forked and owned.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Adopt an existing library when</h4>
+        <ul>
+          <li>The team is small and the product ships faster with MUI, Ant Design, or Chakra UI out of the box.</li>
+          <li>The product is internal tooling where visual identity matters less than speed.</li>
+          <li>Nobody on the team wants to maintain a component library &mdash; an unmaintained library is worse than a dependency.</li>
+          <li>You're prototyping and need to validate the idea before investing in custom components.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where component libraries link in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">tech/design</span>
+        <div class="skill">Design hub</div>
+        <div class="why">Components are the practical output of every other design sub-skill.</div>
+      </a>
+      <a href="design-systems.html" class="connect-node">
+        <span class="tag">tech/design/systems</span>
+        <div class="skill">Design Systems</div>
+        <div class="why">Tokens are the input; components are the output. A library without tokens is a collection of hardcoded opinions.</div>
+      </a>
+      <a href="frameworks.html" class="connect-node">
+        <span class="tag">tech/design/frameworks</span>
+        <div class="skill">Frameworks</div>
+        <div class="why">The framework determines how components are styled &mdash; Tailwind classes, CSS Modules, or CSS-in-JS.</div>
+      </a>
+      <a href="accessibility.html" class="connect-node">
+        <span class="tag">tech/design/accessibility</span>
+        <div class="skill">Accessibility</div>
+        <div class="why">Components are where accessibility either compounds (built once, accessible everywhere) or falls apart (inconsistent across instances).</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 06 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://storybook.js.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">Storybook</span>
+        <span class="r-url">storybook.js.org</span>
+      </a>
+      <a href="https://cva.style" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Library</span>
+        <span class="r-title">class-variance-authority (cva)</span>
+        <span class="r-url">cva.style</span>
+      </a>
+      <a href="https://www.chromatic.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Testing</span>
+        <span class="r-title">Chromatic &mdash; visual regression</span>
+        <span class="r-url">chromatic.com</span>
+      </a>
+      <a href="https://bradfrost.com/blog/post/atomic-web-design/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Methodology</span>
+        <span class="r-title">Atomic Design &mdash; Brad Frost</span>
+        <span class="r-url">bradfrost.com</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Design sub-hub</a>
+      <a href="https://storybook.js.org" target="_blank" rel="noopener">Storybook &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.querySelector('.theme-toggle').textContent=n==='dark'?'\u2600\uFE0F':'\uD83C\uDF19';localStorage.setItem('theme',n)}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'\u2600\uFE0F':'\uD83C\uDF19'}
+  const observer=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

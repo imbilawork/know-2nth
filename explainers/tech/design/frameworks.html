@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frameworks — know.2nth.ai</title>
+<meta name="description" content="CSS frameworks — Tailwind, shadcn/ui, Radix UI, and the tradeoffs between utility-first, CSS-in-JS, and CSS Modules.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/design/frameworks</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Design</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">design</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">frameworks</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; Frameworks &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      How you write CSS<br><span class="gradient">is a team decision.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Tailwind, shadcn/ui, Radix, CSS Modules, CSS-in-JS &mdash; these are not interchangeable. Each makes a trade between authoring speed, runtime cost, and team ergonomics. The right choice depends on your project shape, not on which framework has the most GitHub stars this week.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">Tailwind &middot; shadcn/ui</span>
+      <span class="pill">Radix UI</span>
+      <span class="pill">CSS Modules</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">Three strategies for styling, one codebase to maintain.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Utility-first (Tailwind CSS)</strong> puts classes directly in markup. No separate stylesheet, no naming debate, no specificity wars. The JIT compiler scans your templates and generates only the CSS you actually use. The result is tiny bundles and fast iteration &mdash; at the cost of verbose HTML that some teams find unreadable.</p>
+      <p><strong>Component-scoped (CSS Modules / CSS-in-JS)</strong> keeps styles co-located with the component that uses them. CSS Modules do it at build time with class name hashing &mdash; zero runtime cost. CSS-in-JS (styled-components, Emotion) does it at runtime with JS-generated stylesheets &mdash; more flexible, more overhead.</p>
+      <p><strong>Unstyled primitives (Radix UI, Headless UI)</strong> give you accessible behaviour with zero opinions on appearance. You bring the styling &mdash; Tailwind, CSS Modules, vanilla CSS, whatever. shadcn/ui takes this further: it generates Radix-based components into your codebase, pre-styled with Tailwind, so you own the code outright.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">The code behind each approach.</h2>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">/* tailwind.config.ts — extending the default theme */</span>
+<span class="k">import</span> type { Config } <span class="k">from</span> <span class="s">'tailwindcss'</span>
+
+<span class="k">export default</span> {
+  content: [<span class="s">'./src/**/*.{ts,tsx}'</span>],
+  theme: {
+    extend: {
+      colors: {
+        ink: <span class="s">'#0B1120'</span>,
+        navy: <span class="s">'#121D33'</span>,
+        sky: <span class="s">'#38BDF8'</span>,
+      },
+      fontFamily: {
+        sans: [<span class="s">'Outfit'</span>, <span class="s">'system-ui'</span>, <span class="s">'sans-serif'</span>],
+        mono: [<span class="s">'JetBrains Mono'</span>, <span class="s">'monospace'</span>],
+      },
+      borderRadius: {
+        lg: <span class="s">'20px'</span>,
+        md: <span class="s">'12px'</span>,
+      },
+    },
+  },
+  plugins: [],
+} <span class="k">satisfies</span> Config</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">{/* shadcn/ui — a component you own, not a dependency */}</span>
+<span class="k">import</span> { Button } <span class="k">from</span> <span class="s">"@/components/ui/button"</span>
+
+<span class="c">{/* This file lives in YOUR repo — edit it freely */}</span>
+<span class="k">export function</span> <span class="n">SubmitAction</span>() {
+  <span class="k">return</span> (
+    &lt;<span class="n">Button</span> variant=<span class="s">"default"</span> size=<span class="s">"lg"</span>&gt;
+      Deploy to production
+    &lt;/<span class="n">Button</span>&gt;
+  )
+}
+
+<span class="c">{/* Install a new component: npx shadcn@latest add dialog */}</span>
+<span class="c">{/* It copies the source into components/ui/dialog.tsx */}</span></pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">{/* Radix primitive — accessible, unstyled, composable */}</span>
+<span class="k">import</span> * <span class="k">as</span> Dialog <span class="k">from</span> <span class="s">'@radix-ui/react-dialog'</span>
+
+<span class="k">export function</span> <span class="n">ConfirmDialog</span>({ children }) {
+  <span class="k">return</span> (
+    &lt;<span class="n">Dialog.Root</span>&gt;
+      &lt;<span class="n">Dialog.Trigger</span> asChild&gt;{children}&lt;/<span class="n">Dialog.Trigger</span>&gt;
+      &lt;<span class="n">Dialog.Portal</span>&gt;
+        &lt;<span class="n">Dialog.Overlay</span> className=<span class="s">"fixed inset-0 bg-black/50"</span> /&gt;
+        &lt;<span class="n">Dialog.Content</span> className=<span class="s">"fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-navy rounded-lg p-6"</span>&gt;
+          &lt;<span class="n">Dialog.Title</span>&gt;Confirm&lt;/<span class="n">Dialog.Title</span>&gt;
+          &lt;<span class="n">Dialog.Description</span>&gt;This action cannot be undone.&lt;/<span class="n">Dialog.Description</span>&gt;
+          &lt;<span class="n">Dialog.Close</span> asChild&gt;
+            &lt;button className=<span class="s">"mt-4 px-4 py-2 bg-blue rounded-md text-paper"</span>&gt;
+              Confirm
+            &lt;/button&gt;
+          &lt;/<span class="n">Dialog.Close</span>&gt;
+        &lt;/<span class="n">Dialog.Content</span>&gt;
+      &lt;/<span class="n">Dialog.Portal</span>&gt;
+    &lt;/<span class="n">Dialog.Root</span>&gt;
+  )
+}</pre>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.12s">
+      <table class="compare">
+        <thead>
+          <tr><th>Approach</th><th>Runtime cost</th><th>DX</th><th>Best for</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Tailwind</code></td><td>Zero &mdash; static CSS</td><td>Fast iteration, verbose markup</td><td>Teams that ship fast and value small bundles</td></tr>
+          <tr><td><code>CSS Modules</code></td><td>Zero &mdash; build-time hashing</td><td>Familiar CSS, scoped by default</td><td>Teams migrating from vanilla CSS</td></tr>
+          <tr><td><code>CSS-in-JS</code></td><td>Runtime JS overhead</td><td>Dynamic styles, theme access in JS</td><td>Design-heavy apps needing runtime theming</td></tr>
+          <tr><td><code>shadcn/ui</code></td><td>Zero &mdash; Tailwind underneath</td><td>Copy-paste, full ownership</td><td>React + Tailwind projects wanting pre-built components</td></tr>
+          <tr><td><code>Radix UI</code></td><td>Minimal &mdash; behaviour only</td><td>Accessible primitives, BYOS</td><td>Teams wanting accessibility without style opinions</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">The mistakes everyone makes once.</h2>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Mixing strategies without boundaries</strong>
+        <p>Tailwind in one component, styled-components in another, a global stylesheet overriding both. Pick one primary approach and stick to it. A second approach is allowed only if it's scoped to a clear boundary (e.g., a third-party widget).</p>
+      </div>
+      <div class="gotcha">
+        <strong>Tailwind's content config is load-bearing</strong>
+        <p>If your <code>content</code> array doesn't include a file path, Tailwind's JIT won't scan it, and those classes won't exist in the output. Every mysterious "class not working" bug starts here.</p>
+      </div>
+      <div class="gotcha">
+        <strong>shadcn/ui is not a package you update</strong>
+        <p>It copies files into your project. Once you edit them, there's no <code>npm update</code> path. That's the design &mdash; you own the code &mdash; but it means you also own the maintenance. Don't treat it like a dependency.</p>
+      </div>
+      <div class="gotcha">
+        <strong>CSS-in-JS has real runtime cost on SSR</strong>
+        <p>Libraries like styled-components inject styles via JavaScript. On the server, that means serialising stylesheets into the HTML response. With React Server Components, several CSS-in-JS libraries simply don't work. Check compatibility before committing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Pick the framework that fits the team.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Go Tailwind when</h4>
+        <ul>
+          <li>The team values speed over CSS purity and can read utility classes fluently.</li>
+          <li>You want tiny production bundles without a CSS-in-JS runtime.</li>
+          <li>You're pairing with shadcn/ui or building a design system with Tailwind's config as the token layer.</li>
+          <li>AI agents are generating your markup &mdash; LLMs produce surprisingly good Tailwind.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip Tailwind when</h4>
+        <ul>
+          <li>The team finds utility classes unreadable and won't adopt the mental model.</li>
+          <li>You need deeply dynamic styles that change on every render &mdash; Tailwind is static by design.</li>
+          <li>You're working in a non-React ecosystem where CSS Modules or scoped styles are the norm.</li>
+          <li>The project is a WordPress theme or CMS where class names need to be human-readable in templates.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where frameworks link in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">tech/design</span>
+        <div class="skill">Design hub</div>
+        <div class="why">The parent hub. Frameworks are the transport layer for design tokens.</div>
+      </a>
+      <a href="design-systems.html" class="connect-node">
+        <span class="tag">tech/design/systems</span>
+        <div class="skill">Design Systems</div>
+        <div class="why">Tokens feed into Tailwind config, CSS variables, and theme providers. Systems without frameworks are academic.</div>
+      </a>
+      <a href="components.html" class="connect-node">
+        <span class="tag">tech/design/components</span>
+        <div class="skill">Component Libraries</div>
+        <div class="why">shadcn/ui and Radix live at the intersection of framework and component library.</div>
+      </a>
+      <a href="accessibility.html" class="connect-node">
+        <span class="tag">tech/design/accessibility</span>
+        <div class="skill">Accessibility</div>
+        <div class="why">Radix UI exists because accessibility is hard to hand-roll. The framework choice affects how much a11y you get for free.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 06 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://tailwindcss.com/docs" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Tailwind CSS documentation</span>
+        <span class="r-url">tailwindcss.com/docs</span>
+      </a>
+      <a href="https://ui.shadcn.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">shadcn/ui</span>
+        <span class="r-url">ui.shadcn.com</span>
+      </a>
+      <a href="https://www.radix-ui.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Library</span>
+        <span class="r-title">Radix UI primitives</span>
+        <span class="r-url">radix-ui.com</span>
+      </a>
+      <a href="https://github.com/css-modules/css-modules" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec</span>
+        <span class="r-title">CSS Modules</span>
+        <span class="r-url">github.com/css-modules/css-modules</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Design sub-hub</a>
+      <a href="https://tailwindcss.com" target="_blank" rel="noopener">Tailwind CSS &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

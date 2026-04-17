@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figma — know.2nth.ai</title>
+<meta name="description" content="Figma — auto layout, variables, dev mode, REST API for token extraction, and the bridge between design files and production components.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root{--ink:#0B1120;--ink-deep:#060A14;--navy:#121D33;--blue:#2563EB;--blue-glow:#3B82F6;--sky:#38BDF8;--sky-muted:#7DD3FC;--paper:#F8FAFC;--mist:#E2E8F0;--slate:#94A3B8;--warm:#F59E0B;--warm-glow:#FBBF24;--warm-soft:rgba(245,158,11,0.12);--green:#10B981;--green-soft:rgba(16,185,129,0.12);--violet:#8B5CF6;--violet-soft:rgba(139,92,246,0.12);--rose:#F43F5E;--rose-soft:rgba(244,63,94,0.12);--bg:var(--ink);--bg-raised:var(--navy);--bg-card:rgba(18,29,51,0.7);--bg-card-hover:rgba(37,99,235,0.06);--text-primary:var(--paper);--text-secondary:var(--slate);--text-muted:#64748B;--border:rgba(148,163,184,0.1);--border-hover:rgba(56,189,248,0.3);--max-w:1200px;--read-w:760px;--radius-sm:8px;--radius-md:12px;--radius-lg:20px;--radius-pill:100px}
+  [data-theme="light"]{--bg:#F1F5F9;--bg-raised:#FFFFFF;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(37,99,235,0.04);--text-primary:var(--ink);--text-secondary:#475569;--text-muted:#94A3B8;--border:rgba(15,23,42,0.08);--border-hover:rgba(37,99,235,0.25)}
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Outfit',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  body::before{content:'';position:fixed;inset:0;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .glow-orb{position:fixed;border-radius:50%;filter:blur(120px);opacity:0.08;pointer-events:none;z-index:0}.glow-orb.blue{width:600px;height:600px;background:var(--blue);top:-200px;right:-100px}.glow-orb.sky{width:500px;height:500px;background:var(--sky);bottom:20%;left:-150px}[data-theme="light"] .glow-orb{opacity:0.04}
+  nav{position:sticky;top:0;z-index:100;padding:0 24px;backdrop-filter:blur(20px) saturate(1.4);background:rgba(11,17,32,0.75);border-bottom:1px solid var(--border)}[data-theme="light"] nav{background:rgba(241,245,249,0.8)}
+  .nav-inner{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-primary)}.nav-brand-mark{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}.nav-brand-sub{font-size:12px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;padding-left:10px;border-left:1px solid var(--border)}
+  .nav-right{display:flex;align-items:center;gap:16px}.nav-link{font-size:13px;color:var(--text-secondary);text-decoration:none;font-weight:500;transition:color 0.2s}.nav-link:hover{color:var(--sky)}.theme-toggle{background:none;border:1px solid var(--border);color:var(--text-secondary);width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:16px;transition:all 0.2s}.theme-toggle:hover{border-color:var(--border-hover);color:var(--sky)}
+  .container{max-width:var(--max-w);margin:0 auto;padding:0 24px;position:relative;z-index:1}
+  .crumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;padding:28px 0 0;display:flex;gap:10px;flex-wrap:wrap}.crumb a{color:var(--text-muted);text-decoration:none;transition:color 0.2s}.crumb a:hover{color:var(--sky)}.crumb-sep{opacity:0.5}.crumb-current{color:var(--text-secondary)}
+  .hero{padding:48px 0 64px}.hero .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:24px;display:inline-flex;align-items:center;gap:10px}.hero .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-glow);box-shadow:0 0 12px var(--blue-glow)}.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;line-height:1.04;letter-spacing:-2px;margin-bottom:22px;max-width:16ch}.hero h1 .gradient{background:linear-gradient(135deg,var(--blue-glow),var(--sky),var(--sky-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero .sub{font-size:18px;color:var(--text-secondary);max-width:680px;line-height:1.65;font-weight:300;margin-bottom:28px}
+  .hero-meta{display:flex;gap:8px;flex-wrap:wrap}.pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);color:var(--text-secondary);letter-spacing:0.5px}.pill.accent{background:rgba(37,99,235,0.12);color:var(--blue-glow);border-color:rgba(37,99,235,0.25)}
+  section{padding:52px 0;position:relative}.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:14px}.section-title{font-size:clamp(26px,3.4vw,36px);font-weight:700;letter-spacing:-0.8px;margin-bottom:18px;line-height:1.2}.section-lede{font-size:16px;color:var(--text-secondary);max-width:var(--read-w);line-height:1.75;font-weight:300;margin-bottom:32px}
+  .prose p{font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:var(--read-w);margin-bottom:18px}.prose p strong{color:var(--text-primary);font-weight:600}.prose code{font-family:'JetBrains Mono',monospace;font-size:0.88em;background:var(--bg-card);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--sky)}
+  pre.code{background:var(--ink-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px 22px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;color:var(--mist);margin:0 0 20px;max-width:var(--read-w)}[data-theme="light"] pre.code{background:#0F172A;color:#E2E8F0}pre.code .k{color:var(--sky)}pre.code .s{color:#A5F3B8}pre.code .c{color:var(--text-muted);font-style:italic}pre.code .n{color:#FCD34D}
+  .info-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;max-width:var(--read-w);margin-bottom:20px}.info-card h4{font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-0.2px}.info-card p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:10px}.info-card p:last-child{margin-bottom:0}
+  .gotcha-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}.gotcha{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-left:3px solid var(--rose);border-radius:var(--radius-md);padding:18px 22px}.gotcha strong{display:block;color:var(--text-primary);font-weight:600;font-size:14px;margin-bottom:6px}.gotcha p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+  .connect-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.connect-node{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;transition:all 0.3s;text-decoration:none;color:inherit;display:block}.connect-node:hover{border-color:var(--border-hover);background:var(--bg-card-hover)}.connect-node .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px}.connect-node .skill{font-size:14px;font-weight:600;margin-bottom:4px}.connect-node .why{font-size:12px;color:var(--text-secondary);line-height:1.5}
+  .resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.resource{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;text-decoration:none;transition:all 0.3s;display:flex;flex-direction:column;gap:4px}.resource:hover{border-color:var(--border-hover)}.resource .r-kind{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}.resource .r-title{font-size:14px;font-weight:600;color:var(--text-primary)}.resource .r-url{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);word-break:break-all}
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:var(--read-w)}@media(max-width:720px){.decision-grid{grid-template-columns:1fr}}.decision-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 24px}.decision-card.use{border-left:3px solid var(--green)}.decision-card.skip{border-left:3px solid var(--rose)}.decision-card h4{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}.decision-card.use h4{color:var(--green)}.decision-card.skip h4{color:var(--rose)}.decision-card ul{list-style:none;padding:0}.decision-card li{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:6px 0;border-bottom:1px solid var(--border)}.decision-card li:last-child{border-bottom:none}
+  footer{padding:60px 0 40px;border-top:1px solid var(--border);text-align:center;margin-top:40px}.footer-brand{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}.footer-tagline{font-size:13px;color:var(--text-muted);margin-bottom:24px}.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:24px;flex-wrap:wrap}.footer-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;transition:color 0.2s}.footer-links a:hover{color:var(--sky)}.footer-copy{font-size:12px;color:var(--text-muted)}
+  .fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){.nav-brand-sub{display:none}.nav-link{display:none}pre.code{font-size:11px;padding:14px 16px}}
+  *,*::before,*::after{transition-property:background-color,border-color,color,box-shadow;transition-duration:0.3s;transition-timing-function:ease}
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/design/figma</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Design</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="./">design</a><span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">figma</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; Figma &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The design file<br><span class="gradient">is not the product.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Figma is where design decisions get made. The product is what ships in the browser. The gap between those two &mdash; the handoff, the token sync, the component mapping &mdash; is where most design system implementations break. Figma's Variables, Dev Mode, and REST API narrow that gap, but they don't close it.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">Auto layout</span>
+      <span class="pill">Variables</span>
+      <span class="pill">Dev mode</span>
+      <span class="pill">REST API</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A design tool that's also a token database.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Auto layout</strong> is Figma's flexbox. It makes frames responsive &mdash; children stack, wrap, and distribute with padding, gap, and alignment controls. If your Figma file doesn't use auto layout, it's a picture, not a design. Engineers can't translate fixed-position rectangles into responsive components.</p>
+      <p><strong>Variables</strong> replaced the old "styles" system for colour, spacing, and sizing. They support <strong>modes</strong> &mdash; light/dark, brand A/brand B &mdash; so a single design file can represent multiple themes without duplicating frames. Variables are the Figma-side representation of design tokens.</p>
+      <p><strong>Dev Mode</strong> shows engineers the CSS, spacing values, and component properties for any selected element. It's the handoff layer &mdash; better than inspecting with a third-party plugin, but still not a substitute for a shared token file that both Figma and code consume.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">API-driven token extraction.</h2>
+      <p class="section-lede">The Figma REST API lets you read a file's structure, styles, and variables programmatically. This is how you bridge the Figma-to-code gap without manual copy-paste.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># Extract variables (tokens) from a Figma file via REST API</span>
+<span class="c"># GET /v1/files/:file_key/variables/local</span>
+
+<span class="k">curl</span> -H <span class="s">"X-Figma-Token: YOUR_TOKEN"</span> \
+  <span class="s">"https://api.figma.com/v1/files/FILE_KEY/variables/local"</span>
+
+<span class="c"># Response shape (simplified):</span>
+{
+  <span class="s">"status"</span>: <span class="n">200</span>,
+  <span class="s">"meta"</span>: {
+    <span class="s">"variableCollections"</span>: {
+      <span class="s">"VariableCollectionId:123"</span>: {
+        <span class="s">"name"</span>: <span class="s">"Primitives"</span>,
+        <span class="s">"modes"</span>: [
+          { <span class="s">"modeId"</span>: <span class="s">"1:0"</span>, <span class="s">"name"</span>: <span class="s">"Light"</span> },
+          { <span class="s">"modeId"</span>: <span class="s">"1:1"</span>, <span class="s">"name"</span>: <span class="s">"Dark"</span> }
+        ]
+      }
+    },
+    <span class="s">"variables"</span>: {
+      <span class="s">"VariableId:456"</span>: {
+        <span class="s">"name"</span>: <span class="s">"color/blue/500"</span>,
+        <span class="s">"resolvedType"</span>: <span class="s">"COLOR"</span>,
+        <span class="s">"valuesByMode"</span>: {
+          <span class="s">"1:0"</span>: { <span class="s">"r"</span>: <span class="n">0.231</span>, <span class="s">"g"</span>: <span class="n">0.510</span>, <span class="s">"b"</span>: <span class="n">0.965</span>, <span class="s">"a"</span>: <span class="n">1</span> },
+          <span class="s">"1:1"</span>: { <span class="s">"r"</span>: <span class="n">0.231</span>, <span class="s">"g"</span>: <span class="n">0.510</span>, <span class="s">"b"</span>: <span class="n">0.965</span>, <span class="s">"a"</span>: <span class="n">1</span> }
+        }
+      }
+    }
+  }
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Figma plugin scaffold — runs inside Figma's sandbox</span>
+<span class="c">// manifest.json</span>
+{
+  <span class="s">"name"</span>: <span class="s">"Token Exporter"</span>,
+  <span class="s">"id"</span>: <span class="s">"your-plugin-id"</span>,
+  <span class="s">"api"</span>: <span class="s">"1.0.0"</span>,
+  <span class="s">"main"</span>: <span class="s">"code.js"</span>,
+  <span class="s">"editorType"</span>: [<span class="s">"figma"</span>]
+}
+
+<span class="c">// code.ts — runs in Figma's plugin sandbox</span>
+<span class="k">const</span> collections = <span class="k">await</span> figma.variables
+  .getLocalVariableCollectionsAsync();
+
+<span class="k">for</span> (<span class="k">const</span> collection <span class="k">of</span> collections) {
+  <span class="k">const</span> variables = collection.variableIds.map(
+    id =&gt; figma.variables.getVariableById(id)
+  );
+
+  <span class="k">const</span> tokens = variables.map(v =&gt; ({
+    name: v.name,
+    type: v.resolvedType,
+    values: Object.fromEntries(
+      collection.modes.map(mode =&gt; [
+        mode.name,
+        v.valuesByMode[mode.modeId]
+      ])
+    ),
+  }));
+
+  console.log(JSON.stringify(tokens, <span class="k">null</span>, <span class="n">2</span>));
+}</pre>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Where the Figma-to-code bridge leaks.</h2>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Figma CSS is not production CSS</strong>
+        <p>Dev Mode generates CSS from the visual properties of a frame. It doesn't know about your tokens, your Tailwind config, or your component API. Treat it as a reference, not as copy-paste production code.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Variables API is read-only for external tools</strong>
+        <p>The REST API lets you read variables but not write them. The sync is one-way: Figma to code. If your tokens change in code, you need a plugin or manual update to push them back into Figma.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Components without auto layout are static images</strong>
+        <p>A component that uses fixed positioning looks correct in Figma but tells engineers nothing about how it should behave at different sizes. Always use auto layout for any component that will be implemented as a responsive element.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Variables require a paid plan</strong>
+        <p>Figma Variables (modes, collections) require a Professional plan or higher. Free plan users can view but not create variables. Factor this into budget planning before committing to a Figma-native token workflow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Figma as the token source of truth.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use Figma as token source when</h4>
+        <ul>
+          <li>Designers are the primary token authors and engineers consume them downstream.</li>
+          <li>You have a CI pipeline that reads the Figma REST API and generates token files on change.</li>
+          <li>The team is small enough that Figma-to-code sync is manageable with a plugin or API script.</li>
+          <li>You need mode support (light/dark) and want designers to preview both themes in context.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Use code as token source when</h4>
+        <ul>
+          <li>Engineers and designers co-author tokens and code is the more natural collaboration surface.</li>
+          <li>You need tokens on platforms Figma doesn't cover (iOS, Android, CLI tools).</li>
+          <li>The Figma REST API's read-only limitation makes the sync too fragile for your workflow.</li>
+          <li>Style Dictionary or Tokens Studio already manages your tokens and pushing to Figma is secondary.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where Figma links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">tech/design</span>
+        <div class="skill">Design hub</div>
+        <div class="why">Figma is one of the two design-to-code skills &mdash; the primary design tool.</div>
+      </a>
+      <a href="design-systems.html" class="connect-node">
+        <span class="tag">tech/design/systems</span>
+        <div class="skill">Design Systems</div>
+        <div class="why">Figma Variables are the design-side representation of tokens. The system defines the values; Figma is where designers consume them.</div>
+      </a>
+      <a href="ai-design.html" class="connect-node">
+        <span class="tag">tech/design/ai-tools</span>
+        <div class="skill">AI Design Tools</div>
+        <div class="why">AI plugins run inside Figma. Content generation, layout suggestions, and accessibility checks all extend the Figma workflow.</div>
+      </a>
+      <a href="components.html" class="connect-node">
+        <span class="tag">tech/design/components</span>
+        <div class="skill">Component Libraries</div>
+        <div class="why">Figma components should map 1:1 to code components. When they drift, the handoff breaks.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 06 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.figma.com/developers/api" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">API</span>
+        <span class="r-title">Figma REST API documentation</span>
+        <span class="r-url">figma.com/developers/api</span>
+      </a>
+      <a href="https://www.figma.com/plugin-docs/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Figma Plugin API</span>
+        <span class="r-url">figma.com/plugin-docs</span>
+      </a>
+      <a href="https://help.figma.com/hc/en-us/articles/15339657135383" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">Variables documentation</span>
+        <span class="r-url">help.figma.com</span>
+      </a>
+      <a href="https://tokens.studio" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Plugin</span>
+        <span class="r-title">Tokens Studio for Figma</span>
+        <span class="r-url">tokens.studio</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Design sub-hub</a>
+      <a href="https://www.figma.com" target="_blank" rel="noopener">Figma &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.querySelector('.theme-toggle').textContent=n==='dark'?'\u2600\uFE0F':'\uD83C\uDF19';localStorage.setItem('theme',n)}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'\u2600\uFE0F':'\uD83C\uDF19'}
+  const observer=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

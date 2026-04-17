@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion — know.2nth.ai</title>
+<meta name="description" content="Motion — CSS transitions, Web Animations API, Framer Motion, spring physics, reduced motion, and the line between animation that communicates and animation that decorates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root{--ink:#0B1120;--ink-deep:#060A14;--navy:#121D33;--blue:#2563EB;--blue-glow:#3B82F6;--sky:#38BDF8;--sky-muted:#7DD3FC;--paper:#F8FAFC;--mist:#E2E8F0;--slate:#94A3B8;--warm:#F59E0B;--warm-glow:#FBBF24;--warm-soft:rgba(245,158,11,0.12);--green:#10B981;--green-soft:rgba(16,185,129,0.12);--violet:#8B5CF6;--violet-soft:rgba(139,92,246,0.12);--rose:#F43F5E;--rose-soft:rgba(244,63,94,0.12);--bg:var(--ink);--bg-raised:var(--navy);--bg-card:rgba(18,29,51,0.7);--bg-card-hover:rgba(37,99,235,0.06);--text-primary:var(--paper);--text-secondary:var(--slate);--text-muted:#64748B;--border:rgba(148,163,184,0.1);--border-hover:rgba(56,189,248,0.3);--max-w:1200px;--read-w:760px;--radius-sm:8px;--radius-md:12px;--radius-lg:20px;--radius-pill:100px}
+  [data-theme="light"]{--bg:#F1F5F9;--bg-raised:#FFFFFF;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(37,99,235,0.04);--text-primary:var(--ink);--text-secondary:#475569;--text-muted:#94A3B8;--border:rgba(15,23,42,0.08);--border-hover:rgba(37,99,235,0.25)}
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Outfit',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  body::before{content:'';position:fixed;inset:0;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .glow-orb{position:fixed;border-radius:50%;filter:blur(120px);opacity:0.08;pointer-events:none;z-index:0}.glow-orb.blue{width:600px;height:600px;background:var(--blue);top:-200px;right:-100px}.glow-orb.sky{width:500px;height:500px;background:var(--sky);bottom:20%;left:-150px}[data-theme="light"] .glow-orb{opacity:0.04}
+  nav{position:sticky;top:0;z-index:100;padding:0 24px;backdrop-filter:blur(20px) saturate(1.4);background:rgba(11,17,32,0.75);border-bottom:1px solid var(--border)}[data-theme="light"] nav{background:rgba(241,245,249,0.8)}
+  .nav-inner{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-primary)}.nav-brand-mark{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}.nav-brand-sub{font-size:12px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;padding-left:10px;border-left:1px solid var(--border)}
+  .nav-right{display:flex;align-items:center;gap:16px}.nav-link{font-size:13px;color:var(--text-secondary);text-decoration:none;font-weight:500;transition:color 0.2s}.nav-link:hover{color:var(--sky)}.theme-toggle{background:none;border:1px solid var(--border);color:var(--text-secondary);width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:16px;transition:all 0.2s}.theme-toggle:hover{border-color:var(--border-hover);color:var(--sky)}
+  .container{max-width:var(--max-w);margin:0 auto;padding:0 24px;position:relative;z-index:1}
+  .crumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;padding:28px 0 0;display:flex;gap:10px;flex-wrap:wrap}.crumb a{color:var(--text-muted);text-decoration:none;transition:color 0.2s}.crumb a:hover{color:var(--sky)}.crumb-sep{opacity:0.5}.crumb-current{color:var(--text-secondary)}
+  .hero{padding:48px 0 64px}.hero .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:24px;display:inline-flex;align-items:center;gap:10px}.hero .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-glow);box-shadow:0 0 12px var(--blue-glow)}.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;line-height:1.04;letter-spacing:-2px;margin-bottom:22px;max-width:16ch}.hero h1 .gradient{background:linear-gradient(135deg,var(--blue-glow),var(--sky),var(--sky-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero .sub{font-size:18px;color:var(--text-secondary);max-width:680px;line-height:1.65;font-weight:300;margin-bottom:28px}
+  .hero-meta{display:flex;gap:8px;flex-wrap:wrap}.pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);color:var(--text-secondary);letter-spacing:0.5px}.pill.accent{background:rgba(37,99,235,0.12);color:var(--blue-glow);border-color:rgba(37,99,235,0.25)}
+  section{padding:52px 0;position:relative}.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:14px}.section-title{font-size:clamp(26px,3.4vw,36px);font-weight:700;letter-spacing:-0.8px;margin-bottom:18px;line-height:1.2}.section-lede{font-size:16px;color:var(--text-secondary);max-width:var(--read-w);line-height:1.75;font-weight:300;margin-bottom:32px}
+  .prose p{font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:var(--read-w);margin-bottom:18px}.prose p strong{color:var(--text-primary);font-weight:600}.prose code{font-family:'JetBrains Mono',monospace;font-size:0.88em;background:var(--bg-card);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--sky)}
+  pre.code{background:var(--ink-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px 22px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;color:var(--mist);margin:0 0 20px;max-width:var(--read-w)}[data-theme="light"] pre.code{background:#0F172A;color:#E2E8F0}pre.code .k{color:var(--sky)}pre.code .s{color:#A5F3B8}pre.code .c{color:var(--text-muted);font-style:italic}pre.code .n{color:#FCD34D}
+  .info-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;max-width:var(--read-w);margin-bottom:20px}.info-card h4{font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-0.2px}.info-card p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:10px}.info-card p:last-child{margin-bottom:0}
+  .compare-wrap{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;max-width:var(--read-w);margin-bottom:20px}.compare{width:100%;border-collapse:collapse;font-size:13px}.compare th,.compare td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}.compare thead th{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--sky);background:rgba(37,99,235,0.04)}.compare tbody tr:last-child td{border-bottom:none}.compare td{color:var(--text-secondary)}.compare td code{font-family:'JetBrains Mono',monospace;font-size:0.9em;color:var(--sky)}
+  .gotcha-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}.gotcha{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-left:3px solid var(--rose);border-radius:var(--radius-md);padding:18px 22px}.gotcha strong{display:block;color:var(--text-primary);font-weight:600;font-size:14px;margin-bottom:6px}.gotcha p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+  .connect-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.connect-node{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;transition:all 0.3s;text-decoration:none;color:inherit;display:block}.connect-node:hover{border-color:var(--border-hover);background:var(--bg-card-hover)}.connect-node .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px}.connect-node .skill{font-size:14px;font-weight:600;margin-bottom:4px}.connect-node .why{font-size:12px;color:var(--text-secondary);line-height:1.5}
+  .resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.resource{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;text-decoration:none;transition:all 0.3s;display:flex;flex-direction:column;gap:4px}.resource:hover{border-color:var(--border-hover)}.resource .r-kind{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}.resource .r-title{font-size:14px;font-weight:600;color:var(--text-primary)}.resource .r-url{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);word-break:break-all}
+  .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:var(--read-w)}@media(max-width:720px){.decision-grid{grid-template-columns:1fr}}.decision-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 24px}.decision-card.use{border-left:3px solid var(--green)}.decision-card.skip{border-left:3px solid var(--rose)}.decision-card h4{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}.decision-card.use h4{color:var(--green)}.decision-card.skip h4{color:var(--rose)}.decision-card ul{list-style:none;padding:0}.decision-card li{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:6px 0;border-bottom:1px solid var(--border)}.decision-card li:last-child{border-bottom:none}
+  footer{padding:60px 0 40px;border-top:1px solid var(--border);text-align:center;margin-top:40px}.footer-brand{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}.footer-tagline{font-size:13px;color:var(--text-muted);margin-bottom:24px}.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:24px;flex-wrap:wrap}.footer-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;transition:color 0.2s}.footer-links a:hover{color:var(--sky)}.footer-copy{font-size:12px;color:var(--text-muted)}
+  .fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+  @media(max-width:768px){.nav-brand-sub{display:none}.nav-link{display:none}pre.code{font-size:11px;padding:14px 16px}.compare{font-size:12px}.compare th,.compare td{padding:10px 12px}}
+  *,*::before,*::after{transition-property:background-color,border-color,color,box-shadow;transition-duration:0.3s;transition-timing-function:ease}
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/design/motion</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Design</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="./">design</a><span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">motion</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; Motion &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Motion that decorates<br><span class="gradient">is noise.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Animation should communicate state change &mdash; entering, leaving, loading, error. Everything else is visual noise that slows down the interface and annoys users who've turned on reduced motion. The craft is knowing when to animate and, more importantly, when not to.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">CSS transitions</span>
+      <span class="pill">Framer Motion</span>
+      <span class="pill">Spring physics</span>
+      <span class="pill">prefers-reduced-motion</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">Four tools, one purpose: communicate change.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>CSS transitions</strong> are the simplest tool &mdash; change a property and the browser interpolates between the old and new values. No JavaScript required. Ideal for hover states, colour changes, and layout shifts that need to feel smooth rather than instant.</p>
+      <p><strong>CSS animations</strong> use <code>@keyframes</code> for multi-step sequences. More control than transitions, still zero JS. Good for loading spinners, skeleton pulses, and anything that loops.</p>
+      <p><strong>The Web Animations API</strong> gives JavaScript control over the same engine that runs CSS animations. You get <code>.play()</code>, <code>.pause()</code>, <code>.reverse()</code>, and promises that resolve when the animation finishes. Useful when you need to coordinate animations with logic.</p>
+      <p><strong>Framer Motion</strong> (React) and similar libraries add spring physics, layout animations, gesture handling, and enter/exit transitions via <code>AnimatePresence</code>. They're the right tool when CSS can't express what you need &mdash; and overkill when it can.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">From CSS to spring physics.</h2>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">/* CSS transition — the 80% solution */</span>
+<span class="k">.card</span> {
+  transform: translateY(<span class="n">0</span>);
+  opacity: <span class="n">1</span>;
+  transition: transform <span class="n">0.3s</span> cubic-bezier(<span class="n">0.16, 1, 0.3, 1</span>),
+              opacity <span class="n">0.3s</span> ease;
+}
+<span class="k">.card:hover</span> {
+  transform: translateY(<span class="n">-4px</span>);
+}
+
+<span class="c">/* IntersectionObserver fade-in — this site uses this pattern */</span>
+<span class="k">.fade-up</span> {
+  opacity: <span class="n">0</span>;
+  transform: translateY(<span class="n">24px</span>);
+  transition: opacity <span class="n">0.6s</span> ease, transform <span class="n">0.6s</span> ease;
+}
+<span class="k">.fade-up.visible</span> {
+  opacity: <span class="n">1</span>;
+  transform: translateY(<span class="n">0</span>);
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Framer Motion — enter/exit with spring physics</span>
+<span class="k">import</span> { motion, AnimatePresence } <span class="k">from</span> <span class="s">'framer-motion'</span>
+
+<span class="k">const</span> <span class="n">variants</span> = {
+  hidden:  { opacity: <span class="n">0</span>, y: <span class="n">20</span>, scale: <span class="n">0.95</span> },
+  visible: { opacity: <span class="n">1</span>, y: <span class="n">0</span>,  scale: <span class="n">1</span> },
+  exit:    { opacity: <span class="n">0</span>, y: <span class="n">-10</span>, scale: <span class="n">0.95</span> },
+}
+
+<span class="k">function</span> <span class="n">Toast</span>({ message, isVisible }) {
+  <span class="k">return</span> (
+    &lt;AnimatePresence&gt;
+      {isVisible &amp;&amp; (
+        &lt;motion.div
+          variants={<span class="n">variants</span>}
+          initial=<span class="s">"hidden"</span>
+          animate=<span class="s">"visible"</span>
+          exit=<span class="s">"exit"</span>
+          transition={{ type: <span class="s">"spring"</span>, stiffness: <span class="n">300</span>, damping: <span class="n">25</span> }}
+        &gt;
+          {message}
+        &lt;/motion.div&gt;
+      )}
+    &lt;/AnimatePresence&gt;
+  )
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">// IntersectionObserver — vanilla JS fade-in on scroll</span>
+<span class="k">const</span> observer = <span class="k">new</span> IntersectionObserver(
+  (entries) =&gt; {
+    entries.forEach(entry =&gt; {
+      <span class="k">if</span> (entry.isIntersecting) {
+        entry.target.classList.add(<span class="s">'visible'</span>);
+      }
+    });
+  },
+  { threshold: <span class="n">0.1</span>, rootMargin: <span class="s">'0px 0px -40px 0px'</span> }
+);
+
+document.querySelectorAll(<span class="s">'.fade-up'</span>).forEach(el =&gt; observer.observe(el));</pre>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.12s">
+      <table class="compare">
+        <thead><tr><th>Tool</th><th>Best for</th><th>Avoid when</th></tr></thead>
+        <tbody>
+          <tr><td><code>CSS transitions</code></td><td>Hover, focus, simple state changes</td><td>Enter/exit animations, complex sequences</td></tr>
+          <tr><td><code>CSS @keyframes</code></td><td>Loops, loading states, skeleton pulses</td><td>Animations that need JS coordination</td></tr>
+          <tr><td><code>Web Animations API</code></td><td>Programmatic control, chaining, cancelling</td><td>Simple hover effects (use CSS)</td></tr>
+          <tr><td><code>Framer Motion</code></td><td>Enter/exit, layout, gestures, springs</td><td>Non-React projects, simple CSS-solvable motion</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Where motion goes wrong.</h2>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Ignoring prefers-reduced-motion</strong>
+        <p>Some users get nauseous from parallax and sliding animations. Others have vestibular disorders. <code>@media (prefers-reduced-motion: reduce)</code> must disable or simplify every animation. This is not optional.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Animating layout properties</strong>
+        <p>Animating <code>width</code>, <code>height</code>, <code>top</code>, or <code>left</code> triggers layout recalculation on every frame. Stick to <code>transform</code> and <code>opacity</code> &mdash; they run on the GPU compositor and don't trigger reflow.</p>
+      </div>
+      <div class="gotcha">
+        <strong>will-change on everything</strong>
+        <p><code>will-change: transform</code> tells the browser to promote an element to its own compositor layer. Applying it to every element wastes GPU memory and can cause blurry text. Use it on elements that will actually animate, and remove it when the animation ends.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Entrance animations that delay content</strong>
+        <p>A staggered fade-in that takes 2 seconds to reveal the page content is not a "delightful experience" &mdash; it's making users wait. Keep entrance animations under 400ms total. Users came for the content, not the choreography.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">When to animate.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Animate when</h4>
+        <ul>
+          <li>Something enters or exits the DOM &mdash; the user needs spatial context for where it came from or went.</li>
+          <li>A state change happens that might be missed &mdash; loading, success, error feedback.</li>
+          <li>The layout shifts and you need to bridge the old position to the new one smoothly.</li>
+          <li>You want to reinforce direct manipulation &mdash; drag, swipe, pinch responses.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Don't animate when</h4>
+        <ul>
+          <li>The animation is purely decorative and doesn't communicate any state change.</li>
+          <li>It delays the user from reaching content &mdash; loading screens, splash animations, staggered reveals.</li>
+          <li>CSS can do the job &mdash; don't reach for Framer Motion for a hover colour change.</li>
+          <li>You haven't added a reduced-motion fallback yet &mdash; add that first, then the animation.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where motion links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">tech/design</span>
+        <div class="skill">Design hub</div>
+        <div class="why">Motion is one of the two interface craft skills &mdash; the dynamic half of the visual layer.</div>
+      </a>
+      <a href="accessibility.html" class="connect-node">
+        <span class="tag">tech/design/accessibility</span>
+        <div class="skill">Accessibility</div>
+        <div class="why">prefers-reduced-motion is a hard requirement. Every animation decision has an accessibility dimension.</div>
+      </a>
+      <a href="components.html" class="connect-node">
+        <span class="tag">tech/design/components</span>
+        <div class="skill">Component Libraries</div>
+        <div class="why">Components are where motion gets encapsulated &mdash; an animated toast, a transitioning modal, a skeleton loader.</div>
+      </a>
+      <a href="frameworks.html" class="connect-node">
+        <span class="tag">tech/design/frameworks</span>
+        <div class="skill">Frameworks</div>
+        <div class="why">Tailwind's transition utilities handle the simple cases. Framer Motion handles the complex ones. Both live inside the framework layer.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 06 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.framer.com/motion/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Library</span>
+        <span class="r-title">Framer Motion</span>
+        <span class="r-url">framer.com/motion</span>
+      </a>
+      <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">Web Animations API &mdash; MDN</span>
+        <span class="r-url">developer.mozilla.org</span>
+      </a>
+      <a href="https://web.dev/articles/animations-guide" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">Animations guide &mdash; web.dev</span>
+        <span class="r-url">web.dev/articles/animations-guide</span>
+      </a>
+      <a href="https://easings.net" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">Easing Functions Cheat Sheet</span>
+        <span class="r-url">easings.net</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Design sub-hub</a>
+      <a href="https://www.framer.com/motion/" target="_blank" rel="noopener">Framer Motion &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.querySelector('.theme-toggle').textContent=n==='dark'?'\u2600\uFE0F':'\uD83C\uDF19';localStorage.setItem('theme',n)}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'\u2600\uFE0F':'\uD83C\uDF19'}
+  const observer=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
