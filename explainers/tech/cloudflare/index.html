@@ -313,7 +313,7 @@
     <div class="hub-stats fade-up" style="transition-delay: 0.15s">
       <div class="hub-stat"><div class="num">16</div><div class="label">Services</div></div>
       <div class="hub-stat"><div class="num">13</div><div class="label">Production</div></div>
-      <div class="hub-stat"><div class="num">2</div><div class="label">Live explainers</div></div>
+      <div class="hub-stat"><div class="num">17</div><div class="label">Live explainers</div></div>
     </div>
   </div>
 </section>
@@ -343,32 +343,32 @@
         <p>The V8-isolate runtime that replaced a lot of origin servers. Streaming, service bindings, sub-millisecond cold starts. The first leaf to ship a full know.2nth.ai explainer.</p>
       </a>
 
-      <div class="svc-card soon">
+      <a href="pages.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Pages</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/pages</span>
         <p>Git-driven static hosting with Functions. The "connect a repo, get a deploy" surface that pulls Workers in at the edges. This site runs on it.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="workflows.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Workflows</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/workflows</span>
         <p>Durable execution with <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">step.do()</code> — the orchestration primitive for long-running agent flows without writing your own retry logic.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="workers-for-platforms.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Workers for Platforms</div>
-          <span class="svc-state stub">Stub</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/workers-for-platforms</span>
         <p>Multi-tenant execution — run customer Workers inside your Workers. The "platform-of-platforms" surface for SaaS builders.</p>
-      </div>
+      </a>
 
     </div>
 
@@ -379,41 +379,41 @@
     </div>
     <div class="svc-grid fade-up" style="transition-delay: 0.03s">
 
-      <div class="svc-card soon">
+      <a href="kv.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">KV</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/kv</span>
         <p>Global, eventually consistent key-value. Sessions, feature flags, config — the first real state primitive Workers got.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="r2.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">R2</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/r2</span>
         <p>S3-compatible object storage with <strong>zero egress fees</strong>. Presigned URLs, lifecycle rules, the one storage service on this list that pays for itself against peers.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="d1.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">D1</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/d1</span>
         <p>SQLite at the edge. Migrations, batch ops, single-primary semantics — and the honest constraints that come with being SQLite rather than Postgres.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="hyperdrive.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Hyperdrive</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/hyperdrive</span>
         <p>Connection pooling to your real Postgres or MySQL. The escape hatch for when D1 isn't the right shape and you need the client-side SOR.</p>
-      </div>
+      </a>
 
     </div>
 
@@ -424,41 +424,41 @@
     </div>
     <div class="svc-grid fade-up" style="transition-delay: 0.03s">
 
-      <div class="svc-card soon">
+      <a href="queues.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Queues</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/queues</span>
         <p>Reliable messaging with dead-letter queues. The async AI fan-out pattern — producer Worker drops a job, consumer Worker processes on its own schedule.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="durable-objects.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Durable Objects</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/durable-objects</span>
         <p>Single-writer stateful compute. WebSocket hibernation, strong consistency, the primitive behind real-time collab and game state at the edge.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="analytics-engine.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Analytics Engine</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/analytics-engine</span>
         <p>Time-series metrics you can write from any Worker. The token-economy telemetry store — cheap, append-only, queryable via SQL.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="email.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Email</div>
-          <span class="svc-state stub">Stub</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/email</span>
         <p>Inbound routing plus MailChannels for outbound. Transactional email that lives on the same network as the code that triggered it.</p>
-      </div>
+      </a>
 
     </div>
 
@@ -469,32 +469,32 @@
     </div>
     <div class="svc-grid fade-up" style="transition-delay: 0.03s">
 
-      <div class="svc-card soon">
+      <a href="workers-ai.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Workers AI</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
-        <span class="svc-path">tech/cloudflare/ai/workers-ai</span>
+        <span class="svc-path">tech/cloudflare/workers-ai</span>
         <p>Edge inference across a catalogue of open models — LLMs, embeddings, vision, speech. JSON schema enforcement, no GPU management.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="ai-gateway.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">AI Gateway</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
-        <span class="svc-path">tech/cloudflare/ai/ai-gateway</span>
+        <span class="svc-path">tech/cloudflare/ai-gateway</span>
         <p>Token metering, caching, and fallback routing for LLM calls — a proxy layer that sits between your Worker and OpenAI, Anthropic, or Workers AI.</p>
-      </div>
+      </a>
 
-      <div class="svc-card soon">
+      <a href="vectorize.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Vectorize</div>
-          <span class="svc-state prod">Production</span>
+          <span class="svc-state live">Live</span>
         </div>
-        <span class="svc-path">tech/cloudflare/ai/vectorize</span>
+        <span class="svc-path">tech/cloudflare/vectorize</span>
         <p>Vector database with metadata filtering. The RAG pipeline's retrieval half — pairs with Workers AI embeddings for a fully edge-hosted stack.</p>
-      </div>
+      </a>
 
     </div>
 
@@ -505,14 +505,14 @@
     </div>
     <div class="svc-grid fade-up" style="transition-delay: 0.03s">
 
-      <div class="svc-card soon">
+      <a href="tunnel.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">Tunnel</div>
-          <span class="svc-state stub">Stub</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">tech/cloudflare/tunnel</span>
         <p>Secure outbound connector from on-premise systems to Workers. The right answer when the system of record lives behind someone's firewall.</p>
-      </div>
+      </a>
 
     </div>
 
