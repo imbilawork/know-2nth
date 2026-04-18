@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ODEK LEAP Analytics — Dashboard Demo</title>
+<meta name="description" content="Interactive demo of the ODEK LEAP branded analytics platform — powered by Apache Superset and PostgreSQL, built by 2nth.ai.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --magenta: #B41F8E;
+    --magenta-light: #D94DB8;
+    --magenta-soft: rgba(180, 31, 142, 0.08);
+    --magenta-glow: rgba(180, 31, 142, 0.15);
+    --navy: #151f6d;
+    --navy-deep: #0e1550;
+    --navy-light: #1e2a8a;
+    --ink: #1A1A1A;
+    --charcoal: #2D2D2D;
+    --steel: #6B7280;
+    --mist: #9CA3AF;
+    --silver: #D1D5DB;
+    --cloud: #F3F4F6;
+    --snow: #F9FAFB;
+    --white: #FFFFFF;
+    --green: #059669;
+    --green-soft: rgba(5, 150, 105, 0.1);
+    --red: #DC2626;
+    --red-soft: rgba(220, 38, 38, 0.08);
+    --amber: #D97706;
+    --amber-soft: rgba(217, 119, 6, 0.08);
+    --blue: #2563EB;
+    --blue-soft: rgba(37, 99, 235, 0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito Sans', -apple-system, sans-serif;
+    background: var(--cloud); color: var(--ink);
+    line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
+    background: var(--navy); color: white; z-index: 100;
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .sidebar-brand {
+    padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-brand h1 {
+    font-size: 20px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.2;
+  }
+  .sidebar-brand h1 .odek { color: #FFFFFF; }
+  .sidebar-brand h1 .odek-o { position: relative; }
+  .sidebar-brand h1 .odek-o::after {
+    content: '\0300'; color: var(--magenta-light); font-weight: 800;
+  }
+  .sidebar-brand h1 .dot { color: var(--magenta-light); font-size: 24px; }
+  .sidebar-brand h1 .leap { color: var(--magenta-light); }
+  .sidebar-brand .powered {
+    font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 4px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .sidebar-section {
+    padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: rgba(255,255,255,0.3);
+    padding: 0 20px; margin-bottom: 8px;
+  }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,0.6); cursor: pointer; transition: all 0.2s;
+    text-decoration: none;
+  }
+  .sidebar-link:hover { color: white; background: rgba(255,255,255,0.06); }
+  .sidebar-link.active { color: white; background: var(--magenta); border-radius: 0; }
+  .sidebar-link .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-client {
+    padding: 16px 20px; margin-top: auto;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-client label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: rgba(255,255,255,0.3);
+    display: block; margin-bottom: 6px;
+  }
+  .client-select {
+    width: 100%; padding: 8px 10px; border-radius: 6px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+    color: white; font-family: inherit; font-size: 12px; font-weight: 600;
+    cursor: pointer; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  .client-select option { background: var(--navy); color: white; }
+
+  /* ── Main content ── */
+  .main { margin-left: 240px; min-height: 100vh; }
+
+  .topbar {
+    background: var(--white); border-bottom: 1px solid var(--silver);
+    padding: 0 32px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-title { font-size: 16px; font-weight: 700; color: var(--ink); }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-filter {
+    font-size: 12px; padding: 6px 14px; border-radius: 6px;
+    border: 1px solid var(--silver); background: var(--white);
+    color: var(--charcoal); font-family: inherit; font-weight: 600; cursor: pointer;
+  }
+  .topbar-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--magenta); color: white;
+    display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  }
+
+  .content { padding: 28px 32px; }
+
+  /* ── KPI row ── */
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi {
+    background: var(--white); border-radius: 12px; padding: 22px 24px;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .kpi-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--steel); margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-size: 30px; font-weight: 800; letter-spacing: -1px;
+    color: var(--ink); line-height: 1; margin-bottom: 6px;
+  }
+  .kpi-change {
+    font-size: 12px; font-weight: 700; display: inline-flex;
+    align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px;
+  }
+  .kpi-change.up { background: var(--green-soft); color: var(--green); }
+  .kpi-change.down { background: var(--red-soft); color: var(--red); }
+
+  /* ── Chart cards ── */
+  .chart-grid {
+    display: grid; grid-template-columns: 2fr 1fr; gap: 16px;
+    margin-bottom: 24px;
+  }
+  .chart-card {
+    background: var(--white); border-radius: 12px; padding: 24px;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .chart-card h3 {
+    font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px;
+  }
+  .chart-card .chart-sub {
+    font-size: 11px; color: var(--mist); margin-bottom: 20px;
+  }
+
+  /* ── CSS-only bar chart ── */
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-top: 10px; }
+  .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .bar {
+    width: 100%; border-radius: 4px 4px 0 0; min-height: 4px;
+    transition: height 0.6s ease;
+  }
+  .bar.primary { background: var(--magenta); }
+  .bar.secondary { background: var(--navy); opacity: 0.3; }
+  .bar-label { font-size: 10px; color: var(--mist); font-weight: 600; }
+
+  /* ── CSS-only donut chart ── */
+  .donut-wrap { display: flex; align-items: center; gap: 24px; }
+  .donut {
+    width: 140px; height: 140px; border-radius: 50%; flex-shrink: 0;
+    background: conic-gradient(
+      var(--magenta) 0deg 137deg,
+      var(--navy) 137deg 230deg,
+      var(--blue) 230deg 295deg,
+      var(--silver) 295deg 360deg
+    );
+    position: relative;
+  }
+  .donut::after {
+    content: ''; position: absolute;
+    top: 30px; left: 30px; right: 30px; bottom: 30px;
+    background: var(--white); border-radius: 50%;
+  }
+  .donut-legend { list-style: none; }
+  .donut-legend li {
+    font-size: 12px; color: var(--charcoal); padding: 4px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .donut-legend .dot {
+    width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+  }
+  .donut-legend .val { margin-left: auto; font-weight: 700; color: var(--ink); }
+
+  /* ── Table ── */
+  .data-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  .data-table th {
+    text-align: left; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--mist); padding: 10px 14px;
+    border-bottom: 2px solid var(--cloud);
+  }
+  .data-table td {
+    padding: 12px 14px; border-bottom: 1px solid var(--cloud);
+    color: var(--charcoal);
+  }
+  .data-table tr:hover td { background: var(--snow); }
+  .data-table td:first-child { font-weight: 700; color: var(--ink); }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+  }
+  .badge.high { background: var(--green-soft); color: var(--green); }
+  .badge.medium { background: var(--amber-soft); color: var(--amber); }
+  .badge.low { background: var(--red-soft); color: var(--red); }
+
+  /* ── Retention heatmap ── */
+  .heatmap { display: grid; grid-template-columns: 80px repeat(12, 1fr); gap: 2px; }
+  .heatmap-header {
+    font-size: 9px; font-weight: 700; color: var(--mist);
+    text-align: center; padding: 4px 0;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .heatmap-row-label {
+    font-size: 11px; font-weight: 600; color: var(--charcoal);
+    display: flex; align-items: center; padding-right: 8px;
+  }
+  .heatmap-cell {
+    aspect-ratio: 1; border-radius: 3px; display: grid; place-items: center;
+    font-size: 9px; font-weight: 700; color: white;
+  }
+  .heatmap-cell.h100 { background: var(--magenta); }
+  .heatmap-cell.h90 { background: rgba(180, 31, 142, 0.85); }
+  .heatmap-cell.h80 { background: rgba(180, 31, 142, 0.7); }
+  .heatmap-cell.h70 { background: rgba(180, 31, 142, 0.55); }
+  .heatmap-cell.h60 { background: rgba(180, 31, 142, 0.42); color: var(--ink); }
+  .heatmap-cell.h50 { background: rgba(180, 31, 142, 0.3); color: var(--ink); }
+  .heatmap-cell.h40 { background: rgba(180, 31, 142, 0.2); color: var(--charcoal); }
+  .heatmap-cell.h30 { background: rgba(180, 31, 142, 0.12); color: var(--steel); }
+
+  .full-grid { grid-template-columns: 1fr 1fr; }
+
+  /* ── Demo banner ── */
+  .demo-banner {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    color: white; text-align: center; padding: 10px 20px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+  }
+  .demo-banner a { color: var(--magenta-light); text-decoration: none; }
+  .demo-banner a:hover { text-decoration: underline; }
+
+  @media (max-width: 1024px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .chart-grid { grid-template-columns: 1fr; }
+    .full-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  This is a demo of the ODEK LEAP branded analytics platform — infrastructure by <a href="https://2nth.ai" target="_blank">2nth.ai</a>
+</div>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1><span class="odek">O&#768;DEK</span><span class="dot">.</span><span class="leap">LEAP</span></h1>
+    <div class="powered">Analytics Platform</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Dashboards</div>
+    <a class="sidebar-link active"><span class="icon">📊</span> Executive Overview</a>
+    <a class="sidebar-link"><span class="icon">💰</span> Revenue Drivers</a>
+    <a class="sidebar-link"><span class="icon">👥</span> Client Segmentation</a>
+    <a class="sidebar-link"><span class="icon">🔄</span> Retention Analysis</a>
+    <a class="sidebar-link"><span class="icon">📈</span> Capacity Planning</a>
+    <a class="sidebar-link"><span class="icon">🛡️</span> Risk Dashboard</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Tools</div>
+    <a class="sidebar-link"><span class="icon">🔍</span> SQL Explorer</a>
+    <a class="sidebar-link"><span class="icon">📅</span> Scheduled Reports</a>
+    <a class="sidebar-link"><span class="icon">🔔</span> Alerts</a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Settings</div>
+    <a class="sidebar-link"><span class="icon">👤</span> Users & Roles</a>
+    <a class="sidebar-link"><span class="icon">🔗</span> Data Sources</a>
+  </div>
+
+  <div class="sidebar-client">
+    <label>Active client</label>
+    <select class="client-select">
+      <option>Meridian Insurance Group</option>
+      <option>Protea Financial Services</option>
+      <option>Atlas Capital Partners</option>
+      <option>Kgalema Health Fund</option>
+      <option>Sentinel Wealth Advisors</option>
+    </select>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Executive Overview</div>
+    <div class="topbar-right">
+      <select class="topbar-filter">
+        <option>Last 12 months</option>
+        <option>Last 6 months</option>
+        <option>Last 3 months</option>
+        <option>YTD 2026</option>
+        <option>Custom range...</option>
+      </select>
+      <select class="topbar-filter">
+        <option>All business lines</option>
+        <option>Life insurance</option>
+        <option>Short-term</option>
+        <option>Investments</option>
+        <option>Health</option>
+      </select>
+      <div class="topbar-avatar">JM</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── KPIs ── -->
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Gross Written Premium</div>
+        <div class="kpi-value">R 847M</div>
+        <span class="kpi-change up">+12.4% vs prior year</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Client Retention Rate</div>
+        <div class="kpi-value">87.3%</div>
+        <span class="kpi-change up">+2.1pp vs prior year</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Claims Ratio</div>
+        <div class="kpi-value">62.8%</div>
+        <span class="kpi-change down">+3.2pp vs target</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Active Policies</div>
+        <div class="kpi-value">124,891</div>
+        <span class="kpi-change up">+8,412 net new</span>
+      </div>
+    </div>
+
+    <!-- ── Revenue trend + Segment mix ── -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Monthly Premium Income (R millions)</h3>
+        <div class="chart-sub">Actual vs prior year · All business lines</div>
+        <div class="bar-chart">
+          <div class="bar-group">
+            <div class="bar primary" style="height: 55%"></div>
+            <div class="bar secondary" style="height: 48%"></div>
+            <div class="bar-label">Apr</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 58%"></div>
+            <div class="bar secondary" style="height: 50%"></div>
+            <div class="bar-label">May</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 62%"></div>
+            <div class="bar secondary" style="height: 52%"></div>
+            <div class="bar-label">Jun</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 60%"></div>
+            <div class="bar secondary" style="height: 54%"></div>
+            <div class="bar-label">Jul</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 65%"></div>
+            <div class="bar secondary" style="height: 53%"></div>
+            <div class="bar-label">Aug</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 68%"></div>
+            <div class="bar secondary" style="height: 55%"></div>
+            <div class="bar-label">Sep</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 72%"></div>
+            <div class="bar secondary" style="height: 58%"></div>
+            <div class="bar-label">Oct</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 70%"></div>
+            <div class="bar secondary" style="height: 60%"></div>
+            <div class="bar-label">Nov</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 78%"></div>
+            <div class="bar secondary" style="height: 62%"></div>
+            <div class="bar-label">Dec</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 75%"></div>
+            <div class="bar secondary" style="height: 64%"></div>
+            <div class="bar-label">Jan</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 80%"></div>
+            <div class="bar secondary" style="height: 65%"></div>
+            <div class="bar-label">Feb</div>
+          </div>
+          <div class="bar-group">
+            <div class="bar primary" style="height: 85%"></div>
+            <div class="bar secondary" style="height: 68%"></div>
+            <div class="bar-label">Mar</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Revenue by Business Line</h3>
+        <div class="chart-sub">Current period · R millions</div>
+        <div class="donut-wrap">
+          <div class="donut"></div>
+          <ul class="donut-legend">
+            <li><span class="dot" style="background:var(--magenta)"></span> Life <span class="val">R 322M</span></li>
+            <li><span class="dot" style="background:var(--navy)"></span> Short-term <span class="val">R 218M</span></li>
+            <li><span class="dot" style="background:var(--blue)"></span> Investments <span class="val">R 189M</span></li>
+            <li><span class="dot" style="background:var(--silver)"></span> Health <span class="val">R 118M</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Retention heatmap + Agent table ── -->
+    <div class="chart-grid full-grid">
+      <div class="chart-card">
+        <h3>Client Retention Cohort Analysis</h3>
+        <div class="chart-sub">Percentage of clients retained by month since acquisition</div>
+        <div style="margin-top: 8px;">
+          <div class="heatmap">
+            <div class="heatmap-header"></div>
+            <div class="heatmap-header">M1</div><div class="heatmap-header">M2</div>
+            <div class="heatmap-header">M3</div><div class="heatmap-header">M4</div>
+            <div class="heatmap-header">M5</div><div class="heatmap-header">M6</div>
+            <div class="heatmap-header">M7</div><div class="heatmap-header">M8</div>
+            <div class="heatmap-header">M9</div><div class="heatmap-header">M10</div>
+            <div class="heatmap-header">M11</div><div class="heatmap-header">M12</div>
+
+            <div class="heatmap-row-label">Q1 2025</div>
+            <div class="heatmap-cell h100">100</div><div class="heatmap-cell h90">94</div>
+            <div class="heatmap-cell h90">91</div><div class="heatmap-cell h80">88</div>
+            <div class="heatmap-cell h80">86</div><div class="heatmap-cell h80">84</div>
+            <div class="heatmap-cell h70">82</div><div class="heatmap-cell h70">80</div>
+            <div class="heatmap-cell h70">79</div><div class="heatmap-cell h70">78</div>
+            <div class="heatmap-cell h70">77</div><div class="heatmap-cell h70">76</div>
+
+            <div class="heatmap-row-label">Q2 2025</div>
+            <div class="heatmap-cell h100">100</div><div class="heatmap-cell h90">92</div>
+            <div class="heatmap-cell h80">88</div><div class="heatmap-cell h80">85</div>
+            <div class="heatmap-cell h80">82</div><div class="heatmap-cell h70">80</div>
+            <div class="heatmap-cell h70">78</div><div class="heatmap-cell h70">76</div>
+            <div class="heatmap-cell h70">75</div><div class="heatmap-cell h60">73</div>
+            <div class="heatmap-cell h60">72</div><div class="heatmap-cell h60">71</div>
+
+            <div class="heatmap-row-label">Q3 2025</div>
+            <div class="heatmap-cell h100">100</div><div class="heatmap-cell h90">95</div>
+            <div class="heatmap-cell h90">92</div><div class="heatmap-cell h90">90</div>
+            <div class="heatmap-cell h80">88</div><div class="heatmap-cell h80">87</div>
+            <div class="heatmap-cell h80">85</div><div class="heatmap-cell h80">84</div>
+            <div class="heatmap-cell h80">83</div><div class="heatmap-cell h80">82</div>
+            <div class="heatmap-cell h80">81</div><div class="heatmap-cell h80">80</div>
+
+            <div class="heatmap-row-label">Q4 2025</div>
+            <div class="heatmap-cell h100">100</div><div class="heatmap-cell h90">93</div>
+            <div class="heatmap-cell h90">90</div><div class="heatmap-cell h80">87</div>
+            <div class="heatmap-cell h80">85</div><div class="heatmap-cell h80">83</div>
+            <div class="heatmap-cell h80">81</div><div class="heatmap-cell h70">79</div>
+            <div class="heatmap-cell h70">78</div><div class="heatmap-cell h40"></div>
+            <div class="heatmap-cell h40"></div><div class="heatmap-cell h40"></div>
+
+            <div class="heatmap-row-label">Q1 2026</div>
+            <div class="heatmap-cell h100">100</div><div class="heatmap-cell h90">96</div>
+            <div class="heatmap-cell h90">93</div><div class="heatmap-cell h90">91</div>
+            <div class="heatmap-cell h90">90</div><div class="heatmap-cell h80">88</div>
+            <div class="heatmap-cell h40"></div><div class="heatmap-cell h40"></div>
+            <div class="heatmap-cell h40"></div><div class="heatmap-cell h40"></div>
+            <div class="heatmap-cell h40"></div><div class="heatmap-cell h40"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Top Performing Agents</h3>
+        <div class="chart-sub">By gross written premium · Last 12 months</div>
+        <table class="data-table" style="margin-top: 8px;">
+          <thead>
+            <tr>
+              <th>Agent</th>
+              <th>Region</th>
+              <th>GWP</th>
+              <th>Retention</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Thandi Mokoena</td>
+              <td>Gauteng</td>
+              <td>R 42.1M</td>
+              <td>94%</td>
+              <td><span class="badge high">Excellent</span></td>
+            </tr>
+            <tr>
+              <td>James van der Merwe</td>
+              <td>Western Cape</td>
+              <td>R 38.7M</td>
+              <td>91%</td>
+              <td><span class="badge high">Excellent</span></td>
+            </tr>
+            <tr>
+              <td>Sipho Dlamini</td>
+              <td>KwaZulu-Natal</td>
+              <td>R 31.2M</td>
+              <td>88%</td>
+              <td><span class="badge high">Excellent</span></td>
+            </tr>
+            <tr>
+              <td>Fatima Patel</td>
+              <td>Gauteng</td>
+              <td>R 28.9M</td>
+              <td>85%</td>
+              <td><span class="badge medium">Good</span></td>
+            </tr>
+            <tr>
+              <td>Pieter Botha</td>
+              <td>Free State</td>
+              <td>R 24.3M</td>
+              <td>82%</td>
+              <td><span class="badge medium">Good</span></td>
+            </tr>
+            <tr>
+              <td>Lindiwe Nkosi</td>
+              <td>Eastern Cape</td>
+              <td>R 21.8M</td>
+              <td>79%</td>
+              <td><span class="badge medium">Good</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
