@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apache Superset — know.2nth.ai</title>
+<meta name="description" content="Apache Superset — open-source BI for data exploration, SQL Lab, 40+ chart types, and embedded analytics. The 2nth default over Power BI and Tableau for new builds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--sky);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky);
+    background: rgba(37, 99, 235, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--sky);
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  /* Decision split */
+  .decision-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    max-width: var(--read-w);
+  }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+  }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+  }
+  .decision-card li:last-child { border-bottom: none; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">data/analytics/superset</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← Analytics</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Data</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">data</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">analytics</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">superset</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> data/analytics · Superset · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Open-source BI.<br><span class="gradient">SQL-native.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Apache Superset 6.0 — open-source BI for data exploration, SQL Lab, 40+ chart types, embedded analytics. The 2nth default over Power BI and Tableau for new builds.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">Apache 2.0</span>
+      <span class="pill">Python + React</span>
+      <span class="pill">SQLAlchemy</span>
+      <span class="pill">v6.0</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">Open-source BI that speaks SQL first.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Apache Superset is an open-source business intelligence platform built on Python and React. Its core loop: connect a database, define a dataset, build charts, assemble dashboards. The whole thing is driven by SQL — analysts write queries in SQL Lab, datasets are either SQL queries or direct table references, and every chart ultimately resolves to a SQL statement you can inspect.</p>
+      <p><strong>SQL Lab</strong> is the ad-hoc query interface: syntax highlighting, schema browser, query history, CSV export, and the ability to promote any result set into a named dataset for charting. <strong>40+ chart types</strong> — bar, line, area, scatter, heatmap, Sankey, sunburst, pivot, big number tiles, geospatial maps — cover most reporting needs without custom code.</p>
+      <p><strong>Embedded analytics</strong> ships as a first-class feature: guest tokens let you embed dashboards into external applications with row-level security applied per viewer. SQLAlchemy backs every connection, which means any database with a SQLAlchemy dialect — and there are over 30 — works without additional drivers on the Superset side.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Why Superset is the 2nth default</h4>
+      <p><strong>Free and self-hosted.</strong> No per-seat licensing. Runs on your infrastructure, so data never leaves your VPC — relevant for POPIA compliance and any client with data residency requirements.</p>
+      <p><strong>SQL-native.</strong> Every analyst already knows SQL. There's no proprietary query language to learn, no drag-and-drop abstraction that breaks on edge cases. Write SQL, see charts.</p>
+      <p><strong>Embeddable.</strong> Guest token auth plus row-level security means you can surface dashboards inside client portals, ERPNext views, or custom applications without shipping a separate BI seat to every user.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 DATA SOURCES ── -->
+<section id="datasources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Data sources</div>
+      <h2 class="section-title">Connect anything with a SQLAlchemy dialect.</h2>
+      <p class="section-lede">Superset treats every data source as a SQLAlchemy URI. If the database has a dialect, it works. Datasets are either physical (point at a table) or virtual (wrap a SQL query).</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Database</th>
+            <th>SQLAlchemy URI pattern</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PostgreSQL</td>
+            <td><code>postgresql://user:pass@host/db</code></td>
+            <td>2nth default for OLTP + reporting. Cloud SQL in africa-south1.</td>
+          </tr>
+          <tr>
+            <td>ClickHouse</td>
+            <td><code>clickhousedb://user:pass@host/db</code></td>
+            <td>For high-volume event data. Sub-second aggregations on billions of rows.</td>
+          </tr>
+          <tr>
+            <td>DuckDB</td>
+            <td><code>duckdb:////path/to/file.db</code></td>
+            <td>Local analytics on Parquet/CSV. Lightweight; no server needed.</td>
+          </tr>
+          <tr>
+            <td>BigQuery</td>
+            <td><code>bigquery://project/dataset</code></td>
+            <td>Service account JSON via <code>credentials_base64</code> extra.</td>
+          </tr>
+          <tr>
+            <td>MySQL</td>
+            <td><code>mysql://user:pass@host/db</code></td>
+            <td>Works. MariaDB too. Not the preferred path for new builds.</td>
+          </tr>
+          <tr>
+            <td>Snowflake</td>
+            <td><code>snowflake://user:pass@account/db/schema</code></td>
+            <td>Add <code>?warehouse=WH&amp;role=ROLE</code> to the URI.</td>
+          </tr>
+          <tr>
+            <td>Trino</td>
+            <td><code>trino://user@host:port/catalog</code></td>
+            <td>Federation layer. Query Hive, Iceberg, Delta from one surface.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>Virtual vs physical datasets.</strong> A <em>physical</em> dataset points at a table — Superset generates the SQL from chart configuration. A <em>virtual</em> dataset is a saved SQL query that becomes the source table for one or more charts. Virtual datasets are how you hide complexity: pre-join, pre-filter, pre-aggregate in the dataset definition, then let analysts build charts on the clean surface.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># SQLAlchemy URI — PostgreSQL with Cloud SQL Auth Proxy</span>
+postgresql+psycopg2://superset:<span class="n">password</span>@<span class="n">127.0.0.1</span>:<span class="n">5432</span>/superset_meta
+
+<span class="c"># ClickHouse via HTTP interface</span>
+clickhousedb://default:@<span class="n">clickhouse-host</span>:<span class="n">8123</span>/analytics
+
+<span class="c"># DuckDB — absolute path required</span>
+duckdb:////data/warehouse.db
+
+<span class="c"># BigQuery — credentials in database extra JSON</span>
+bigquery://my-gcp-project/my_dataset
+<span class="c"># extra: {"credentials_base64": "&lt;base64-encoded-service-account-json&gt;"}</span>
+
+<span class="c"># Virtual dataset SQL — hide the join complexity from chart authors</span>
+<span class="k">SELECT</span>
+  o.order_date,
+  o.region,
+  c.segment,
+  <span class="k">SUM</span>(o.revenue) <span class="k">AS</span> revenue,
+  <span class="k">COUNT</span>(<span class="k">DISTINCT</span> o.customer_id) <span class="k">AS</span> customers
+<span class="k">FROM</span> orders o
+<span class="k">JOIN</span> customers c <span class="k">ON</span> c.id = o.customer_id
+<span class="k">GROUP BY</span> <span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span></pre>
+  </div>
+</section>
+
+<!-- ── 03 HOW IT WORKS ── -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · How it works</div>
+      <h2 class="section-title">Datasets → Charts → Dashboards → Filters.</h2>
+      <p class="section-lede">Superset's mental model is a four-layer stack. Each layer is reusable: one dataset feeds many charts; one chart can appear on many dashboards; filters apply cross-chart via the filter bar.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Datasets</strong> are the base. Each dataset has columns (with types, descriptions, and certified status), metrics (named SQL aggregations like <code>SUM(revenue)</code>), and optional time grain configuration. Get the dataset right and chart creation becomes drag-and-drop.</p>
+      <p><strong>SQL Lab</strong> is the power-user escape hatch. Full editor with autocomplete, multi-tab sessions, query history, explain plan, and CSV/JSON export. Any query result can be saved as a virtual dataset in one click.</p>
+      <p><strong>Jinja templating</strong> in SQL Lab and virtual datasets lets you write dynamic SQL that responds to dashboard filters, the current user, and time range selections — without any custom code in the Superset application layer.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">-- Jinja template in a virtual dataset or SQL Lab query</span>
+<span class="c">-- {{ filter_values("region")[0] }} pulls the active dashboard filter</span>
+<span class="c">-- {{ current_username() }} is the logged-in Superset user</span>
+<span class="c">-- {{ from_dttm }} and {{ to_dttm }} are the dashboard time range</span>
+
+<span class="k">SELECT</span> *
+<span class="k">FROM</span> orders
+<span class="k">WHERE</span> region = <span class="s">'{{ filter_values("region")[0] }}'</span>
+  <span class="k">AND</span> created_by = <span class="s">'{{ current_username() }}'</span>
+  <span class="k">AND</span> order_date &gt;= <span class="s">'{{ from_dttm }}'</span></pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Native filters vs Jinja filters</h4>
+      <p>Native filters (the filter bar on the right of a dashboard) apply to all charts on the dashboard that share the same column name — zero SQL required. Jinja template filters are for queries that need server-side parameterisation: row-level security, user-scoped views, or dynamic WHERE clauses that the native filter system can't express. Use native filters first; reach for Jinja when you need something native filters can't do.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 SECURITY ── -->
+<section id="security">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · Security</div>
+      <h2 class="section-title">RBAC plus row-level security. POPIA-relevant.</h2>
+      <p class="section-lede">Superset ships with four built-in roles that cover most deployment shapes. Row-level security adds data-subject access control at the dataset level — every query on the dataset gets the RLS clause appended automatically.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>What it can do</th>
+            <th>Typical user</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Admin</code></td>
+            <td>Everything: database connections, user management, all datasets and dashboards</td>
+            <td>Platform operator, BI team lead</td>
+          </tr>
+          <tr>
+            <td><code>Alpha</code></td>
+            <td>Create datasets, charts, dashboards. Cannot manage database connections or users.</td>
+            <td>Senior analyst, BI developer</td>
+          </tr>
+          <tr>
+            <td><code>Gamma</code></td>
+            <td>View dashboards and charts they've been granted access to. Cannot create.</td>
+            <td>Business stakeholder, read-only consumer</td>
+          </tr>
+          <tr>
+            <td><code>sql_lab</code></td>
+            <td>Access SQL Lab and run ad-hoc queries on permitted databases.</td>
+            <td>Analyst who needs raw SQL access</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>Row-level security</strong> is defined per dataset as a SQL clause. Superset appends the clause to every query executed against that dataset — in SQL Lab, in charts, in embedded dashboards via guest tokens. The clause can reference <code>current_username()</code> to scope results to the authenticated user.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># superset_config.py — RLS clause example</span>
+<span class="c"># Applied automatically to all queries on the "sales" dataset.</span>
+<span class="c"># Users only see rows where region_code matches their username prefix.</span>
+<span class="c"># Defined in Security > Row Level Security in the Superset UI,</span>
+<span class="c"># or seeded via the Superset CLI / API during provisioning.</span>
+
+<span class="s">"region_code = '{{ current_username().split('@')[0] }}'"</span>
+
+<span class="c"># The resulting query Superset executes becomes:</span>
+<span class="c"># SELECT ... FROM sales WHERE region_code = 'alice'</span>
+<span class="c"># ...where 'alice' is the prefix of alice@company.com</span></pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.12s">
+      <h4>POPIA relevance</h4>
+      <p>RLS enforces data-subject access at the query layer — analysts cannot retrieve rows they're not authorised to see, even in SQL Lab (if RLS is enabled for SQL Lab via the <code>ENABLE_ROW_LEVEL_SECURITY</code> feature flag). Dataset permissions gate which analysts can see which datasets. Combined, these two mechanisms let you run a single Superset instance serving multiple business units or clients without cross-contamination of data.</p>
+      <p>Self-hosted on GCP africa-south1 or a local K8s cluster means data never transits through foreign infrastructure — which is the cleaner answer to POPIA data residency than any SaaS BI tool.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 DEPLOYMENT ── -->
+<section id="deployment">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · Deployment</div>
+      <h2 class="section-title">Helm on K8s for production. Docker Compose for dev.</h2>
+      <p class="section-lede">The official Helm chart is the production path. One critical rule: all <code>superset_config.py</code> overrides go in a single <code>configOverrides</code> key. Split them and the Helm chart merges them unpredictably.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># values.yaml — Helm chart configuration for GKE + Cloud SQL</span>
+<span class="c"># Repo: helm.superset.apache.org</span>
+
+configOverrides:
+  my_override: |
+    FEATURE_FLAGS = {
+        <span class="s">"DASHBOARD_CROSS_FILTERS"</span>: <span class="k">True</span>,
+        <span class="s">"ENABLE_TEMPLATE_PROCESSING"</span>: <span class="k">True</span>,
+        <span class="s">"ALERT_REPORTS"</span>: <span class="k">True</span>,
+        <span class="s">"ENABLE_ROW_LEVEL_SECURITY"</span>: <span class="k">True</span>,
+    }
+    SQLALCHEMY_DATABASE_URI = <span class="s">"postgresql://superset:pass@cloudsql/superset"</span>
+    SQLLAB_TIMEOUT = <span class="n">300</span>         <span class="c"># seconds — default 30 is too short for warehouses</span>
+    SUPERSET_WEBSERVER_TIMEOUT = <span class="n">300</span>
+    GUEST_TOKEN_JWT_EXP_SECONDS = <span class="n">3600</span>  <span class="c"># embedded dashboards stay live for 1 hour</span>
+    RESULTS_BACKEND = <span class="s">"RedisCache"</span>  <span class="c"># or S3/R2 for large CSV exports</span>
+
+    <span class="c"># ONE BLOCK RULE: do not split configOverrides into multiple keys.</span>
+    <span class="c"># The Helm chart string-merges them and the result is unpredictable.</span>
+    <span class="c"># Everything goes in my_override (or whatever you name the single key).</span>
+
+supersetNode:
+  connections:
+    db_host: <span class="s">"127.0.0.1"</span>    <span class="c"># Cloud SQL Auth Proxy sidecar</span>
+    db_port: <span class="s">"5432"</span>
+    db_user: <span class="s">"superset"</span>
+    db_name: <span class="s">"superset"</span>
+
+redis:
+  enabled: <span class="k">true</span>
+
+celery:
+  enabled: <span class="k">true</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>Docker Compose for local dev.</strong> The repo ships a <code>docker-compose.yml</code> that spins up Superset, PostgreSQL, Redis, and Celery workers. Run <code>docker compose up</code> in the repo root, wait two minutes, and you have a full instance at <code>localhost:8088</code> with the admin/admin default credentials. Change those immediately if you expose it to a network.</p>
+      <p><strong>Redis doubles as cache and Celery broker.</strong> Superset uses Redis for two separate jobs: caching query results (so repeated dashboard loads don't re-hit the database) and as the Celery task broker (for async queries, alert checks, and scheduled reports). One Redis instance handles both — but configure <code>CACHE_CONFIG</code> and <code>DATA_CACHE_CONFIG</code> separately in <code>superset_config.py</code> if you want different TTLs for UI metadata vs query results.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 GOTCHAS ── -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Gotchas</div>
+      <h2 class="section-title">Six things that only bite once you ship.</h2>
+      <p class="section-lede">Most of these are not obvious from the docs. They surface in production, not in the local Docker Compose setup.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>configOverrides one-block rule</strong>
+        <p>Splitting <code>configOverrides</code> into multiple keys causes the Helm chart to merge them unpredictably — settings from one block override another without warning. Put everything in a single named key. Always.</p>
+      </div>
+      <div class="gotcha">
+        <strong>SQL Lab timeout defaults to 30 seconds</strong>
+        <p><code>SQLLAB_TIMEOUT</code> defaults to 30 seconds. Any warehouse query that scans more than a few million rows will hit it. Set it to 300 seconds minimum for analytical workloads. Match <code>SUPERSET_WEBSERVER_TIMEOUT</code> too, or the web process times out before Celery returns the result.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Guest token expiry goes blank silently</strong>
+        <p><code>GUEST_TOKEN_JWT_EXP_SECONDS</code> defaults to 300 (5 minutes). Embedded dashboards with longer session lifetimes go blank when the token expires — no error, just a blank iframe. Users have no idea why. Set it to at least 3600 for any embedded use case.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Celery worker OOMs on large CSV exports</strong>
+        <p>Large CSV exports load the entire result set into Celery worker memory. Workers OOM and die silently on result sets above ~500k rows. Set <code>RESULTS_BACKEND</code> to a remote store (Redis with a high <code>maxmemory</code>, S3, or Cloudflare R2) so results stream to storage rather than living in the worker process.</p>
+      </div>
+      <div class="gotcha">
+        <strong>RLS is not applied in SQL Lab by default</strong>
+        <p>Row-level security applies to chart queries automatically. It does NOT apply in SQL Lab unless you enable the <code>ENABLE_ROW_LEVEL_SECURITY</code> feature flag AND restrict SQL Lab access to <code>sql_lab</code> role only. Without this, an analyst with SQL Lab access can bypass RLS by writing their own SELECT.</p>
+      </div>
+      <div class="gotcha">
+        <strong>FEATURE_FLAGS keys are UPPER_SNAKE_CASE</strong>
+        <p>Not camelCase. Not kebab-case. <code>DASHBOARD_CROSS_FILTERS</code>, not <code>dashboardCrossFilters</code> or <code>dashboard-cross-filters</code>. Wrong case silently has no effect — the flag stays at its default. Check the source for the canonical key names before assuming a flag isn't working.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 DECISION ── -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 · Decision guide</div>
+      <h2 class="section-title">Use it for, skip it for.</h2>
+      <p class="section-lede">Superset is the right call for a specific shape of BI problem. When the shape changes, so does the answer.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use Superset when</h4>
+        <ul>
+          <li>You need self-hosted BI with no per-seat licensing — open-source, Apache 2.0.</li>
+          <li>Your team already knows SQL — the entire product is SQL-first, no proprietary language.</li>
+          <li>POPIA data sovereignty matters — data stays on your infrastructure, your region.</li>
+          <li>Budget is a real constraint — Superset vs Tableau is a five-figure annual saving at mid-market scale.</li>
+          <li>You need embedded analytics — guest tokens and RLS make dashboard embedding straightforward.</li>
+          <li>You're connecting to ClickHouse, DuckDB, or Trino — first-class SQLAlchemy support, no workarounds.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip Superset when</h4>
+        <ul>
+          <li>Non-technical users need self-service without SQL — Metabase's UX is significantly more accessible for that persona.</li>
+          <li>You need real-time streaming dashboards (sub-second refresh) — Grafana is the right tool for time-series and metrics.</li>
+          <li>The organisation is already deep in the Microsoft ecosystem — Power BI's Azure integration and Excel familiarity will win that argument regardless of Superset's merits.</li>
+          <li>You need pixel-perfect printed reports — Superset is a BI explorer, not a report renderer. Tableau or a dedicated reporting tool handles that better.</li>
+          <li>You have no one to operate it — Superset requires a person who can manage Kubernetes, Redis, Celery, and Postgres. It's not a SaaS install.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 2ⁿ PERSPECTIVE ── -->
+<section id="perspective">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 · 2ⁿ Perspective</div>
+      <h2 class="section-title">How this leaf compounds in the tree.</h2>
+      <p class="section-lede">Superset is the read layer in the 2nth data stack. Every other data skill feeds it; it surfaces the results to humans and agents.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The compounding play is this: Superset doesn't produce data — it reads it. That means every upstream skill that produces clean, queryable data increases what Superset can surface. dbt models land in PostgreSQL or BigQuery, and Superset charts update automatically at the next dashboard refresh. ERPNext operational data flows into a reporting replica, and Superset becomes the analytical front-end for the ERP without touching the ERPNext application layer. Cloudflare R2 becomes the export backend so large analyst queries don't crash the Celery worker.</p>
+      <p>The agent angle: Superset has a REST API. An agent can query the <code>/api/v1/chart/data</code> endpoint, pass a dataset ID and time range, and get chart data back as JSON — without building a separate analytics pipeline. That's the pattern for agent-generated business summaries: pull structured data from Superset, format it, push it into a report or a Slack message.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.08s">
+      <div class="connect-node soon">
+        <span class="tag">data/warehouse/dbt</span>
+        <div class="skill">dbt</div>
+        <div class="why">dbt models are the cleanest Superset datasets. Model in dbt, certify in Superset. The two tools are designed to work together.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/warehouse/bigquery</span>
+        <div class="skill">BigQuery</div>
+        <div class="why">BigQuery as the warehouse, Superset as the BI layer. Standard GCP data stack pattern — no additional infrastructure between them.</div>
+      </div>
+      <a href="../../biz/erp/erpnext.html" class="connect-node">
+        <span class="tag">biz/erp/erpnext</span>
+        <div class="skill">ERPNext</div>
+        <div class="why">ERPNext operational data feeds a reporting replica; Superset reads that replica. Operational reporting without touching ERPNext's application layer.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">biz/oracle-scm</span>
+        <div class="skill">Oracle SCM / Fusion Analytics</div>
+        <div class="why">Oracle Fusion exports land in BigQuery or PostgreSQL; Superset reads them. A Superset layer avoids Oracle Fusion Analytics licensing for read-only reporting.</div>
+      </div>
+      <a href="../../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Workers proxy the Superset guest token API for embedded dashboards — keeps the Superset admin credentials server-side and off the browser.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/cloudflare/r2</span>
+        <div class="skill">Cloudflare R2</div>
+        <div class="why">R2 as the RESULTS_BACKEND for large Celery exports. Analysts download large CSVs from R2 directly — zero load on the Superset web process.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The official docs are thorough but occasionally lag behind the codebase. The GitHub repo and the Preset blog are the most current references for configuration and feature flags.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://superset.apache.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Project home</span>
+        <span class="r-title">Apache Superset</span>
+        <span class="r-url">superset.apache.org</span>
+      </a>
+      <a href="https://github.com/apache/superset" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">apache/superset on GitHub</span>
+        <span class="r-url">github.com/apache/superset</span>
+      </a>
+      <a href="https://github.com/apache/superset/tree/master/helm/superset" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Helm chart</span>
+        <span class="r-title">Official Helm chart</span>
+        <span class="r-url">github.com/apache/superset/tree/master/helm/superset</span>
+      </a>
+      <a href="https://preset.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Managed hosting</span>
+        <span class="r-title">Preset — managed Superset</span>
+        <span class="r-url">preset.io</span>
+      </a>
+      <a href="https://docs.sqlalchemy.org/en/20/dialects/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">SQLAlchemy dialect docs</span>
+        <span class="r-url">docs.sqlalchemy.org/en/20/dialects/</span>
+      </a>
+      <a href="https://superset.apache.org/docs/configuration/configuring-superset/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Configuring Superset</span>
+        <span class="r-url">superset.apache.org/docs/configuration</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Analytics sub-hub</a>
+      <a href="https://superset.apache.org" target="_blank" rel="noopener">superset.apache.org ↗</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
