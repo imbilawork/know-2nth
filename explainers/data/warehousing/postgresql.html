@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PostgreSQL — know.2nth.ai</title>
+<meta name="description" content="PostgreSQL 18 — the relational database underneath Frappe, Superset, and most of the 2nth stack. ACID, extensible, OLTP and analytical workloads in the same engine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(56, 189, 248, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(56, 189, 248, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(56, 189, 248, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.sky { width: 600px; height: 600px; background: var(--sky); top: -200px; right: -100px; }
+  .glow-orb.blue { width: 500px; height: 500px; background: var(--blue); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--sky); box-shadow: 0 0 12px var(--sky);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--sky), var(--sky-muted), var(--blue-glow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: rgba(56, 189, 248, 0.12); color: var(--sky); border-color: rgba(56, 189, 248, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--sky);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky);
+    background: rgba(56, 189, 248, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--sky);
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  /* Decision split */
+  .decision-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    max-width: var(--read-w);
+  }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+  }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+  }
+  .decision-card li:last-child { border-bottom: none; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb sky"></div>
+<div class="glow-orb blue"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">data/warehousing/postgresql</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← Warehousing</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Data</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">data</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">warehousing</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">postgresql</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> data/warehousing · PostgreSQL · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The database that<br><span class="gradient">does everything.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      PostgreSQL 18 — the relational database underneath Frappe, Superset, half the 2nth stack, and most of the internet. ACID-compliant, extensible, open-source, and the rare database that handles OLTP and analytical workloads in the same engine.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">PostgreSQL License</span>
+      <span class="pill">v18</span>
+      <span class="pill">ACID</span>
+      <span class="pill">Extensible</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">Not just storage. A programmable data platform.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>PostgreSQL is an object-relational database that's been in active development since 1986. The "object-relational" part matters: it supports user-defined types, functions, operators, and aggregates. But the real story in 2026 isn't the core engine — it's the extension ecosystem that sits on top of it.</p>
+      <p>Extensions turn PostgreSQL into a vector database (<strong>pgvector</strong>), a time-series database (<strong>TimescaleDB</strong>), a geospatial database (<strong>PostGIS</strong>), a graph database (<strong>Apache AGE</strong>). The Frappe Framework runs on it. Apache Superset stores its metadata in it. Cloudflare Hyperdrive proxies connections to it from the edge. It is the substrate that the rest of the data stack builds on.</p>
+      <p>The core commitments: ACID transactions, row-level security, logical replication, MVCC concurrency (readers don't block writers), full-text search, JSONB document storage with indexing, and window functions for analytics — all built in, no add-ons required.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Why this is the 2nth default</h4>
+      <p>PostgreSQL is the default because it handles the first three years of most builds without requiring a database migration. Start on Postgres, add materialized views for dashboard queries, add pgvector for RAG, add PostGIS for geospatial. By the time you outgrow it — if you ever do — you'll know exactly which specialized database you need and why.</p>
+      <p>It's also the database that Frappe's ERPNext, HRMS, and CRM run on (v15+), which means a single Postgres instance can serve both your ERP and your analytics metadata store. One operational target, not two.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 CORE PATTERNS ── -->
+<section id="patterns">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Core patterns</div>
+      <h2 class="section-title">The capabilities that make it more than a row store.</h2>
+      <p class="section-lede">PostgreSQL ships with a set of features that remove entire categories of external tooling from the architecture. Each one is worth knowing before you reach for a specialist service.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>JSONB</code></td><td>Document storage with full GIN indexing — when you need NoSQL flexibility inside SQL structure. Supports path queries, containment checks, and array operations.</td></tr>
+          <tr><td>CTEs (<code>WITH</code>)</td><td>Common Table Expressions for readable complex logic. Break a multi-step query into named intermediate results. Makes recursive queries tractable.</td></tr>
+          <tr><td>Window functions</td><td>Analytics without leaving the database. Running totals, rank, lag/lead, percentile — computed over a defined partition and order without collapsing rows.</td></tr>
+          <tr><td>Materialized views</td><td>Pre-computed query results stored as a table, refreshable on demand or concurrently. The first tool to reach for when dashboard queries are slow.</td></tr>
+          <tr><td>Full-text search</td><td><code>tsvector</code>/<code>tsquery</code> with GIN indexes. Fast enough to skip Elasticsearch for most document search use cases.</td></tr>
+          <tr><td><code>LISTEN</code>/<code>NOTIFY</code></td><td>Pub/sub built into the database. Notify channels on row changes; listeners receive events in real time. No message queue required for simple event fans.</td></tr>
+          <tr><td>Logical replication</td><td>Stream changes from a publication to one or more subscribers. Source for CDC pipelines, read replicas, and cross-database migrations.</td></tr>
+          <tr><td>Row-level security</td><td>Policies on tables that control which rows a session can read or write, evaluated per-user based on session variables. POPIA data-subject access control without application logic.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">-- JSONB: document storage with index</span>
+<span class="k">CREATE INDEX</span> idx_orders_meta <span class="k">ON</span> orders <span class="k">USING</span> gin (metadata jsonb_path_ops);
+
+<span class="c">-- Containment query — uses the index</span>
+<span class="k">SELECT</span> * <span class="k">FROM</span> orders <span class="k">WHERE</span> metadata <span class="k">@&gt;</span> <span class="s">'{"region": "ZA"}'</span>;
+
+<span class="c">-- Path query</span>
+<span class="k">SELECT</span> metadata -&gt;&gt; <span class="s">'region'</span> <span class="k">AS</span> region, <span class="k">count</span>(*) <span class="k">FROM</span> orders <span class="k">GROUP BY</span> <span class="n">1</span>;</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">-- Materialized view for a dashboard — refreshable without locking</span>
+<span class="k">CREATE MATERIALIZED VIEW</span> daily_sales <span class="k">AS</span>
+<span class="k">SELECT</span>
+  date_trunc(<span class="s">'day'</span>, created_at) <span class="k">AS</span> day,
+  sum(total)                     <span class="k">AS</span> revenue,
+  count(*)                       <span class="k">AS</span> orders
+<span class="k">FROM</span> orders
+<span class="k">WHERE</span> status = <span class="s">'completed'</span>
+<span class="k">GROUP BY</span> <span class="n">1</span>;
+
+<span class="c">-- Refresh without blocking reads</span>
+<span class="k">REFRESH MATERIALIZED VIEW CONCURRENTLY</span> daily_sales;</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.12s"><span class="c">-- LISTEN/NOTIFY: real-time events without a message queue</span>
+<span class="k">LISTEN</span> order_updates;
+<span class="k">NOTIFY</span> order_updates, <span class="s">'{"order_id": 42, "status": "shipped"}'</span>;
+
+<span class="c">-- Window function: running total by day</span>
+<span class="k">SELECT</span>
+  day,
+  revenue,
+  sum(revenue) <span class="k">OVER</span> (<span class="k">ORDER BY</span> day) <span class="k">AS</span> running_total
+<span class="k">FROM</span> daily_sales
+<span class="k">ORDER BY</span> day;</pre>
+  </div>
+</section>
+
+<!-- ── 03 EXTENSIONS ── -->
+<section id="extensions">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · Extensions</div>
+      <h2 class="section-title">The killer feature is what it becomes.</h2>
+      <p class="section-lede">PostgreSQL's extension system lets the database grow into specialized roles without replacing the core. The extensions most relevant to the 2nth stack cover vectors, geospatial, time-series, scheduling, and graph queries.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Extension</th>
+            <th>What it adds</th>
+            <th>Where it fits</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>pgvector</code></td><td>Vector similarity search — cosine, dot product, L2 distance. Store embeddings, run nearest-neighbour queries.</td><td>RAG pipelines, semantic search, recommendation</td></tr>
+          <tr><td><code>PostGIS</code></td><td>Geospatial geometry and geography types, spatial indexes, ST_Distance, ST_Within, routing.</td><td>Field service, logistics, mapping, delivery zones</td></tr>
+          <tr><td><code>TimescaleDB</code></td><td>Hypertables that auto-partition time-series data, continuous aggregates, compression.</td><td>IoT, metrics, event streams, financial tick data</td></tr>
+          <tr><td><code>pg_cron</code></td><td>Cron-scheduled SQL jobs inside the database. No external scheduler needed for routine maintenance or aggregation tasks.</td><td>Nightly rollups, cleanup jobs, data expiry</td></tr>
+          <tr><td><code>pg_stat_statements</code></td><td>Query performance monitoring — total time, calls, mean time, rows per query. Essential for tuning.</td><td>Performance investigation, index planning</td></tr>
+          <tr><td><code>Apache AGE</code></td><td>Graph queries using the Cypher query language on top of relational data. No separate graph database required.</td><td>Knowledge graphs, fraud detection, org charts</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">-- Install pgvector (once, per database)</span>
+<span class="k">CREATE EXTENSION IF NOT EXISTS</span> vector;
+
+<span class="c">-- Table with a vector column (1536-dim for text-embedding-3-small)</span>
+<span class="k">CREATE TABLE</span> documents (
+  id        bigserial  <span class="k">primary key</span>,
+  content   text,
+  embedding vector(<span class="n">1536</span>)
+);
+
+<span class="c">-- HNSW index for fast approximate nearest-neighbour search</span>
+<span class="k">CREATE INDEX ON</span> documents <span class="k">USING</span> hnsw (embedding vector_cosine_ops);
+
+<span class="c">-- Semantic search: find the 5 most similar documents</span>
+<span class="k">SELECT</span> id, content, embedding &lt;=&gt; <span class="s">'[0.1, 0.2, ...]'</span> <span class="k">AS</span> distance
+<span class="k">FROM</span> documents
+<span class="k">ORDER BY</span> distance
+<span class="k">LIMIT</span> <span class="n">5</span>;</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">-- TimescaleDB: hypertable for time-series data</span>
+<span class="k">CREATE EXTENSION IF NOT EXISTS</span> timescaledb;
+
+<span class="k">CREATE TABLE</span> sensor_readings (
+  time        timestamptz  <span class="k">NOT NULL</span>,
+  sensor_id   int,
+  temperature numeric(<span class="n">5</span>,<span class="n">2</span>)
+);
+
+<span class="c">-- Convert to hypertable (auto-partitions by time)</span>
+<span class="k">SELECT</span> create_hypertable(<span class="s">'sensor_readings'</span>, <span class="s">'time'</span>);</pre>
+  </div>
+</section>
+
+<!-- ── 04 DEPLOYMENT ── -->
+<section id="deployment">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · Deployment</div>
+      <h2 class="section-title">Where to run it and how to connect.</h2>
+      <p class="section-lede">PostgreSQL runs everywhere. The choice between self-hosted and managed turns on operational overhead vs. control, and on where the data needs to live for compliance.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Option</th>
+            <th>Region</th>
+            <th>Good for</th>
+            <th>Tradeoff</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Cloud SQL (Google)</strong></td><td>africa-south1 (JHB)</td><td>SA data residency, POPIA, GCP stack</td><td>Vendor lock-in, cost at scale</td></tr>
+          <tr><td><strong>Amazon RDS</strong></td><td>af-south-1 (Cape Town)</td><td>AWS stack, multi-AZ HA</td><td>Cape Town region only for SA</td></tr>
+          <tr><td><strong>Supabase</strong></td><td>Closest AWS region</td><td>Rapid dev, built-in auth + storage + REST</td><td>No SA region; EU/US data only</td></tr>
+          <tr><td><strong>Self-hosted</strong></td><td>Your infra</td><td>Full control, POPIA on-prem compliance</td><td>You own backups, HA, patching</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c"># Connection string pattern</span>
+postgresql://user:password@host:5432/dbname?sslmode=require
+
+<span class="c"># With PgBouncer (connection pooling) in front</span>
+postgresql://user:password@pgbouncer-host:6432/dbname?sslmode=require
+
+<span class="c"># Cloudflare Hyperdrive connection string (from a Worker)</span>
+<span class="c"># env.HYPERDRIVE.connectionString returns a pooled string automatically</span></pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Connection pooling is not optional in production</h4>
+      <p>PostgreSQL's default <code>max_connections</code> is 100. Each connection holds memory (roughly 5-10 MB). A web application with 20 pods, each opening 10 connections, hits the limit before it gets interesting. Use <strong>PgBouncer</strong> for self-hosted deployments — it pools connections in transaction mode and makes the limit effectively irrelevant. Cloudflare Hyperdrive does the same thing for Workers: it maintains a warm pool at the edge so each Worker invocation doesn't pay the TCP + TLS handshake cost.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.12s"><span class="c"># Backup strategy</span>
+
+<span class="c"># Small databases (dev, staging): logical backup</span>
+pg_dump -Fc -h host -U user dbname > backup_$(date +%Y%m%d).dump
+pg_restore -d newdb backup_20260416.dump
+
+<span class="c"># Production: physical backup + WAL archiving</span>
+<span class="c"># pg_basebackup takes a binary snapshot</span>
+pg_basebackup -h host -U replicator -Ft -z -Xs -P -D /backups/base
+
+<span class="c"># WAL archiving in postgresql.conf</span>
+archive_mode = on
+archive_command = <span class="s">'gsutil cp %p gs://my-bucket/wal/%f'</span>
+
+<span class="c"># Point-in-time recovery: restore base + replay WAL to a specific timestamp</span></pre>
+  </div>
+</section>
+
+<!-- ── 05 SA CONTEXT ── -->
+<section id="sa">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · SA context</div>
+      <h2 class="section-title">Running PostgreSQL in a South African context.</h2>
+      <p class="section-lede">South Africa has specific infrastructure constraints and regulatory requirements that shape how PostgreSQL gets deployed and configured here.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Cloud SQL in africa-south1.</strong> Google Cloud SQL has a PostgreSQL offering in the Johannesburg region (africa-south1). This is the right default for POPIA-sensitive builds where data residency in South Africa is a requirement. Latency from most SA cities to Johannesburg is low enough that application-level connection pooling (PgBouncer or Hyperdrive) makes the round-trip negligible.</p>
+      <p><strong>POPIA and row-level security.</strong> The Protection of Personal Information Act requires that data subjects can access and request deletion of their personal data. PostgreSQL's row-level security (RLS) makes this straightforward: define a policy that restricts row access based on a session variable set to the current data subject's ID. An agent or API can query as a specific data subject and automatically get only their rows — no application-level filtering required.</p>
+      <p><strong>Money: never use <code>float</code>.</strong> For ZAR amounts, use <code>NUMERIC(12,2)</code> or store as integer cents. Floating-point arithmetic introduces rounding errors that compound across aggregations. A sum of 10,000 float-stored transactions may differ from the correct value by a few cents — which is a financial reporting error, not just a rounding quirk.</p>
+      <p><strong>Load shedding resilience.</strong> During load shedding, database connections are dropped when the server restarts. The defence: connection pooling (PgBouncer reconnects automatically), application-level retry logic with exponential backoff, and WAL archiving to cloud storage so point-in-time recovery is available if a hard restart corrupts a checkpoint. Do not rely on pg_dump scheduled jobs alone — WAL archiving is the safety net.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">-- Row-level security for POPIA data-subject access control</span>
+<span class="k">ALTER TABLE</span> customer_data <span class="k">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="c">-- Policy: each session can only see rows where customer_id matches the session variable</span>
+<span class="k">CREATE POLICY</span> customer_isolation <span class="k">ON</span> customer_data
+  <span class="k">USING</span> (customer_id = current_setting(<span class="s">'app.current_customer_id'</span>)::bigint);
+
+<span class="c">-- Set before each query in the application layer</span>
+<span class="k">SET</span> app.current_customer_id = <span class="s">'42'</span>;
+<span class="k">SELECT</span> * <span class="k">FROM</span> customer_data; <span class="c">-- returns only customer 42's rows</span>
+
+<span class="c">-- ZAR money: always NUMERIC, never FLOAT</span>
+<span class="k">CREATE TABLE</span> invoices (
+  id         bigserial <span class="k">primary key</span>,
+  amount_zar numeric(<span class="n">12</span>,<span class="n">2</span>) <span class="k">NOT NULL</span>,  <span class="c">-- correct</span>
+  amount_bad float                       <span class="c">-- never do this</span>
+);</pre>
+  </div>
+</section>
+
+<!-- ── 06 GOTCHAS ── -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Gotchas</div>
+      <h2 class="section-title">Things that only bite once you ship.</h2>
+      <p class="section-lede">Six failure modes worth internalising before a PostgreSQL instance goes in front of production traffic.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Never use float for money</strong>
+        <p>Use <code>NUMERIC(12,2)</code> or integer cents. Floating-point arithmetic accumulates rounding errors that show up in financial reports. This catches every new engineer exactly once — usually in production.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Connection limits hit fast</strong>
+        <p>Default <code>max_connections=100</code>. A 20-pod app with 5 connections each is already at the limit. Use PgBouncer in transaction mode for self-hosted, or Cloudflare Hyperdrive for Workers. Raising <code>max_connections</code> without pooling just moves the pain.</p>
+      </div>
+      <div class="gotcha">
+        <strong>VACUUM doesn't run itself well enough</strong>
+        <p>Autovacuum is on by default but tuned conservatively. High-write tables accumulate dead tuple bloat. Monitor with <code>pg_stat_user_tables</code>, check <code>n_dead_tup</code>, and tune autovacuum thresholds for hot tables. Table bloat hurts query performance and index scans.</p>
+      </div>
+      <div class="gotcha">
+        <strong><code>SELECT *</code> in production</strong>
+        <p>Always list columns explicitly, especially with JSONB columns. <code>SELECT *</code> on a table with a 10 MB JSONB column deserialises and transmits all of it. In a loop, this is a disaster. Always specify the columns you actually need.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Missing indexes on foreign keys</strong>
+        <p>PostgreSQL does not automatically create indexes on foreign key columns. Every unindexed FK column becomes a sequential scan on the referenced table during JOINs and cascade deletes. Check <code>pg_constraint</code> after schema changes and index FKs manually.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Locale matters for sort order</strong>
+        <p>The database locale controls collation — how strings are ordered and compared. Set <code>LC_COLLATE=en_ZA.UTF-8</code> at database creation for correct South African sort order. Changing locale after the fact requires a full dump-and-restore.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 DECISION ── -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 · Decision guide</div>
+      <h2 class="section-title">Use it for, skip it for.</h2>
+      <p class="section-lede">PostgreSQL is the right default for most builds. Here is the honest set of cases where a specialist database is actually the better choice.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use PostgreSQL when</h4>
+        <ul>
+          <li>You need ACID transactions — financial records, inventory, order management.</li>
+          <li>You want extensions to grow into specialized roles: pgvector for RAG, PostGIS for geospatial, TimescaleDB for time-series.</li>
+          <li>The team knows SQL — Postgres rewards SQL fluency with enormous capability.</li>
+          <li>Regulatory compliance (POPIA) requires self-hosted data residency in South Africa.</li>
+          <li>You're running Frappe/ERPNext — it's the native database for v15+.</li>
+          <li>You want one database that serves both operational (OLTP) and light analytical (OLAP) workloads.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip PostgreSQL when</h4>
+        <ul>
+          <li>You need sub-second analytics on 100 billion+ rows — use ClickHouse.</li>
+          <li>You need zero-ops serverless SQL — BigQuery or DuckDB are simpler to operate.</li>
+          <li>You need in-process embedded SQL in a script or notebook — DuckDB is the right shape.</li>
+          <li>You need multi-cloud storage/compute separation at enterprise scale — Snowflake.</li>
+          <li>The write throughput is so high that MVCC dead-tuple accumulation and vacuum overhead become unmanageable — ClickHouse's append-only model may fit better.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 2ⁿ PERSPECTIVE ── -->
+<section id="perspective">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 · 2ⁿ Perspective</div>
+      <h2 class="section-title">How this leaf compounds in the tree.</h2>
+      <p class="section-lede">PostgreSQL is not one tool in the stack — it is the substrate that multiple other skill nodes depend on. Understanding it once unlocks the operational model for a large part of the 2nth build surface.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The compounding logic: every node that talks to a PostgreSQL instance shares the same connection model, the same auth patterns, the same query language, and the same extension surface. An agent that knows how to operate a Postgres instance knows how to read Superset's metadata, back up a Frappe site's database, and query an ERPNext report — because they're all the same database.</p>
+      <p>The extension story matters for agents too. pgvector turns a Postgres instance into a vector store — no separate Pinecone or Weaviate to provision. PostGIS turns it into a geospatial engine. An agent operating against a Postgres instance with these extensions can do work that used to require three separate services.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.08s">
+      <a href="../../tech/frappe/framework.html" class="connect-node">
+        <span class="tag">tech/frappe/framework</span>
+        <div class="skill">Frappe Framework</div>
+        <div class="why">Frappe v15 runs on PostgreSQL natively. Every Frappe doctype is a Postgres table. The Frappe leaf assumes this one as the backing store.</div>
+      </a>
+      <a href="../analytics/superset.html" class="connect-node">
+        <span class="tag">data/analytics/superset</span>
+        <div class="skill">Apache Superset</div>
+        <div class="why">Superset stores its own metadata (dashboards, charts, datasets, users) in PostgreSQL. It also queries Postgres directly as a datasource — the same instance can play both roles.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/cloudflare/hyperdrive</span>
+        <div class="skill">Cloudflare Hyperdrive</div>
+        <div class="why">Hyperdrive pools and caches Postgres connections from Cloudflare Workers. When D1 (SQLite-at-edge) isn't enough, Hyperdrive brings a real Postgres instance to the edge with pooling built in.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">tech/cloudflare/d1</span>
+        <div class="skill">Cloudflare D1</div>
+        <div class="why">D1 is SQLite at the edge — the right tool when you need a lightweight embedded database in a Worker. When you need the real thing (ACID, extensions, large datasets), the path is D1 → Hyperdrive → Postgres.</div>
+      </div>
+      <a href="./" class="connect-node">
+        <span class="tag">data/warehousing</span>
+        <div class="skill">Warehousing sub-hub</div>
+        <div class="why">The parent sub-hub. PostgreSQL covers the OLTP-to-light-OLAP spectrum; the other nodes in the hub fill the shapes Postgres doesn't cover.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">data/engineering</span>
+        <div class="skill">Data Engineering</div>
+        <div class="why">dbt, Airbyte, and the transformation layer all sit on top of the warehouse. Postgres is the most common target for these tools in the 2nth stack.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The official documentation is excellent — one of the best in the open-source world. The wiki has the operational patterns. pgvector and Supabase docs are the fastest path to the extension ecosystem.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.postgresql.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Project home</span>
+        <span class="r-title">postgresql.org</span>
+        <span class="r-url">postgresql.org</span>
+      </a>
+      <a href="https://www.postgresql.org/docs/18/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">PostgreSQL 18 documentation</span>
+        <span class="r-url">postgresql.org/docs/18</span>
+      </a>
+      <a href="https://wiki.postgresql.org/wiki/Main_Page" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Wiki</span>
+        <span class="r-title">PostgreSQL Wiki</span>
+        <span class="r-url">wiki.postgresql.org</span>
+      </a>
+      <a href="https://github.com/pgvector/pgvector" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Extension</span>
+        <span class="r-title">pgvector — vector similarity search</span>
+        <span class="r-url">github.com/pgvector/pgvector</span>
+      </a>
+      <a href="https://supabase.com/docs" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Platform docs</span>
+        <span class="r-title">Supabase documentation</span>
+        <span class="r-url">supabase.com/docs</span>
+      </a>
+      <a href="https://cloud.google.com/sql/docs/postgres" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Managed hosting</span>
+        <span class="r-title">Cloud SQL for PostgreSQL</span>
+        <span class="r-url">cloud.google.com/sql/docs/postgres</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Warehousing sub-hub</a>
+      <a href="https://www.postgresql.org" target="_blank" rel="noopener">postgresql.org ↗</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

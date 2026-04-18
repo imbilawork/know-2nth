@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warehousing — know.2nth.ai</title>
+<meta name="description" content="The Warehousing sub-hub of the 2nth data domain. Five databases — PostgreSQL, ClickHouse, DuckDB, BigQuery, Snowflake — with PostgreSQL as the default for new builds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(56, 189, 248, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(56, 189, 248, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(56, 189, 248, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.sky { width: 600px; height: 600px; background: var(--sky); top: -200px; right: -100px; }
+  .glow-orb.blue { width: 500px; height: 500px; background: var(--blue); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hub-hero { padding: 48px 0 64px; }
+  .hub-hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hub-hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--sky); box-shadow: 0 0 12px var(--sky);
+  }
+  .hub-hero h1 {
+    font-size: clamp(44px, 7vw, 72px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 24px; max-width: 16ch;
+  }
+  .hub-hero h1 .gradient {
+    background: linear-gradient(135deg, var(--sky), var(--sky-muted), var(--blue-glow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hub-hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 32px; }
+  .hub-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hub-stat { padding-right: 32px; border-right: 1px solid var(--border); }
+  .hub-stat:last-child { border-right: none; padding-right: 0; }
+  .hub-stat .num {
+    font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700;
+    background: linear-gradient(135deg, var(--sky), var(--blue-glow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1; margin-bottom: 6px;
+  }
+  .hub-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  section.hub-section { padding: 32px 0 48px; position: relative; }
+  .hub-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 14px;
+  }
+  .hub-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 14px; line-height: 1.2;
+  }
+  .hub-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: 720px;
+    line-height: 1.7; font-weight: 300; margin-bottom: 36px;
+  }
+
+  /* Service grid */
+  .svc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .svc-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+    text-decoration: none; color: inherit; display: block;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .svc-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  .svc-card.soon { cursor: default; opacity: 0.74; }
+  .svc-card.soon:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .svc-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; margin-bottom: 10px;
+  }
+  .svc-name {
+    font-size: 16px; font-weight: 700; letter-spacing: -0.3px;
+  }
+  .svc-state {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1.1px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: var(--radius-pill);
+    font-weight: 600; flex-shrink: 0;
+  }
+  .svc-state.live { background: rgba(56, 189, 248, 0.12); color: var(--sky); }
+  .svc-state.stub { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
+  .svc-path {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    color: var(--text-muted); margin-bottom: 10px; display: block;
+  }
+  .svc-card p {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+  }
+
+  /* Shared pattern info */
+  .pattern-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--sky);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: 780px;
+    margin-bottom: 20px;
+  }
+  .pattern-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  .pattern-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+  .pattern-card p:last-of-type { margin-bottom: 16px; }
+  .pattern-card pre {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    line-height: 1.65; color: var(--mist);
+    overflow-x: auto;
+  }
+  [data-theme="light"] .pattern-card pre { background: #0F172A; color: #E2E8F0; }
+  .pattern-card pre .c { color: var(--text-muted); font-style: italic; }
+  .pattern-card pre .s { color: #A5F3B8; }
+
+  .olap-table-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: 780px; margin-bottom: 20px;
+  }
+  .olap-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .olap-table th, .olap-table td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .olap-table thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky);
+    background: rgba(56, 189, 248, 0.04);
+  }
+  .olap-table tbody tr:last-child td { border-bottom: none; }
+  .olap-table td { color: var(--text-secondary); }
+  .olap-table td strong { color: var(--text-primary); font-weight: 600; }
+
+  .cross-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cross-link {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    padding: 10px 20px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); background: var(--bg-card);
+    text-decoration: none; color: var(--text-secondary);
+    transition: all 0.3s; letter-spacing: 0.5px;
+  }
+  .cross-link:hover { border-color: var(--border-hover); color: var(--sky); transform: translateY(-1px); }
+  .cross-link.soon { opacity: 0.5; cursor: default; border-style: dashed; }
+  .cross-link.soon:hover { transform: none; color: var(--text-muted); border-color: var(--border); }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 60px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    .hub-stats { gap: 20px; }
+    .hub-stat { padding-right: 20px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb sky"></div>
+<div class="glow-orb blue"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">data/warehousing</span>
+    </a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">← Data</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Data</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">data</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">warehousing</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hub-hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> data/warehousing · Sub-domain hub</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Where the data<br><span class="gradient">actually lives.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The storage and modeling layer underneath every dashboard, every ML pipeline, every report. PostgreSQL is the default; ClickHouse, DuckDB, BigQuery, and Snowflake fill specific shapes.
+    </p>
+    <div class="hub-stats fade-up" style="transition-delay: 0.15s">
+      <div class="hub-stat"><div class="num">5</div><div class="label">Databases</div></div>
+      <div class="hub-stat"><div class="num">1</div><div class="label">Live explainer</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DATABASES ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">01 · Databases</div>
+      <h2 class="hub-title">The warehousing toolkit.</h2>
+      <p class="hub-lede">Five databases that cover different points on the OLTP-to-OLAP spectrum. PostgreSQL is live and is the default for new builds; the rest land as content ships.</p>
+    </div>
+
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="postgresql.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">PostgreSQL</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">data/warehousing/postgresql</span>
+        <p>The default relational database. ACID, extensions (PostGIS, pgvector, TimescaleDB), JSON, full-text search. The warehouse Frappe, Superset, and most 2nth builds run on.</p>
+      </a>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">ClickHouse</div>
+          <span class="svc-state stub">Stub</span>
+        </div>
+        <span class="svc-path">data/warehousing/clickhouse</span>
+        <p>Column-oriented OLAP for sub-second analytics on billions of rows. The engine of choice when PostgreSQL with materialized views isn't fast enough for the query shape.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">DuckDB</div>
+          <span class="svc-state stub">Stub</span>
+        </div>
+        <span class="svc-path">data/warehousing/duckdb</span>
+        <p>In-process analytical SQL. The SQLite of OLAP — no server, just a library. Runs inside Python scripts, dbt, notebooks, and Cloudflare Workers (WASM build).</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">BigQuery</div>
+          <span class="svc-state stub">Stub</span>
+        </div>
+        <span class="svc-path">data/warehousing/bigquery</span>
+        <p>Google's serverless warehouse. Pay-per-query, petabyte-scale, zero infrastructure to manage. The warehouse of choice when the team wants SQL and nothing else.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Snowflake</div>
+          <span class="svc-state stub">Stub</span>
+        </div>
+        <span class="svc-path">data/warehousing/snowflake</span>
+        <p>Multi-cloud warehouse with separation of storage and compute. Scale compute independently of storage; pay for what you run. The enterprise multi-cloud answer.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── THE SHARED PATTERN ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">02 · The shared pattern</div>
+      <h2 class="hub-title">OLTP vs OLAP — and the databases that blur the line.</h2>
+      <p class="hub-lede">Every database in this sub-hub sits somewhere on the OLTP-to-OLAP spectrum. Understanding where each one lives makes the choice obvious for most workloads.</p>
+    </div>
+
+    <div class="pattern-card fade-up" style="transition-delay: 0.05s">
+      <h4>OLTP → mixed → OLAP</h4>
+      <p>OLTP (Online Transaction Processing) means many small, fast reads and writes — an order being created, a user logging in, a row being updated. Postgres is native OLTP: row-oriented storage, ACID transactions, B-tree indexes, connection pooling. It's built for the operational workload.</p>
+      <p>OLAP (Online Analytical Processing) means fewer but larger queries — "sum revenue by region for the last 90 days across 500 million rows." Column-oriented storage (ClickHouse, BigQuery, Snowflake) is dramatically faster for this shape: it reads only the columns the query touches, compresses tightly, and parallelises across many cores.</p>
+      <p>The interesting territory is the middle. PostgreSQL covers it surprisingly well with materialized views, partial indexes, and TimescaleDB hypertables. Most teams never need to leave Postgres. The others become relevant when specific shapes emerge: sub-second OLAP at massive scale (ClickHouse), zero-infra serverless (BigQuery), in-process analysis without a server (DuckDB), multi-cloud storage/compute separation (Snowflake).</p>
+      <pre><span class="c"># The spectrum</span>
+
+<span class="s">OLTP</span>          <span class="s">Mixed</span>                    <span class="s">OLAP</span>
+  │               │                         │
+PostgreSQL ──── PostgreSQL + ──────── ClickHouse
+               extensions              BigQuery
+               (pgvector,             Snowflake
+               TimescaleDB,           DuckDB
+               mat. views)</pre>
+      <p style="margin-top: 14px;">The practical guide: start on PostgreSQL. Add materialized views for dashboard queries. If you're still slow after that with real data volumes, look at ClickHouse. If you need zero infrastructure, look at BigQuery. If you need in-process analysis in a script or notebook, reach for DuckDB.</p>
+    </div>
+
+    <div class="olap-table-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="olap-table">
+        <thead>
+          <tr>
+            <th>Database</th>
+            <th>Best for</th>
+            <th>Not for</th>
+            <th>Infrastructure</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>PostgreSQL</strong></td>
+            <td>General purpose — OLTP + light OLAP with extensions</td>
+            <td>Sub-second queries on 100B+ rows</td>
+            <td>Self-hosted / Cloud SQL / RDS / Supabase</td>
+          </tr>
+          <tr>
+            <td><strong>ClickHouse</strong></td>
+            <td>High-cardinality analytics on huge event streams</td>
+            <td>Transactional writes, small datasets</td>
+            <td>Self-hosted / ClickHouse Cloud</td>
+          </tr>
+          <tr>
+            <td><strong>DuckDB</strong></td>
+            <td>In-process analysis, local files (Parquet, CSV), notebooks</td>
+            <td>Concurrent multi-user writes</td>
+            <td>Embedded — no server</td>
+          </tr>
+          <tr>
+            <td><strong>BigQuery</strong></td>
+            <td>Petabyte-scale serverless SQL, GCP ecosystem</td>
+            <td>Low-latency transactional queries, cost-sensitive small data</td>
+            <td>Fully managed — Google Cloud</td>
+          </tr>
+          <tr>
+            <td><strong>Snowflake</strong></td>
+            <td>Multi-cloud enterprise warehouse, independent scaling</td>
+            <td>Cost-sensitive workloads, simple OLTP</td>
+            <td>Fully managed — AWS / Azure / GCP</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── CROSS-LINKS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">03 · Related branches</div>
+      <h2 class="hub-title">Where the warehousing branch connects.</h2>
+      <p class="hub-lede">Warehousing is the substrate that analytics, ML pipelines, and agent memory all sit on. It connects upward to the data hub, laterally to analytics tools, and outward to edge infrastructure.</p>
+    </div>
+    <div class="cross-links fade-up" style="transition-delay: 0.05s">
+      <a href="../" class="cross-link">← Data</a>
+      <a href="../analytics/" class="cross-link">data/analytics →</a>
+      <a href="../../tech/cloudflare/d1.html" class="cross-link soon">tech/cloudflare/d1 · soon</a>
+      <a href="../../tech/cloudflare/hyperdrive.html" class="cross-link soon">tech/cloudflare/hyperdrive · soon</a>
+      <a href="../../tech/frappe/framework.html" class="cross-link">tech/frappe/framework →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Data hub</a>
+      <a href="https://www.postgresql.org" target="_blank" rel="noopener">postgresql.org ↗</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
