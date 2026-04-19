@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2nth × Google Cloud — Dev Journey — know.2nth.ai</title>
+<meta name="description" content="The actual commands, outputs, and architectural lessons from standing up the first 2nth.ai GCP project. Compute Engine and Cloud Run validated in africa-south1, with the org-policy gotcha that shaped the whole design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --bg-terminal: #0A1224; --terminal-border: rgba(56, 189, 248, 0.18);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1000px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --gcp-blue: #4285F4; --gcp-red: #EA4335; --gcp-yellow: #FBBC05; --gcp-green: #34A853;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --bg-terminal: #0F172A;
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--sky); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .crumb {
+    font-size: 12px; color: var(--text-muted);
+    padding: 20px 0 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .crumb a { color: var(--sky); text-decoration: none; }
+  .crumb a:hover { text-decoration: underline; }
+  .crumb-sep { padding: 0 8px; color: var(--text-muted); }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 24px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--sky);
+    padding: 6px 14px;
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: var(--radius-pill);
+    margin-bottom: 24px;
+  }
+  .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--sky);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 54px); line-height: 1.1; font-weight: 700;
+    letter-spacing: -1.5px; margin-bottom: 20px;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .lede {
+    font-size: 18px; color: var(--text-secondary); max-width: 720px;
+    margin-bottom: 24px;
+  }
+  .hero-meta {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .hero-meta span { border-left: 2px solid var(--sky); padding-left: 10px; }
+
+  section.step { padding: 32px 0; }
+  .step-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 10px;
+  }
+  .step-label.pass { color: var(--green); }
+  .step-label.gotcha { color: var(--warm); }
+  .step-title {
+    font-size: clamp(22px, 3vw, 30px); font-weight: 700;
+    letter-spacing: -0.5px; margin-bottom: 14px;
+  }
+  .step-body {
+    font-size: 15px; color: var(--text-secondary); margin-bottom: 18px;
+  }
+  .step-body code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(56, 189, 248, 0.08);
+    color: var(--sky);
+    padding: 1px 6px; border-radius: 4px; font-size: 13px;
+  }
+  .step-body strong { color: var(--text-primary); }
+
+  .terminal {
+    background: var(--bg-terminal);
+    border: 1px solid var(--terminal-border);
+    border-radius: var(--radius-md);
+    margin: 16px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .terminal::before {
+    content: '';
+    position: absolute; top: 12px; left: 14px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #EA4335;
+    box-shadow:
+      16px 0 0 #FBBC05,
+      32px 0 0 #34A853;
+  }
+  .terminal-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--slate);
+    padding: 10px 16px 10px 70px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  }
+  .terminal pre {
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65;
+    color: #CBD5E1;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .terminal .c { color: #64748B; font-style: italic; }
+  .terminal .s { color: #7DD3FC; }
+  .terminal .k { color: #F472B6; }
+  .terminal .ok { color: #34D399; }
+  .terminal .err { color: #F87171; }
+  .terminal .warn { color: #FBBF24; }
+  .terminal .cmd { color: #F8FAFC; font-weight: 600; }
+  .terminal .path { color: #A5F3FC; }
+
+  .checks {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+    margin: 16px 0;
+    backdrop-filter: blur(8px);
+  }
+  .checks h4 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--green); margin-bottom: 14px; font-family: 'JetBrains Mono', monospace;
+  }
+  .checks ul { list-style: none; display: grid; gap: 10px; }
+  .checks li {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 14px; color: var(--text-secondary);
+  }
+  .checks li::before {
+    content: '✓'; color: var(--green); font-weight: 700;
+    flex-shrink: 0; width: 18px;
+  }
+  .checks li strong { color: var(--text-primary); }
+
+  .gotcha-card {
+    background: var(--warm-soft);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--radius-md);
+    padding: 22px 26px;
+    margin: 16px 0;
+  }
+  .gotcha-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--warm); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .gotcha-card h4::before {
+    content: '⚠'; font-size: 16px;
+  }
+  .gotcha-card h3 {
+    font-size: 20px; font-weight: 600; margin-bottom: 12px;
+  }
+  .gotcha-card p {
+    font-size: 14.5px; color: var(--text-secondary); margin-bottom: 10px;
+  }
+  .gotcha-card p strong { color: var(--text-primary); }
+
+  .takeaway {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(56, 189, 248, 0.04));
+    border: 1px solid rgba(37, 99, 235, 0.22);
+    border-radius: var(--radius-md);
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .takeaway h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--blue-glow); margin-bottom: 12px;
+  }
+  .takeaway p {
+    font-size: 15px; color: var(--text-secondary); margin-bottom: 10px;
+  }
+  .takeaway strong { color: var(--text-primary); }
+
+  .sep {
+    height: 1px; background: var(--border); max-width: 140px; margin: 40px auto;
+  }
+
+  .next-strip {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 36px;
+    margin: 40px 0;
+  }
+  .next-strip .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--sky); margin-bottom: 10px;
+  }
+  .next-strip h3 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 14px;
+  }
+  .next-strip p { color: var(--text-secondary); margin-bottom: 18px; }
+  .next-services {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px;
+  }
+  .next-services span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; padding: 10px 14px;
+    background: rgba(56, 189, 248, 0.06);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+  }
+
+  footer {
+    margin-top: 60px; padding: 40px 0 60px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; font-size: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
+  .footer-links {
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .footer-links a {
+    font-size: 13px; color: var(--text-secondary); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/google · demo</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">← Google hub</a>
+      <a href="../" class="nav-link">Tech</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">›</span>
+    <a href="./">google</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">demo</span>
+  </div>
+</div>
+
+<div class="container">
+  <section class="hero fade-up">
+    <div class="eyebrow"><span class="dot"></span> 2nth × Google Cloud · Dev Journey</div>
+    <h1>
+      First project.<br>
+      <span class="gradient">Africa-south1. Two services live.</span>
+    </h1>
+    <p class="lede">
+      The actual commands, outputs, and architectural takeaways from standing up the first 2nth.ai GCP project. Compute Engine and Cloud Run validated in Johannesburg (<code style="font-family: 'JetBrains Mono', monospace;">africa-south1</code>) — and the single org-policy gotcha that shaped the architectural pattern for everything coming next.
+    </p>
+    <div class="hero-meta">
+      <span>Project · cs-poc-kzmkho6ivq8mhceekpqttth</span>
+      <span>Identity · craig@2nth.ai</span>
+      <span>Region · africa-south1</span>
+      <span>Cost spent · &lt; $0.02</span>
+    </div>
+  </section>
+
+  <!-- ── STEP 0 — SETUP ── -->
+  <section class="step fade-up">
+    <div class="step-label">00 · Setup</div>
+    <h2 class="step-title">Switch identity and project.</h2>
+    <p class="step-body">
+      The <code>craig@2nth.ai</code> Workspace identity was freshly created; gcloud was still bound to the previous <code>craig@agilex.co.za</code> account. One revoke, one login, one project switch — and the CLI is pointing at the right surface.
+    </p>
+    <div class="terminal">
+      <div class="terminal-label">terminal · gcloud auth + project switch</div>
+<pre><span class="c"># revoke the old account</span>
+<span class="cmd">gcloud auth revoke</span> craig@agilex.co.za
+
+<span class="c"># authenticate as the new identity (browser OAuth)</span>
+<span class="cmd">gcloud auth login</span> craig@2nth.ai --update-adc
+<span class="ok">Application Default Credentials (ADC) were updated.</span>
+<span class="ok">You are now logged in as [craig@2nth.ai].</span>
+
+<span class="c"># point at the POC sandbox project</span>
+<span class="cmd">gcloud config set project</span> cs-poc-kzmkho6ivq8mhceekpqttth
+
+<span class="c"># fix the ADC quota project mismatch warning</span>
+<span class="cmd">gcloud auth application-default set-quota-project</span> cs-poc-kzmkho6ivq8mhceekpqttth</pre>
+    </div>
+    <p class="step-body">
+      The POC project is a Google-auto-generated sandbox (the <code>cs-poc-</code> prefix is the giveaway) sitting inside folder <code>436629319555</code>. It comes with inherited org policies — a fact that will matter in a minute.
+    </p>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- ── STEP 1 — COMPUTE ENGINE ── -->
+  <section class="step fade-up">
+    <div class="step-label pass">01 · Compute Engine · ✓ passed</div>
+    <h2 class="step-title">A private VM. IAP-only SSH. Three minutes in, three minutes out.</h2>
+    <p class="step-body">
+      The question being tested: can we stand up a VM in <code>africa-south1</code>, reach it without a public IP, and have everything torn down before it costs anything? Yes to all three.
+    </p>
+
+    <div class="terminal">
+      <div class="terminal-label">terminal · enable APIs + provision VM</div>
+<pre><span class="c"># enable the three APIs we need</span>
+<span class="cmd">gcloud services enable</span> compute.googleapis.com iap.googleapis.com oslogin.googleapis.com
+
+<span class="c"># firewall rule: allow IAP's range to reach tag iap-ssh on tcp:22</span>
+<span class="cmd">gcloud compute firewall-rules create</span> allow-iap-ssh \
+  --network=default --direction=INGRESS --action=ALLOW \
+  --source-ranges=<span class="s">35.235.240.0/20</span> \
+  --rules=tcp:22 \
+  --target-tags=<span class="s">iap-ssh</span>
+
+<span class="c"># create e2-micro VM, NO external IP</span>
+<span class="cmd">gcloud compute instances create</span> test-gce-01 \
+  --zone=<span class="s">africa-south1-a</span> \
+  --machine-type=<span class="s">e2-micro</span> \
+  --image-family=<span class="s">debian-12</span> --image-project=<span class="s">debian-cloud</span> \
+  --boot-disk-size=10GB --boot-disk-type=pd-balanced \
+  --no-address \
+  --tags=<span class="s">iap-ssh</span> \
+  --scopes=<span class="s">cloud-platform</span> \
+  --metadata=<span class="s">enable-oslogin=TRUE</span>
+
+<span class="ok">Created [.../zones/africa-south1-a/instances/test-gce-01]</span>
+<span class="path">NAME         ZONE             MACHINE_TYPE  INTERNAL_IP  EXTERNAL_IP  STATUS</span>
+test-gce-01  africa-south1-a  e2-micro      10.218.0.2                <span class="ok">RUNNING</span></pre>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-label">terminal · SSH through IAP (no public IP, no bastion)</div>
+<pre><span class="cmd">gcloud compute ssh</span> test-gce-01 \
+  --zone=africa-south1-a \
+  --tunnel-through-iap \
+  --command=<span class="s">'hostname &amp;&amp; uname -r &amp;&amp; cat /etc/os-release | grep PRETTY'</span>
+
+<span class="c"># output</span>
+<span class="ok">test-gce-01</span>
+<span class="ok">6.1.0-44-cloud-amd64</span>
+<span class="ok">PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"</span>
+
+<span class="c"># metadata server reachable from inside</span>
+<span class="cmd">curl</span> -H <span class="s">"Metadata-Flavor: Google"</span> \
+  http://metadata.google.internal/computeMetadata/v1/instance/zone
+<span class="ok">projects/518726288965/zones/africa-south1-a</span>
+
+<span class="cmd">curl</span> -H <span class="s">"Metadata-Flavor: Google"</span> \
+  http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email
+<span class="ok">518726288965-compute@developer.gserviceaccount.com</span></pre>
+    </div>
+
+    <div class="checks">
+      <h4>What this proved</h4>
+      <ul>
+        <li><strong>af-south1 provisioning path works</strong> for general compute. 3 zones (a/b/c), all UP.</li>
+        <li><strong>Private-only networking is viable</strong> — no external IP, no exposed SSH port, no bastion VM.</li>
+        <li><strong>IAP SSH tunneling works</strong> for an owner identity (after a quick <code>iap.tunnelResourceAccessor</code> grant) — the path teammates will use.</li>
+        <li><strong>Metadata server + default Compute SA</strong> are reachable from inside the VM — the foundation for Workload Identity and SDK auth without JSON keys.</li>
+        <li><strong>Debian 12 image is current</strong> (built 3 days before the test run) — no stale base for new VMs.</li>
+      </ul>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-label">terminal · cleanup (VM deleted, firewall kept for future tests)</div>
+<pre><span class="cmd">gcloud compute instances delete</span> test-gce-01 --zone=africa-south1-a --quiet
+<span class="ok">Deleted [.../instances/test-gce-01].</span>
+
+<span class="c"># firewall rule retained — free, reusable for the next VM test</span></pre>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- ── STEP 2 — CLOUD RUN ── -->
+  <section class="step fade-up">
+    <div class="step-label pass">02 · Cloud Run · ✓ passed (with a twist)</div>
+    <h2 class="step-title">Serverless container. Scale to zero. Auth-only by design.</h2>
+    <p class="step-body">
+      The 2nth default for GCP compute. Pay-per-request, scale to zero, global HTTPS out of the box. Deploy Google's own hello container — no Dockerfile, no build, just the image.
+    </p>
+
+    <div class="terminal">
+      <div class="terminal-label">terminal · enable APIs + deploy</div>
+<pre><span class="cmd">gcloud services enable</span> \
+  run.googleapis.com \
+  artifactregistry.googleapis.com \
+  cloudbuild.googleapis.com
+
+<span class="cmd">gcloud run deploy</span> hello \
+  --image=<span class="s">us-docker.pkg.dev/cloudrun/container/hello</span> \
+  --region=<span class="s">africa-south1</span> \
+  --allow-unauthenticated \
+  --min-instances=0 --max-instances=2 \
+  --memory=256Mi --cpu=1
+
+<span class="ok">Deploying new service...</span>
+<span class="ok">Creating Revision... done</span>
+<span class="ok">Routing traffic... done</span>
+<span class="warn">Completed with warnings:</span>
+<span class="warn">  Setting IAM policy failed — org policy blocks allUsers.</span>
+Service [hello] revision [hello-00001-qp5] serving <span class="ok">100%</span> of traffic.
+Service URL: <span class="path">https://hello-518726288965.africa-south1.run.app</span></pre>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-label">terminal · test the service (unauth 403, authed 200)</div>
+<pre><span class="c"># unauthenticated — blocked (expected: org policy refused to add allUsers)</span>
+<span class="cmd">curl</span> -o /dev/null -w <span class="s">"%{http_code}\n"</span> <span class="path">$URL</span>
+<span class="err">403</span>
+
+<span class="c"># authenticated with our identity token — serves</span>
+<span class="cmd">curl</span> -H <span class="s">"Authorization: Bearer $(gcloud auth print-identity-token)"</span> <span class="path">$URL</span>
+&lt;!doctype html&gt;
+&lt;title&gt;Congratulations | Cloud Run&lt;/title&gt;
+...</pre>
+    </div>
+
+    <div class="checks">
+      <h4>What this proved</h4>
+      <ul>
+        <li><strong>Cloud Run in af-south1 deploys cleanly</strong> — revision created, traffic routed, service URL live in under 90 seconds.</li>
+        <li><strong>Scale-to-zero works</strong> — <code>min-instances=0</code> means no instances running after idle timeout, no billing between requests.</li>
+        <li><strong>Identity-token auth works</strong> — the same pattern a Cloudflare Worker will use when calling this Cloud Run service via a signed Google ID token (see the compute skill for the Web Crypto JWT signer).</li>
+        <li><strong>Deploy-by-image works without a build step</strong> — Google's public Artifact Registry serves a <code>cloudrun/container/hello</code> image that bypasses Cloud Build entirely.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- ── STEP 3 — THE GOTCHA ── -->
+  <section class="step fade-up">
+    <div class="step-label gotcha">03 · The gotcha that shapes the architecture</div>
+    <h2 class="step-title">iam.allowedPolicyMemberDomains — the inherited policy that changes everything.</h2>
+    <p class="step-body">
+      Both tests surfaced the same constraint. When adding an IAM binding for <code>craig@2nth.ai</code> or for <code>allUsers</code>, the call is rejected:
+    </p>
+
+    <div class="terminal">
+      <div class="terminal-label">terminal · the rejection</div>
+<pre><span class="err">description: User craig@2nth.ai is not in permitted organization.</span>
+<span class="err">subject: orgpolicy:projects/cs-poc-kzmkho6ivq8mhceekpqttth</span>
+<span class="err">type: constraints/iam.allowedPolicyMemberDomains</span></pre>
+    </div>
+
+    <div class="gotcha-card">
+      <h4>The mechanism</h4>
+      <h3>An allowed-domains policy is inherited from the org folder, and <code>2nth.ai</code> isn't on the list.</h3>
+      <p>
+        The POC project sits inside folder <code>436629319555</code>. That folder has an <strong>allowed-domains org policy</strong> that restricts which Workspace domains can hold IAM roles. It doesn't include <code>2nth.ai</code> — so neither adding a <code>2nth.ai</code> user nor the public <code>allUsers</code> principal succeeds.
+      </p>
+      <p>
+        Neither test was blocked in practice: Craig already had owner rights via the project's initial grant, and the Cloud Run service deployed fine, it just defaulted to authenticated-only. But the policy is going to shape every future design decision.
+      </p>
+    </div>
+
+    <div class="takeaway">
+      <h4>The architectural consequence</h4>
+      <p>
+        <strong>Public-facing 2nth.ai products can't live directly on this GCP project</strong> — no <code>allUsers</code> means no open-to-the-world Cloud Run service, no public bucket, no anonymous function endpoint.
+      </p>
+      <p>
+        <strong>That forces the architecture we already wanted anyway.</strong> Cloudflare Workers hold the public edge — TLS, rate limiting, auth, caching, WAF. They sign a Google ID token from a service-account key stored as a Worker secret, and call the private Cloud Run service over HTTPS. Every public feature becomes: <em>edge Worker → private Cloud Run → private data plane</em>. The org policy is effectively enforcing the hybrid pattern.
+      </p>
+      <p>
+        <strong>For teammates</strong> (adding <code>james@2nth.ai</code>, <code>katharine@2nth.ai</code>), either (a) ask the org admin to add <code>2nth.ai</code> to the allowed-domains list on folder <code>436629319555</code>, or (b) move the project to a folder with a broader policy.
+      </p>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- ── STEP 4 — WHAT'S NEXT ── -->
+  <section class="step fade-up">
+    <div class="next-strip">
+      <div class="label">04 · What's next</div>
+      <h3>Three more services to validate. Same project. Same narrative.</h3>
+      <p>
+        Compute and Cloud Run were the load-bearing ones. The remaining tests are about confirming the services the 2nth platform actually depends on day-to-day — inference, analytics, messaging, storage, and secrets. Each follows the same pattern: enable, test, document the gotcha, clean up.
+      </p>
+      <div class="next-services">
+        <span>Vertex AI · Gemini 2.5</span>
+        <span>Claude via Model Garden</span>
+        <span>BigQuery · partitioned queries</span>
+        <span>Pub/Sub · push + pull</span>
+        <span>Cloud Storage · signed URLs</span>
+        <span>Secret Manager</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">Operational intelligence for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Tech hub</a>
+      <a href="./">Google hub</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/tech/google" target="_blank" rel="noopener">Canonical skills</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
