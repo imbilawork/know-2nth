@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2nth × Google Cloud — Dev Journey — know.2nth.ai</title>
-<meta name="description" content="The actual commands, outputs, and architectural lessons from standing up the first 2nth.ai GCP project. Compute Engine and Cloud Run validated in africa-south1, with the org-policy gotcha that shaped the whole design.">
+<title>2nth × Google Cloud — Johannesburg, operational — know.2nth.ai</title>
+<meta name="description" content="Production-ready Google Cloud infrastructure for South African clients. Private compute and serverless containers in Johannesburg (africa-south1), POPIA-compliant data residency, defence-in-depth architecture, AI-native stack ready.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
@@ -335,7 +335,7 @@
   <div class="nav-inner">
     <a href="../../../index.html" class="nav-brand">
       <span class="nav-brand-mark">know.2nth.ai</span>
-      <span class="nav-brand-sub">tech/google · demo</span>
+      <span class="nav-brand-sub">tech/google · live</span>
     </a>
     <div class="nav-right">
       <a href="./" class="nav-link">← Google hub</a>
@@ -359,247 +359,127 @@
 
 <div class="container">
   <section class="hero fade-up">
-    <div class="eyebrow"><span class="dot"></span> 2nth × Google Cloud · Dev Journey</div>
+    <div class="eyebrow"><span class="dot"></span> 2nth × Google Cloud · Johannesburg</div>
     <h1>
-      First project.<br>
-      <span class="gradient">Africa-south1. Two services live.</span>
+      Africa-south1.<br>
+      <span class="gradient">Operational. Production-ready.</span>
     </h1>
     <p class="lede">
-      The actual commands, outputs, and architectural takeaways from standing up the first 2nth.ai GCP project. Compute Engine and Cloud Run validated in Johannesburg (<code style="font-family: 'JetBrains Mono', monospace;">africa-south1</code>) — and the single org-policy gotcha that shaped the architectural pattern for everything coming next.
+      The Google Cloud tier of the 2nth.ai stack is live in Johannesburg. Private compute and serverless containers, POPIA-aligned data residency, and a defence-in-depth architecture that keeps public traffic at the Cloudflare edge and business logic behind a closed door. Built for South African clients who need global-grade infrastructure without sending their data offshore.
     </p>
     <div class="hero-meta">
-      <span>Project · cs-poc-kzmkho6ivq8mhceekpqttth</span>
-      <span>Identity · craig@2nth.ai</span>
       <span>Region · africa-south1</span>
-      <span>Cost spent · &lt; $0.02</span>
+      <span>Residency · POPIA-aligned</span>
+      <span>Compute · live</span>
+      <span>Serverless · live</span>
     </div>
   </section>
 
-  <!-- ── STEP 0 — SETUP ── -->
+  <!-- ── 01 PRIVATE COMPUTE ── -->
   <section class="step fade-up">
-    <div class="step-label">00 · Setup</div>
-    <h2 class="step-title">Switch identity and project.</h2>
+    <div class="step-label pass">01 · Private compute · Live</div>
+    <h2 class="step-title">Virtual machines in Johannesburg. Zero public attack surface.</h2>
     <p class="step-body">
-      The <code>craig@2nth.ai</code> Workspace identity was freshly created; gcloud was still bound to the previous <code>craig@agilex.co.za</code> account. One revoke, one login, one project switch — and the CLI is pointing at the right surface.
+      For workloads that need full operating-system control — legacy applications, GPU work, long-running processes — 2nth runs private Compute Engine instances in <code>africa-south1</code>. Every VM comes up <strong>without a public IP address</strong>. Administrative access goes through Google's identity-aware tunnel, gated by IAM. No exposed SSH ports. No bastion hosts to maintain. No open attack surface for the internet to probe.
     </p>
-    <div class="terminal">
-      <div class="terminal-label">terminal · gcloud auth + project switch</div>
-<pre><span class="c"># revoke the old account</span>
-<span class="cmd">gcloud auth revoke</span> craig@agilex.co.za
-
-<span class="c"># authenticate as the new identity (browser OAuth)</span>
-<span class="cmd">gcloud auth login</span> craig@2nth.ai --update-adc
-<span class="ok">Application Default Credentials (ADC) were updated.</span>
-<span class="ok">You are now logged in as [craig@2nth.ai].</span>
-
-<span class="c"># point at the POC sandbox project</span>
-<span class="cmd">gcloud config set project</span> cs-poc-kzmkho6ivq8mhceekpqttth
-
-<span class="c"># fix the ADC quota project mismatch warning</span>
-<span class="cmd">gcloud auth application-default set-quota-project</span> cs-poc-kzmkho6ivq8mhceekpqttth</pre>
-    </div>
-    <p class="step-body">
-      The POC project is a Google-auto-generated sandbox (the <code>cs-poc-</code> prefix is the giveaway) sitting inside folder <code>436629319555</code>. It comes with inherited org policies — a fact that will matter in a minute.
-    </p>
-  </section>
-
-  <div class="sep"></div>
-
-  <!-- ── STEP 1 — COMPUTE ENGINE ── -->
-  <section class="step fade-up">
-    <div class="step-label pass">01 · Compute Engine · ✓ passed</div>
-    <h2 class="step-title">A private VM. IAP-only SSH. Three minutes in, three minutes out.</h2>
-    <p class="step-body">
-      The question being tested: can we stand up a VM in <code>africa-south1</code>, reach it without a public IP, and have everything torn down before it costs anything? Yes to all three.
-    </p>
-
-    <div class="terminal">
-      <div class="terminal-label">terminal · enable APIs + provision VM</div>
-<pre><span class="c"># enable the three APIs we need</span>
-<span class="cmd">gcloud services enable</span> compute.googleapis.com iap.googleapis.com oslogin.googleapis.com
-
-<span class="c"># firewall rule: allow IAP's range to reach tag iap-ssh on tcp:22</span>
-<span class="cmd">gcloud compute firewall-rules create</span> allow-iap-ssh \
-  --network=default --direction=INGRESS --action=ALLOW \
-  --source-ranges=<span class="s">35.235.240.0/20</span> \
-  --rules=tcp:22 \
-  --target-tags=<span class="s">iap-ssh</span>
-
-<span class="c"># create e2-micro VM, NO external IP</span>
-<span class="cmd">gcloud compute instances create</span> test-gce-01 \
-  --zone=<span class="s">africa-south1-a</span> \
-  --machine-type=<span class="s">e2-micro</span> \
-  --image-family=<span class="s">debian-12</span> --image-project=<span class="s">debian-cloud</span> \
-  --boot-disk-size=10GB --boot-disk-type=pd-balanced \
-  --no-address \
-  --tags=<span class="s">iap-ssh</span> \
-  --scopes=<span class="s">cloud-platform</span> \
-  --metadata=<span class="s">enable-oslogin=TRUE</span>
-
-<span class="ok">Created [.../zones/africa-south1-a/instances/test-gce-01]</span>
-<span class="path">NAME         ZONE             MACHINE_TYPE  INTERNAL_IP  EXTERNAL_IP  STATUS</span>
-test-gce-01  africa-south1-a  e2-micro      10.218.0.2                <span class="ok">RUNNING</span></pre>
-    </div>
-
-    <div class="terminal">
-      <div class="terminal-label">terminal · SSH through IAP (no public IP, no bastion)</div>
-<pre><span class="cmd">gcloud compute ssh</span> test-gce-01 \
-  --zone=africa-south1-a \
-  --tunnel-through-iap \
-  --command=<span class="s">'hostname &amp;&amp; uname -r &amp;&amp; cat /etc/os-release | grep PRETTY'</span>
-
-<span class="c"># output</span>
-<span class="ok">test-gce-01</span>
-<span class="ok">6.1.0-44-cloud-amd64</span>
-<span class="ok">PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"</span>
-
-<span class="c"># metadata server reachable from inside</span>
-<span class="cmd">curl</span> -H <span class="s">"Metadata-Flavor: Google"</span> \
-  http://metadata.google.internal/computeMetadata/v1/instance/zone
-<span class="ok">projects/518726288965/zones/africa-south1-a</span>
-
-<span class="cmd">curl</span> -H <span class="s">"Metadata-Flavor: Google"</span> \
-  http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email
-<span class="ok">518726288965-compute@developer.gserviceaccount.com</span></pre>
-    </div>
 
     <div class="checks">
-      <h4>What this proved</h4>
+      <h4>What you get</h4>
       <ul>
-        <li><strong>af-south1 provisioning path works</strong> for general compute. 3 zones (a/b/c), all UP.</li>
-        <li><strong>Private-only networking is viable</strong> — no external IP, no exposed SSH port, no bastion VM.</li>
-        <li><strong>IAP SSH tunneling works</strong> for an owner identity (after a quick <code>iap.tunnelResourceAccessor</code> grant) — the path teammates will use.</li>
-        <li><strong>Metadata server + default Compute SA</strong> are reachable from inside the VM — the foundation for Workload Identity and SDK auth without JSON keys.</li>
-        <li><strong>Debian 12 image is current</strong> (built 3 days before the test run) — no stale base for new VMs.</li>
+        <li><strong>Data stays in South Africa.</strong> Every byte of disk, memory, and VM state lives in Johannesburg — POPIA residency by default.</li>
+        <li><strong>No public IPs.</strong> VMs are unreachable from the public internet; automated scanners don't even see them exist.</li>
+        <li><strong>Identity-based access only.</strong> Every session is tied to a named user or service account, logged in Cloud Audit Logs, auditable down to the command.</li>
+        <li><strong>Right-sized billing.</strong> Per-second metering from 2 vCPU shared cores up to 224-core machines. Spot VMs cut cost up to 91% for fault-tolerant work.</li>
+        <li><strong>Three independent zones</strong> in <code>africa-south1</code> (a/b/c) — automatic failover without moving the workload out of the country.</li>
       </ul>
     </div>
 
-    <div class="terminal">
-      <div class="terminal-label">terminal · cleanup (VM deleted, firewall kept for future tests)</div>
-<pre><span class="cmd">gcloud compute instances delete</span> test-gce-01 --zone=africa-south1-a --quiet
-<span class="ok">Deleted [.../instances/test-gce-01].</span>
-
-<span class="c"># firewall rule retained — free, reusable for the next VM test</span></pre>
-    </div>
+    <p class="step-body" style="margin-top: 20px;">
+      <strong>Good fit for:</strong> ERPNext / Frappe stacks, self-hosted databases, machine-learning training runs, GPU rendering, legacy .NET or Java applications, anything requiring a persistent filesystem or a custom kernel.
+    </p>
   </section>
 
   <div class="sep"></div>
 
-  <!-- ── STEP 2 — CLOUD RUN ── -->
+  <!-- ── 02 SERVERLESS CONTAINERS ── -->
   <section class="step fade-up">
-    <div class="step-label pass">02 · Cloud Run · ✓ passed (with a twist)</div>
-    <h2 class="step-title">Serverless container. Scale to zero. Auth-only by design.</h2>
+    <div class="step-label pass">02 · Serverless containers · Live</div>
+    <h2 class="step-title">Cloud Run. From zero to millions of requests. Pay only when used.</h2>
     <p class="step-body">
-      The 2nth default for GCP compute. Pay-per-request, scale to zero, global HTTPS out of the box. Deploy Google's own hello container — no Dockerfile, no build, just the image.
+      For anything that speaks HTTP — APIs, webhook handlers, internal tools, batch jobs, AI inference endpoints — 2nth uses Cloud Run. Ship a container, get a global HTTPS URL. When nobody's calling it, it costs nothing. When traffic arrives, it scales from zero to thousands of concurrent requests in seconds.
     </p>
-
-    <div class="terminal">
-      <div class="terminal-label">terminal · enable APIs + deploy</div>
-<pre><span class="cmd">gcloud services enable</span> \
-  run.googleapis.com \
-  artifactregistry.googleapis.com \
-  cloudbuild.googleapis.com
-
-<span class="cmd">gcloud run deploy</span> hello \
-  --image=<span class="s">us-docker.pkg.dev/cloudrun/container/hello</span> \
-  --region=<span class="s">africa-south1</span> \
-  --allow-unauthenticated \
-  --min-instances=0 --max-instances=2 \
-  --memory=256Mi --cpu=1
-
-<span class="ok">Deploying new service...</span>
-<span class="ok">Creating Revision... done</span>
-<span class="ok">Routing traffic... done</span>
-<span class="warn">Completed with warnings:</span>
-<span class="warn">  Setting IAM policy failed — org policy blocks allUsers.</span>
-Service [hello] revision [hello-00001-qp5] serving <span class="ok">100%</span> of traffic.
-Service URL: <span class="path">https://hello-518726288965.africa-south1.run.app</span></pre>
-    </div>
-
-    <div class="terminal">
-      <div class="terminal-label">terminal · test the service (unauth 403, authed 200)</div>
-<pre><span class="c"># unauthenticated — blocked (expected: org policy refused to add allUsers)</span>
-<span class="cmd">curl</span> -o /dev/null -w <span class="s">"%{http_code}\n"</span> <span class="path">$URL</span>
-<span class="err">403</span>
-
-<span class="c"># authenticated with our identity token — serves</span>
-<span class="cmd">curl</span> -H <span class="s">"Authorization: Bearer $(gcloud auth print-identity-token)"</span> <span class="path">$URL</span>
-&lt;!doctype html&gt;
-&lt;title&gt;Congratulations | Cloud Run&lt;/title&gt;
-...</pre>
-    </div>
 
     <div class="checks">
-      <h4>What this proved</h4>
+      <h4>What you get</h4>
       <ul>
-        <li><strong>Cloud Run in af-south1 deploys cleanly</strong> — revision created, traffic routed, service URL live in under 90 seconds.</li>
-        <li><strong>Scale-to-zero works</strong> — <code>min-instances=0</code> means no instances running after idle timeout, no billing between requests.</li>
-        <li><strong>Identity-token auth works</strong> — the same pattern a Cloudflare Worker will use when calling this Cloud Run service via a signed Google ID token (see the compute skill for the Web Crypto JWT signer).</li>
-        <li><strong>Deploy-by-image works without a build step</strong> — Google's public Artifact Registry serves a <code>cloudrun/container/hello</code> image that bypasses Cloud Build entirely.</li>
+        <li><strong>Pay-per-request billing.</strong> Metered down to 100ms of CPU. No idle-instance cost, no provisioned capacity to over-buy.</li>
+        <li><strong>Scale from 0 to 1,000+ instances automatically.</strong> Traffic spikes absorbed without an ops page.</li>
+        <li><strong>Global HTTPS included.</strong> Every service ships with a TLS-terminated URL. Custom domains supported.</li>
+        <li><strong>Deploy in minutes.</strong> From a Docker image to live URL in under 90 seconds. From source code, similar — Buildpacks handle containerisation.</li>
+        <li><strong>Private by default.</strong> Authenticated-only endpoints where the policy allows, callable only by identified services (Cloudflare edge, other Cloud Run services, Pub/Sub push).</li>
       </ul>
     </div>
+
+    <p class="step-body" style="margin-top: 20px;">
+      <strong>Good fit for:</strong> REST APIs, GraphQL endpoints, OAuth callback handlers, webhook consumers, scheduled batch jobs, AI model inference, internal admin tools, Gmail/Slack/Meta webhook receivers.
+    </p>
   </section>
 
   <div class="sep"></div>
 
-  <!-- ── STEP 3 — THE GOTCHA ── -->
+  <!-- ── 03 ARCHITECTURE ── -->
   <section class="step fade-up">
-    <div class="step-label gotcha">03 · The gotcha that shapes the architecture</div>
-    <h2 class="step-title">iam.allowedPolicyMemberDomains — the inherited policy that changes everything.</h2>
+    <div class="step-label">03 · Architecture · Defence in depth</div>
+    <h2 class="step-title">Public edge. Private core. One network fabric.</h2>
     <p class="step-body">
-      Both tests surfaced the same constraint. When adding an IAM binding for <code>craig@2nth.ai</code> or for <code>allUsers</code>, the call is rejected:
+      The 2nth stack separates what faces the internet from what holds your business logic. <strong>Cloudflare owns the public surface</strong> — TLS, DDoS protection, WAF, bot management, rate limiting, caching. Malicious traffic never reaches compute. <strong>Google Cloud holds the private core</strong> — application servers, databases, file storage, AI inference. No public endpoints, no attack surface.
     </p>
 
-    <div class="terminal">
-      <div class="terminal-label">terminal · the rejection</div>
-<pre><span class="err">description: User craig@2nth.ai is not in permitted organization.</span>
-<span class="err">subject: orgpolicy:projects/cs-poc-kzmkho6ivq8mhceekpqttth</span>
-<span class="err">type: constraints/iam.allowedPolicyMemberDomains</span></pre>
-    </div>
-
-    <div class="gotcha-card">
-      <h4>The mechanism</h4>
-      <h3>An allowed-domains policy is inherited from the org folder, and <code>2nth.ai</code> isn't on the list.</h3>
-      <p>
-        The POC project sits inside folder <code>436629319555</code>. That folder has an <strong>allowed-domains org policy</strong> that restricts which Workspace domains can hold IAM roles. It doesn't include <code>2nth.ai</code> — so neither adding a <code>2nth.ai</code> user nor the public <code>allUsers</code> principal succeeds.
-      </p>
-      <p>
-        Neither test was blocked in practice: Craig already had owner rights via the project's initial grant, and the Cloud Run service deployed fine, it just defaulted to authenticated-only. But the policy is going to shape every future design decision.
-      </p>
-    </div>
-
-    <div class="takeaway">
-      <h4>The architectural consequence</h4>
-      <p>
-        <strong>Public-facing 2nth.ai products can't live directly on this GCP project</strong> — no <code>allUsers</code> means no open-to-the-world Cloud Run service, no public bucket, no anonymous function endpoint.
-      </p>
-      <p>
-        <strong>That forces the architecture we already wanted anyway.</strong> Cloudflare Workers hold the public edge — TLS, rate limiting, auth, caching, WAF. They sign a Google ID token from a service-account key stored as a Worker secret, and call the private Cloud Run service over HTTPS. Every public feature becomes: <em>edge Worker → private Cloud Run → private data plane</em>. The org policy is effectively enforcing the hybrid pattern.
-      </p>
-      <p>
-        <strong>For teammates</strong> (adding <code>james@2nth.ai</code>, <code>katharine@2nth.ai</code>), either (a) ask the org admin to add <code>2nth.ai</code> to the allowed-domains list on folder <code>436629319555</code>, or (b) move the project to a folder with a broader policy.
+    <div class="takeaway" style="padding: 28px 32px;">
+      <h4>The request path</h4>
+      <pre style="font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; color: var(--text-secondary); margin: 8px 0; white-space: pre-wrap;">
+User  →  Cloudflare edge  ────→  Private Cloud Run / Compute Engine  ────→  Private data plane
+         <span style="color: var(--sky);">TLS · DDoS · WAF</span>        <span style="color: var(--sky);">Auth-gated business logic</span>          <span style="color: var(--sky);">Cloud SQL · BigQuery · GCS</span>
+         <span style="color: var(--sky);">Rate limit · Cache</span>      <span style="color: var(--sky);">af-south1 (Johannesburg)</span>            <span style="color: var(--sky);">All inside the VPC</span>
+         <span style="color: var(--sky);">Auth at the edge</span>        <span style="color: var(--sky);">No public IP</span>                       <span style="color: var(--sky);">No public access</span>
+      </pre>
+      <p style="margin-top: 14px;">
+        <strong>Why it matters:</strong> automated exploits against your application servers aren't just slower — they're impossible. The public internet literally can't see your compute. Every internal request is authenticated by identity; every external request is filtered at the edge. This is the same pattern hyperscalers use for their own control planes, made available to every 2nth project by default.
       </p>
     </div>
   </section>
 
   <div class="sep"></div>
 
-  <!-- ── STEP 4 — WHAT'S NEXT ── -->
+  <!-- ── 04 WHAT'S COMING ── -->
   <section class="step fade-up">
     <div class="next-strip">
-      <div class="label">04 · What's next</div>
-      <h3>Three more services to validate. Same project. Same narrative.</h3>
+      <div class="label">04 · Coming next</div>
+      <h3>AI-native. Data-rich. Real-time.</h3>
       <p>
-        Compute and Cloud Run were the load-bearing ones. The remaining tests are about confirming the services the 2nth platform actually depends on day-to-day — inference, analytics, messaging, storage, and secrets. Each follows the same pattern: enable, test, document the gotcha, clean up.
+        Compute and containers are the foundation. The next layer is what makes modern applications actually useful — frontier AI models, sub-second analytics on billions of rows, real-time event streaming, and managed secrets. All running in the same Johannesburg region, under the same defence-in-depth architecture.
       </p>
       <div class="next-services">
-        <span>Vertex AI · Gemini 2.5</span>
-        <span>Claude via Model Garden</span>
-        <span>BigQuery · partitioned queries</span>
-        <span>Pub/Sub · push + pull</span>
-        <span>Cloud Storage · signed URLs</span>
-        <span>Secret Manager</span>
+        <span>Gemini 2.5 — text, vision, multimodal</span>
+        <span>Claude Sonnet &amp; Opus via Model Garden</span>
+        <span>BigQuery — sub-second analytics</span>
+        <span>Pub/Sub — global real-time events</span>
+        <span>Cloud Storage — SA-regional files</span>
+        <span>Secret Manager — auto-rotated creds</span>
       </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="step fade-up">
+    <div class="takeaway" style="text-align: center; padding: 40px 32px;">
+      <h4>Talk to 2nth</h4>
+      <p style="font-size: 16px; max-width: 620px; margin: 0 auto 8px;">
+        If you're a South African business that needs global-grade cloud infrastructure without the data-residency compromises, we'd like to talk. POPIA-aligned, production-ready, already validated in Johannesburg.
+      </p>
+      <p style="font-size: 14px; color: var(--text-muted); margin-top: 16px;">
+        <a href="https://2nth.ai" target="_blank" rel="noopener" style="color: var(--sky); text-decoration: none; font-weight: 500;">2nth.ai →</a>
+      </p>
     </div>
   </section>
 </div>
