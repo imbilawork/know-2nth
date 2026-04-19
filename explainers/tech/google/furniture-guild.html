@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Furniture Guild — Fine furniture, crafted in South Africa</title>
+<meta name="description" content="Furniture Guild — solid hardwood tables, chairs, desks and home furniture, crafted in Cape Town. Browse the catalogue and request a quote. A 2nth.ai consumer-frontend demo running over ERPNext in Johannesburg.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='5' y='10' width='22' height='3' fill='%23C38A4D'/%3E%3Crect x='7' y='13' width='3' height='14' fill='%23A06B33'/%3E%3Crect x='22' y='13' width='3' height='14' fill='%23A06B33'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #12100E; --ink-deep: #0A0907;
+    --wood-dark: #5C3A1F; --wood-mid: #8B5A2B; --wood-light: #C38A4D;
+    --wood-glow: #E4B07E; --cream: #F4EADD; --paper: #FCF8F2;
+    --sage: #7C9070; --sage-soft: rgba(124, 144, 112, 0.12);
+    --sky: #38BDF8;
+    --mist: #E2DDD3; --slate: #948B7E; --text-muted: #6B6259;
+    --bg: var(--paper); --bg-raised: #FFFFFF;
+    --bg-card: #FFFFFF; --bg-card-hover: #FFF9EF;
+    --text-primary: var(--ink); --text-secondary: #3D362E;
+    --border: rgba(139, 90, 43, 0.12); --border-hover: rgba(139, 90, 43, 0.35);
+    --max-w: 1200px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="dark"] {
+    --bg: #1C1611; --bg-raised: #241C15;
+    --bg-card: #2A1F17; --bg-card-hover: #33261C;
+    --text-primary: var(--paper); --text-secondary: #D8CAB3;
+    --text-muted: #8A7A63;
+    --border: rgba(196, 138, 77, 0.15); --border-hover: rgba(228, 176, 126, 0.35);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.3);
+    background: rgba(252, 248, 242, 0.92);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="dark"] nav { background: rgba(28, 22, 17, 0.9); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-primary); }
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--wood-mid), var(--wood-dark));
+    position: relative;
+  }
+  .brand-mark::before {
+    content: ''; position: absolute; inset: 6px 3px;
+    background: repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 4px);
+    border-radius: 3px;
+  }
+  .brand-name { font-size: 19px; font-weight: 700; letter-spacing: -0.4px; }
+  .brand-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 24px; }
+  .nav-link { font-size: 14px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--wood-mid); }
+  .nav-cart-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: var(--radius-pill);
+    background: var(--wood-dark); color: var(--paper);
+    font-size: 13px; font-weight: 600; cursor: pointer; border: none;
+    transition: all 0.2s;
+  }
+  .nav-cart-btn:hover { background: var(--wood-mid); transform: translateY(-1px); }
+  .nav-cart-count {
+    background: var(--wood-glow); color: var(--ink);
+    padding: 1px 7px; border-radius: var(--radius-pill);
+    font-size: 11px; font-weight: 700;
+  }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; }
+
+  /* ── 2nth context badge ── */
+  .context-ribbon {
+    background: linear-gradient(135deg, rgba(124, 144, 112, 0.1), rgba(56, 189, 248, 0.05));
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px; text-align: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--text-muted); letter-spacing: 1px;
+  }
+  .context-ribbon a { color: var(--sage); text-decoration: none; font-weight: 600; }
+  .context-ribbon a:hover { text-decoration: underline; }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 64px 0 40px; position: relative;
+  }
+  .hero h1 {
+    font-size: clamp(38px, 5.5vw, 62px); line-height: 1.05; font-weight: 800;
+    letter-spacing: -2px; margin-bottom: 22px; max-width: 900px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--wood-dark), var(--wood-glow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub {
+    font-size: 19px; color: var(--text-secondary); max-width: 640px; margin-bottom: 26px;
+  }
+  .hero-meta {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase;
+  }
+  .hero-meta span { border-left: 2px solid var(--wood-light); padding-left: 10px; }
+
+  /* ── Category filter ── */
+  .filter-bar {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    padding: 24px 0 12px;
+    border-top: 1px solid var(--border);
+  }
+  .filter-pill {
+    padding: 8px 18px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); background: transparent;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--text-secondary); cursor: pointer;
+    font-weight: 500; transition: all 0.18s;
+    letter-spacing: 0.3px;
+  }
+  .filter-pill:hover { border-color: var(--wood-mid); }
+  .filter-pill.active { background: var(--wood-dark); color: var(--paper); border-color: var(--wood-dark); }
+
+  /* ── Product grid ── */
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px; padding: 20px 0 48px;
+  }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-md); overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: all 0.2s ease;
+  }
+  .card:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(139, 90, 43, 0.1); }
+  .card-img {
+    height: 180px;
+    background: linear-gradient(135deg, var(--wood-light), var(--wood-mid));
+    position: relative; overflow: hidden;
+  }
+  .card-img::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 6px,
+      rgba(0, 0, 0, 0.07) 6px,
+      rgba(0, 0, 0, 0.07) 7px
+    );
+  }
+  .card-img.dining { background: linear-gradient(135deg, #C38A4D, #8B5A2B); }
+  .card-img.living { background: linear-gradient(135deg, #A0845C, #5C3A1F); }
+  .card-img.bedroom { background: linear-gradient(135deg, #B8804F, #7A4A26); }
+  .card-img.office { background: linear-gradient(135deg, #D4A574, #8B5A2B); }
+  .card-img.kitchen { background: linear-gradient(135deg, #C8956A, #6B4423); }
+  .card-img-shape {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.25;
+  }
+  .card-img-shape svg { width: 60%; height: 60%; }
+  .card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
+  .card-cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--wood-mid); letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .card-name { font-size: 17px; font-weight: 600; margin-bottom: 8px; line-height: 1.3; }
+  .card-desc { font-size: 13px; color: var(--text-secondary); flex: 1; margin-bottom: 14px; }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; }
+  .card-price { font-size: 18px; font-weight: 700; color: var(--wood-dark); }
+  [data-theme="dark"] .card-price { color: var(--wood-glow); }
+  .card-btn {
+    padding: 8px 16px; border-radius: var(--radius-pill);
+    background: var(--ink); color: var(--paper);
+    font-size: 12px; font-weight: 600; border: none; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .card-btn:hover { background: var(--wood-dark); }
+  .card-btn.added { background: var(--sage); }
+
+  /* ── Cart drawer ── */
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed; top: 0; right: -440px; width: 420px; max-width: 100vw;
+    height: 100vh; background: var(--bg-raised); z-index: 201;
+    transition: right 0.25s ease;
+    display: flex; flex-direction: column;
+    border-left: 1px solid var(--border);
+  }
+  .drawer.open { right: 0; }
+  .drawer-head {
+    padding: 20px 22px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .drawer-head h3 { font-size: 18px; font-weight: 700; }
+  .drawer-close {
+    background: none; border: none; font-size: 22px; cursor: pointer;
+    color: var(--text-muted); line-height: 1;
+  }
+  .drawer-items { flex: 1; overflow-y: auto; padding: 14px 22px; }
+  .drawer-item {
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .drawer-item:last-child { border-bottom: none; }
+  .drawer-item-thumb {
+    width: 52px; height: 52px; border-radius: 8px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--wood-light), var(--wood-mid));
+  }
+  .drawer-item-info { flex: 1; font-size: 13px; }
+  .drawer-item-name { font-weight: 600; margin-bottom: 2px; }
+  .drawer-item-meta { color: var(--text-muted); font-size: 12px; }
+  .drawer-item-qty {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .qty-btn { width: 24px; height: 24px; border-radius: 4px; border: 1px solid var(--border); background: transparent; cursor: pointer; font-size: 14px; color: var(--text-secondary); }
+  .qty-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; min-width: 18px; text-align: center; }
+  .drawer-empty {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 20px; text-align: center; color: var(--text-muted); font-size: 14px;
+  }
+  .drawer-foot {
+    padding: 18px 22px; border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .drawer-total {
+    display: flex; justify-content: space-between; margin-bottom: 14px;
+    font-size: 15px; font-weight: 600;
+  }
+  .drawer-total .amt { font-size: 20px; font-weight: 700; color: var(--wood-dark); }
+  [data-theme="dark"] .drawer-total .amt { color: var(--wood-glow); }
+  .drawer-cta {
+    width: 100%; padding: 14px; border-radius: var(--radius-pill);
+    background: var(--ink); color: var(--paper); border: none;
+    font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px;
+    transition: background 0.2s;
+  }
+  .drawer-cta:hover { background: var(--wood-dark); }
+
+  /* ── Modal (quote flow) ── */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 300;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-bg.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--bg-raised); border-radius: var(--radius-lg);
+    max-width: 540px; width: 100%; padding: 32px 30px;
+    border: 1px solid var(--border);
+    max-height: 92vh; overflow-y: auto;
+  }
+  .modal h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .modal .sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-transform: uppercase; }
+  .field input, .field textarea, .field select {
+    width: 100%; padding: 11px 14px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg);
+    font-family: inherit; font-size: 14px; color: var(--text-primary);
+  }
+  .field textarea { min-height: 80px; resize: vertical; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn { padding: 11px 22px; border-radius: var(--radius-pill); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--ink); color: var(--paper); flex: 1; }
+  .btn-primary:hover { background: var(--wood-dark); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+
+  /* ── Quote preview ── */
+  .quote-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--sage);
+    margin-bottom: 18px; padding: 10px 14px;
+    background: var(--sage-soft); border-radius: 8px;
+    display: inline-block;
+  }
+  .quote-line {
+    display: grid; grid-template-columns: 1fr auto auto auto;
+    gap: 14px; padding: 10px 0;
+    border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .quote-line:first-of-type { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
+  .quote-summary {
+    margin-top: 16px; padding-top: 14px;
+    border-top: 2px solid var(--wood-dark);
+  }
+  .quote-summary-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+  .quote-summary-row.total { font-size: 18px; font-weight: 700; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+
+  /* ── Order timeline ── */
+  .timeline {
+    padding: 20px 0; margin-bottom: 20px;
+  }
+  .timeline-step {
+    display: flex; gap: 18px; align-items: flex-start;
+    padding: 14px 0; position: relative;
+  }
+  .timeline-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg-raised);
+    flex-shrink: 0; margin-top: 3px; position: relative; z-index: 1;
+  }
+  .timeline-step:not(:last-child)::before {
+    content: ''; position: absolute; left: 8px; top: 30px; bottom: -6px;
+    width: 2px; background: var(--border); z-index: 0;
+  }
+  .timeline-step.done .timeline-dot {
+    background: var(--sage); border-color: var(--sage);
+  }
+  .timeline-step.done::before { background: var(--sage); }
+  .timeline-step.current .timeline-dot {
+    background: var(--wood-mid); border-color: var(--wood-mid);
+    box-shadow: 0 0 0 4px rgba(139, 90, 43, 0.15);
+  }
+  .timeline-title { font-weight: 600; font-size: 14px; }
+  .timeline-sub { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 80px; padding: 48px 0 60px;
+    border-top: 1px solid var(--border);
+    background: var(--cream);
+  }
+  [data-theme="dark"] footer { background: var(--bg-raised); }
+  .footer-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+  .footer-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 30px; margin-bottom: 30px; }
+  .footer-brand-block h4 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .footer-brand-block p { font-size: 14px; color: var(--text-secondary); max-width: 340px; }
+  .footer-col { display: flex; flex-direction: column; gap: 8px; }
+  .footer-col h5 {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .footer-col a { font-size: 13px; color: var(--text-secondary); text-decoration: none; }
+  .footer-col a:hover { color: var(--wood-mid); }
+  .footer-copy {
+    padding-top: 20px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text-muted);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.55s, transform 0.55s; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 34px; letter-spacing: -1px; }
+    .nav-right { gap: 10px; }
+    .nav-link { display: none; }
+    .drawer { width: 100%; right: -100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="context-ribbon">
+  2nth.ai demo · Customer-facing storefront running over a private ERPNext instance in <code>africa-south1</code> · <a href="demo.html">see the infrastructure →</a>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#">
+      <span class="brand-mark"></span>
+      <span>
+        <span class="brand-name">Furniture Guild</span>
+      </span>
+      <span class="brand-sub">Crafted in CPT</span>
+    </a>
+    <div class="nav-right">
+      <a href="#catalog" class="nav-link">Catalogue</a>
+      <a href="#process" class="nav-link">How it works</a>
+      <a href="furniture-guild-workshop.html" class="nav-link">Workshop view</a>
+      <button class="nav-cart-btn" onclick="openCart()">
+        <span>Quote</span>
+        <span class="nav-cart-count" id="cart-count">0</span>
+      </button>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <section class="hero fade-up">
+    <h1>Solid wood. South African.<br><em>Built to last a generation.</em></h1>
+    <p class="sub">Dining tables, chairs, desks, beds and more — crafted from oak, yellowwood, walnut and pine in our Cape Town workshop. Browse the catalogue, request a quote, and we'll get back to you within two business days.</p>
+    <div class="hero-meta">
+      <span>16 Products · In-stock now</span>
+      <span>Cape Town workshop</span>
+      <span>Delivery SA-wide · 5–10 days</span>
+      <span>10-year craftsmanship guarantee</span>
+    </div>
+  </section>
+
+  <div class="filter-bar" id="filter">
+    <button class="filter-pill active" data-cat="all" onclick="setFilter('all')">All · 16</button>
+    <button class="filter-pill" data-cat="Dining" onclick="setFilter('Dining')">Dining · 4</button>
+    <button class="filter-pill" data-cat="Living" onclick="setFilter('Living')">Living · 4</button>
+    <button class="filter-pill" data-cat="Bedroom" onclick="setFilter('Bedroom')">Bedroom · 2</button>
+    <button class="filter-pill" data-cat="Office" onclick="setFilter('Office')">Office · 4</button>
+    <button class="filter-pill" data-cat="Kitchen" onclick="setFilter('Kitchen')">Kitchen · 2</button>
+  </div>
+
+  <section class="grid fade-up" id="catalog"></section>
+
+  <!-- Process / How it works -->
+  <section class="fade-up" id="process" style="padding: 48px 0; margin-top: 30px; border-top: 1px solid var(--border);">
+    <h2 style="font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 14px;">How it works</h2>
+    <p style="font-size: 16px; color: var(--text-secondary); max-width: 600px; margin-bottom: 30px;">
+      Quote-to-delivery in four steps. Every stage is handled by the same operational system the workshop uses — you and we see the same data.
+    </p>
+    <div class="timeline">
+      <div class="timeline-step done">
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-title">1 · You request a quote</div>
+          <div class="timeline-sub">Pick products, tell us about the space, submit. No account required, no pushy email list.</div>
+        </div>
+      </div>
+      <div class="timeline-step done">
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-title">2 · We reply with a priced quote</div>
+          <div class="timeline-sub">Typically within two business days. Quote includes lead time, delivery cost, and 50% deposit terms.</div>
+        </div>
+      </div>
+      <div class="timeline-step current">
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-title">3 · You confirm, we build</div>
+          <div class="timeline-sub">Accept the quote, pay the 50% deposit, and the order enters our workshop queue. Progress is visible in your order tracker.</div>
+        </div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-title">4 · Delivered, set up, guaranteed</div>
+          <div class="timeline-sub">Nationwide courier delivery with white-glove placement in Cape Town / Johannesburg. 10-year structural guarantee.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2nth context (gentle, at the bottom — this is a demo) -->
+  <section class="fade-up" style="padding: 40px 0; margin-top: 20px; border-top: 1px solid var(--border);">
+    <div style="background: linear-gradient(135deg, rgba(124, 144, 112, 0.08), rgba(56, 189, 248, 0.04)); border: 1px solid rgba(124, 144, 112, 0.25); border-radius: 16px; padding: 32px 36px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--sage); margin-bottom: 12px;">2nth.ai · About this demo</div>
+      <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.4px;">This is what ERPNext looks like with a front-end on it.</h3>
+      <p style="font-size: 15px; color: var(--text-secondary); max-width: 780px; margin-bottom: 14px;">
+        Every product, price, customer and invoice you see is real data in a private ERPNext instance running on Google Cloud in Johannesburg. When you request a quote, a Cloudflare Worker at the edge signs a request into the private ERPNext API — no direct public exposure, no CORS theatre, no SaaS middleman. The workshop team sees your order in their ERPNext desk; you see it on a page that behaves like the rest of the internet.
+      </p>
+      <p style="font-size: 14px; color: var(--text-muted);">
+        See the <a href="furniture-guild-workshop.html" style="color: var(--sage); font-weight: 600;">production dashboard</a> for the workshop-side view of the same data, or the <a href="demo.html" style="color: var(--sage); font-weight: 600;">infrastructure explainer</a> for how this is wired.
+      </p>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <h4>Furniture Guild</h4>
+        <p>Fine solid-wood furniture, built by hand in Cape Town. Delivered across South Africa with a 10-year craftsmanship guarantee.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Shop</h5>
+        <a href="#catalog">Catalogue</a>
+        <a href="#process">How it works</a>
+        <a href="#catalog">Care &amp; guarantee</a>
+      </div>
+      <div class="footer-col">
+        <h5>Workshop</h5>
+        <a href="#">Custom builds</a>
+        <a href="#">Trade accounts</a>
+        <a href="furniture-guild-workshop.html">Production view</a>
+      </div>
+      <div class="footer-col">
+        <h5>2nth.ai</h5>
+        <a href="demo.html">Infrastructure</a>
+        <a href="compute.html">Compute tier</a>
+        <a href="./">Google Cloud hub</a>
+      </div>
+    </div>
+    <div class="footer-copy">
+      <span>© 2026 Furniture Guild · Cape Town, South Africa</span>
+      <span>A <a href="https://2nth.ai" style="color: var(--wood-mid); text-decoration: none; font-weight: 600;">2nth.ai</a> demo — running on private GCP infrastructure in <code>africa-south1</code></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── Cart Drawer ── -->
+<div class="drawer-overlay" id="drawer-bg" onclick="closeCart()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>Your quote request</h3>
+    <button class="drawer-close" onclick="closeCart()">×</button>
+  </div>
+  <div class="drawer-items" id="drawer-items"></div>
+  <div class="drawer-foot">
+    <div class="drawer-total"><span>Estimated subtotal</span><span class="amt" id="drawer-total">R 0</span></div>
+    <button class="drawer-cta" id="submit-quote" onclick="submitQuote()" disabled>Request quote →</button>
+    <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px; text-align: center;">Prices exclude delivery and VAT · No commitment, no account required</p>
+  </div>
+</aside>
+
+<!-- ── Modal ── -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+  // ── Product catalogue (matches ERPNext items) ──
+  const PRODUCTS = [
+    // Dining
+    { code: "FG-TBL-OAK6", name: "Solid Oak Dining Table — 6-Seater", cat: "Dining", price: 12000, desc: "Solid South African white oak, 1800×900mm. Seats six comfortably. Hand-finished Danish oil." },
+    { code: "FG-TBL-OAK8", name: "Solid Oak Dining Table — 8-Seater", cat: "Dining", price: 17500, desc: "Larger format, same craftsmanship. 2400×1000mm, matches the 8-chair set." },
+    { code: "FG-CHR-OAK",  name: "Oak Dining Chair",                    cat: "Dining", price: 1800,  desc: "Mortise-and-tenon joinery, no screws, no dowels. Stackable set of four or six." },
+    { code: "FG-SID-WAL",  name: "Walnut Sideboard — 3-Door",           cat: "Dining", price: 8500,  desc: "Three doors, two interior shelves, soft-close hinges. Statement piece for a dining room." },
+    // Living
+    { code: "FG-TBL-WALCOF", name: "Walnut Coffee Table", cat: "Living", price: 4800, desc: "1200×600mm, 45cm high. Floating look on a steel pin base." },
+    { code: "FG-TVS-WAL",    name: "Walnut TV Stand — 180cm", cat: "Living", price: 5200, desc: "Solid walnut, two drawers, cable-management cutouts. Fits up to 75-inch displays." },
+    { code: "FG-BSH-PIN5",   name: "Pine Bookshelf — 5-Tier", cat: "Living", price: 3200, desc: "Adjustable shelves, anchored top plate. Natural pine with Danish oil finish." },
+    { code: "FG-CAB-DISP",   name: "Display Cabinet — Glass Front", cat: "Living", price: 7800, desc: "Solid oak frame, tempered glass, LED-ready with wiring channel. Interior lighting optional (+R800)." },
+    // Bedroom
+    { code: "FG-BED-OAKK", name: "King Size Bed Frame — Solid Oak", cat: "Bedroom", price: 9800, desc: "Traditional four-post design, engineered for Queen/King SA mattresses. Includes slats." },
+    { code: "FG-TBL-BED",  name: "Bedside Table — Oak",              cat: "Bedroom", price: 1200, desc: "Single drawer, lower shelf. Matches the bed frame — buy as a set for 10% off." },
+    // Office
+    { code: "FG-DSK-YEL",  name: "Executive Desk — Yellowwood",      cat: "Office", price: 18000, desc: "Indigenous yellowwood, 1800×800mm. Three drawers, cable pass-through, lockable." },
+    { code: "FG-CHR-EXEC", name: "Executive Office Chair — Leather", cat: "Office", price: 4500,  desc: "Full-grain leather, yellowwood frame, ergonomic tilt. Optional lumbar cushion." },
+    { code: "FG-CAB-FIL3", name: "Filing Cabinet — 3-Drawer",        cat: "Office", price: 3600,  desc: "Solid oak cabinet, A4 hanging-file ready. Lockable. Matches the exec desk." },
+    { code: "FG-DSK-STU",  name: "Student Study Desk",               cat: "Office", price: 2400,  desc: "Pine, 1200×600mm. Single drawer, pencil tray. Excellent entry-level build." },
+    // Kitchen
+    { code: "FG-BEN-NOOK", name: "Kitchen Nook Bench — Solid Oak",  cat: "Kitchen", price: 6500,  desc: "L-shape bench seat, lift-up storage under. Seats 4–5, great for apartment kitchens." },
+    { code: "FG-STL-BAR",  name: "Bar Stool — Oak (Set of 2)",       cat: "Kitchen", price: 1400,  desc: "75cm counter height. Stack-friendly. Sold in pairs." },
+  ];
+
+  // ── State ──
+  const cart = JSON.parse(localStorage.getItem("fg-cart") || "{}");
+  let currentFilter = "all";
+
+  // ── Render ──
+  function renderGrid() {
+    const grid = document.getElementById("catalog");
+    const items = PRODUCTS.filter(p => currentFilter === "all" || p.cat === currentFilter);
+    grid.innerHTML = items.map(p => {
+      const inCart = cart[p.code] || 0;
+      return `
+        <article class="card">
+          <div class="card-img ${p.cat.toLowerCase()}">
+            <div class="card-img-shape">${furnSvg(p.cat)}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-cat">${p.cat} · ${p.code}</div>
+            <div class="card-name">${p.name}</div>
+            <div class="card-desc">${p.desc}</div>
+            <div class="card-foot">
+              <span class="card-price">R ${p.price.toLocaleString('en-ZA')}</span>
+              <button class="card-btn ${inCart ? 'added' : ''}" onclick="addToCart('${p.code}')">
+                ${inCart ? `Added · ${inCart}` : 'Add to quote'}
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function furnSvg(cat) {
+    const svgs = {
+      "Dining": '<svg viewBox="0 0 100 60" fill="currentColor" style="color:#fff"><rect x="10" y="20" width="80" height="6"/><rect x="15" y="26" width="4" height="28"/><rect x="81" y="26" width="4" height="28"/></svg>',
+      "Living": '<svg viewBox="0 0 100 60" fill="currentColor" style="color:#fff"><rect x="10" y="32" width="80" height="18" rx="2"/><rect x="10" y="20" width="12" height="14" rx="2"/><rect x="78" y="20" width="12" height="14" rx="2"/></svg>',
+      "Bedroom": '<svg viewBox="0 0 100 60" fill="currentColor" style="color:#fff"><rect x="10" y="30" width="80" height="14" rx="2"/><rect x="10" y="18" width="80" height="14" rx="3"/><rect x="10" y="44" width="4" height="10"/><rect x="86" y="44" width="4" height="10"/></svg>',
+      "Office": '<svg viewBox="0 0 100 60" fill="currentColor" style="color:#fff"><rect x="10" y="22" width="80" height="4"/><rect x="14" y="26" width="4" height="26"/><rect x="82" y="26" width="4" height="26"/><rect x="30" y="32" width="40" height="12" rx="1"/></svg>',
+      "Kitchen": '<svg viewBox="0 0 100 60" fill="currentColor" style="color:#fff"><circle cx="30" cy="40" r="8"/><circle cx="70" cy="40" r="8"/><rect x="22" y="48" width="16" height="6"/><rect x="62" y="48" width="16" height="6"/></svg>',
+    };
+    return svgs[cat] || svgs["Dining"];
+  }
+
+  function renderDrawer() {
+    const container = document.getElementById("drawer-items");
+    const codes = Object.keys(cart);
+    if (codes.length === 0) {
+      container.innerHTML = '<div class="drawer-empty">Your quote request is empty.<br>Add some products to get started.</div>';
+      document.getElementById("drawer-total").textContent = "R 0";
+      document.getElementById("submit-quote").disabled = true;
+      document.getElementById("cart-count").textContent = "0";
+      return;
+    }
+    let total = 0;
+    let totalQty = 0;
+    container.innerHTML = codes.map(code => {
+      const p = PRODUCTS.find(x => x.code === code);
+      const qty = cart[code];
+      total += p.price * qty;
+      totalQty += qty;
+      return `
+        <div class="drawer-item">
+          <div class="drawer-item-thumb"></div>
+          <div class="drawer-item-info">
+            <div class="drawer-item-name">${p.name}</div>
+            <div class="drawer-item-meta">R ${p.price.toLocaleString('en-ZA')} each</div>
+          </div>
+          <div class="drawer-item-qty">
+            <button class="qty-btn" onclick="updateQty('${code}', -1)">−</button>
+            <span class="qty-val">${qty}</span>
+            <button class="qty-btn" onclick="updateQty('${code}', 1)">+</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+    document.getElementById("drawer-total").textContent = "R " + total.toLocaleString('en-ZA');
+    document.getElementById("submit-quote").disabled = false;
+    document.getElementById("cart-count").textContent = totalQty;
+  }
+
+  function addToCart(code) {
+    cart[code] = (cart[code] || 0) + 1;
+    save();
+    renderGrid();
+    renderDrawer();
+    openCart();
+  }
+
+  function updateQty(code, delta) {
+    cart[code] = Math.max(0, (cart[code] || 0) + delta);
+    if (cart[code] === 0) delete cart[code];
+    save();
+    renderGrid();
+    renderDrawer();
+  }
+
+  function save() { localStorage.setItem("fg-cart", JSON.stringify(cart)); }
+
+  function openCart() {
+    document.getElementById("drawer").classList.add("open");
+    document.getElementById("drawer-bg").classList.add("open");
+  }
+  function closeCart() {
+    document.getElementById("drawer").classList.remove("open");
+    document.getElementById("drawer-bg").classList.remove("open");
+  }
+
+  function setFilter(cat) {
+    currentFilter = cat;
+    document.querySelectorAll(".filter-pill").forEach(b => {
+      b.classList.toggle("active", b.dataset.cat === cat);
+    });
+    renderGrid();
+  }
+
+  // ── Quote submission flow ──
+  function submitQuote() {
+    closeCart();
+    const codes = Object.keys(cart);
+    const subtotal = codes.reduce((a, c) => a + (PRODUCTS.find(x => x.code === c).price * cart[c]), 0);
+    openModal(`
+      <h2>Tell us a little about your space</h2>
+      <p class="sub">No account, no newsletter. We just need a way to send you the priced quote back.</p>
+      <form id="quote-form" onsubmit="sendQuote(event); return false;">
+        <div class="field">
+          <label>Your name</label>
+          <input type="text" name="name" value="Craig Leppan" required>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" value="craig@2nth.ai" required>
+        </div>
+        <div class="field">
+          <label>Delivery suburb / city</label>
+          <input type="text" name="city" value="Cape Town" required>
+        </div>
+        <div class="field">
+          <label>Notes (room dimensions, timelines, anything else)</label>
+          <textarea name="notes" placeholder="Delivery after 15 May would be ideal…"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Back</button>
+          <button type="submit" class="btn btn-primary">Request quote →</button>
+        </div>
+      </form>
+    `);
+  }
+
+  function sendQuote(e) {
+    e.preventDefault();
+    // Simulate API round trip + quote return
+    const quoteNumber = "QTN-FG-" + String(Math.floor(Math.random() * 900) + 100);
+    const codes = Object.keys(cart);
+    const lines = codes.map(c => {
+      const p = PRODUCTS.find(x => x.code === c);
+      return { name: p.name, qty: cart[c], rate: p.price, total: p.price * cart[c] };
+    });
+    const subtotal = lines.reduce((a, l) => a + l.total, 0);
+    const vat = Math.round(subtotal * 0.15);
+    const delivery = Math.max(450, Math.round(subtotal * 0.035));
+    const total = subtotal + vat + delivery;
+
+    openModal(`
+      <div class="quote-num">Quote ${quoteNumber} · Valid 14 days</div>
+      <h2>Here's your quote</h2>
+      <p class="sub">A copy has been sent to your email. You can accept it online and we'll schedule the build.</p>
+
+      <div class="quote-line"><span>Item</span><span>Qty</span><span>Rate</span><span>Total</span></div>
+      ${lines.map(l => `
+        <div class="quote-line">
+          <span>${l.name}</span>
+          <span>${l.qty}</span>
+          <span>R ${l.rate.toLocaleString('en-ZA')}</span>
+          <span>R ${l.total.toLocaleString('en-ZA')}</span>
+        </div>
+      `).join("")}
+
+      <div class="quote-summary">
+        <div class="quote-summary-row"><span>Subtotal</span><span>R ${subtotal.toLocaleString('en-ZA')}</span></div>
+        <div class="quote-summary-row"><span>VAT (15%)</span><span>R ${vat.toLocaleString('en-ZA')}</span></div>
+        <div class="quote-summary-row"><span>Delivery (Cape Town)</span><span>R ${delivery.toLocaleString('en-ZA')}</span></div>
+        <div class="quote-summary-row total"><span>Total due</span><span>R ${total.toLocaleString('en-ZA')}</span></div>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 28px;">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Think about it</button>
+        <button type="button" class="btn btn-primary" onclick="acceptQuote('${quoteNumber}', ${total})">Accept &amp; pay 50% deposit →</button>
+      </div>
+    `);
+  }
+
+  function acceptQuote(qnum, total) {
+    const deposit = Math.round(total * 0.5);
+    openModal(`
+      <h2>Deposit paid · Your order is confirmed</h2>
+      <p class="sub">Quote <code style="font-family:'JetBrains Mono',monospace;color:var(--sage);font-weight:600;">${qnum}</code> has been converted to order <code style="font-family:'JetBrains Mono',monospace;color:var(--sage);font-weight:600;">${qnum.replace('QTN','ORD')}</code>. You'll see daily updates as it moves through the workshop.</p>
+
+      <div class="timeline" style="margin-bottom: 8px;">
+        <div class="timeline-step done">
+          <div class="timeline-dot"></div>
+          <div><div class="timeline-title">Deposit received · R ${deposit.toLocaleString('en-ZA')}</div>
+          <div class="timeline-sub">Just now · Reference ${qnum.replace('QTN','PAY')}</div></div>
+        </div>
+        <div class="timeline-step current">
+          <div class="timeline-dot"></div>
+          <div><div class="timeline-title">Entered workshop queue</div>
+          <div class="timeline-sub">Estimated start: 3 working days</div></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"></div>
+          <div><div class="timeline-title">In production</div>
+          <div class="timeline-sub">Progress visible in your order tracker</div></div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot"></div>
+          <div><div class="timeline-title">Ready for delivery</div>
+          <div class="timeline-sub">Balance R ${(total - deposit).toLocaleString('en-ZA')} due on dispatch</div></div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" onclick="clearAndClose()">Got it</button>
+      </div>
+    `);
+    // clear cart
+    Object.keys(cart).forEach(k => delete cart[k]);
+    save();
+    renderGrid();
+    renderDrawer();
+  }
+
+  function clearAndClose() { closeModal(); }
+
+  function openModal(html) {
+    document.getElementById("modal").innerHTML = html;
+    document.getElementById("modal-bg").classList.add("open");
+  }
+  function closeModal() {
+    document.getElementById("modal-bg").classList.remove("open");
+  }
+
+  // ── Theme ──
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    document.querySelector(".theme-toggle").textContent = next === "dark" ? "☀️" : "🌙";
+    localStorage.setItem("theme", next);
+  }
+  const saved = localStorage.getItem("theme");
+  if (saved) {
+    document.documentElement.setAttribute("data-theme", saved);
+    document.querySelector(".theme-toggle").textContent = saved === "dark" ? "☀️" : "🌙";
+  }
+
+  // ── Init ──
+  renderGrid();
+  renderDrawer();
+
+  // Close on escape
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { closeCart(); closeModal(); }
+  });
+
+  // Fade-up observer
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll(".fade-up").forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
