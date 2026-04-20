@@ -558,8 +558,8 @@
         <div class="label">Sub-categories</div>
       </div>
       <div class="hub-stat">
-        <div class="num">1</div>
-        <div class="label">Live explainer</div>
+        <div class="num">2</div>
+        <div class="label">Live explainers</div>
       </div>
     </div>
   </div>
@@ -588,17 +588,18 @@
         </div>
       </a>
 
-      <div class="hub-card soon">
-        <span class="state stub">Stub</span>
+      <a href="engineering/liteparse.html" class="hub-card">
+        <span class="state live">4 tools · 1 live</span>
         <h3>Engineering <span class="path">data/engineering</span></h3>
-        <p>ETL/ELT pipelines, dbt transformations, orchestration with Airflow and Dagster. The plumbing that gets data from source systems into warehouses in a shape humans and models can use.</p>
+        <p>ETL/ELT pipelines, dbt transformations, orchestration with Airflow and Dagster — and document parsing via LiteParse. The plumbing that gets data (structured and unstructured) from source systems into warehouses and vector stores.</p>
         <div class="tags">
+          <span class="tag">LiteParse</span>
           <span class="tag">dbt</span>
           <span class="tag">Airflow</span>
           <span class="tag">Dagster</span>
           <span class="tag">ETL/ELT</span>
         </div>
-      </div>
+      </a>
 
       <a href="warehousing/" class="hub-card">
         <span class="state production">5 databases · 1 live</span>
@@ -658,7 +659,7 @@
     <div class="fade-up">
       <div class="hub-label">02 · Start here</div>
       <h2 class="hub-title">Featured skill nodes</h2>
-      <p class="hub-lede">Apache Superset is live — the 2nth default BI tool for new builds. More leaves landing as the data branch grows.</p>
+      <p class="hub-lede">Apache Superset for the read layer. LiteParse for getting unstructured documents into the pipeline in the first place. More leaves landing as the data branch grows.</p>
     </div>
     <div class="featured-grid fade-up" style="transition-delay: 0.05s">
       <a href="analytics/superset.html" class="featured-card">
@@ -668,6 +669,14 @@
         </div>
         <h4>Apache Superset</h4>
         <p>Open-source BI platform. SQL Lab for ad-hoc queries, 40+ chart types, embedded analytics, RBAC with row-level security. The default BI tool for new 2nth builds — preferred over Power BI and Tableau for cost, flexibility, and data sovereignty.</p>
+      </a>
+      <a href="engineering/liteparse.html" class="featured-card">
+        <div class="meta">
+          <span class="tag-mono live">Live</span>
+          <span class="tag-mono" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);">data/engineering/liteparse</span>
+        </div>
+        <h4>LiteParse</h4>
+        <p>Local document parsing from LlamaIndex. PDFs, DOCX, PPTX, XLSX, images → clean text or JSON with bounding boxes. Runs in a client VPC or on a laptop — no cloud, no LLM, no per-page pricing. The POPIA-safe ingestion layer for RAG.</p>
       </a>
     </div>
   </div>

@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteParse — know.2nth.ai</title>
+<meta name="description" content="LiteParse — local, POPIA-safe document parsing for RAG. PDFs, DOCX, PPTX, XLSX, images → clean text or JSON with bounding boxes. No cloud, no LLM required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    padding-left: 10px; border-left: 1px solid var(--border);
+  }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 66px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.4vw, 36px); font-weight: 700;
+    letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2;
+  }
+  .section-lede {
+    font-size: 16px; color: var(--text-secondary); max-width: var(--read-w);
+    line-height: 1.75; font-weight: 300; margin-bottom: 32px;
+  }
+  .prose p {
+    font-size: 16px; color: var(--text-secondary); line-height: 1.75;
+    max-width: var(--read-w); margin-bottom: 18px;
+  }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--sky);
+  }
+
+  pre.code {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 20px 22px;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; line-height: 1.65; color: var(--mist);
+    margin: 0 0 20px; max-width: var(--read-w);
+  }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; max-width: var(--read-w);
+    margin-bottom: 20px;
+  }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td {
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .compare thead th {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky);
+    background: rgba(37, 99, 235, 0.04);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    color: var(--sky);
+  }
+
+  .gotcha-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .gotcha {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--rose);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+  }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .connect-node {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; transition: all 0.3s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); display: block; margin-bottom: 6px;
+  }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .resource {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 18px 22px; text-decoration: none; transition: all 0.3s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  .decision-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    max-width: var(--read-w);
+  }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+  }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+  }
+  .decision-card li:last-child { border-bottom: none; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 40px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    pre.code { font-size: 11px; padding: 14px 16px; }
+    .compare { font-size: 12px; }
+    .compare th, .compare td { padding: 10px 12px; }
+  }
+
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.3s; transition-timing-function: ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">data/engineering/liteparse</span>
+    </a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">← Data</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Data</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">data</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">engineering / liteparse</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> data/engineering · LiteParse · Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Local document parsing.<br><span class="gradient">No cloud. No LLM.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      LiteParse — the lightweight sibling of LlamaParse. PDFs, DOCX, PPTX, XLSX, images → clean text or structured JSON with bounding boxes. Runs on your laptop, your container, or a client's VPC. The POPIA-safe ingestion layer for RAG.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">MIT</span>
+      <span class="pill">Node 18+</span>
+      <span class="pill">LlamaIndex</span>
+      <span class="pill">v0.1</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 · What it is</div>
+      <h2 class="section-title">A local-first CLI for turning messy docs into clean text.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>LiteParse is a Node CLI (<code>lit</code>) and TypeScript library from LlamaIndex that parses unstructured documents into text or structured JSON. It accepts PDFs natively and routes Office formats through LibreOffice and images through ImageMagick — everything converges on a PDF parse pass with optional OCR. The output is either flat text (for quick extraction) or JSON with per-block text, bounding boxes, and confidence scores (for RAG chunking, layout-aware retrieval, or overlay rendering).</p>
+      <p>It is the <strong>local sibling</strong> of LlamaParse, LlamaIndex's cloud parser. Same authorship, same parse quality floor, different deployment shape: LiteParse runs on your machine, inside a container, inside a client VPC — wherever the documents live. No API key, no upload, no telemetry. That constraint is the whole feature.</p>
+      <p><strong>OCR</strong> ships with Tesseract.js bundled (zero setup) and can delegate to any HTTP OCR server that speaks the LiteParse protocol — EasyOCR and PaddleOCR wrappers are ready-made in the LlamaIndex repo. <strong>Batch mode</strong> walks a directory. <strong>Screenshot mode</strong> renders pages as PNG for multimodal agents that need visual layout, not just text.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Why LiteParse is the 2nth default for private-data RAG</h4>
+      <p><strong>Data residency by construction.</strong> The parser runs where the documents live. POPIA subjects never transit through a foreign cloud. Legal, HR, and healthcare use-cases that reject LlamaParse SaaS accept LiteParse.</p>
+      <p><strong>Zero-cost at any volume.</strong> No per-page pricing, no rate limits. Parse a million pages — the cost is CPU time, not API invoices. Relevant for ingestion-heavy discovery-phase projects.</p>
+      <p><strong>Same output shape as LlamaParse.</strong> JSON schema is compatible enough that an ingestion pipeline written for LlamaParse swaps in LiteParse with minimal changes. Start local for pilots; upgrade to LlamaParse cloud only where parse quality becomes the binding constraint.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 INPUT FORMATS ── -->
+<section id="inputs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 · Input formats</div>
+      <h2 class="section-title">PDFs natively. Office via LibreOffice. Images via ImageMagick.</h2>
+      <p class="section-lede">Everything that isn't already a PDF gets wrapped to PDF first, then parsed. That single-lane pipeline means parse behaviour is consistent across formats — and it means LibreOffice and ImageMagick are hard dependencies for non-PDF inputs.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Extensions</th>
+            <th>Path</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PDF</td>
+            <td><code>.pdf</code></td>
+            <td>Native. Text-layer first; OCR fallback for scans.</td>
+          </tr>
+          <tr>
+            <td>Word</td>
+            <td><code>.doc .docx .docm .odt .rtf</code></td>
+            <td>LibreOffice headless → PDF → parse.</td>
+          </tr>
+          <tr>
+            <td>PowerPoint</td>
+            <td><code>.ppt .pptx .pptm .odp</code></td>
+            <td>LibreOffice headless → PDF → parse.</td>
+          </tr>
+          <tr>
+            <td>Spreadsheets</td>
+            <td><code>.xls .xlsx .xlsm .ods .csv .tsv</code></td>
+            <td>LibreOffice for binary; direct parse for CSV/TSV.</td>
+          </tr>
+          <tr>
+            <td>Images</td>
+            <td><code>.jpg .jpeg .png .gif .bmp .tiff .webp .svg</code></td>
+            <td>ImageMagick wrap → PDF → OCR.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>Setup.</strong> The Node package is one install; the native deps are the friction. Get them right once per machine and forget them.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># Core CLI</span>
+<span class="k">npm</span> i -g @llamaindex/liteparse
+
+<span class="c"># Office formats (DOCX, PPTX, XLSX) — LibreOffice converts to PDF</span>
+brew install --cask libreoffice        <span class="c"># macOS</span>
+apt-get install libreoffice            <span class="c"># Debian/Ubuntu</span>
+
+<span class="c"># Image inputs (JPG, PNG, TIFF, etc.)</span>
+brew install imagemagick               <span class="c"># macOS</span>
+apt-get install imagemagick            <span class="c"># Debian/Ubuntu</span>
+
+<span class="c"># Verify</span>
+lit --version</pre>
+  </div>
+</section>
+
+<!-- ── 03 HOW IT WORKS ── -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 · How it works</div>
+      <h2 class="section-title">Four commands cover 95% of use cases.</h2>
+      <p class="section-lede"><code>lit parse</code> for one file. <code>lit batch-parse</code> for a directory. <code>lit screenshot</code> when you need page images for a multimodal agent. A config file when you want to stop passing the same flags every time.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Parse a single file.</strong> Default output is plain text to stdout. Pass <code>--format json</code> for bounding boxes, confidence scores, and per-block structure — the shape RAG pipelines want.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c"># Plain text extraction</span>
+lit parse document.pdf
+
+<span class="c"># Structured JSON — the RAG-friendly output</span>
+lit parse document.pdf --format json -o output.json
+
+<span class="c"># Target pages only — faster for appendix-heavy PDFs</span>
+lit parse document.pdf --target-pages <span class="s">"1-5,10,15-20"</span>
+
+<span class="c"># Text-native PDF — skip OCR for a 3–10× speedup</span>
+lit parse document.pdf --no-ocr
+
+<span class="c"># High-DPI render for small text or scanned docs</span>
+lit parse document.pdf --dpi <span class="n">300</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Batch-parse a directory.</strong> Point <code>lit batch-parse</code> at input and output paths. Recurse with <code>--recursive</code>. Filter by extension with <code>--extension</code>. Output mirrors input structure — each source file produces a text or JSON sibling in the output directory.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.12s"><span class="c"># All supported formats, flat output</span>
+lit batch-parse ./input ./output
+
+<span class="c"># PDFs only, recursive — the common ingestion pattern</span>
+lit batch-parse ./input ./output --extension .pdf --recursive</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.14s">
+      <p><strong>Page screenshots</strong> are for multimodal agents — contracts with signatures, forms with checkboxes, scientific papers with diagrams. Render the page as PNG, hand it to Claude or GPT-4V alongside the parsed text, and the model sees what a human sees.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.16s"><span class="c"># All pages</span>
+lit screenshot document.pdf -o ./screenshots
+
+<span class="c"># Specific pages, high-DPI PNG</span>
+lit screenshot document.pdf --pages <span class="s">"1,3,5"</span> --dpi <span class="n">300</span> --format png -o ./screenshots</pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.18s">
+      <h4>Config file pattern</h4>
+      <p>For repeated runs with the same settings — typical in a scheduled ingestion job — commit a <code>liteparse.config.json</code> next to the script. Same keys as the CLI flags, camelCase in JSON:</p>
+      <p><code>{ "ocrEnabled": true, "ocrLanguage": "en", "dpi": 150, "outputFormat": "json", "preciseBoundingBox": true, "maxPages": 1000 }</code></p>
+      <p>Run with <code>lit parse document.pdf --config liteparse.config.json</code>. Flags on the command line override the config — convenient for one-off reprocessing of a specific file.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 OCR ── -->
+<section id="ocr">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 · OCR</div>
+      <h2 class="section-title">Tesseract.js by default. Self-hosted OCR server when it matters.</h2>
+      <p class="section-lede">Tesseract.js is bundled — zero setup, acceptable accuracy on clean English text. For non-English, scanned-scan-of-a-scan, or handwriting, delegate OCR to an external server. The LiteParse repo ships EasyOCR and PaddleOCR wrappers that speak the protocol out of the box.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Flag</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>(default)</code></td>
+            <td>Tesseract.js bundled. English out of the box.</td>
+          </tr>
+          <tr>
+            <td><code>--ocr-language fra</code></td>
+            <td>ISO code for Tesseract language pack. First run downloads the trained data.</td>
+          </tr>
+          <tr>
+            <td><code>--ocr-server-url &lt;url&gt;</code></td>
+            <td>Delegate to an external HTTP OCR server (EasyOCR, PaddleOCR, custom).</td>
+          </tr>
+          <tr>
+            <td><code>--no-ocr</code></td>
+            <td>Disable OCR entirely — 3–10× faster on text-native PDFs.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>External OCR protocol.</strong> Any HTTP server implementing the following contract can be plugged in — swap OCR engines without touching the ingestion pipeline.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># Endpoint: POST /ocr</span>
+<span class="c"># Accepts: multipart with `file` + `language`</span>
+<span class="c"># Returns:</span>
+{
+  <span class="s">"results"</span>: [
+    { <span class="s">"text"</span>: <span class="s">"Hello"</span>, <span class="s">"bbox"</span>: [x1, y1, x2, y2], <span class="s">"confidence"</span>: <span class="n">0.98</span> }
+  ]
+}
+
+<span class="c"># Use it:</span>
+lit parse scan.pdf --ocr-server-url http://localhost:<span class="n">8828</span>/ocr</pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.12s">
+      <h4>When to reach for external OCR</h4>
+      <p>Non-Latin scripts (Arabic, Chinese, Amharic), handwriting, or low-quality scans — Tesseract's ceiling is low on any of the three. EasyOCR handles 80+ languages out of the box; PaddleOCR is state-of-the-art on Chinese and has strong structure-aware models. Both run locally, so the data-residency argument still holds.</p>
+      <p>The cost: one more service to run. On a single VM that's cheap; at fleet scale it starts mattering. Start with Tesseract, measure error rate on a sample, upgrade only if the error rate breaks the downstream use case.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 RAG INGESTION PATTERN ── -->
+<section id="rag">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 · RAG ingestion</div>
+      <h2 class="section-title">The 2nth pattern: parse local, embed at the edge.</h2>
+      <p class="section-lede">LiteParse runs where the documents are. The JSON output lands in R2. A Cloudflare Worker pulls chunks, embeds them with Workers AI, and writes vectors to Vectorize. The pipeline respects data residency while still getting the latency benefits of edge infrastructure.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">// Node-side ingestion script — run on a box with file-system access</span>
+<span class="k">import</span> { parse } <span class="k">from</span> <span class="s">"@llamaindex/liteparse"</span>;
+<span class="k">import</span> { readdir } <span class="k">from</span> <span class="s">"node:fs/promises"</span>;
+
+<span class="k">const</span> files = <span class="k">await</span> readdir(<span class="s">"./contracts"</span>);
+
+<span class="k">for</span> (<span class="k">const</span> file <span class="k">of</span> files) {
+  <span class="k">const</span> result = <span class="k">await</span> parse(<span class="s">`./contracts/${file}`</span>, {
+    outputFormat: <span class="s">"json"</span>,
+    ocrEnabled: <span class="k">true</span>,
+    dpi: <span class="n">150</span>,
+    preciseBoundingBox: <span class="k">true</span>,
+  });
+
+  <span class="c">// Each page is an array of blocks with text + bbox</span>
+  <span class="k">const</span> chunks = result.pages.flatMap(page =&gt;
+    page.blocks.map(b =&gt; ({
+      text: b.text,
+      sourceFile: file,
+      page: page.number,
+      bbox: b.bbox,
+    }))
+  );
+
+  <span class="c">// Push to R2 as JSONL for downstream embedding</span>
+  <span class="k">await</span> putToR2(<span class="s">`parsed/${file}.jsonl`</span>, chunks);
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>Why parse off-edge and embed on-edge.</strong> LiteParse has native deps (pdfjs, LibreOffice, ImageMagick) that do not run in Cloudflare Workers — parsing has to happen in a Node container, a VM, or a user machine. Embedding is the opposite: it's pure linear algebra over network, perfect for Workers AI at the edge. The split is natural: heavy IO + native deps on the parsing side, stateless compute at the serving side.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 GOTCHAS ── -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 · Gotchas</div>
+      <h2 class="section-title">Six things that only bite once you ship.</h2>
+      <p class="section-lede">Most of these come from the native dependency chain. The Node CLI is clean; LibreOffice, ImageMagick, and Tesseract are where the friction lives.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>OCR is the slow step</strong>
+        <p>A 100-page scanned PDF with default Tesseract.js takes minutes, not seconds. Use <code>--no-ocr</code> for text-native PDFs, or delegate to an external OCR server for batch jobs. Profile before optimising the parser — the parser isn't the problem, OCR is.</p>
+      </div>
+      <div class="gotcha">
+        <strong>LibreOffice headless requires no GUI instance running</strong>
+        <p>If <code>lit parse doc.docx</code> hangs or errors, LibreOffice is either missing or running as a GUI instance that blocks the headless invocation. <code>pkill soffice</code> and retry. On servers, ensure LibreOffice was installed as a CLI-only package.</p>
+      </div>
+      <div class="gotcha">
+        <strong>ImageMagick's default policy blocks PDFs</strong>
+        <p>Fresh Debian/Ubuntu installs of ImageMagick ship with a security policy that refuses to read PDF. If image parsing errors with "not authorized", remove the <code>&lt;policy domain="coder" rights="none" pattern="PDF" /&gt;</code> line from <code>/etc/ImageMagick-6/policy.xml</code>. Known issue, well-documented upstream.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Tesseract.js bundles a single language</strong>
+        <p>For non-English docs, pass <code>--ocr-language &lt;iso&gt;</code> and accept that the first run will be slow — the Tesseract trained data for that language has to download on demand. Pre-warm the cache on build machines so production runs don't stall on language-pack fetch.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Bounding boxes are in PDF point coordinates, not pixels</strong>
+        <p>The bbox tuple is in PDF points (72 DPI). If you render a page screenshot at 300 DPI and try to overlay bounding boxes, multiply by <code>dpi / 72</code>. Every visual-overlay integration hits this on first attempt.</p>
+      </div>
+      <div class="gotcha">
+        <strong><code>batch-parse</code> is sequential</strong>
+        <p>Large directories process one file at a time. For throughput, shard the input directory and run multiple <code>lit batch-parse</code> processes — or drop to the TypeScript API and use <code>Promise.all</code> with a concurrency limiter. There's no built-in parallelism flag.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 DECISION ── -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 · Decision guide</div>
+      <h2 class="section-title">Use it for, skip it for.</h2>
+      <p class="section-lede">LiteParse is the right call when data cannot leave the machine. When that constraint lifts, the decision gets more interesting.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use LiteParse when</h4>
+        <ul>
+          <li>Data residency or POPIA rules forbid cloud document parsers — the parser runs inside your VPC.</li>
+          <li>You're pilot-parsing at zero marginal cost before committing to a paid cloud parser.</li>
+          <li>You need JSON with bounding boxes for layout-aware RAG or visual overlay — same output shape as LlamaParse.</li>
+          <li>Documents are a mix of PDF, DOCX, PPTX, XLSX, and images — one CLI handles all of them.</li>
+          <li>You have a multimodal agent that needs page screenshots alongside parsed text.</li>
+          <li>The pipeline lives on a build machine, a user laptop, or a client's on-prem server — no network calls acceptable.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip LiteParse when</h4>
+        <ul>
+          <li>Parse quality is the binding constraint and cloud processing is allowed — LlamaParse cloud has a higher ceiling on complex layouts, tables, and diagrams.</li>
+          <li>You need to parse inside Cloudflare Workers or Lambda — native deps won't fit; run the parser in a Node container and let the edge handle serving.</li>
+          <li>You're at enterprise volume with on-prem residency — Unstructured.io's on-prem offering has stronger SLA, monitoring, and table extraction.</li>
+          <li>You're already deep in Azure — Azure Document Intelligence is cheaper per-call for Azure-native workloads and has the compliance paperwork built in.</li>
+          <li>The input is only text-native PDFs and you need nothing but text — <code>pdftotext</code> from poppler is 50 lines of Bash and no Node dependency.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 2ⁿ PERSPECTIVE ── -->
+<section id="perspective">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 · 2ⁿ Perspective</div>
+      <h2 class="section-title">How this leaf compounds in the tree.</h2>
+      <p class="section-lede">LiteParse is the ingestion entry point for every RAG use case in the tree. It produces clean text; the rest of the stack turns that text into retrieval, reasoning, and compounding agent capability.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The compounding play is this: LiteParse doesn't produce value on its own — it removes a blocker. Every skill downstream that needs structured text from unstructured documents (legal contract review, healthcare record intake, recruitment CV parsing, ERP document capture, procurement OCR) runs into the same first-mile problem: get the text out cleanly, without sending the document anywhere. LiteParse is the skill you load before any of those skills have a chance of working inside a POPIA-bounded deployment.</p>
+      <p>The agent angle: an agent can invoke <code>lit parse</code> as a shell command, then pass the parsed JSON back into the context window for reasoning. The skill is compatible with Claude Code, Cursor, and any agent runtime with shell access. No API wrapper, no MCP server required — just a CLI that returns structured output. That simplicity is deliberate; the value compounds where the parsed output lands, not in the parsing step itself.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.08s">
+      <a href="../../tech/cloudflare/vectorize.html" class="connect-node">
+        <span class="tag">tech/cloudflare/vectorize</span>
+        <div class="skill">Vectorize</div>
+        <div class="why">Embed LiteParse JSON chunks into Vectorize from a Worker. Parsed text stays on the parse host; only embeddings hit the edge.</div>
+      </a>
+      <a href="../../tech/cloudflare/workers-ai.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers-ai</span>
+        <div class="skill">Workers AI</div>
+        <div class="why">Generate embeddings for parsed chunks at the edge. BGE or Cohere-embed-v3 at sub-50ms — the matching half of local-parse + edge-embed.</div>
+      </a>
+      <a href="../../tech/cloudflare/r2.html" class="connect-node">
+        <span class="tag">tech/cloudflare/r2</span>
+        <div class="skill">R2</div>
+        <div class="why">Persist source documents and parsed JSONL side-by-side. Zero egress means re-embedding on schema changes is cheap.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">data/engineering</span>
+        <div class="skill">Data Engineering (parent)</div>
+        <div class="why">Document parsing is the unstructured-data branch of ingestion. LiteParse plugs into the same ELT pattern as Fivetran or Airbyte — just for files.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">leg/commercial</span>
+        <div class="skill">Legal / Commercial</div>
+        <div class="why">Contract review pipelines: LiteParse extracts clauses with bounding boxes; a downstream skill runs clause classification and red-flag detection.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">biz/hr/recruitment</span>
+        <div class="skill">HR / Recruitment</div>
+        <div class="why">CV intake at scale. LiteParse handles the DOCX/PDF mix; a downstream skill normalises to structured candidate records.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 · Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">LlamaIndex ships the canonical docs and the OCR-server wrappers. The npm page has the latest release notes; the GitHub repo is where issues and new format support land.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://github.com/run-llama/LiteParse" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">run-llama/LiteParse on GitHub</span>
+        <span class="r-url">github.com/run-llama/LiteParse</span>
+      </a>
+      <a href="https://www.npmjs.com/package/@llamaindex/liteparse" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Package</span>
+        <span class="r-title">@llamaindex/liteparse on npm</span>
+        <span class="r-url">npmjs.com/package/@llamaindex/liteparse</span>
+      </a>
+      <a href="https://skills.sh/run-llama/llamaparse-agent-skills/liteparse" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Agent skill</span>
+        <span class="r-title">LiteParse agent skill (skills.sh)</span>
+        <span class="r-url">skills.sh/run-llama/llamaparse-agent-skills/liteparse</span>
+      </a>
+      <a href="https://www.llamaindex.ai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Upstream</span>
+        <span class="r-title">LlamaIndex</span>
+        <span class="r-url">llamaindex.ai</span>
+      </a>
+      <a href="https://raw.githubusercontent.com/2nth-ai/skills/main/data/engineering/liteparse/SKILL.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Agent context</span>
+        <span class="r-title">Load this skill into your agent</span>
+        <span class="r-url">2nth-ai/skills · data/engineering/liteparse</span>
+      </a>
+      <a href="https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">Tesseract language data</span>
+        <span class="r-url">tesseract-ocr.github.io</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Data domain</a>
+      <a href="https://github.com/run-llama/LiteParse" target="_blank" rel="noopener">github.com/run-llama/LiteParse ↗</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
