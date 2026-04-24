@@ -113,11 +113,13 @@ Individual skill nodes follow the **imbila-explainer** pattern adapted for 2nth.
 
 ## Deployment
 
-- **Hosting**: Cloudflare Pages (static site)
+- **Hosting**: Cloudflare Pages (static site), project `know-2nth`
 - **Domain**: `know.2nth.ai` subdomain
+- **Deploy model**: **manual via wrangler** — the Pages project is NOT wired to GitHub. `git push` does nothing. Deploys happen only when someone runs `wrangler pages deploy` from this directory.
+- **Implication**: git and prod can drift in both directions. Local-only files will deploy; committed files won't ship until the command is run.
 - **Auth**: Cloudflare Access for member tier gating
 - **Agent API**: Cloudflare Workers at `/api/context/[domain]/[skill]` — returns skill node as structured markdown or JSON
-- **Repo**: GitHub under imbilawork org
+- **Repo**: GitHub under imbilawork org (`imbilawork/know-2nth`)
 
 ## Content voice
 
@@ -160,9 +162,17 @@ When serving content to agents (via API or download), each skill node should inc
 # Local dev
 npx serve .                          # Serve locally for preview
 
-# Deploy (once repo + Pages configured)
-git add -A && git commit -m "msg"
-git push origin main                 # Cloudflare Pages auto-deploys
+# Commit to git (does NOT deploy)
+git add explainers/path/to/file.html
+git commit -m "msg"
+git push origin main
+
+# Deploy to production (know.2nth.ai) — separate step, run from this directory
+cd /Users/craigleppan/2nth/know.2nth
+npx wrangler pages deploy . --project-name=know-2nth --branch=main
+# wrangler uploads whatever is in the current directory, including
+# uncommitted files. Running from the wrong directory uploads every
+# nested project and trips the 25 MiB file limit — always cd first.
 
 # Create new explainer
 # Use Claude with imbila-explainer skill adapted for 2nth branding
