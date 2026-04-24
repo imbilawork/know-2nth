@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlatformIO — know.2nth.ai</title>
+<meta name="description" content="PlatformIO — the unified embedded development platform. One CLI, one config file, 1000+ boards. Build, upload, test, and debug firmware for ESP32, STM32, Arduino, and RP2040 without leaving the terminal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/embedded/platformio</span>
+    </a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">&larr; Technology</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">embedded</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">platformio</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/embedded &middot; PlatformIO &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      One CLI for <span class="gradient">every board.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      PlatformIO is a unified embedded development platform &mdash; a single CLI, a single config file, and a single build system that covers 1000+ boards from ESP32 to STM32 to RP2040. It replaces the Arduino IDE's limited toolchain, vendor-specific SDKs, and hand-rolled Makefiles with one <code>platformio.ini</code> and <code>pio run</code>. Build, upload, test, debug, and manage libraries without leaving the terminal or VS Code.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">Python &middot; C/C++</span>
+      <span class="pill">Apache 2.0</span>
+      <span class="pill">CLI + IDE</span>
+      <span class="pill">1000+ boards</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A build system, package manager, and device manager for embedded.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>PlatformIO Core is a Python CLI that wraps <strong>GCC cross-compilers</strong>, <strong>vendor SDKs</strong>, and <strong>upload tools</strong> behind a single interface. You declare your board, framework, and libraries in <code>platformio.ini</code>; PlatformIO downloads the right toolchain, resolves library dependencies, compiles your source, and uploads the binary. One command does what used to require four separate tools and three different vendor portals.</p>
+      <p>It runs headless in a terminal for CI/CD, or inside VS Code with a first-party extension for interactive development. The same project builds on macOS, Linux, and Windows without a single change to the config file.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Why this matters for DroneScan + ScanMan Hive</h4>
+      <p>DroneScan drones carry embedded controllers (ESP32, STM32) for barcode capture, flight control, and comms. ScanMan Hive's robot-ready architecture expects ground AGVs and aerial drones to hit the same REST endpoint. PlatformIO is the firmware pipeline that gets the scan logic onto the silicon &mdash; and keeps it updated across a fleet of 50 drones without manual USB uploads.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 WHY IT MATTERS ── -->
+<section id="why">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; Why it matters</div>
+      <h2 class="section-title">The embedded toolchain problem is a vendor lock-in problem.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Every silicon vendor ships their own IDE, their own SDK, their own build system. Espressif has ESP-IDF. ST has STM32Cube. Nordic has nRF Connect. Arduino has the Arduino IDE. A team building firmware for two boards needs two toolchains, two library ecosystems, and two ways of doing the same thing.</p>
+      <p>PlatformIO collapses that into one. Your <code>platformio.ini</code> declares <strong>which boards</strong> and <strong>which frameworks</strong>; PlatformIO handles the rest. Switch from ESP32 to STM32 by changing two lines, not two toolchains. Run the same unit tests on a native host and on real hardware from the same test directory. Ship the same CI pipeline regardless of the target MCU.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead><tr><th>Without PlatformIO</th><th>With PlatformIO</th></tr></thead>
+        <tbody>
+          <tr><td>One IDE/SDK per vendor</td><td>One CLI, one config, every vendor</td></tr>
+          <tr><td>Manual toolchain install per OS</td><td><code>pip install platformio</code></td></tr>
+          <tr><td>Library copy-paste or submodules</td><td><code>lib_deps</code> in <code>platformio.ini</code></td></tr>
+          <tr><td>No CI without custom Docker builds</td><td><code>pio run</code> on any CI runner</td></tr>
+          <tr><td>No unit tests or native simulation</td><td><code>pio test -e native</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 HOW IT WORKS ── -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; How it works</div>
+      <h2 class="section-title">platformio.ini is the unit of everything.</h2>
+      <p class="section-lede">Sound familiar? Frappe has doctypes. PlatformIO has environments. One config declares the full build context &mdash; board, framework, libraries, flags, upload method, test targets. The CLI reads that config and does the work.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">; platformio.ini — DroneScan Hummingbird firmware</span>
+[<span class="k">platformio</span>]
+<span class="n">default_envs</span> = hummingbird
+
+[<span class="k">env:hummingbird</span>]
+<span class="n">platform</span>    = <span class="s">espressif32</span>
+<span class="n">board</span>       = <span class="s">esp32-s3-devkitc-1</span>
+<span class="n">framework</span>   = <span class="s">arduino</span>
+<span class="n">monitor_speed</span> = <span class="s">115200</span>
+<span class="n">upload_speed</span>  = <span class="s">921600</span>
+<span class="n">build_flags</span> =
+    <span class="s">-DBOARD_HAS_PSRAM</span>
+    <span class="s">-DDRONESCAN_UNIT=HUMMINGBIRD</span>
+    <span class="s">-DHIVE_ENDPOINT=\"https://api.hive.scanman.co.za\"</span>
+<span class="n">lib_deps</span> =
+    <span class="s">bblanchon/ArduinoJson@^7.0.0</span>
+    <span class="s">knolleary/PubSubClient@^2.8</span>
+
+[<span class="k">env:meerkat</span>]
+<span class="n">platform</span>    = <span class="s">espressif32</span>
+<span class="n">board</span>       = <span class="s">esp32dev</span>
+<span class="n">framework</span>   = <span class="s">arduino</span>
+<span class="n">build_flags</span> =
+    <span class="s">-DDRONESCAN_UNIT=MEERKAT</span>
+    <span class="s">-DHIVE_ENDPOINT=\"https://api.hive.scanman.co.za\"</span></pre>
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>One repo, two products.</strong> The Hummingbird (aerial drone, ESP32-S3 with PSRAM) and the Meerkat (ground unit, standard ESP32) share the same source tree. The <code>[env:...]</code> block is the only thing that changes. <code>pio run -e hummingbird</code> builds one; <code>pio run -e meerkat</code> builds the other. Both firmware binaries post scan events to the same ScanMan Hive <code>scan_event</code> endpoint.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 THE ECOSYSTEM ── -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; The ecosystem</div>
+      <h2 class="section-title">More than a build tool.</h2>
+      <p class="section-lede">PlatformIO is a platform: CLI, IDE extension, package registry, board database, CI integration, and remote device management. Each piece earns its place.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Component</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>pio run</code></td><td>Build firmware for any board with one command</td></tr>
+          <tr><td><code>pio test</code></td><td>Run Unity tests on-device or native (desktop)</td></tr>
+          <tr><td><code>pio device monitor</code></td><td>Serial monitor with ESP32 exception decoder</td></tr>
+          <tr><td><code>pio pkg</code></td><td>Library + platform package manager with semver</td></tr>
+          <tr><td>VS Code extension</td><td>IntelliSense, build tasks, serial monitor, debugger</td></tr>
+          <tr><td>PlatformIO Registry</td><td>14 000+ libraries searchable by board, framework, keyword</td></tr>
+          <tr><td>PlatformIO Remote</td><td>Upload and monitor over the network &mdash; OTA for dev</td></tr>
+          <tr><td>CI integration</td><td>GitHub Actions, GitLab CI, Jenkins &mdash; just run <code>pio run</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 USE CASES ── -->
+<section id="uses">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Use cases</div>
+      <h2 class="section-title">Where this lands in the 2nth stack.</h2>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.05s">
+      <h4>DroneScan Hummingbird + Buffalo + Meerkat firmware</h4>
+      <p>One PlatformIO repo with three <code>[env]</code> blocks builds firmware for all three DroneScan product lines. Shared barcode-capture logic, shared Hive endpoint integration, per-product flight controller and motor driver config. CI runs <code>pio run</code> on every push; binaries land in R2 ready for OTA.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>ScanMan Hive IoT edge devices</h4>
+      <p>Temperature, humidity, and door-open sensors in cold-chain warehouses. Each sensor posts scan events to the same <code>scan_event</code> API a picker's phone or a DroneScan drone uses. PlatformIO builds the firmware; Cloudflare Tunnel routes the MQTT broker back to the Hive.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.11s">
+      <h4>Rapid MCU prototyping</h4>
+      <p>Client hands you an ESP32-S3 devkit and says "make it scan a barcode and talk to our ERP." PlatformIO lets you go from zero to uploading in under 10 minutes: <code>pio project init --board esp32-s3-devkitc-1</code>, add a barcode lib, write 40 lines of C++, <code>pio run -t upload</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 EVOLUTION ── -->
+<section id="evolution">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Evolution</div>
+      <h2 class="section-title">From Arduino IDE to cloud-native firmware CI.</h2>
+      <p class="section-lede">PlatformIO started as a CLI alternative to the Arduino IDE. It has evolved into the embedded equivalent of what npm + webpack became for JavaScript &mdash; the standard toolchain that everything else plugs into.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Era</th><th>Toolchain</th><th>Limitation</th></tr></thead>
+        <tbody>
+          <tr><td>2005&ndash;2014</td><td>Arduino IDE</td><td>Single board, no library management, no CI, no tests</td></tr>
+          <tr><td>2014&ndash;2018</td><td>PlatformIO Core + CLI</td><td>Multi-board, unified build, early library registry</td></tr>
+          <tr><td>2018&ndash;2022</td><td>PlatformIO + VS Code + CI</td><td>IntelliSense, debugging, GitHub Actions pipelines</td></tr>
+          <tr><td>2022&ndash;now</td><td>PlatformIO + Remote + Fleet</td><td>OTA dev, remote monitoring, fleet firmware management</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 DECISION GUIDE ── -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Decision guide</div>
+      <h2 class="section-title">When to use it. When to skip it.</h2>
+      <p class="section-lede">PlatformIO is not always the right tool. If you're deep in a vendor-specific SDK with custom drivers that don't port, forcing PlatformIO into the middle adds friction for no gain.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use when</h4>
+        <ul>
+          <li>You target more than one board family (ESP32 + STM32, or Hummingbird + Meerkat)</li>
+          <li>You want CI for firmware &mdash; build on every push, test on a native host</li>
+          <li>You need reproducible builds across macOS, Linux, and Windows</li>
+          <li>You want library management with version pinning, not copy-paste</li>
+          <li>You want to write tests that run without flashing hardware</li>
+          <li>You want one toolchain for a fleet of heterogeneous devices</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>You're prototyping a single Arduino sketch for learning</li>
+          <li>Your firmware is deeply coupled to a vendor IDE's HAL (e.g. Nordic nRF Connect)</li>
+          <li>You're using Zephyr RTOS with its own west meta-tool</li>
+          <li>Your team is 100% vendor-locked and has no cross-platform need</li>
+          <li>You need real-time tracing tools that only exist in the vendor IDE</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 2ⁿ PERSPECTIVE ── -->
+<section id="perspective">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; 2&#x207F; Perspective</div>
+      <h2 class="section-title">How this node connects in the tree.</h2>
+      <p class="section-lede">PlatformIO is the firmware layer underneath DroneScan's fleet. When a Hummingbird drone hits the ScanMan Hive <code>scan_event</code> endpoint, the firmware that captured the barcode, compressed the image, and posted the HTTP request was built by PlatformIO. The platform connects downward to silicon and upward to the Hive.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <div class="connect-node">
+        <span class="tag">partner/dronescan</span>
+        <div class="skill">DroneScan Fleet</div>
+        <div class="why">Hummingbird, Buffalo, Meerkat, and RFID firmware is built with PlatformIO. One repo, multiple <code>[env]</code> blocks, one CI pipeline. The firmware posts scan events to ScanMan Hive.</div>
+      </div>
+      <div class="connect-node">
+        <span class="tag">partner/scanman-hive</span>
+        <div class="skill">ScanMan Hive</div>
+        <div class="why">The Frappe-native WMS that receives <code>scan_event</code> payloads from PlatformIO-built firmware. The <code>device_type: "Aerial Robot"</code> or <code>"Ground Robot"</code> field on every WMS Transaction traces back to the firmware that sent it.</div>
+      </div>
+      <a href="../cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Firmware OTA binaries live in R2. A Worker serves the latest build to drones checking for updates. The update check is an HTTP GET to a signed URL &mdash; same Cloudflare edge, different surface.</div>
+      </a>
+      <a href="../frappe/framework.html" class="connect-node">
+        <span class="tag">tech/frappe/framework</span>
+        <div class="skill">Frappe Framework</div>
+        <div class="why">The <code>@frappe.whitelist()</code> endpoint the drone firmware calls. PlatformIO builds the client; Frappe serves the API. The boundary between embedded C++ and server-side Python is one HTTP POST.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/embedded/esp-idf</span>
+        <div class="skill">ESP-IDF</div>
+        <div class="why">Espressif's native SDK. PlatformIO wraps it as a framework option (<code>framework = espidf</code>). For DroneScan hardware that needs FreeRTOS-level control, ESP-IDF is the framework; PlatformIO is still the build system.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/mqtt</span>
+        <div class="skill">MQTT</div>
+        <div class="why">IoT sensors and some drone telemetry use MQTT rather than HTTP. PlatformIO firmware pulls in PubSubClient or AsyncMqttClient from the registry. The MQTT broker routes through Cloudflare Tunnel to the Hive.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The PlatformIO docs are comprehensive. The registry is the fastest way to find a library for any board. The GitHub is actively maintained and responsive on issues.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://platformio.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Project home</span>
+        <span class="r-title">platformio.org</span>
+        <span class="r-url">platformio.org</span>
+      </a>
+      <a href="https://docs.platformio.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">PlatformIO documentation</span>
+        <span class="r-url">docs.platformio.org</span>
+      </a>
+      <a href="https://registry.platformio.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Registry</span>
+        <span class="r-title">14 000+ libraries</span>
+        <span class="r-url">registry.platformio.org</span>
+      </a>
+      <a href="https://github.com/platformio/platformio-core" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">platformio-core on GitHub</span>
+        <span class="r-url">github.com/platformio/platformio-core</span>
+      </a>
+      <a href="https://marketplace.visualstudio.com/items?itemName=platformio.platformio-ide" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">IDE</span>
+        <span class="r-title">VS Code extension</span>
+        <span class="r-url">marketplace.visualstudio.com</span>
+      </a>
+      <a href="https://community.platformio.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Community</span>
+        <span class="r-title">PlatformIO Community Forum</span>
+        <span class="r-url">community.platformio.org</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Technology</a>
+      <a href="https://platformio.org" target="_blank" rel="noopener">platformio.org &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
