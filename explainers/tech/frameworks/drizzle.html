@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drizzle ORM &mdash; know.2nth.ai</title>
+<meta name="description" content="Drizzle ORM — TypeScript-first SQL toolkit for Postgres, MySQL, SQLite, and Cloudflare D1. Schema in TypeScript, queries that compile to the SQL you'd write by hand, zero runtime dependencies, first-class edge support.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/frameworks/drizzle</span>
+    </a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">&larr; Technology</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">frameworks</span>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">drizzle</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/frameworks &middot; Drizzle ORM &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The TypeScript ORM that <span class="gradient">stays out of the way.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Drizzle is a TypeScript-first SQL toolkit for Postgres, MySQL, SQLite, and Cloudflare D1. You declare your schema in TypeScript, write queries that look like the SQL you'd write by hand, and get full type inference without a codegen step. Zero runtime dependencies, ~7&nbsp;kB min+gz, and first-class support for edge runtimes &mdash; Workers, Bun, Deno, Neon's serverless driver. The tradeoff Prisma makes for ergonomics, Drizzle refuses: the query you write is the SQL that runs.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Draft</span>
+      <span class="pill">TypeScript</span>
+      <span class="pill">Apache 2.0</span>
+      <span class="pill">Edge-ready</span>
+      <span class="pill">Postgres &middot; MySQL &middot; SQLite &middot; D1</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 01 WHAT IT IS ── -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A query builder with a schema-aware type system.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Drizzle is two things in one package. <strong>drizzle-orm</strong> is a tiny, tree-shakeable query builder that compiles TypeScript expressions to SQL at build time &mdash; no reflection, no runtime codegen, no query engine binary. <strong>drizzle-kit</strong> is the CLI that handles migrations: it diffs your TypeScript schema against the database and generates SQL migration files you commit to git.</p>
+      <p>The mental model is simple. You describe your tables in a <code>schema.ts</code> file using Drizzle's column helpers. You pass that schema to a <code>drizzle()</code> factory with a driver of your choice. The resulting client is fully typed against your schema &mdash; <code>db.select().from(users).where(eq(users.email, email))</code> knows <code>users.email</code> exists, knows it's a string, and compiles to one SQL statement. When the schema changes, <code>drizzle-kit generate</code> emits a migration; <code>drizzle-kit migrate</code> applies it.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Why this matters for 2nth builds</h4>
+      <p>Most 2nth production systems still sit on Frappe &mdash; doctypes are the ORM, and the DB is Postgres behind ERPNext. But when a build needs a custom Cloudflare Worker with its own tables (storefront caches, event logs, agent context stores, webhook inboxes), Frappe is the wrong tool. Drizzle is the right one: it runs inside the Worker, it works against D1 natively, and when a Worker talks to a bigger Postgres through Hyperdrive, the same Drizzle code works unchanged. One schema language, one migration pipeline, four database targets.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 WHY IT MATTERS ── -->
+<section id="why">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; Why it matters</div>
+      <h2 class="section-title">The ORM tax is real. Drizzle doesn't charge it.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Most TypeScript ORMs make two choices that hurt on the edge. They ship a query engine as a native binary (Prisma's Rust engine, historically), and they lean on runtime reflection to stay generic. Both make cold starts slower, bundles bigger, and deployment to V8 isolates awkward or impossible.</p>
+      <p>Drizzle takes the opposite bet. <strong>Schema lives in TypeScript.</strong> Types are inferred, not generated. Queries are composed as values, not strings. SQL is emitted at the call site, not by an external process. The whole library is roughly seven kilobytes of JavaScript with no native dependencies &mdash; which is why it runs in Workers, Pages Functions, Bun, Deno Deploy, and Lambda with no adapter layer in between.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead><tr><th>Concern</th><th>Prisma</th><th>Drizzle</th></tr></thead>
+        <tbody>
+          <tr><td>Schema source</td><td>Custom <code>.prisma</code> DSL</td><td>TypeScript file</td></tr>
+          <tr><td>Type generation</td><td>Codegen step &mdash; <code>prisma generate</code></td><td>Pure type inference &mdash; no step</td></tr>
+          <tr><td>Query engine</td><td>Rust binary (historically); now WASM/TS</td><td>No engine &mdash; it's a query builder</td></tr>
+          <tr><td>Edge / Workers</td><td>Supported via driver adapters</td><td>First-class, from day one</td></tr>
+          <tr><td>Bundle size</td><td>Large &mdash; client + engine</td><td>~7 kB min+gz</td></tr>
+          <tr><td>SQL control</td><td>Abstracted away; escape via <code>$queryRaw</code></td><td>You write SQL-shaped TypeScript</td></tr>
+          <tr><td>Migration model</td><td>Schema-as-source-of-truth</td><td>Schema-as-source-of-truth &mdash; plus optional pull from DB</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 HOW IT WORKS ── -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; How it works</div>
+      <h2 class="section-title">schema.ts is the unit of everything.</h2>
+      <p class="section-lede">Frappe has doctypes. PlatformIO has environments. Drizzle has the schema file. One TypeScript module declares every table, every column, every relation &mdash; and it's the same file the type system reads, the migration tool diffs, and the query builder consumes.</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">// schema.ts — Furniture Guild storefront cache (Worker + D1)</span>
+<span class="k">import</span> { sqliteTable, text, integer, real } <span class="k">from</span> <span class="s">"drizzle-orm/sqlite-core"</span>;
+<span class="k">import</span> { relations, sql } <span class="k">from</span> <span class="s">"drizzle-orm"</span>;
+
+<span class="k">export const</span> <span class="n">products</span> = <span class="n">sqliteTable</span>(<span class="s">"products"</span>, {
+  id:        <span class="n">text</span>(<span class="s">"id"</span>).<span class="n">primaryKey</span>(),
+  sku:       <span class="n">text</span>(<span class="s">"sku"</span>).<span class="n">notNull</span>().<span class="n">unique</span>(),
+  name:      <span class="n">text</span>(<span class="s">"name"</span>).<span class="n">notNull</span>(),
+  priceZar:  <span class="n">real</span>(<span class="s">"price_zar"</span>).<span class="n">notNull</span>(),
+  stock:     <span class="n">integer</span>(<span class="s">"stock"</span>).<span class="n">notNull</span>().<span class="n">default</span>(0),
+  updatedAt: <span class="n">integer</span>(<span class="s">"updated_at"</span>, { mode: <span class="s">"timestamp"</span> })
+               .<span class="n">default</span>(sql<span class="s">`(unixepoch())`</span>),
+});
+
+<span class="k">export const</span> <span class="n">productImages</span> = <span class="n">sqliteTable</span>(<span class="s">"product_images"</span>, {
+  id:        <span class="n">text</span>(<span class="s">"id"</span>).<span class="n">primaryKey</span>(),
+  productId: <span class="n">text</span>(<span class="s">"product_id"</span>).<span class="n">notNull</span>()
+               .<span class="n">references</span>(() =&gt; products.id, { onDelete: <span class="s">"cascade"</span> }),
+  url:       <span class="n">text</span>(<span class="s">"url"</span>).<span class="n">notNull</span>(),
+  alt:       <span class="n">text</span>(<span class="s">"alt"</span>),
+});
+
+<span class="k">export const</span> <span class="n">productsRelations</span> = <span class="n">relations</span>(products, ({ many }) =&gt; ({
+  images: many(productImages),
+}));</pre>
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>One schema, one migration set, one typed client.</strong> On the Worker side:</p>
+    </div>
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">// worker.ts — storefront endpoint running on D1</span>
+<span class="k">import</span> { drizzle } <span class="k">from</span> <span class="s">"drizzle-orm/d1"</span>;
+<span class="k">import</span> { eq } <span class="k">from</span> <span class="s">"drizzle-orm"</span>;
+<span class="k">import</span> * <span class="k">as</span> schema <span class="k">from</span> <span class="s">"./schema"</span>;
+
+<span class="k">export default</span> {
+  <span class="k">async</span> <span class="n">fetch</span>(req: Request, env: Env) {
+    <span class="k">const</span> db = <span class="n">drizzle</span>(env.DB, { schema });
+    <span class="k">const</span> sku = <span class="k">new</span> URL(req.url).pathname.split(<span class="s">"/"</span>).pop()!;
+
+    <span class="c">// Relational query — JOIN generated for you, fully typed</span>
+    <span class="k">const</span> product = <span class="k">await</span> db.query.products.<span class="n">findFirst</span>({
+      where: eq(schema.products.sku, sku),
+      with: { images: true },
+    });
+
+    <span class="k">return</span> product
+      ? Response.<span class="n">json</span>(product)
+      : <span class="k">new</span> Response(<span class="s">"not found"</span>, { status: 404 });
+  },
+};</pre>
+    <div class="prose fade-up" style="transition-delay: 0.12s">
+      <p>Switching targets is a one-line change. Swap <code>drizzle-orm/d1</code> for <code>drizzle-orm/postgres-js</code> and the same <code>db.query.products.findFirst(...)</code> runs against a Postgres over Hyperdrive. The schema file moves too &mdash; <code>sqliteTable</code> becomes <code>pgTable</code>, column types shift where dialects differ &mdash; but the query surface is identical.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.14s">
+      <h4>Two APIs in one ORM</h4>
+      <p><strong>SQL-like:</strong> <code>db.select().from(users).leftJoin(posts, ...).where(...)</code> &mdash; explicit, composable, reads like the SQL it compiles to. Best when you want control.</p>
+      <p><strong>Relational (Queries):</strong> <code>db.query.users.findMany({ with: { posts: true } })</code> &mdash; nested object result, joins generated for you. Best when you want ergonomics.</p>
+      <p>Both live in the same client and use the same schema. Use whichever fits the call; don't pick one globally.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 THE ECOSYSTEM ── -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; The ecosystem</div>
+      <h2 class="section-title">More than the query builder.</h2>
+      <p class="section-lede">Drizzle ships as a small surface area of packages. Each one has a clear role and earns its place; nothing is bundled you don't import.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Package / tool</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>drizzle-orm</code></td><td>The query builder and type-inference core. Import the dialect-specific entry point (<code>/pg-core</code>, <code>/mysql-core</code>, <code>/sqlite-core</code>).</td></tr>
+          <tr><td><code>drizzle-kit</code></td><td>CLI for migrations. <code>generate</code> diffs schema vs. last snapshot; <code>migrate</code> applies; <code>push</code> syncs directly (dev only); <code>pull</code> introspects an existing DB.</td></tr>
+          <tr><td>Drizzle Studio</td><td>Local browser-based data explorer. <code>drizzle-kit studio</code> spins it up &mdash; read/edit rows, run queries, inspect schema. Equivalent to Prisma Studio; runs offline.</td></tr>
+          <tr><td>Dialect drivers</td><td><code>postgres-js</code>, <code>node-postgres</code>, <code>@neondatabase/serverless</code>, <code>mysql2</code>, <code>@planetscale/database</code>, <code>better-sqlite3</code>, <code>bun:sqlite</code>, Cloudflare D1 binding, <code>@libsql/client</code> (Turso), Expo SQLite.</td></tr>
+          <tr><td>Relations API</td><td>Define <code>one</code>/<code>many</code> relations alongside tables; use <code>db.query.X.findMany({ with: ... })</code> for nested loads without writing joins.</td></tr>
+          <tr><td>Zod / Valibot / Yup adapters</td><td><code>drizzle-zod</code> generates insert/select validators from your schema. One source of truth across API boundary validation and DB layer.</td></tr>
+          <tr><td><code>drizzle-seed</code></td><td>Deterministic seed data generator that respects your schema &mdash; relations, constraints, and all.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 USE CASES ── -->
+<section id="uses">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Use cases</div>
+      <h2 class="section-title">Where this lands in the 2nth stack.</h2>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.05s">
+      <h4>Worker &rarr; D1 storefront cache</h4>
+      <p>Furniture Guild's storefront fetches product data from ERPNext on origin, but a hot path &mdash; product pages, category lists, search &mdash; runs off a D1 cache updated by scheduled Workers. Drizzle models the cache tables, D1 is the store, the whole thing lives in one Worker bundle. No ORM for Python to reach across; ERPNext stays the system of record.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Worker &rarr; Hyperdrive &rarr; Postgres</h4>
+      <p>When the Worker needs real-time writes against a shared Postgres &mdash; webhook ingest, agent memory, audit logs &mdash; point the Postgres driver at the Hyperdrive binding's connection string. Drizzle doesn't care that it's pooled. Same <code>schema.ts</code>, same queries, connection overhead handled by Cloudflare's network.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.11s">
+      <h4>Agent context and event stores</h4>
+      <p>Long-running agents need durable state: conversation history, tool-call logs, task queues. Drizzle + D1 gives you a typed interface over per-agent or per-tenant SQLite without standing up a new database service. For bigger workloads, the same schema moves to Postgres with a driver swap.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.14s">
+      <h4>Bun / Deno side services</h4>
+      <p>Not every 2nth service is a Worker. A Bun service doing PDF ingest or a Deno task runner benefits from the same ORM discipline. Drizzle works natively in both &mdash; <code>bun:sqlite</code> driver, Deno-compatible packages &mdash; so the SQL layer is consistent across runtimes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 EVOLUTION ── -->
+<section id="evolution">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Evolution</div>
+      <h2 class="section-title">From "third ORM" to default for edge TypeScript.</h2>
+      <p class="section-lede">Drizzle launched into a crowded field and carved space by refusing to make the usual tradeoffs. In three years it went from a curiosity to the default TypeScript ORM for serverless and edge builds.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Era</th><th>What shipped</th><th>What it unlocked</th></tr></thead>
+        <tbody>
+          <tr><td>2022</td><td>Drizzle ORM v0 &mdash; SQL-like query builder for Postgres</td><td>Proof that TS inference could replace codegen</td></tr>
+          <tr><td>2023</td><td>MySQL + SQLite dialects, drizzle-kit migrations, D1 adapter</td><td>One ORM for every SQL target that matters on the edge</td></tr>
+          <tr><td>2024</td><td>Relations API, Drizzle Studio, Turso + Neon serverless drivers</td><td>Ergonomic queries without giving up edge-first design</td></tr>
+          <tr><td>2025</td><td><code>drizzle-seed</code>, RQB v2, stronger multi-dialect schema helpers</td><td>Seeds, nested queries, and schema-as-TS matured into a serious production toolkit</td></tr>
+          <tr><td>2026</td><td>Widely adopted as the default Workers/D1 ORM; strong Bun and Expo support</td><td>Standard library status in the TS-on-edge stack</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 DECISION GUIDE ── -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Decision guide</div>
+      <h2 class="section-title">When to use it. When to skip it.</h2>
+      <p class="section-lede">Drizzle is not the right tool for every 2nth build. If the system of record is Frappe, don't reach for Drizzle &mdash; reach for doctypes. If the service is Python, don't polyglot the persistence layer for its own sake.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use when</h4>
+        <ul>
+          <li>You're writing a TypeScript service (Worker, Bun, Node, Deno) that owns its own tables</li>
+          <li>You target Cloudflare D1 or Turso and want a real ORM, not raw <code>env.DB.prepare()</code></li>
+          <li>You need to move the same schema between SQLite (dev, D1) and Postgres (prod, Hyperdrive)</li>
+          <li>You want migrations in git, reviewable as SQL, generated from a typed schema</li>
+          <li>You care about cold-start size and bundle budgets on the edge</li>
+          <li>You want one schema feeding both DB access and API-layer validation (via <code>drizzle-zod</code>)</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>Your system of record is ERPNext / Frappe &mdash; doctypes are the ORM, and bypassing them fragments truth</li>
+          <li>Your team is Python-first and the service doesn't touch TypeScript</li>
+          <li>You need a visual schema-first DSL for non-engineers &mdash; Prisma's <code>.prisma</code> file reads more approachably</li>
+          <li>You need Mongo or other non-SQL stores &mdash; Drizzle is SQL only</li>
+          <li>Your query patterns are mostly one-off analytics &mdash; a SQL client is simpler than any ORM</li>
+          <li>You need Django/Rails-style batteries (admin, auth scaffolding) &mdash; Drizzle is a library, not a framework</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 2ⁿ PERSPECTIVE ── -->
+<section id="perspective">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; 2&#x207F; Perspective</div>
+      <h2 class="section-title">How this node connects in the tree.</h2>
+      <p class="section-lede">Drizzle sits between the Workers runtime and whichever SQL store a given 2nth build is using that week. It's the layer that makes D1, Turso, Postgres-via-Hyperdrive, and Neon all feel like the same database to the application code &mdash; so the build can start on D1 and graduate to Postgres without rewriting the data layer.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The runtime Drizzle most often ships into. Drizzle's edge-first design &mdash; no native deps, ~7 kB bundle, sync schema parsing &mdash; exists because of targets like Workers.</div>
+      </a>
+      <a href="../cloudflare/d1.html" class="connect-node">
+        <span class="tag">tech/cloudflare/d1</span>
+        <div class="skill">Cloudflare D1</div>
+        <div class="why">First-class Drizzle adapter. The pairing of a typed ORM with distributed SQLite is how most Worker-owned tables are modelled in 2nth builds.</div>
+      </a>
+      <a href="../cloudflare/hyperdrive.html" class="connect-node">
+        <span class="tag">tech/cloudflare/hyperdrive</span>
+        <div class="skill">Cloudflare Hyperdrive</div>
+        <div class="why">When the Worker needs a full Postgres, Hyperdrive is the bridge. Drizzle's <code>postgres-js</code> and <code>node-postgres</code> drivers point at the Hyperdrive connection string unchanged.</div>
+      </a>
+      <a href="../frappe/framework.html" class="connect-node">
+        <span class="tag">tech/frappe/framework</span>
+        <div class="skill">Frappe Framework</div>
+        <div class="why">The other side of the boundary. ERPNext-backed systems use doctypes as the ORM. Drizzle lives in the Workers that wrap, cache, or extend Frappe &mdash; never replacing it as the source of truth.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/frameworks/hono</span>
+        <div class="skill">Hono</div>
+        <div class="why">The HTTP layer Drizzle most often pairs with in Workers. Hono handles the request; Drizzle handles the SQL. Thin, typed, no framework ceremony.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/postgresql</span>
+        <div class="skill">PostgreSQL</div>
+        <div class="why">The production database behind most serious 2nth workloads. Drizzle speaks Postgres natively &mdash; JSONB, arrays, generated columns, partial indexes, <code>pgvector</code> via custom column types.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The Drizzle docs are the fastest way in &mdash; dialect-specific, with runnable examples for every driver. The GitHub is active, the Discord answers quickly, and the Studio is worth trying before you pick an ORM at all.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://orm.drizzle.team" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Project home</span>
+        <span class="r-title">orm.drizzle.team</span>
+        <span class="r-url">orm.drizzle.team</span>
+      </a>
+      <a href="https://orm.drizzle.team/docs/overview" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Drizzle documentation overview</span>
+        <span class="r-url">orm.drizzle.team/docs/overview</span>
+      </a>
+      <a href="https://orm.drizzle.team/docs/connect-cloudflare-d1" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">Connect with Cloudflare D1</span>
+        <span class="r-url">orm.drizzle.team/docs/connect-cloudflare-d1</span>
+      </a>
+      <a href="https://orm.drizzle.team/docs/kit-overview" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">drizzle-kit &mdash; migrations CLI</span>
+        <span class="r-url">orm.drizzle.team/docs/kit-overview</span>
+      </a>
+      <a href="https://github.com/drizzle-team/drizzle-orm" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">drizzle-team/drizzle-orm on GitHub</span>
+        <span class="r-url">github.com/drizzle-team/drizzle-orm</span>
+      </a>
+      <a href="https://orm.drizzle.team/drizzle-studio/overview" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Studio</span>
+        <span class="r-title">Drizzle Studio &mdash; local data explorer</span>
+        <span class="r-url">orm.drizzle.team/drizzle-studio/overview</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Technology</a>
+      <a href="https://orm.drizzle.team" target="_blank" rel="noopener">orm.drizzle.team &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
