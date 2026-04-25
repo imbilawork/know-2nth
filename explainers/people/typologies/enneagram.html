@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Enneagram &mdash; know.2nth.ai</title>
+<meta name="description" content="The Enneagram — nine types, three centres, two arrows, three instincts. A structurally rich personality framework with weaker empirical scaffolding than its proponents claim and stronger practical traction than its critics acknowledge. Honest take, oriented for coaching and team work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23F43F5E' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%23FB7185' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%23FB7185' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%23FB7185' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%23FB7185' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%23FB7185' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-glow: #FB7185; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(244, 63, 94, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(244, 63, 94, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+    --domain: var(--rose); --domain-glow: var(--rose-glow);
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(244, 63, 94, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(244, 63, 94, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.rose { width: 600px; height: 600px; background: var(--rose); top: -200px; right: -100px; }
+  .glow-orb.warm { width: 500px; height: 500px; background: var(--warm); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--rose), var(--warm)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--rose-glow); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--rose-glow); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--rose-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--rose-glow); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); box-shadow: 0 0 12px var(--rose); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--rose), var(--rose-glow), var(--warm)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: var(--rose-soft); color: var(--rose-glow); border-color: rgba(244, 63, 94, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--rose-glow); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--rose-glow); }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.rose { border-left: 3px solid var(--rose); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .types-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; max-width: 1100px; }
+  .type-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; transition: all 0.3s; }
+  .type-card:hover { border-color: var(--border-hover); }
+  .type-card .num { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--rose), var(--rose-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 8px; }
+  .type-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.2px; }
+  .type-card .triad { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .type-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+  .type-card .arrows { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); padding-top: 8px; border-top: 1px solid var(--border); display: flex; gap: 14px; }
+  .type-card .arrows .grow { color: var(--green); }
+  .type-card .arrows .stress { color: var(--rose); }
+
+  .triad-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; max-width: var(--read-w); }
+  .triad { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .triad-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--rose-glow); margin-bottom: 8px; }
+  .triad h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .triad .types-list { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--rose-glow); margin-bottom: 12px; }
+  .triad p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--rose-glow); background: rgba(244, 63, 94, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--rose-glow); }
+
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--rose-glow); word-break: break-all; }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--rose), var(--warm)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--rose-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb rose"></div>
+<div class="glow-orb warm"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">people/typologies/enneagram</span>
+    </a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">&larr; People</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x2600;&#xFE0F;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">People</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">people</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">typologies</span>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">enneagram</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> people/typologies &middot; The Enneagram &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Nine types, three centres, <span class="gradient">two arrows of motion.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The Enneagram is a personality framework with deep structural elegance and contested empirical support. Nine core types organised by three centres of intelligence (gut, heart, head), each with an integration path and a stress path, each refined by wings and three instinctual subtypes. Used well, it is the most generative coaching frame in common use &mdash; a map for "what does growth look like for you, specifically." Used poorly, it is just one more way to put a person in a box.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill">9 types &middot; 27 subtypes</span>
+      <span class="pill">Riso-Hudson lineage</span>
+      <span class="pill">IEQ9 / RHETI</span>
+      <span class="pill">Coaching &middot; Teams</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A structurally rich map of habitual patterns.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The Enneagram (from Greek <em>ennea</em>, nine, and <em>gramma</em>, drawing) is a nine-pointed symbol annotated with personality types. Each type names a habitual pattern of attention &mdash; what a person tends to notice, value, defend against, and reach for under stress. The claim is not that you <em>are</em> a type; the claim is that one of nine attention strategies tends to dominate, and that knowing which one gives you leverage you wouldn't otherwise have on your own behaviour.</p>
+      <p>What sets the Enneagram apart from MBTI, the Big Five, and DISC is its <strong>directional structure</strong>. Each type is connected to two others by lines on the symbol &mdash; one is the type you move <em>toward</em> in growth (integration), the other is the type whose patterns you fall into under pressure (disintegration). This makes the Enneagram less a static category and more a dynamic system: you stay one type, but the framework tells you what healthier and unhealthier versions of yourself look like, with named patterns to watch for in either direction.</p>
+    </div>
+    <div class="info-card rose fade-up" style="transition-delay: 0.08s">
+      <h4>The bet, in one sentence</h4>
+      <p>The Enneagram's bet is that nine attention strategies are enough to describe most of the meaningful variation in adult personality, and that knowing yours produces more useful coaching conversations than any of the alternative typologies do. The first half is contested. The second half is what most experienced coaches who use the framework will tell you is empirically obvious from practice.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 WHY IT MATTERS -->
+<section id="why">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; Why it matters</div>
+      <h2 class="section-title">It produces a different kind of coaching conversation.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Most personality typologies describe <em>what</em> someone is like. The Enneagram describes <em>how someone got that way</em> &mdash; what fear or longing the pattern is protecting against, what cost it carries, and what the alternative looks like. That changes what you can do with it in a session. A coach using Big Five can say "you score high on neuroticism." A coach using the Enneagram can say "you're a Six. Which means your mind is built for scanning the environment for what could go wrong, and that's been useful, and right now it's costing you sleep. What would it cost to trust the people around you for the next 48 hours, just as an experiment?"</p>
+      <p>The framework also gives <strong>shared language for teams</strong>. When two people are in conflict and one is a Type 8 and the other a Type 9, the conflict is no longer about character &mdash; it's about predictable patterns meeting. The 8 reads the 9's avoidance as passive resistance; the 9 reads the 8's directness as aggression. Naming the dynamic in Enneagram terms tends to defuse it faster than naming it in personal terms.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Honest read on adoption</h4>
+      <p>The Enneagram has substantial uptake in coaching (ICF-affiliated coaches use it widely), in spiritual direction, in some corporate L&amp;D, and unevenly in clinical psychology. It is largely <em>absent</em> from academic personality research, which is dominated by the Big Five. Both observations are true. The right inference is not "the academy will catch up" or "the practitioners are wrong" &mdash; it's that the framework offers practical traction in self-reflection that the academic instruments don't, while making structural claims the academic instruments wouldn't. Use it for what it's good at.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; How it works</div>
+      <h2 class="section-title">Nine types, three triads, two arrows, three instincts.</h2>
+      <p class="section-lede">The Enneagram's core machinery is small. Nine types organised into three centres of intelligence. Each type has two adjacent <em>wings</em> that flavour it. Each type has two <em>arrows</em> &mdash; one to the type you grow toward, one to the type you fall into. Each type has three <em>instinctual subtypes</em>. That's the whole map.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The nine types</strong> are usually named in the Riso-Hudson lineage as below. Names vary across teachers (Helen Palmer's narrative tradition uses different labels, as does Beatrice Chestnut for subtype work) but the type structure is the same.</p>
+    </div>
+
+    <div class="types-grid fade-up" style="transition-delay: 0.08s">
+      <div class="type-card">
+        <div class="num">1</div>
+        <h4>The Reformer</h4>
+        <span class="triad">Body &middot; Anger</span>
+        <p>Principled, self-controlled, perfectionistic. Driven by a felt sense of "the right way." Critical of self and others when stressed.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 7</span> grow</span><span><span class="stress">&rarr; 4</span> stress</span></div>
+      </div>
+      <div class="type-card">
+        <div class="num">2</div>
+        <h4>The Helper</h4>
+        <span class="triad">Heart &middot; Shame</span>
+        <p>Caring, generous, people-pleasing. Earns connection by anticipating others' needs. Resentful when help isn't seen or returned.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 4</span> grow</span><span><span class="stress">&rarr; 8</span> stress</span></div>
+      </div>
+      <div class="type-card">
+        <div class="num">3</div>
+        <h4>The Achiever</h4>
+        <span class="triad">Heart &middot; Shame</span>
+        <p>Adaptive, success-oriented, image-conscious. Values being valuable. Loses contact with the self underneath the role when overworked.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 6</span> grow</span><span><span class="stress">&rarr; 9</span> stress</span></div>
+      </div>
+      <div class="type-card">
+        <div class="num">4</div>
+        <h4>The Individualist</h4>
+        <span class="triad">Heart &middot; Shame</span>
+        <p>Sensitive, expressive, drawn to what's missing. Builds identity from a felt sense of difference. Melancholy when comparing inward.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 1</span> grow</span><span><span class="stress">&rarr; 2</span> stress</span></div>
+      </div>
+      <div class="type-card">
+        <div class="num">5</div>
+        <h4>The Investigator</h4>
+        <span class="triad">Head &middot; Fear</span>
+        <p>Perceptive, cerebral, private. Conserves energy and information. Withdraws into expertise when demands feel like intrusion.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 8</span> grow</span><span><span class="stress">&rarr; 7</span> stress</span></div>
+      </div>
+      <div class="type-card">
+        <div class="num">6</div>
+        <h4>The Loyalist</h4>
+        <span class="triad">Head &middot; Fear</span>
+        <p>Committed, security-oriented, vigilant. Builds trust through testing. Splits between phobic deference and counter-phobic defiance.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 9</span> grow</span><span><span class="stress">&rarr; 3</span> stress</span></div>
+      </div>
+      <div class="type-card">
+        <div class="num">7</div>
+        <h4>The Enthusiast</h4>
+        <span class="triad">Head &middot; Fear</span>
+        <p>Spontaneous, productive, future-oriented. Outruns difficult emotion by reframing or moving on. Scattered when avoiding.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 5</span> grow</span><span><span class="stress">&rarr; 1</span> stress</span></div>
+      </div>
+      <div class="type-card">
+        <div class="num">8</div>
+        <h4>The Challenger</h4>
+        <span class="triad">Body &middot; Anger</span>
+        <p>Powerful, direct, protective. Asserts to test reality and to keep vulnerability private. Domineering when control feels threatened.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 2</span> grow</span><span><span class="stress">&rarr; 5</span> stress</span></div>
+      </div>
+      <div class="type-card">
+        <div class="num">9</div>
+        <h4>The Peacemaker</h4>
+        <span class="triad">Body &middot; Anger</span>
+        <p>Easygoing, agreeable, merging. Keeps the peace by suspending self-priority. Stuck and stubborn when avoiding their own preferences.</p>
+        <div class="arrows"><span><span class="grow">&rarr; 3</span> grow</span><span><span class="stress">&rarr; 6</span> stress</span></div>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s" style="margin-top: 32px;">
+      <p style="margin-top: 32px;"><strong>The three centres of intelligence</strong> &mdash; Body, Heart, and Head &mdash; group the types by which faculty leads and which core emotion structures the type's defences. Mistyping is most often a confusion <em>within</em> a triad, not across triads, so getting the centre right is half the work.</p>
+    </div>
+
+    <div class="triad-grid fade-up" style="transition-delay: 0.12s">
+      <div class="triad">
+        <div class="triad-label">Body / Gut</div>
+        <h4>Anger triad</h4>
+        <div class="types-list">8 &middot; 9 &middot; 1</div>
+        <p>Core emotion is anger, expressed differently in each: 8 acts on it directly, 1 internalises it as resentment, 9 numbs and refuses to feel it. Concerned with autonomy, control, and integrity of the self.</p>
+      </div>
+      <div class="triad">
+        <div class="triad-label">Heart / Feeling</div>
+        <h4>Shame triad</h4>
+        <div class="types-list">2 &middot; 3 &middot; 4</div>
+        <p>Core emotion is shame about identity. 2 manages it by being needed, 3 by being successful, 4 by leaning into difference. Concerned with image, connection, and the gap between who they are and who they wish to be.</p>
+      </div>
+      <div class="triad">
+        <div class="triad-label">Head / Thinking</div>
+        <h4>Fear triad</h4>
+        <div class="types-list">5 &middot; 6 &middot; 7</div>
+        <p>Core emotion is fear, projected onto the future. 5 defends by withdrawing and knowing, 6 by anticipating and aligning, 7 by reframing and moving forward. Concerned with security, certainty, and the cost of contact.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.14s" style="margin-top: 32px;">
+      <p style="margin-top: 32px;"><strong>Wings</strong> are the two types adjacent to your core type on the symbol. A Type 4 has a wing toward Type 3 (4w3 &mdash; the more outward, image-aware Four) or toward Type 5 (4w5 &mdash; the more withdrawn, observational Four). Most people lean strongly toward one wing, though some integrate both. Wings explain a lot of the within-type variation that initially makes the framework feel too coarse.</p>
+      <p><strong>Instinctual subtypes</strong> further refine each type into three: <strong>Self-Preservation</strong> (sp &mdash; concerned with safety, resources, the body), <strong>Social</strong> (so &mdash; concerned with belonging, group standing, contribution), and <strong>Sexual / One-to-One</strong> (sx &mdash; concerned with intensity, attraction, the merged dyad). Nine types &times; three instincts = 27 named subtypes, and Beatrice Chestnut and Uranio Paes have done much of the modern work mapping how dramatically the same type can present in each instinct.</p>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.16s">
+      <h4>Levels of development</h4>
+      <p>The Riso-Hudson model adds a vertical dimension &mdash; nine <strong>levels of development</strong> per type, from healthy (1&ndash;3) through average (4&ndash;6) to unhealthy (7&ndash;9). The point is not to judge but to recognise that the same type looks very different in self-aware versus self-deceived states. A healthy 8 is a generous protector; an unhealthy 8 is a domineering bully. The personality structure is the same; the level of integration is not. Most coaching work is movement up the levels of one's own type, not switching types.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 ECOSYSTEM -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; The ecosystem</div>
+      <h2 class="section-title">Lineages, tests, training paths.</h2>
+      <p class="section-lede">"The Enneagram" is one symbol with several teaching lineages and several assessment instruments. The lineage you train in shapes the language you'll use; the instrument you administer shapes the conversations that follow.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Lineage</th><th>What it emphasises</th><th>Where it lives</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Riso-Hudson</strong></td><td>Levels of development, structured type descriptions, the RHETI test. The most academic and codified lineage.</td><td>The Enneagram Institute (US). Books: <em>The Wisdom of the Enneagram</em>, <em>Personality Types</em>.</td></tr>
+          <tr><td><strong>Naranjo / SAT</strong></td><td>Psychiatric depth, character structures linked to defence mechanisms, somatic and meditative practice.</td><td>SAT (Seekers After Truth) programmes, Claudio Naranjo's books, lineage continued by various teachers.</td></tr>
+          <tr><td><strong>Palmer / Daniels</strong></td><td>Narrative tradition. Type taught through panels of typed individuals telling their own stories. Oral, experiential.</td><td>The Enneagram Worldwide / Narrative Enneagram, Stanford-affiliated training.</td></tr>
+          <tr><td><strong>Hurley-Donson</strong></td><td>Integration of typology with adult-development frameworks. Less common; influential in some L&amp;D circles.</td><td>The Enneagram Advantage and successor programmes.</td></tr>
+          <tr><td><strong>Chestnut / Paes</strong></td><td>Subtypes as the unit of analysis &mdash; arguing the 27 subtypes are more useful than the 9 types alone.</td><td>Beatrice Chestnut's <em>The Complete Enneagram</em> and ongoing programmes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead><tr><th>Test</th><th>What it gives you</th><th>Honest read</th></tr></thead>
+        <tbody>
+          <tr><td><code>RHETI</code> (Riso-Hudson Enneagram Type Indicator)</td><td>144 forced-choice items; type score across all nine.</td><td>The classic. Free short version online; full paid. Test-retest reliability is moderate; results need interpretation.</td></tr>
+          <tr><td><code>IEQ9</code> (Integrative Enneagram Questionnaire)</td><td>175 items; type, wing, instinct, levels, sub-type, centre dominance. Used widely in coaching.</td><td>Built and run from South Africa (Integrative9). The most psychometrically rigorous Enneagram instrument in current use; coach-administered.</td></tr>
+          <tr><td><code>Truity / EnneaApp</code></td><td>Free or low-cost online tests, simpler outputs.</td><td>Useful starting points for self-typing. Not a substitute for reflective work or a paid coach interpretation.</td></tr>
+          <tr><td>Coach typing interview</td><td>1&ndash;2 hour conversation with a trained Enneagram coach who hypothesises type from your patterns and confirms with you.</td><td>The most accurate method, full stop. No instrument beats a skilled practitioner asking the right questions and watching how you answer.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 05 USE CASES -->
+<section id="uses">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Use cases</div>
+      <h2 class="section-title">Where the Enneagram earns its place.</h2>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.05s">
+      <h4>Coaching conversations &mdash; the primary use case</h4>
+      <p>The single best use of the Enneagram is as a structural prompt in coaching. Knowing the client's type lets the coach ask the question that actually moves the needle for that pattern. A Five doesn't need encouragement to think harder. A Three doesn't need reminding to perform. A Nine doesn't need help blending in. The framework points you at what's <em>missing</em>, which is usually where the work is.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Team dynamics and conflict</h4>
+      <p>Mapping a team across the nine types tends to defuse personalised conflict in two ways: it depersonalises the dynamic ("we're not seeing each other's intentions, we're seeing each other's patterns") and it predicts the friction points before they happen. A team with three Eights and one Nine has a structural problem the Nine will quietly absorb until they exit. A team without a single Six is missing a vigilance the project will eventually need.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.11s">
+      <h4>Self-awareness practice</h4>
+      <p>Beyond coaching, the Enneagram is a practice of noticing. When the Six wakes up at 3am scanning for danger, the framework lets them see "this is my Type doing what it does," which is the first move in not being entirely fused with the pattern. The structural distance is the leverage. Teachers like Russ Hudson speak of "the observer self" &mdash; the part of you that can watch the type behave.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.14s">
+      <h4>Leadership development</h4>
+      <p>Used carefully, the Enneagram helps senior leaders see their own type's blind spots before they blow up the team. A Three CEO who only hires Threes ships fast and burns out their Twos and Sixes. An Eight founder who confuses challenge with care drives away the Nines who hold the centre. The framework lets a coach name the pattern in language the leader can hear.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 EVOLUTION -->
+<section id="evolution">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Evolution</div>
+      <h2 class="section-title">From Ichazo's symbol to coaching standard.</h2>
+      <p class="section-lede">The modern Enneagram is roughly fifty years old. It has older symbolic ancestors, but the typology as we know it traces a specific lineage from Bolivia in the 1960s to today's coaching practice through three generations of teachers.</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Era</th><th>Figure</th><th>Contribution</th></tr></thead>
+        <tbody>
+          <tr><td>1960s</td><td>Oscar Ichazo</td><td>Bolivian mystic and founder of the Arica School. Introduced the nine-pointed symbol as a map of "ego fixations." The first to attach personality content to the geometry.</td></tr>
+          <tr><td>1970s</td><td>Claudio Naranjo</td><td>Chilean psychiatrist who studied with Ichazo, brought the system to the Esalen Institute, and connected the types to clinical psychology and defence mechanisms. The bridge from mystical to psychological.</td></tr>
+          <tr><td>1980s&ndash;1990s</td><td>Don Riso &amp; Russ Hudson</td><td>Co-founded the Enneagram Institute. Codified the levels of development, wrote the foundational texts, built the RHETI test. The Riso-Hudson lineage remains the most widely taught.</td></tr>
+          <tr><td>1980s&ndash;2000s</td><td>Helen Palmer &amp; David Daniels</td><td>Developed the narrative tradition &mdash; teaching the types through panels of people sharing their experience. Founded what became The Narrative Enneagram, with Stanford-affiliated training.</td></tr>
+          <tr><td>2000s&ndash;now</td><td>Beatrice Chestnut, Uranio Paes, Russ Hudson</td><td>Modern teaching foregrounds instinctual subtypes (the 27, not just the 9), integrates somatic practice, and refines the work on levels of development. Chestnut's <em>The Complete Enneagram</em> is the current canonical text on subtypes.</td></tr>
+          <tr><td>2010s&ndash;now</td><td>Integrative9 (Dirk Cloete, ZA)</td><td>South African team that built the IEQ9, currently the most psychometrically robust Enneagram instrument. Coach-administered, widely used in corporate L&amp;D internationally.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 07 DECISION GUIDE -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Decision guide</div>
+      <h2 class="section-title">When to use it. When not to.</h2>
+      <p class="section-lede">The Enneagram is a tool. Like any tool, its value is in the hands and the use case. The decision guide below names the work it does well and the work it should never be used for &mdash; the second list matters more.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use when</h4>
+        <ul>
+          <li>You're coaching a client and want a frame for "what does growth look like for this person specifically."</li>
+          <li>A team is in repeated, patterned conflict and naming the pattern would help more than naming the people.</li>
+          <li>A senior leader is hitting their own ceiling and the blind spots are the type's, not the role's.</li>
+          <li>Self-awareness work &mdash; the framework gives a vocabulary for noticing the pattern as it runs.</li>
+          <li>You want a coaching tool with structural depth that goes beyond surface description into directional growth paths.</li>
+          <li>You can pair the test with reflective work &mdash; instrument plus interpretation, not instrument alone.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Never use for</h4>
+        <ul>
+          <li><strong>Recruitment screening or hiring decisions.</strong> Illegal in many jurisdictions, ethically dubious in all of them. Type does not predict performance.</li>
+          <li>Performance reviews or compensation decisions of any kind.</li>
+          <li>Categorising someone they haven't typed themselves &mdash; "you're obviously a Three" is harm dressed as insight.</li>
+          <li>Dismissing behaviour ("classic 8 move") instead of engaging with it.</li>
+          <li>Locking someone into a fixed identity. The whole point is movement; the type is the starting line, not the finish.</li>
+          <li>A clinical mental-health diagnosis. The Enneagram describes structure, not pathology, and is not a substitute for therapy where therapy is needed.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Gotchas</div>
+      <h2 class="section-title">Where the Enneagram bites.</h2>
+      <p class="section-lede">The framework has known failure modes. None of them are reasons to abandon it, but all of them are reasons to use it carefully and to be honest with clients about what it is and isn't.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Empirical validation is genuinely thin</strong>
+        <p>Most peer-reviewed studies of the Enneagram are small, methodologically weak, or done by proponents. The connection between types and Big Five factors is reasonable but loose. Don't oversell academic backing the framework doesn't yet have. The IEQ9 is the strongest current instrument by psychometric standards, and that's a moving floor, not a ceiling.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Mistyping is common &mdash; especially via self-test</strong>
+        <p>Self-administered tests confuse what you <em>do</em> with what you <em>most identify with</em>. A Three under stress moves to Nine and may test as Nine. A Six who counter-phobically performs may test as Eight. Pair every test with reflection, ideally a coach-led typing conversation. Treat first-test results as a hypothesis, not a verdict.</p>
+      </div>
+      <div class="gotcha">
+        <strong>The "I'm a special version of my type" trap</strong>
+        <p>Every Four believes they're a particularly intense Four. Every Five believes their inner world is uniquely complex. The framework predicts this. If your client is making an exception of themselves <em>within</em> their type description, that's the type talking, not falsification.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Cross-cultural applicability is under-studied</strong>
+        <p>The framework's literature is heavily Western and largely white. The descriptions of types may carry cultural assumptions about emotional expression, individualism, and conflict that don't transfer cleanly. Use it with awareness, particularly in cross-cultural coaching.</p>
+      </div>
+      <div class="gotcha">
+        <strong>The arrows are easily over-interpreted</strong>
+        <p>Integration and disintegration arrows are useful directional pointers. They are not deterministic predictions. A Type 6 doesn't <em>become</em> a Type 3 under stress &mdash; they take on some Three-like patterns alongside their Six core. Read the arrows as flavour, not as transformation.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Dogmatism in some teaching circles</strong>
+        <p>Parts of the Enneagram world treat the framework as revealed truth and resist criticism. Other parts hold it lightly as a tool that's earning its keep. The latter is more useful. Be sceptical of any teacher who can't tell you the framework's limits in plain language.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; 2&#x207F; Perspective</div>
+      <h2 class="section-title">How this node connects in the tree.</h2>
+      <p class="section-lede">The Enneagram is the first leaf to land under People. It connects sideways to the rest of the People domain (coaching, leadership, teams) and upward to the broader principle the domain holds: that human development is structurable, useful when scoped, and never a substitute for the conversation in the room.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../" class="connect-node">
+        <span class="tag">people/hub</span>
+        <div class="skill">People domain hub</div>
+        <div class="why">The parent domain. Five principles set the evidence stance for everything in this branch &mdash; the Enneagram explainer is the first one held to that bar.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">people/coaching/icf</span>
+        <div class="skill">ICF coaching foundations</div>
+        <div class="why">The professional standard the Enneagram most often gets used inside. Core competencies (presence, powerful questions, contracting) are how the framework is responsibly applied.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">people/coaching/grow</span>
+        <div class="skill">GROW model</div>
+        <div class="why">Common session structure that pairs well with Enneagram framing. Type informs the kind of goal that lands; GROW handles the conversation arc.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">people/teams</span>
+        <div class="skill">Teams &amp; facilitation</div>
+        <div class="why">Where Enneagram type maps land most usefully outside 1:1 coaching. A team mapped across the nine types is easier to read and less likely to personalise its conflicts.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">people/leadership</span>
+        <div class="skill">Leadership development</div>
+        <div class="why">Senior leaders' Enneagram type is the shape of their organisation's blind spots. The leaf to write next is the one that turns type into leadership decision-making.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">people/typologies/big-five</span>
+        <div class="skill">Big Five (OCEAN)</div>
+        <div class="why">The academic personality framework. Where the Enneagram has practical traction and weak empirical scaffolding, the Big Five is the inverse. Different tools, different rooms.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">10 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The books below are the canonical entry points for each lineage. The instruments are listed in increasing order of rigour. The training paths are the ones reputable coaches in South Africa and internationally currently route through.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.enneagraminstitute.com/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Lineage</span>
+        <span class="r-title">The Enneagram Institute (Riso-Hudson)</span>
+        <span class="r-url">enneagraminstitute.com</span>
+      </a>
+      <a href="https://www.integrative9.com/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Instrument</span>
+        <span class="r-title">Integrative9 &middot; IEQ9</span>
+        <span class="r-url">integrative9.com</span>
+      </a>
+      <a href="https://www.narrativeenneagram.org/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Lineage</span>
+        <span class="r-title">The Narrative Enneagram (Palmer / Daniels)</span>
+        <span class="r-url">narrativeenneagram.org</span>
+      </a>
+      <a href="https://www.internationalenneagram.org/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Body</span>
+        <span class="r-title">International Enneagram Association</span>
+        <span class="r-url">internationalenneagram.org</span>
+      </a>
+      <a href="https://www.amazon.com/Wisdom-Enneagram-Complete-Psychological-Personality/dp/0553378201" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Book</span>
+        <span class="r-title">The Wisdom of the Enneagram &middot; Riso &amp; Hudson</span>
+        <span class="r-url">Riso &amp; Hudson, 1999</span>
+      </a>
+      <a href="https://www.amazon.com/Complete-Enneagram-Paths-Self-Knowledge/dp/1938314549" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Book</span>
+        <span class="r-title">The Complete Enneagram &middot; Beatrice Chestnut</span>
+        <span class="r-url">Chestnut, 2013</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">People domain</a>
+      <a href="https://www.integrative9.com/" target="_blank" rel="noopener">IEQ9 &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
