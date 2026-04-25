@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DESIGN.md &mdash; know.2nth.ai</title>
+<meta name="description" content="DESIGN.md — the file-format spec for handing your design system to a coding agent. YAML tokens, markdown rationale, lintable in CI, 14 KB of structure that turns a vibe into a contract.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+
+  .lint-table { width: 100%; border-collapse: collapse; font-size: 12.5px; max-width: var(--read-w); margin-bottom: 20px; }
+  .lint-table th, .lint-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .lint-table thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); }
+  .lint-table td { color: var(--text-secondary); }
+  .lint-table td code { font-family: 'JetBrains Mono', monospace; color: var(--sky); }
+  .sev { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: var(--radius-pill); letter-spacing: 1px; text-transform: uppercase; }
+  .sev.error { background: var(--rose-soft); color: var(--rose); }
+  .sev.warn { background: var(--warm-soft); color: var(--warm); }
+  .sev.info { background: rgba(56, 189, 248, 0.12); color: var(--sky); }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/design/design-md</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Design</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">design</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">design.md</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; DESIGN.md &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      One file your agent <span class="gradient">already knows how to read.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      DESIGN.md is a file-format spec from Google Labs Code (the team behind Stitch) for handing your design system to a coding agent. YAML front matter holds the normative tokens; markdown body holds the rationale a designer would actually write. Lintable in CI, diffable across versions, exportable to Tailwind or DTCG. The bet is simple: <code>DESIGN.md</code> becomes a canonical filename agents recognise the way they already recognise <code>README.md</code>.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Live</span>
+      <span class="pill warn">Alpha &middot; format may change</span>
+      <span class="pill">Apache 2.0</span>
+      <span class="pill">@google/design.md</span>
+      <span class="pill">YAML + Markdown</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A canonical filename, a tight spec, and a CLI that reads both.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>DESIGN.md is three things at once. It is <strong>a markdown file</strong> you commit to a repo. It is <strong>a format specification</strong> &mdash; a 14&nbsp;KB document that defines exactly which YAML keys are allowed, which sections must appear, and what counts as a valid token reference. And it is <strong>an npm CLI</strong>, <code>@google/design.md</code>, that lints the file, diffs two versions, exports the tokens to Tailwind or to the DTCG <code>tokens.json</code> format, and prints the spec itself so it can be piped straight into an agent prompt.</p>
+      <p>The mental model is <code>README.md</code> for visual systems. README is the file every coding agent already loads to understand what a project does. DESIGN.md is the file an agent loads to understand what the project should <em>look like</em>. The point isn't that DESIGN.md is technically novel &mdash; YAML in front matter has existed forever, and design tokens are a solved problem at most shops. The point is the convention: a single filename, a fixed shape, a published spec, and a linter, so any agent reading the repo gets the same picture.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>The architecture in one breath</h4>
+      <p><strong>YAML front matter</strong> holds the normative data &mdash; palettes, typography scales, component tokens, layout dimensions. This is what tools and agents parse. <strong>Markdown body</strong> holds the rationale, the do's and don'ts, and the flavourful prose names ("Midnight Forest Green", "warm limestone") that designers actually use when they speak. The two layers are explicitly ranked: if the YAML and the prose disagree, the YAML wins. Tokens are the contract; prose is context.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.11s">
+      <h4>Maturity check &mdash; alpha as of April 2026</h4>
+      <p>The repo (<code>google-labs-code/design.md</code>) is roughly two weeks old at time of writing. ~7,300 GitHub stars and 26 open issues. Self-declared <code>version: alpha</code>. The README explicitly warns "expect changes to the format as it matures." The CLI, packaging, and CI scaffolding are stable. The format itself is not frozen. Treat any DESIGN.md you author today as something you'll likely need to migrate when 1.0 lands.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">YAML up top, markdown down the page, CLI in CI.</h2>
+      <p class="section-lede">A DESIGN.md file has three layers: front matter (normative), body (rationale), and machine output (what the CLI exports). Same file feeds all three. To make this concrete, the example below is what know.2nth's own design system would look like rendered as a DESIGN.md.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">---</span>
+<span class="h">name</span>: know.2nth.ai
+<span class="h">version</span>: 0.1.0
+<span class="h">description</span>: Knowledge portal and skills tree for 2nth.ai &mdash;
+  dark-first, blue-and-sky on ink, technical without being cold.
+
+<span class="h">colors</span>:
+  <span class="h">primary</span>:
+    <span class="h">tokens</span>:
+      blue:        <span class="s">"#2563EB"</span>  <span class="c"># action, focus, primary CTA</span>
+      blue-glow:   <span class="s">"#3B82F6"</span>  <span class="c"># lighter primary, glows + halos</span>
+      sky:         <span class="s">"#38BDF8"</span>  <span class="c"># secondary accent, links, labels</span>
+      sky-muted:   <span class="s">"#7DD3FC"</span>
+  <span class="h">neutral</span>:
+    <span class="h">tokens</span>:
+      ink:         <span class="s">"#0B1120"</span>  <span class="c"># page background (dark)</span>
+      ink-deep:    <span class="s">"#060A14"</span>  <span class="c"># code block background</span>
+      navy:        <span class="s">"#121D33"</span>  <span class="c"># raised surface</span>
+      paper:       <span class="s">"#F8FAFC"</span>  <span class="c"># text on dark</span>
+      mist:        <span class="s">"#E2E8F0"</span>
+      slate:       <span class="s">"#94A3B8"</span>  <span class="c"># secondary text</span>
+  <span class="h">tertiary</span>:
+    <span class="h">tokens</span>:
+      warm:        <span class="s">"#F59E0B"</span>  <span class="c"># amber, business / partner accent</span>
+      green:       <span class="s">"#10B981"</span>  <span class="c"># security / open-tier accent</span>
+      violet:      <span class="s">"#8B5CF6"</span>  <span class="c"># AI / ML domain accent</span>
+      rose:        <span class="s">"#F43F5E"</span>  <span class="c"># professional services accent</span>
+
+<span class="h">typography</span>:
+  <span class="h">families</span>:
+    sans: <span class="s">"Outfit, system-ui, -apple-system, sans-serif"</span>
+    mono: <span class="s">"'JetBrains Mono', monospace"</span>
+  <span class="h">weights</span>: [300, 400, 500, 600, 700, 800]
+  <span class="h">scale</span>:
+    label:    { family: <span class="s">"{typography.families.mono}"</span>, size: <span class="s">"11px"</span>, weight: 500, tracking: <span class="s">"2px"</span>, transform: uppercase }
+    body:     { family: <span class="s">"{typography.families.sans}"</span>, size: <span class="s">"16px"</span>, weight: 300, leading: 1.75 }
+    h1:       { family: <span class="s">"{typography.families.sans}"</span>, size: <span class="s">"clamp(40px, 6vw, 66px)"</span>, weight: 800, tracking: <span class="s">"-2px"</span> }
+    h2:       { family: <span class="s">"{typography.families.sans}"</span>, size: <span class="s">"clamp(26px, 3.4vw, 36px)"</span>, weight: 700, tracking: <span class="s">"-0.8px"</span> }
+
+<span class="h">layout</span>:
+  <span class="h">containers</span>:
+    max:  <span class="s">"1200px"</span>
+    read: <span class="s">"760px"</span>
+  <span class="h">spacing</span>:  { xs: <span class="s">"8px"</span>, sm: <span class="s">"12px"</span>, md: <span class="s">"20px"</span>, lg: <span class="s">"32px"</span> }
+
+<span class="h">shapes</span>:
+  <span class="h">rounded</span>: { sm: <span class="s">"8px"</span>, md: <span class="s">"12px"</span>, lg: <span class="s">"20px"</span>, full: <span class="s">"100px"</span> }
+
+<span class="h">components</span>:
+  <span class="h">card</span>:
+    backgroundColor: <span class="s">"{colors.neutral.tokens.navy}"</span>
+    textColor:       <span class="s">"{colors.neutral.tokens.paper}"</span>
+    rounded:         <span class="s">"{shapes.rounded.lg}"</span>
+    padding:         <span class="s">"{layout.spacing.lg}"</span>
+  <span class="h">button-primary</span>:
+    backgroundColor: <span class="s">"{colors.primary.tokens.blue}"</span>
+    textColor:       <span class="s">"{colors.neutral.tokens.paper}"</span>
+    rounded:         <span class="s">"{shapes.rounded.full}"</span>
+  <span class="h">button-primary-hover</span>:
+    backgroundColor: <span class="s">"{colors.primary.tokens.blue-glow}"</span>
+    textColor:       <span class="s">"{colors.neutral.tokens.paper}"</span>
+    rounded:         <span class="s">"{shapes.rounded.full}"</span>
+<span class="c">---</span>
+
+<span class="h"># know.2nth.ai &mdash; design system</span>
+
+<span class="h">## Overview</span>
+
+Dark-first knowledge portal. Blue-and-sky accents on a deep ink ground.
+Technical without being cold &mdash; structured monospace labels, generous
+fluid type, light theme as a first-class toggle.
+
+<span class="h">## Colors</span>
+
+The deep ink (<span class="s">{colors.neutral.tokens.ink}</span>) is the canvas, navy
+(<span class="s">{colors.neutral.tokens.navy}</span>) is the raised surface, blue and sky carry
+all the action. Tertiary accents are domain markers &mdash; warm for business,
+green for security, violet for AI, rose for professional services.
+
+<span class="h">## Typography</span>
+
+Outfit for prose at every weight from 300 to 800. JetBrains Mono for
+labels, code, paths, and anywhere a structural marker beats a flourish.
+Scale is fluid via <span class="s">clamp()</span>; readers don't see the breakpoints.
+
+<span class="h">## Do's and Don'ts</span>
+
+- Do use <span class="s">{colors.primary.tokens.blue}</span> for any interactive primary action.
+- Do use mono labels in section markers (<span class="s">"01 &middot; What it is"</span>).
+- Don't tint neutrals away from the published palette &mdash; light/dark theme
+  switches use sibling tokens, not opacity tricks.
+- Don't ship a leaf that breaks the 9-section explainer pattern. Mid-page
+  vibes are a regression to brochure thinking.</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>That whole thing parses.</strong> Drop the file at the root of any repo, run <code>npx @google/design.md lint DESIGN.md</code>, and the CLI tells you whether the YAML resolves, whether contrast meets WCAG AA, whether any token reference is broken, and whether the section order matches the spec. Run <code>npx @google/design.md export --format dtcg</code> and you get a DTCG-compliant <code>tokens.json</code>. Run <code>npx @google/design.md spec --rules</code> and the canonical 14&nbsp;KB spec prints to stdout, ready to pipe into a Claude or Stitch prompt as context.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># Add to package.json scripts</span>
+<span class="s">"design:lint"</span>:    <span class="s">"design.md lint DESIGN.md"</span>,
+<span class="s">"design:diff"</span>:    <span class="s">"design.md diff DESIGN.md origin/main:DESIGN.md"</span>,
+<span class="s">"design:tokens"</span>:  <span class="s">"design.md export --format dtcg --out tokens.json"</span>,
+<span class="s">"design:tw"</span>:      <span class="s">"design.md export --format tailwind --out tailwind.theme.js"</span>,
+<span class="s">"design:context"</span>: <span class="s">"design.md spec --rules"</span>  <span class="c"># pipe into agent</span></pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.12s">
+      <h4>Linting is the load-bearing feature</h4>
+      <p>The format alone is just YAML conventions. The reason DESIGN.md earns its keep in CI is the seven lint rules &mdash; each fixed-severity, each opinionated, none of them configurable away. They turn "we have a token file" into "the token file is internally consistent and accessible by published rules". Skip the next section if you don't intend to lint; you'll get the file format without the value.</p>
+    </div>
+
+    <table class="lint-table fade-up" style="transition-delay: 0.14s">
+      <thead><tr><th>Rule</th><th>Severity</th><th>What it catches</th></tr></thead>
+      <tbody>
+        <tr><td><code>broken-ref</code></td><td><span class="sev error">Error</span></td><td>A token reference like <code>{colors.primary.tokens.blue}</code> that doesn't resolve. Typo, deleted token, restructured palette &mdash; CI fails.</td></tr>
+        <tr><td><code>missing-primary</code></td><td><span class="sev warn">Warn</span></td><td>You declared <code>colors:</code> but didn't define a <code>primary</code> palette. The spec considers <code>primary</code> the only required palette.</td></tr>
+        <tr><td><code>contrast-ratio</code></td><td><span class="sev warn">Warn</span></td><td>A component pair (<code>backgroundColor</code> + <code>textColor</code>) fails WCAG AA at 4.5:1. The only accessibility check baked in.</td></tr>
+        <tr><td><code>orphaned-tokens</code></td><td><span class="sev warn">Warn</span></td><td>Tokens declared in palettes but never referenced by any component or alias. Dead colour.</td></tr>
+        <tr><td><code>missing-typography</code></td><td><span class="sev warn">Warn</span></td><td>You haven't defined any typography scale entries. The spec assumes type is mandatory.</td></tr>
+        <tr><td><code>section-order</code></td><td><span class="sev warn">Warn</span></td><td>Markdown headings out of canonical order (Overview, Colors, Typography, Layout, Elevation, Shapes, Components, Do's and Don'ts).</td></tr>
+        <tr><td><code>token-summary</code></td><td><span class="sev info">Info</span></td><td>Stats &mdash; counts of tokens by type, components by surface. Diagnostic, not gating.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Where DESIGN.md is narrower than its name suggests.</h2>
+      <p class="section-lede">The format is deliberately small. That's a feature for shipping a spec quickly and a problem if you're expecting it to swallow your whole design system whole. Six places it bites.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Alpha format, breaking changes likely</strong>
+        <p>Two weeks old, version 0.x, README says expect changes. Token reference syntax, section names, lint rules &mdash; any of it can shift. Pin a CLI version and budget a small migration when 1.0 lands.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Hex sRGB only &mdash; no OKLCH, no P3, no HSL</strong>
+        <p>The spec is conservative on colour. If your design system already uses OKLCH for perceptual uniformity, or wide-gamut P3 for premium displays, DESIGN.md downgrades you. There's no extension point for it yet.</p>
+      </div>
+      <div class="gotcha">
+        <strong>No motion, no IA, no content voice</strong>
+        <p>Visual tokens and component-level styling. Animation, information architecture, microcopy, voice and tone are explicitly out of scope. The 2nth Design hub's <code>motion.html</code>, <code>typography.html</code>, and Imbila's voice system stay load-bearing.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Component model is deliberately shallow</strong>
+        <p>Eight allowed component properties (<code>backgroundColor</code>, <code>textColor</code>, <code>typography</code>, <code>rounded</code>, <code>padding</code>, <code>size</code>, <code>height</code>, <code>width</code>). Hover/active/focus states are <em>sibling components</em> with naming conventions, not nested variants. Pragmatic, but a real divergence from how most design-token specs model state.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Contrast is the only a11y check &mdash; and it's AA, not AAA</strong>
+        <p>WCAG AA at 4.5:1 is baked in. AAA, focus-visible, motion-reduction, and every other accessibility concern lives outside the file. If you treat DESIGN.md as your accessibility surface, you're under-scoping the problem.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Adoption assumes agents read it</strong>
+        <p>The whole bet is that coding agents start treating <code>DESIGN.md</code> as a canonical filename. Today, only Stitch (Google's design agent) does that natively. Claude Code, Cursor, Copilot don't &mdash; though piping <code>design.md spec</code> into the prompt makes it work. If your team isn't using an agent, the file is just YAML you could already have written.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Adopt DESIGN.md when.</h2>
+      <p class="section-lede">DESIGN.md is the right tool when your design system needs to be legible to an agent, when you want a small format that fits in the prompt budget, and when you're willing to accept alpha-grade format churn in exchange for joining the convention early.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Adopt when</h4>
+        <ul>
+          <li>You're building agent-first &mdash; Stitch, Claude Code, Cursor, v0 &mdash; and want a single file the model can load as design context.</li>
+          <li>You don't have a design system file yet and want a cheap way to start one with a published spec and a linter.</li>
+          <li>You want WCAG AA contrast checking in CI without writing it yourself.</li>
+          <li>You're comfortable migrating a small file when 1.0 ships.</li>
+          <li>You want to publish a portable design source that downstream tools can convert to Tailwind or DTCG <code>tokens.json</code>.</li>
+          <li>You're building tools where Stitch agents will operate &mdash; native consumer.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>You've already invested in mature DTCG or Style Dictionary &mdash; DESIGN.md exports to DTCG, but importing the other way isn't the supported direction.</li>
+          <li>Your design system needs OKLCH, P3, perceptual blends, or motion/IA/voice tokens. The format won't carry them.</li>
+          <li>Format churn is unacceptable &mdash; you're shipping into a regulated environment or a long-frozen codebase.</li>
+          <li>You don't have or want CI lint &mdash; without it, the format gives you discipline you could already get from any JSON tokens file.</li>
+          <li>Your team is design-led without engineering involvement &mdash; YAML in the head and CLI tooling are real friction for designers.</li>
+          <li>You only have one product and one designer. You don't need a contract; you need a Figma file.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where DESIGN.md links in the tree.</h2>
+      <p class="section-lede">DESIGN.md is the design-side analogue of how 2nth already serves skill nodes to agents. The connections below are the ones worth holding in your head when deciding what role this format should play in a given build.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="design-systems.html" class="connect-node">
+        <span class="tag">tech/design/systems</span>
+        <div class="skill">Design systems</div>
+        <div class="why">Sibling concept. Design Systems covers the <em>idea</em> of tokens; DESIGN.md is one specific <em>file format</em> for expressing them. Read systems first, then choose a transport.</div>
+      </a>
+      <a href="components.html" class="connect-node">
+        <span class="tag">tech/design/components</span>
+        <div class="skill">Component libraries</div>
+        <div class="why">DESIGN.md's component block maps directly to library primitives. shadcn/ui buttons, Radix dialogs &mdash; the <code>components:</code> section is where a design system meets a component library.</div>
+      </a>
+      <a href="figma.html" class="connect-node">
+        <span class="tag">tech/design/figma</span>
+        <div class="skill">Figma</div>
+        <div class="why">Figma Variables map cleanly to the colors/typography/shapes blocks in DESIGN.md. The natural pipeline is Figma &rarr; DESIGN.md &rarr; Tailwind/DTCG, with the file as the source of truth in git.</div>
+      </a>
+      <a href="ai-design.html" class="connect-node">
+        <span class="tag">tech/design/ai-design</span>
+        <div class="skill">AI design tools</div>
+        <div class="why">The reason the file exists. AI design tools are great at first drafts and bad at consistency. DESIGN.md is the consistency contract you hand them so the second draft converges.</div>
+      </a>
+      <a href="frameworks.html" class="connect-node">
+        <span class="tag">tech/design/frameworks</span>
+        <div class="skill">Design frameworks</div>
+        <div class="why">Tailwind config can be generated directly from DESIGN.md via <code>design.md export --format tailwind</code>. The file becomes the source; the framework config becomes the artefact.</div>
+      </a>
+      <a href="accessibility.html" class="connect-node">
+        <span class="tag">tech/design/accessibility</span>
+        <div class="skill">Accessibility</div>
+        <div class="why">DESIGN.md's contrast lint enforces WCAG AA on every component pair in CI. It's a narrow slice of accessibility &mdash; necessary, not sufficient.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/claude-code</span>
+        <div class="skill">Claude Code &middot; skills</div>
+        <div class="why">Same pattern, different scope. Claude Code's skills system is "canonical files agents read for capability"; DESIGN.md is "canonical file agents read for visual identity". One philosophy, applied to design.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/dtcg</span>
+        <div class="skill">Design Tokens Format (DTCG)</div>
+        <div class="why">The W3C-track standard for design tokens. DESIGN.md is DTCG-inspired and exports to DTCG, but is much smaller. If you need the full DTCG type system, DESIGN.md is the on-ramp, not the destination.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The spec page on Stitch is the canonical reference. The GitHub repo is where the format actually evolves &mdash; track the issues if you're considering production use. Three worked examples ship in the repo.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://stitch.withgoogle.com/docs/design-md/specification" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec</span>
+        <span class="r-title">DESIGN.md specification &middot; Stitch</span>
+        <span class="r-url">stitch.withgoogle.com/docs/design-md/specification</span>
+      </a>
+      <a href="https://github.com/google-labs-code/design.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">google-labs-code/design.md</span>
+        <span class="r-url">github.com/google-labs-code/design.md</span>
+      </a>
+      <a href="https://www.npmjs.com/package/@google/design.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CLI</span>
+        <span class="r-title">@google/design.md on npm</span>
+        <span class="r-url">npmjs.com/package/@google/design.md</span>
+      </a>
+      <a href="https://github.com/google-labs-code/design.md/tree/main/examples/atmospheric-glass" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Example</span>
+        <span class="r-title">atmospheric-glass &middot; worked example</span>
+        <span class="r-url">github.com/.../examples/atmospheric-glass</span>
+      </a>
+      <a href="https://github.com/google-labs-code/design.md/tree/main/examples/paws-and-paths" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Example</span>
+        <span class="r-title">paws-and-paths &middot; worked example</span>
+        <span class="r-url">github.com/.../examples/paws-and-paths</span>
+      </a>
+      <a href="https://www.designtokens.org/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Standard</span>
+        <span class="r-title">Design Tokens Community Group (DTCG)</span>
+        <span class="r-url">designtokens.org</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Design sub-hub</a>
+      <a href="https://github.com/google-labs-code/design.md" target="_blank" rel="noopener">DESIGN.md on GitHub &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
