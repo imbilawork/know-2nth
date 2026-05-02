@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Design &mdash; know.2nth.ai</title>
+<meta name="description" content="Open Design — open-source, Apache-2.0, local-first alternative to Anthropic's Claude Design. The daemon turns whichever coding-agent CLI is on PATH into a design engine, driven by 19 Skills and 71 Design Systems. POPIA-friendly, load-shedding-resilient, ZAR-friendly.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/tech/design/open-design.html">
+<meta property="og:title" content="Open Design &mdash; know.2nth.ai">
+<meta property="og:description" content="Open Design — open-source, Apache-2.0, local-first alternative to Anthropic's Claude Design. The daemon turns whichever coding-agent CLI is on PATH into a design engine, driven by 19 Skills and 71 Design Systems. POPIA-friendly, load-shedding-resilient, ZAR-friendly.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Open Design &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Open Design — open-source, Apache-2.0, local-first alternative to Anthropic's Claude Design. The daemon turns whichever coding-agent CLI is on PATH into a design engine, driven by 19 Skills and 71 Design Systems. POPIA-friendly, load-shedding-resilient, ZAR-friendly.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .info-card ul { margin: 8px 0 0 18px; }
+  .info-card li { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 6px; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; max-width: var(--read-w); margin-bottom: 22px; }
+  .stat-cell { background: var(--bg-card); padding: 18px 20px; }
+  .stat-cell .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .stat-cell .value { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; background: linear-gradient(135deg, var(--blue-glow), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+  .stat-cell .sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/design/open-design</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Design</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">design</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">open-design</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; Open Design &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Your CLI is already <span class="gradient">a design engine.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Open Design is the open-source, Apache-2.0, local-first answer to Anthropic's Claude Design. It ships zero models. A local Node daemon scans <code>PATH</code> for a coding-agent CLI &mdash; Claude Code, Codex, Cursor Agent, Gemini, OpenCode, Qwen, Copilot &mdash; and turns whichever it finds into a design engine driven by 19 composable Skills and 71 brand-grade Design Systems. No subscription, no cloud lock-in, briefs stay on your laptop.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live</span>
+      <span class="pill accent">Apache 2.0</span>
+      <span class="pill">nexu-io/open-design</span>
+      <span class="pill">Local-first</span>
+      <span class="pill">BYOK</span>
+      <span class="pill warn">Released 2026-04-28</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A daemon, an adapter zoo, and a prompt stack you can fork.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Anthropic shipped <strong>Claude Design</strong> on 2026-04-17 &mdash; a hosted, Pro/Max-gated design canvas built on Opus 4.7. Eleven days later, <code>nexu-io/open-design</code> shipped the open-source counterpart. Same job; opposite shape.</p>
+      <p>Open Design (<strong>OD</strong>) is a web app plus a local Node daemon. The daemon's only job is to find whichever coding-agent CLI you already have on <code>PATH</code> and route design briefs through it. Skills are folders of structured prompts (<code>SKILL.md</code> + <code>example.html</code> anchor). Design Systems are <code>DESIGN.md</code> files describing colour, typography, spacing, motion, voice. The daemon assembles a prompt stack from the active Skill + Design System and hands it to the CLI. The CLI emits HTML; OD renders it in a sandboxed <code>srcdoc</code> iframe and offers exports to PDF, PPTX, ZIP, and Markdown.</p>
+      <p>This is a <strong>thin wrapper around tools you already pay for</strong>. If you have Claude Code, OD spawns it. If you have Codex CLI, OD spawns it. If you have nothing, OD falls back to an OpenAI-compatible BYOK proxy at <code>/api/proxy/stream</code> &mdash; point it at DeepSeek, Groq, OpenRouter, the Anthropic API direct, or your own self-hosted vLLM / Ollama.</p>
+    </div>
+
+    <div class="stat-row fade-up" style="transition-delay: 0.08s">
+      <div class="stat-cell">
+        <div class="label">Skills</div>
+        <div class="value">19</div>
+        <div class="sub">prototype + deck + docs</div>
+      </div>
+      <div class="stat-cell">
+        <div class="label">Design Systems</div>
+        <div class="value">71</div>
+        <div class="sub">2 starters + 69 brands</div>
+      </div>
+      <div class="stat-cell">
+        <div class="label">CLIs auto-detected</div>
+        <div class="value">7</div>
+        <div class="sub">Claude / Codex / &hellip;</div>
+      </div>
+      <div class="stat-cell">
+        <div class="label">Cost</div>
+        <div class="value">R0</div>
+        <div class="sub">+ your CLI's API spend</div>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.11s">
+      <h4>Maturity check &mdash; 80 stars and an architecture, not a brand</h4>
+      <p>OD is two weeks old as of 2026-05-02. ~80 GitHub stars, 9 forks, 3 commits. The architecture is sound and end-to-end working &mdash; daemon, IPC, sandboxed preview, BYOK proxy, the 5-dimensional self-critique &mdash; but the ecosystem is moving weekly and several things you'll see on LinkedIn are inflated.</p>
+      <p><strong>Numbers to NOT propagate</strong>:</p>
+      <ul>
+        <li>"31 skills, 72 token libraries" &mdash; the actual shipping numbers are 19/71. The repo's own card image uses 19/71.</li>
+        <li>"Pi / Hermes / Kimi CLIs supported" &mdash; in roadmap copy, not the main English README's supported list.</li>
+        <li>"1,500+ stars" &mdash; third-party hype. Direct fetch: ~80.</li>
+        <li>"Scores below 3/5 trigger regeneration" &mdash; the 5-dimensional critique is real, but the dimensions and threshold need source-checking against <code>alchaincyf/huashu-design</code> before being quoted.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">PATH scan, prompt-stack assembly, sandboxed preview.</h2>
+      <p class="section-lede">The daemon's boot sequence is short. It scans <code>PATH</code> for one of seven supported CLIs, picks the first match in priority order, registers a typed five-field stamp (<code>app &middot; mode &middot; namespace &middot; ipc &middot; source</code>), and starts listening on a local Unix socket. The web UI proxies design briefs through that socket; the CLI does the work; the agent's output renders in an isolated iframe.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The auto-detect priority is fixed: <strong>Claude Code &rarr; Codex CLI &rarr; Cursor Agent &rarr; Gemini CLI &rarr; OpenCode &rarr; Qwen Code &rarr; GitHub Copilot CLI</strong>. To force a specific adapter regardless of what's on <code>PATH</code>, set <code>OD_FORCE_AGENT=codex pnpm dev</code>. If none of the seven are found, the daemon enters BYOK proxy mode and the UI surfaces an OpenAI-compatible config form (<code>baseUrl</code>, <code>apiKey</code>, <code>model</code>).</p>
+      <p>To boot it locally:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c"># Quickstart &mdash; daemon + web UI</span>
+git clone https://github.com/nexu-io/open-design
+cd open-design
+pnpm install &amp;&amp; pnpm dev
+
+<span class="c"># UI opens at http://localhost:5173</span>
+<span class="c"># Daemon binds to /tmp/open-design/ipc/&lt;namespace&gt;/&lt;app&gt;.sock</span>
+
+<span class="c"># Force a specific CLI (skip auto-detect)</span>
+<span class="h">OD_FORCE_AGENT</span>=codex pnpm dev
+
+<span class="c"># Anthropic API directly (no Claude Code installed)</span>
+<span class="h">ANTHROPIC_API_KEY</span>=sk-ant-&hellip; pnpm dev
+
+<span class="c"># Allow BYOK proxy to hit a LAN-hosted vLLM (off by default)</span>
+<span class="h">OD_PROXY_ALLOW_PRIVATE</span>=1 pnpm dev</pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>The 5-dimensional self-critique</h4>
+      <p>Before emitting an artifact, the agent runs a 5-dimensional self-check sourced from <code>alchaincyf/huashu-design</code>. The full prompt lives at <code>src/prompts/discovery.ts</code> in the OD repo. Two things matter when quoting it: the dimensions are real, but the labels and threshold popularly cited on LinkedIn ("philosophy / hierarchy / execution / specificity / restraint, scores below 3/5 regenerate") are not yet verified against the source &mdash; fetch <code>discovery.ts</code> directly. And it is a <em>prompt-stack rubric, not a separate model</em>. Performance depends entirely on the underlying CLI's instruction-following: strong with Opus 4.7 / Sonnet 4.6 / Codex; weaker with smaller open models.</p>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.13s">
+      <h4>Anti-slop lever &mdash; the Direction Picker</h4>
+      <p>When the user has no brand to load, OD shows a <strong>Direction Picker</strong>: 5 curated visual schools (Editorial Monocle, Modern Minimal, Tech Utility, Brutalist, Soft Warm). One radio click &rarr; deterministic OKLch palette + font stack, no model freestyle. This is the whole bet on consistency &mdash; the agent doesn't get to invent the colour story, it gets handed one. When the user does have a brand, the active Design System (Linear, Stripe, Tesla, Notion, Apple, &hellip;) is injected into the prompt stack instead. Either way, the visual system is data the model reads, not a vibe the model invents.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Six places Open Design bites.</h2>
+      <p class="section-lede">The architecture is clean. The footguns are operational &mdash; spawn behaviour on Windows, namespace collisions in SQLite, license carve-outs, and the gap between "5-dim critique runs" and "5-dim critique produces consistent output". Worth knowing before you bet a client deliverable on it.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>No CLI on PATH &mdash; silent fallback to BYOK</strong>
+        <p>OD doesn't error if it can't find a coding-agent CLI; it falls through to the proxy. If you expected Claude Code to be driving and the proxy is engaged instead, you're paying twice (CLI subscription + BYOK provider) and getting the wrong run. Always <code>which claude-code</code> before booting.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Windows long-prompt argv &mdash; stdin or temp file</strong>
+        <p>Adapters that hit the 32&nbsp;KB <code>CreateProcess</code> argv limit (Codex, Gemini, OpenCode, Cursor Agent, Qwen) route through stdin. When stdin overflows, the daemon falls back to a temp prompt file. Don't "fix" prompt truncation by truncating the prompt &mdash; check <code>OD_LOG_LEVEL=debug</code> for the actual spawn path.</p>
+      </div>
+      <div class="gotcha">
+        <strong><code>OD_DATA_DIR</code> namespace collisions corrupt SQLite</strong>
+        <p>Running Playwright tests, a beta channel, and your real project against the same <code>OD_DATA_DIR</code> will corrupt the database. Always <code>--namespace</code> per profile (<code>prod</code>, <code>test</code>, <code>beta</code>). Each gets its own session/history/exports tree.</p>
+      </div>
+      <div class="gotcha">
+        <strong>guizang-ppt is MIT, not Apache-2.0</strong>
+        <p>The <code>skills/guizang-ppt/</code> sub-folder is bundled verbatim from <code>op7418/guizang-ppt-skill</code> and retains its original MIT licence. Top level is Apache-2.0. If you fork OD, preserve the sub-folder's <code>LICENSE</code> and the <code>op7418</code> attribution.</p>
+      </div>
+      <div class="gotcha">
+        <strong>5-dim critique is prompt-stack, not deterministic</strong>
+        <p>Don't promise customers regeneration semantics that depend on a specific underlying model. The same critique prompt produces tighter loops on Opus 4.7 than on Qwen 32B. Frame it as a quality bias, not a guarantee.</p>
+      </div>
+      <div class="gotcha">
+        <strong>No web capture, no codebase auto-onboarding</strong>
+        <p>Two genuine Claude Design wins that OD doesn't yet match. Claude Design can grab elements from a live site and build a Design System by reading your codebase. OD requires manual <code>DESIGN.md</code> authoring (or an import from <code>awesome-design-md</code>). For "make this look like our actual product" workflows, OD lags.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; South African context</div>
+      <h2 class="section-title">POPIA, ZAR, and load-shedding all favour OD.</h2>
+      <p class="section-lede">For SA-based design teams, three first-class concerns &mdash; data protection, currency exposure, and operational continuity &mdash; all tilt the same way. Open Design is materially better fitted than Claude Design across all three. Worth being precise about why.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Condition 4 &mdash; Further Processing Limitation (s15).</strong> Briefs and brand assets uploaded to Claude Design flow to Anthropic's US infrastructure. Anthropic's terms permit data being used to improve services unless commercial-tier terms apply. That's a further-processing event the responsible party must justify. With OD on a local CLI, the brief is processed under the CLI's existing terms (the same ones you already accepted for code work). With local Ollama, nothing leaves the device.</p>
+      <p><strong>Condition 7 &mdash; Security Safeguards (s19).</strong> OD's daemon edge blocks SSRF to loopback, link-local, and RFC1918 addresses by default. Credentials are stored at file mode <code>0600</code>. The sandboxed <code>srcdoc</code> iframe isolates rendered artifacts. These are the kind of "appropriate, reasonable technical and organisational measures" Condition 7 contemplates &mdash; documentable in your DPIA without hand-waving.</p>
+      <p><strong>Cross-border transfers (s72).</strong> Claude Design = automatic transfer to the US. OD with local Ollama = no transfer. OD with a US BYOK provider has the same s72 concern as Claude Design, so the advantage only materialises if you point BYOK at a SA/EU-hosted model provider.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead>
+          <tr><th>Tool</th><th>Per seat USD</th><th>Per seat ZAR @ R19/USD</th><th>Annual ZAR (6 seats)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Claude Pro</strong></td><td>$20/mo</td><td>R380/mo</td><td><strong>R27,360</strong></td></tr>
+          <tr><td><strong>Claude Max 5&times;</strong></td><td>$100/mo</td><td>R1,900/mo</td><td><strong>R136,800</strong></td></tr>
+          <tr><td><strong>Claude Max 20&times;</strong></td><td>$200/mo</td><td>R3,800/mo</td><td><strong>R273,600</strong></td></tr>
+          <tr><td><strong>Open Design</strong></td><td>$0</td><td>R0</td><td><strong>R0</strong> + your existing CLI spend</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.11s">
+      <h4>Load-shedding playbook &mdash; the part that's only obvious if you live here</h4>
+      <p>Stage 4&ndash;6 = ~2.5&ndash;4.5 hours offline per cycle, sometimes back-to-back. UPS coverage on a router + laptop buys 30&ndash;90 minutes; international peering has its own resilience profile. Claude Design needs uplink + Anthropic availability, which together fail more often than either alone. OD on a local CLI needs uplink only for the model API call &mdash; tethered LTE/5G usually works through a stage-6 evening. <strong>OD with local Ollama (e.g. <code>qwen2.5-coder:32b</code> on a 32GB MacBook) needs zero internet.</strong> A charged laptop and four hours of stage 6 = a full design session, on the couch, no compromises.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Decision guide</div>
+      <h2 class="section-title">Pick OD when. Pick Claude Design when.</h2>
+      <p class="section-lede">Both are first-draft tools. Neither replaces a senior designer for production polish. Pick on workflow fit, not feature counts. The hybrid &mdash; Claude Design for the first 30 minutes of stakeholder exploration, then OD to ship from &mdash; is what most SA teams actually want.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Pick Open Design when</h4>
+        <ul>
+          <li>You live in your CLI &mdash; the artifact lands directly in the workspace where the code lives.</li>
+          <li>You don't want a second subscription. Most teams already pay for Claude Code; OD's marginal cost is zero.</li>
+          <li>You have POPIA / GDPR / sectoral-regulator constraints and need data sovereignty.</li>
+          <li>You need offline-capable design (load-shedding, travel, low-bandwidth).</li>
+          <li>You want to swap models &mdash; DeepSeek today, Groq tomorrow, local Ollama next quarter &mdash; without changing tools.</li>
+          <li>You can author <code>DESIGN.md</code> manually (or import from <code>awesome-design-md</code>) &mdash; OD has no codebase auto-onboarding.</li>
+          <li>Your output is HTML / PDF / PPTX. OD doesn't export to Canva.</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Pick Claude Design when</h4>
+        <ul>
+          <li>You need <strong>Canva export</strong>. OD has no equivalent and no roadmap for one.</li>
+          <li>Your team is non-technical and you need slider-based refinement UX over a CLI workflow.</li>
+          <li>You want web capture &mdash; pulling elements directly from a live site to remix.</li>
+          <li>You want a Design System auto-built from your codebase at onboarding rather than authored by hand.</li>
+          <li>You need vendor accountability with an SLA, not a 3-commit GitHub repo.</li>
+          <li>You're already paying for Pro / Max / Team / Enterprise &mdash; the marginal cost of using Claude Design is zero.</li>
+          <li>The artifact's destination is a slide-deck-to-Canva pipeline; OD's HTML/PDF/PPTX outputs would just add a re-export step.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.09s">
+      <h4>The hybrid most teams actually run</h4>
+      <p>Use Claude Design for the first 30 minutes of stakeholder exploration &mdash; the slider UX is genuinely faster for "what if it were warmer / what if the typography were heavier" conversations with non-technical collaborators. Then export to HTML, drop into the Open Design workspace, and iterate to ship from there. That's roughly R380/mo for the design lead's Claude Pro seat plus zero for the rest of the team's OD usage. The catch: design tokens drift between the two tools, so the second iteration in OD has to re-anchor to your <code>DESIGN.md</code> rather than trusting Claude's first-draft output as canonical.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where Open Design links in the tree.</h2>
+      <p class="section-lede">OD sits at the intersection of design, agent tooling, and SA-first defaults. The connections below are the ones worth holding in your head when deciding what role this tool should play in a given build.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="design-md.html" class="connect-node">
+        <span class="tag">tech/design/design-md</span>
+        <div class="skill">DESIGN.md</div>
+        <div class="why">Sibling concept. DESIGN.md is a file format for design systems; Open Design's <code>DESIGN.md</code>-style files (<code>colour</code>, <code>typography</code>, <code>spacing</code>, <code>motion</code>) are the runtime that consumes that shape.</div>
+      </a>
+      <a href="design-systems.html" class="connect-node">
+        <span class="tag">tech/design/systems</span>
+        <div class="skill">Design systems</div>
+        <div class="why">OD's 71 brand-grade systems are concrete examples of what design-systems theory looks like compressed to a single agent-loadable file. Read systems first, then OD to see them animated.</div>
+      </a>
+      <a href="ai-design.html" class="connect-node">
+        <span class="tag">tech/design/ai-design</span>
+        <div class="skill">AI design tools</div>
+        <div class="why">The wider category. OD is the open-source, BYOK, sovereignty-first member of the family that includes Claude Design, v0, Lovable, and Framer AI &mdash; with the only "agent CLI as engine" architecture.</div>
+      </a>
+      <a href="components.html" class="connect-node">
+        <span class="tag">tech/design/components</span>
+        <div class="skill">Component libraries</div>
+        <div class="why">OD's prototype outputs lean on shadcn/ui-style component vocabulary by default. The Skill picker (<code>web-prototype</code>, <code>dashboard</code>, <code>mobile-app</code>) implicitly assumes a component library; the Direction Picker overlays a token system on top.</div>
+      </a>
+      <a href="frameworks.html" class="connect-node">
+        <span class="tag">tech/design/frameworks</span>
+        <div class="skill">CSS frameworks</div>
+        <div class="why">Tailwind shows up most often in OD's output. The active Design System's spacing scale and palette compile down to utility classes, with the OKLch tokens preserved in CSS variables for theming.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/claude-code</span>
+        <div class="skill">Claude Code &middot; CLI</div>
+        <div class="why">OD's first-priority adapter. If Claude Code is on <code>PATH</code>, it's the engine. The skills system inside Claude Code and inside Open Design share the same canonical-file philosophy &mdash; a <code>SKILL.md</code> the agent reads to get capable.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">people/sa-context</span>
+        <div class="skill">SA workflow defaults</div>
+        <div class="why">POPIA framing, ZAR cost analysis, load-shedding fallback paths. OD inherits the same SA-first lens as the broader 2nth tree &mdash; not because it's a SA project, but because it happens to land cleanly on every SA constraint.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">tech/cloudflare</span>
+        <div class="skill">Cloudflare hosting</div>
+        <div class="why">For hosted stakeholder previews of OD-generated artifacts, Cloudflare Pages with the BYOK proxy disabled gives you static HTML/PDF delivery with the artifact pipeline reviewable, no keys exposed.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">The repo is the canonical source &mdash; the README, the <code>src/prompts/discovery.ts</code> file, and the <code>open-codesign</code> sibling project all evolve weekly. Re-fetch before quoting any specific number in a client deliverable. Validation date for this leaf: <strong>2026-05-01</strong>.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://github.com/nexu-io/open-design" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">nexu-io/open-design</span>
+        <span class="r-url">github.com/nexu-io/open-design</span>
+      </a>
+      <a href="https://github.com/nexu-io/open-design/blob/main/README.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">README</span>
+        <span class="r-title">Open Design README</span>
+        <span class="r-url">github.com/nexu-io/open-design#readme</span>
+      </a>
+      <a href="https://github.com/nexu-io/open-design/blob/main/src/prompts/discovery.ts" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec</span>
+        <span class="r-title">5-dim self-critique prompt</span>
+        <span class="r-url">src/prompts/discovery.ts</span>
+      </a>
+      <a href="https://github.com/alchaincyf/huashu-design" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Upstream</span>
+        <span class="r-title">alchaincyf/huashu-design (critique source)</span>
+        <span class="r-url">github.com/alchaincyf/huashu-design</span>
+      </a>
+      <a href="https://www.anthropic.com/news/claude-design" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Comparison</span>
+        <span class="r-title">Claude Design announcement (Anthropic Labs)</span>
+        <span class="r-url">anthropic.com/news/claude-design</span>
+      </a>
+      <a href="https://popia.co.za/protection-of-personal-information-act-popia/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Compliance</span>
+        <span class="r-title">POPIA &middot; Conditions 4 &amp; 7 reference</span>
+        <span class="r-url">popia.co.za</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Design sub-hub</a>
+      <a href="https://github.com/nexu-io/open-design" target="_blank" rel="noopener">Open Design on GitHub &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
