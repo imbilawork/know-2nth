@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Figma — know.2nth.ai</title>
-<meta name="description" content="Figma — auto layout, variables, dev mode, REST API for token extraction, and the bridge between design files and production components.">
+<title>Component Libraries — know.2nth.ai</title>
+<meta name="description" content="Component libraries — atomic design, Storybook, composition patterns, visual regression testing, and the craft of building reusable interface parts.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="know.2nth.ai">
-<meta property="og:url" content="https://know.2nth.ai/explainers/tech/design/figma">
-<meta property="og:title" content="Figma — know.2nth.ai">
-<meta property="og:description" content="Figma — auto layout, variables, dev mode, REST API for token extraction, and the bridge between design files and production components.">
+<meta property="og:url" content="https://know.2nth.ai/explainers/design/components">
+<meta property="og:title" content="Component Libraries — know.2nth.ai">
+<meta property="og:description" content="Component libraries — atomic design, Storybook, composition patterns, visual regression testing, and the craft of building reusable interface parts.">
 <meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="know.2nth.ai — The Knowledge Tree">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Figma — know.2nth.ai">
-<meta name="twitter:description" content="Figma — auto layout, variables, dev mode, REST API for token extraction, and the bridge between design files and production components.">
+<meta name="twitter:title" content="Component Libraries — know.2nth.ai">
+<meta name="twitter:description" content="Component libraries — atomic design, Storybook, composition patterns, visual regression testing, and the craft of building reusable interface parts.">
 <meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -33,7 +33,7 @@
   .nav-right{display:flex;align-items:center;gap:16px}.nav-link{font-size:13px;color:var(--text-secondary);text-decoration:none;font-weight:500;transition:color 0.2s}.nav-link:hover{color:var(--sky)}.theme-toggle{background:none;border:1px solid var(--border);color:var(--text-secondary);width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:16px;transition:all 0.2s}.theme-toggle:hover{border-color:var(--border-hover);color:var(--sky)}
   .container{max-width:var(--max-w);margin:0 auto;padding:0 24px;position:relative;z-index:1}
   .crumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;padding:28px 0 0;display:flex;gap:10px;flex-wrap:wrap}.crumb a{color:var(--text-muted);text-decoration:none;transition:color 0.2s}.crumb a:hover{color:var(--sky)}.crumb-sep{opacity:0.5}.crumb-current{color:var(--text-secondary)}
-  .hero{padding:48px 0 64px}.hero .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:24px;display:inline-flex;align-items:center;gap:10px}.hero .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-glow);box-shadow:0 0 12px var(--blue-glow)}.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;line-height:1.04;letter-spacing:-2px;margin-bottom:22px;max-width:16ch}.hero h1 .gradient{background:linear-gradient(135deg,var(--blue-glow),var(--sky),var(--sky-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero .sub{font-size:18px;color:var(--text-secondary);max-width:680px;line-height:1.65;font-weight:300;margin-bottom:28px}
+  .hero{padding:48px 0 64px}.hero .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:24px;display:inline-flex;align-items:center;gap:10px}.hero .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-glow);box-shadow:0 0 12px var(--blue-glow)}.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;line-height:1.04;letter-spacing:-2px;margin-bottom:22px;max-width:14ch}.hero h1 .gradient{background:linear-gradient(135deg,var(--blue-glow),var(--sky),var(--sky-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero .sub{font-size:18px;color:var(--text-secondary);max-width:680px;line-height:1.65;font-weight:300;margin-bottom:28px}
   .hero-meta{display:flex;gap:8px;flex-wrap:wrap}.pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);color:var(--text-secondary);letter-spacing:0.5px}.pill.accent{background:rgba(37,99,235,0.12);color:var(--blue-glow);border-color:rgba(37,99,235,0.25)}
   section{padding:52px 0;position:relative}.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:14px}.section-title{font-size:clamp(26px,3.4vw,36px);font-weight:700;letter-spacing:-0.8px;margin-bottom:18px;line-height:1.2}.section-lede{font-size:16px;color:var(--text-secondary);max-width:var(--read-w);line-height:1.75;font-weight:300;margin-bottom:32px}
   .prose p{font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:var(--read-w);margin-bottom:18px}.prose p strong{color:var(--text-primary);font-weight:600}.prose code{font-family:'JetBrains Mono',monospace;font-size:0.88em;background:var(--bg-card);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--sky)}
@@ -56,13 +56,13 @@
 
 <nav>
   <div class="nav-inner">
-    <a href="../../../index.html" class="nav-brand">
+    <a href="../../index.html" class="nav-brand">
       <span class="nav-brand-mark">know.2nth.ai</span>
-      <span class="nav-brand-sub">tech/design/figma</span>
+      <span class="nav-brand-sub">design/components</span>
     </a>
     <div class="nav-right">
       <a href="./" class="nav-link">&larr; Design</a>
-      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
     </div>
   </div>
@@ -70,30 +70,28 @@
 
 <div class="container">
   <div class="crumb">
-    <a href="../../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="../../../index.html#domains">Technology</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="../">tech</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="./">design</a><span class="crumb-sep">&rsaquo;</span>
-    <span class="crumb-current">figma</span>
+    <a href="../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Design</a><span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">components</span>
   </div>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="container">
-    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; Figma &middot; Skill Leaf</div>
+    <div class="eyebrow fade-up"><span class="dot"></span> design &middot; Component Libraries &middot; Skill Leaf</div>
     <h1 class="fade-up" style="transition-delay: 0.05s">
-      The design file<br><span class="gradient">is not the product.</span>
+      Build once,<br><span class="gradient">compose everywhere.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      Figma is where design decisions get made. The product is what ships in the browser. The gap between those two &mdash; the handoff, the token sync, the component mapping &mdash; is where most design system implementations break. Figma's Variables, Dev Mode, and REST API narrow that gap, but they don't close it.
+      A component library is the practical output of a design system. Atoms combine into molecules, molecules into organisms, organisms into pages. The craft is in the API: how the component exposes its props, handles composition, documents itself, and fails gracefully when used wrong.
     </p>
     <div class="hero-meta fade-up" style="transition-delay: 0.15s">
       <span class="pill accent">Live</span>
-      <span class="pill">Auto layout</span>
-      <span class="pill">Variables</span>
-      <span class="pill">Dev mode</span>
-      <span class="pill">REST API</span>
+      <span class="pill">Atomic design</span>
+      <span class="pill">Storybook</span>
+      <span class="pill">Composition</span>
+      <span class="pill">Visual regression</span>
     </div>
   </div>
 </section>
@@ -103,12 +101,11 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">01 &middot; What it is</div>
-      <h2 class="section-title">A design tool that's also a token database.</h2>
+      <h2 class="section-title">Components are contracts, not templates.</h2>
     </div>
     <div class="prose fade-up" style="transition-delay: 0.05s">
-      <p><strong>Auto layout</strong> is Figma's flexbox. It makes frames responsive &mdash; children stack, wrap, and distribute with padding, gap, and alignment controls. If your Figma file doesn't use auto layout, it's a picture, not a design. Engineers can't translate fixed-position rectangles into responsive components.</p>
-      <p><strong>Variables</strong> replaced the old "styles" system for colour, spacing, and sizing. They support <strong>modes</strong> &mdash; light/dark, brand A/brand B &mdash; so a single design file can represent multiple themes without duplicating frames. Variables are the Figma-side representation of design tokens.</p>
-      <p><strong>Dev Mode</strong> shows engineers the CSS, spacing values, and component properties for any selected element. It's the handoff layer &mdash; better than inspecting with a third-party plugin, but still not a substitute for a shared token file that both Figma and code consume.</p>
+      <p>A component is a reusable piece of UI with a defined API &mdash; its props, its slots, its events. <strong>Atomic design</strong> gives you a vocabulary for scale: <strong>atoms</strong> (button, input, badge), <strong>molecules</strong> (search bar = input + button), <strong>organisms</strong> (header = logo + nav + search bar), <strong>templates</strong> (page layout with placeholder content), and <strong>pages</strong> (templates filled with real data).</p>
+      <p>The value is compounding. Every time you use a component instead of writing one-off markup, you get consistency, accessibility, and testability for free. Every time you copy-paste a component and tweak it, you create a maintenance debt that compounds just as fast in the other direction.</p>
     </div>
   </div>
 </section>
@@ -118,74 +115,77 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">02 &middot; How it works</div>
-      <h2 class="section-title">API-driven token extraction.</h2>
-      <p class="section-lede">The Figma REST API lets you read a file's structure, styles, and variables programmatically. This is how you bridge the Figma-to-code gap without manual copy-paste.</p>
+      <h2 class="section-title">Storybook, variants, and composition.</h2>
     </div>
 
-    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># Extract variables (tokens) from a Figma file via REST API</span>
-<span class="c"># GET /v1/files/:file_key/variables/local</span>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">// Button.stories.tsx — Storybook documentation</span>
+<span class="k">import</span> type { Meta, StoryObj } <span class="k">from</span> <span class="s">'@storybook/react'</span>
+<span class="k">import</span> { Button } <span class="k">from</span> <span class="s">'./Button'</span>
 
-<span class="k">curl</span> -H <span class="s">"X-Figma-Token: YOUR_TOKEN"</span> \
-  <span class="s">"https://api.figma.com/v1/files/FILE_KEY/variables/local"</span>
+<span class="k">const</span> meta: Meta&lt;<span class="k">typeof</span> Button&gt; = {
+  component: Button,
+  tags: [<span class="s">'autodocs'</span>],
+  argTypes: {
+    variant: { control: <span class="s">'select'</span>, options: [<span class="s">'primary'</span>, <span class="s">'secondary'</span>, <span class="s">'ghost'</span>] },
+    size:    { control: <span class="s">'select'</span>, options: [<span class="s">'sm'</span>, <span class="s">'md'</span>, <span class="s">'lg'</span>] },
+  },
+}
+<span class="k">export default</span> meta
 
-<span class="c"># Response shape (simplified):</span>
-{
-  <span class="s">"status"</span>: <span class="n">200</span>,
-  <span class="s">"meta"</span>: {
-    <span class="s">"variableCollections"</span>: {
-      <span class="s">"VariableCollectionId:123"</span>: {
-        <span class="s">"name"</span>: <span class="s">"Primitives"</span>,
-        <span class="s">"modes"</span>: [
-          { <span class="s">"modeId"</span>: <span class="s">"1:0"</span>, <span class="s">"name"</span>: <span class="s">"Light"</span> },
-          { <span class="s">"modeId"</span>: <span class="s">"1:1"</span>, <span class="s">"name"</span>: <span class="s">"Dark"</span> }
-        ]
-      }
-    },
-    <span class="s">"variables"</span>: {
-      <span class="s">"VariableId:456"</span>: {
-        <span class="s">"name"</span>: <span class="s">"color/blue/500"</span>,
-        <span class="s">"resolvedType"</span>: <span class="s">"COLOR"</span>,
-        <span class="s">"valuesByMode"</span>: {
-          <span class="s">"1:0"</span>: { <span class="s">"r"</span>: <span class="n">0.231</span>, <span class="s">"g"</span>: <span class="n">0.510</span>, <span class="s">"b"</span>: <span class="n">0.965</span>, <span class="s">"a"</span>: <span class="n">1</span> },
-          <span class="s">"1:1"</span>: { <span class="s">"r"</span>: <span class="n">0.231</span>, <span class="s">"g"</span>: <span class="n">0.510</span>, <span class="s">"b"</span>: <span class="n">0.965</span>, <span class="s">"a"</span>: <span class="n">1</span> }
-        }
-      }
-    }
-  }
+<span class="k">export const</span> <span class="n">Primary</span>: StoryObj = {
+  args: { variant: <span class="s">'primary'</span>, children: <span class="s">'Deploy'</span> },
+}
+<span class="k">export const</span> <span class="n">Ghost</span>: StoryObj = {
+  args: { variant: <span class="s">'ghost'</span>, children: <span class="s">'Cancel'</span> },
 }</pre>
 
-    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Figma plugin scaffold — runs inside Figma's sandbox</span>
-<span class="c">// manifest.json</span>
-{
-  <span class="s">"name"</span>: <span class="s">"Token Exporter"</span>,
-  <span class="s">"id"</span>: <span class="s">"your-plugin-id"</span>,
-  <span class="s">"api"</span>: <span class="s">"1.0.0"</span>,
-  <span class="s">"main"</span>: <span class="s">"code.js"</span>,
-  <span class="s">"editorType"</span>: [<span class="s">"figma"</span>]
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Component with variant pattern via cva (class-variance-authority)</span>
+<span class="k">import</span> { cva, type VariantProps } <span class="k">from</span> <span class="s">'class-variance-authority'</span>
+
+<span class="k">const</span> <span class="n">buttonVariants</span> = cva(
+  <span class="c">// Base classes shared across all variants</span>
+  <span class="s">'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50'</span>,
+  {
+    variants: {
+      variant: {
+        primary:   <span class="s">'bg-blue text-paper hover:bg-blue-glow'</span>,
+        secondary: <span class="s">'bg-navy text-paper border border-border hover:bg-bg-card'</span>,
+        ghost:     <span class="s">'bg-transparent text-secondary hover:bg-bg-card'</span>,
+      },
+      size: {
+        sm: <span class="s">'h-8 px-3 text-xs'</span>,
+        md: <span class="s">'h-10 px-4 text-sm'</span>,
+        lg: <span class="s">'h-12 px-6 text-base'</span>,
+      },
+    },
+    defaultVariants: { variant: <span class="s">'primary'</span>, size: <span class="s">'md'</span> },
+  }
+)
+
+<span class="k">interface</span> ButtonProps
+  <span class="k">extends</span> React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;,
+    VariantProps&lt;<span class="k">typeof</span> buttonVariants&gt; {}
+
+<span class="k">export function</span> <span class="n">Button</span>({ variant, size, className, ...props }: ButtonProps) {
+  <span class="k">return</span> &lt;button className={buttonVariants({ variant, size, className })} {...props} /&gt;
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">// Composition pattern — compound component for a Card</span>
+<span class="k">function</span> <span class="n">Card</span>({ children, className }) {
+  <span class="k">return</span> &lt;div className={<span class="s">`bg-card border rounded-lg p-6 ${className}`</span>}&gt;{children}&lt;/div&gt;
 }
 
-<span class="c">// code.ts — runs in Figma's plugin sandbox</span>
-<span class="k">const</span> collections = <span class="k">await</span> figma.variables
-  .getLocalVariableCollectionsAsync();
+<span class="n">Card</span>.Header = ({ children }) =&gt; &lt;div className=<span class="s">"mb-4"</span>&gt;{children}&lt;/div&gt;
+<span class="n">Card</span>.Title  = ({ children }) =&gt; &lt;h3 className=<span class="s">"text-lg font-bold"</span>&gt;{children}&lt;/h3&gt;
+<span class="n">Card</span>.Body   = ({ children }) =&gt; &lt;div className=<span class="s">"text-sm text-secondary"</span>&gt;{children}&lt;/div&gt;
 
-<span class="k">for</span> (<span class="k">const</span> collection <span class="k">of</span> collections) {
-  <span class="k">const</span> variables = collection.variableIds.map(
-    id =&gt; figma.variables.getVariableById(id)
-  );
-
-  <span class="k">const</span> tokens = variables.map(v =&gt; ({
-    name: v.name,
-    type: v.resolvedType,
-    values: Object.fromEntries(
-      collection.modes.map(mode =&gt; [
-        mode.name,
-        v.valuesByMode[mode.modeId]
-      ])
-    ),
-  }));
-
-  console.log(JSON.stringify(tokens, <span class="k">null</span>, <span class="n">2</span>));
-}</pre>
+<span class="c">// Usage — composable, readable, no prop drilling</span>
+&lt;<span class="n">Card</span>&gt;
+  &lt;<span class="n">Card.Header</span>&gt;
+    &lt;<span class="n">Card.Title</span>&gt;Deployment status&lt;/<span class="n">Card.Title</span>&gt;
+  &lt;/<span class="n">Card.Header</span>&gt;
+  &lt;<span class="n">Card.Body</span>&gt;All services healthy.&lt;/<span class="n">Card.Body</span>&gt;
+&lt;/<span class="n">Card</span>&gt;</pre>
   </div>
 </section>
 
@@ -194,24 +194,24 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">03 &middot; Gotchas</div>
-      <h2 class="section-title">Where the Figma-to-code bridge leaks.</h2>
+      <h2 class="section-title">Component library pitfalls.</h2>
     </div>
     <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
       <div class="gotcha">
-        <strong>Figma CSS is not production CSS</strong>
-        <p>Dev Mode generates CSS from the visual properties of a frame. It doesn't know about your tokens, your Tailwind config, or your component API. Treat it as a reference, not as copy-paste production code.</p>
+        <strong>Too many props, not enough composition</strong>
+        <p>A Button with 18 props is not a good component &mdash; it's a configuration file. Split it. Use compound components, render props, or slots. If the prop list is growing, the component is doing too much.</p>
       </div>
       <div class="gotcha">
-        <strong>Variables API is read-only for external tools</strong>
-        <p>The REST API lets you read variables but not write them. The sync is one-way: Figma to code. If your tokens change in code, you need a plugin or manual update to push them back into Figma.</p>
+        <strong>Storybook without visual regression is documentation, not testing</strong>
+        <p>Storybook shows you what a component looks like right now. Visual regression (Chromatic, Percy, Playwright screenshots) shows you what changed. Without the diff, you won't catch the subtle breakages.</p>
       </div>
       <div class="gotcha">
-        <strong>Components without auto layout are static images</strong>
-        <p>A component that uses fixed positioning looks correct in Figma but tells engineers nothing about how it should behave at different sizes. Always use auto layout for any component that will be implemented as a responsive element.</p>
+        <strong>Building a library before you have patterns</strong>
+        <p>Don't abstract on day one. Build three instances of a pattern in real features, then extract the component. Premature abstraction locks you into the wrong API before you know what the right one is.</p>
       </div>
       <div class="gotcha">
-        <strong>Variables require a paid plan</strong>
-        <p>Figma Variables (modes, collections) require a Professional plan or higher. Free plan users can view but not create variables. Factor this into budget planning before committing to a Figma-native token workflow.</p>
+        <strong>Forgetting the "unstyled" escape hatch</strong>
+        <p>Every styled component should accept a <code>className</code> prop and pass it through. If consumers can't override your styles, they'll work around your component instead of using it.</p>
       </div>
     </div>
   </div>
@@ -222,25 +222,25 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">04 &middot; Decision guide</div>
-      <h2 class="section-title">Figma as the token source of truth.</h2>
+      <h2 class="section-title">Build vs adopt.</h2>
     </div>
     <div class="decision-grid fade-up" style="transition-delay: 0.05s">
       <div class="decision-card use">
-        <h4>Use Figma as token source when</h4>
+        <h4>Build your own library when</h4>
         <ul>
-          <li>Designers are the primary token authors and engineers consume them downstream.</li>
-          <li>You have a CI pipeline that reads the Figma REST API and generates token files on change.</li>
-          <li>The team is small enough that Figma-to-code sync is manageable with a plugin or API script.</li>
-          <li>You need mode support (light/dark) and want designers to preview both themes in context.</li>
+          <li>Your brand has specific visual requirements that no existing library matches.</li>
+          <li>You have a dedicated design systems team (or at least one person) to maintain it.</li>
+          <li>You need cross-platform consistency (web + native) from a single source of truth.</li>
+          <li>You're using shadcn/ui as a starting point &mdash; it's designed to be forked and owned.</li>
         </ul>
       </div>
       <div class="decision-card skip">
-        <h4>Use code as token source when</h4>
+        <h4>Adopt an existing library when</h4>
         <ul>
-          <li>Engineers and designers co-author tokens and code is the more natural collaboration surface.</li>
-          <li>You need tokens on platforms Figma doesn't cover (iOS, Android, CLI tools).</li>
-          <li>The Figma REST API's read-only limitation makes the sync too fragile for your workflow.</li>
-          <li>Style Dictionary or Tokens Studio already manages your tokens and pushing to Figma is secondary.</li>
+          <li>The team is small and the product ships faster with MUI, Ant Design, or Chakra UI out of the box.</li>
+          <li>The product is internal tooling where visual identity matters less than speed.</li>
+          <li>Nobody on the team wants to maintain a component library &mdash; an unmaintained library is worse than a dependency.</li>
+          <li>You're prototyping and need to validate the idea before investing in custom components.</li>
         </ul>
       </div>
     </div>
@@ -252,28 +252,28 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">05 &middot; Connections</div>
-      <h2 class="section-title">Where Figma links in the tree.</h2>
+      <h2 class="section-title">Where component libraries link in the tree.</h2>
     </div>
     <div class="connect-grid fade-up" style="transition-delay: 0.05s">
       <a href="./" class="connect-node">
-        <span class="tag">tech/design</span>
+        <span class="tag">design</span>
         <div class="skill">Design hub</div>
-        <div class="why">Figma is one of the two design-to-code skills &mdash; the primary design tool.</div>
+        <div class="why">Components are the practical output of every other design sub-skill.</div>
       </a>
       <a href="design-systems.html" class="connect-node">
-        <span class="tag">tech/design/systems</span>
+        <span class="tag">design/systems</span>
         <div class="skill">Design Systems</div>
-        <div class="why">Figma Variables are the design-side representation of tokens. The system defines the values; Figma is where designers consume them.</div>
+        <div class="why">Tokens are the input; components are the output. A library without tokens is a collection of hardcoded opinions.</div>
       </a>
-      <a href="ai-design.html" class="connect-node">
-        <span class="tag">tech/design/ai-tools</span>
-        <div class="skill">AI Design Tools</div>
-        <div class="why">AI plugins run inside Figma. Content generation, layout suggestions, and accessibility checks all extend the Figma workflow.</div>
+      <a href="frameworks.html" class="connect-node">
+        <span class="tag">design/frameworks</span>
+        <div class="skill">Frameworks</div>
+        <div class="why">The framework determines how components are styled &mdash; Tailwind classes, CSS Modules, or CSS-in-JS.</div>
       </a>
-      <a href="components.html" class="connect-node">
-        <span class="tag">tech/design/components</span>
-        <div class="skill">Component Libraries</div>
-        <div class="why">Figma components should map 1:1 to code components. When they drift, the handoff breaks.</div>
+      <a href="accessibility.html" class="connect-node">
+        <span class="tag">design/accessibility</span>
+        <div class="skill">Accessibility</div>
+        <div class="why">Components are where accessibility either compounds (built once, accessible everywhere) or falls apart (inconsistent across instances).</div>
       </a>
     </div>
   </div>
@@ -287,25 +287,25 @@
       <h2 class="section-title">Go deeper.</h2>
     </div>
     <div class="resource-grid fade-up" style="transition-delay: 0.05s">
-      <a href="https://www.figma.com/developers/api" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">API</span>
-        <span class="r-title">Figma REST API documentation</span>
-        <span class="r-url">figma.com/developers/api</span>
+      <a href="https://storybook.js.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">Storybook</span>
+        <span class="r-url">storybook.js.org</span>
       </a>
-      <a href="https://www.figma.com/plugin-docs/" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Docs</span>
-        <span class="r-title">Figma Plugin API</span>
-        <span class="r-url">figma.com/plugin-docs</span>
+      <a href="https://cva.style" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Library</span>
+        <span class="r-title">class-variance-authority (cva)</span>
+        <span class="r-url">cva.style</span>
       </a>
-      <a href="https://help.figma.com/hc/en-us/articles/15339657135383" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Guide</span>
-        <span class="r-title">Variables documentation</span>
-        <span class="r-url">help.figma.com</span>
+      <a href="https://www.chromatic.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Testing</span>
+        <span class="r-title">Chromatic &mdash; visual regression</span>
+        <span class="r-url">chromatic.com</span>
       </a>
-      <a href="https://tokens.studio" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Plugin</span>
-        <span class="r-title">Tokens Studio for Figma</span>
-        <span class="r-url">tokens.studio</span>
+      <a href="https://bradfrost.com/blog/post/atomic-web-design/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Methodology</span>
+        <span class="r-title">Atomic Design &mdash; Brad Frost</span>
+        <span class="r-url">bradfrost.com</span>
       </a>
     </div>
   </div>
@@ -316,9 +316,9 @@
     <div class="footer-brand">know.2nth.ai</div>
     <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
     <div class="footer-links">
-      <a href="../../../index.html">Skills tree</a>
-      <a href="./">Design sub-hub</a>
-      <a href="https://www.figma.com" target="_blank" rel="noopener">Figma &nearr;</a>
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Design hub</a>
+      <a href="https://storybook.js.org" target="_blank" rel="noopener">Storybook &nearr;</a>
     </div>
     <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
   </div>

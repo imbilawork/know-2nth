@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Motion — know.2nth.ai</title>
-<meta name="description" content="Motion — CSS transitions, Web Animations API, Framer Motion, spring physics, reduced motion, and the line between animation that communicates and animation that decorates.">
+<title>AI Design Tools — know.2nth.ai</title>
+<meta name="description" content="AI design tools — image generation, design-to-code, AI-assisted workflows, and why the human with the tokens file is still the last step.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="know.2nth.ai">
-<meta property="og:url" content="https://know.2nth.ai/explainers/tech/design/motion">
-<meta property="og:title" content="Motion — know.2nth.ai">
-<meta property="og:description" content="Motion — CSS transitions, Web Animations API, Framer Motion, spring physics, reduced motion, and the line between animation that communicates and animation that decorates.">
+<meta property="og:url" content="https://know.2nth.ai/explainers/design/ai-design">
+<meta property="og:title" content="AI Design Tools — know.2nth.ai">
+<meta property="og:description" content="AI design tools — image generation, design-to-code, AI-assisted workflows, and why the human with the tokens file is still the last step.">
 <meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="know.2nth.ai — The Knowledge Tree">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Motion — know.2nth.ai">
-<meta name="twitter:description" content="Motion — CSS transitions, Web Animations API, Framer Motion, spring physics, reduced motion, and the line between animation that communicates and animation that decorates.">
+<meta name="twitter:title" content="AI Design Tools — know.2nth.ai">
+<meta name="twitter:description" content="AI design tools — image generation, design-to-code, AI-assisted workflows, and why the human with the tokens file is still the last step.">
 <meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -57,13 +57,13 @@
 
 <nav>
   <div class="nav-inner">
-    <a href="../../../index.html" class="nav-brand">
+    <a href="../../index.html" class="nav-brand">
       <span class="nav-brand-mark">know.2nth.ai</span>
-      <span class="nav-brand-sub">tech/design/motion</span>
+      <span class="nav-brand-sub">design/ai-tools</span>
     </a>
     <div class="nav-right">
       <a href="./" class="nav-link">&larr; Design</a>
-      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
     </div>
   </div>
@@ -71,30 +71,27 @@
 
 <div class="container">
   <div class="crumb">
-    <a href="../../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="../../../index.html#domains">Technology</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="../">tech</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="./">design</a><span class="crumb-sep">&rsaquo;</span>
-    <span class="crumb-current">motion</span>
+    <a href="../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Design</a><span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">ai design tools</span>
   </div>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="container">
-    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; Motion &middot; Skill Leaf</div>
+    <div class="eyebrow fade-up"><span class="dot"></span> design &middot; AI Design Tools &middot; Skill Leaf</div>
     <h1 class="fade-up" style="transition-delay: 0.05s">
-      Motion that decorates<br><span class="gradient">is noise.</span>
+      Great at first drafts,<br><span class="gradient">wrong at consistency.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      Animation should communicate state change &mdash; entering, leaving, loading, error. Everything else is visual noise that slows down the interface and annoys users who've turned on reduced motion. The craft is knowing when to animate and, more importantly, when not to.
+      AI design tools accelerate the early stages &mdash; moodboards, layout exploration, first-pass code generation. But they don't know your tokens, your component inventory, or your accessibility requirements. The human with the design system is still the last step before production.
     </p>
     <div class="hero-meta fade-up" style="transition-delay: 0.15s">
       <span class="pill accent">Live</span>
-      <span class="pill">CSS transitions</span>
-      <span class="pill">Framer Motion</span>
-      <span class="pill">Spring physics</span>
-      <span class="pill">prefers-reduced-motion</span>
+      <span class="pill">v0 &middot; Lovable</span>
+      <span class="pill">Image generation</span>
+      <span class="pill">Design-to-code</span>
     </div>
   </div>
 </section>
@@ -104,13 +101,24 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">01 &middot; What it is</div>
-      <h2 class="section-title">Four tools, one purpose: communicate change.</h2>
+      <h2 class="section-title">AI-assisted, not AI-replaced.</h2>
     </div>
     <div class="prose fade-up" style="transition-delay: 0.05s">
-      <p><strong>CSS transitions</strong> are the simplest tool &mdash; change a property and the browser interpolates between the old and new values. No JavaScript required. Ideal for hover states, colour changes, and layout shifts that need to feel smooth rather than instant.</p>
-      <p><strong>CSS animations</strong> use <code>@keyframes</code> for multi-step sequences. More control than transitions, still zero JS. Good for loading spinners, skeleton pulses, and anything that loops.</p>
-      <p><strong>The Web Animations API</strong> gives JavaScript control over the same engine that runs CSS animations. You get <code>.play()</code>, <code>.pause()</code>, <code>.reverse()</code>, and promises that resolve when the animation finishes. Useful when you need to coordinate animations with logic.</p>
-      <p><strong>Framer Motion</strong> (React) and similar libraries add spring physics, layout animations, gesture handling, and enter/exit transitions via <code>AnimatePresence</code>. They're the right tool when CSS can't express what you need &mdash; and overkill when it can.</p>
+      <p>AI design tools fall into three categories. <strong>Image generation</strong> (Midjourney, DALL-E, Stable Diffusion) creates visual concepts &mdash; moodboards, hero illustrations, icon explorations. Useful for ideation. Terrible for production assets without significant post-processing.</p>
+      <p><strong>Design-to-code generators</strong> (v0, Lovable, screenshot-to-code) take a description or image and produce working UI code. They're shockingly good at producing a first-pass component and consistently bad at using your existing design system. The output is a starting point that needs editing, not a finished product.</p>
+      <p><strong>AI-in-Figma plugins</strong> extend the design tool itself &mdash; content generation (realistic placeholder text), layout suggestions, accessibility auditing, image enhancement. These are the most practical category because they augment an existing workflow rather than replacing it.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead><tr><th>Tool category</th><th>Good at</th><th>Bad at</th></tr></thead>
+        <tbody>
+          <tr><td>Image generation</td><td>Moodboards, concepts, hero visuals, icon exploration</td><td>Brand consistency, exact specifications, legal clarity on training data</td></tr>
+          <tr><td>Design-to-code (v0, Lovable)</td><td>First-pass components, rapid prototyping, layout scaffolding</td><td>Using your tokens, matching your component API, accessibility</td></tr>
+          <tr><td>Screenshot-to-code</td><td>Reproducing an existing UI from an image</td><td>Responsive behaviour, semantic HTML, anything beyond visual fidelity</td></tr>
+          <tr><td>Figma AI plugins</td><td>Content generation, layout suggestions, a11y checks</td><td>Replacing design judgment, handling edge cases</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -120,82 +128,16 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">02 &middot; How it works</div>
-      <h2 class="section-title">From CSS to spring physics.</h2>
+      <h2 class="section-title">The practical workflow.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The AI-assisted design loop</strong> works best when you treat AI output as a draft, not a deliverable. Generate a component with v0, then refactor it to use your tokens. Generate a hero image with Midjourney, then post-process it to match your brand palette. Generate placeholder content with an AI plugin, then review it for tone and accuracy.</p>
+      <p><strong>Code generation from designs</strong> is the most practical use case. Give v0 a prompt like "a pricing card with three tiers, dark theme, Tailwind CSS" and you get a working component in seconds. But it will use its own colours, its own spacing, its own border radius. Your job is to replace those with your design tokens &mdash; and that's where the time goes.</p>
     </div>
 
-    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">/* CSS transition — the 80% solution */</span>
-<span class="k">.card</span> {
-  transform: translateY(<span class="n">0</span>);
-  opacity: <span class="n">1</span>;
-  transition: transform <span class="n">0.3s</span> cubic-bezier(<span class="n">0.16, 1, 0.3, 1</span>),
-              opacity <span class="n">0.3s</span> ease;
-}
-<span class="k">.card:hover</span> {
-  transform: translateY(<span class="n">-4px</span>);
-}
-
-<span class="c">/* IntersectionObserver fade-in — this site uses this pattern */</span>
-<span class="k">.fade-up</span> {
-  opacity: <span class="n">0</span>;
-  transform: translateY(<span class="n">24px</span>);
-  transition: opacity <span class="n">0.6s</span> ease, transform <span class="n">0.6s</span> ease;
-}
-<span class="k">.fade-up.visible</span> {
-  opacity: <span class="n">1</span>;
-  transform: translateY(<span class="n">0</span>);
-}</pre>
-
-    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Framer Motion — enter/exit with spring physics</span>
-<span class="k">import</span> { motion, AnimatePresence } <span class="k">from</span> <span class="s">'framer-motion'</span>
-
-<span class="k">const</span> <span class="n">variants</span> = {
-  hidden:  { opacity: <span class="n">0</span>, y: <span class="n">20</span>, scale: <span class="n">0.95</span> },
-  visible: { opacity: <span class="n">1</span>, y: <span class="n">0</span>,  scale: <span class="n">1</span> },
-  exit:    { opacity: <span class="n">0</span>, y: <span class="n">-10</span>, scale: <span class="n">0.95</span> },
-}
-
-<span class="k">function</span> <span class="n">Toast</span>({ message, isVisible }) {
-  <span class="k">return</span> (
-    &lt;AnimatePresence&gt;
-      {isVisible &amp;&amp; (
-        &lt;motion.div
-          variants={<span class="n">variants</span>}
-          initial=<span class="s">"hidden"</span>
-          animate=<span class="s">"visible"</span>
-          exit=<span class="s">"exit"</span>
-          transition={{ type: <span class="s">"spring"</span>, stiffness: <span class="n">300</span>, damping: <span class="n">25</span> }}
-        &gt;
-          {message}
-        &lt;/motion.div&gt;
-      )}
-    &lt;/AnimatePresence&gt;
-  )
-}</pre>
-
-    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">// IntersectionObserver — vanilla JS fade-in on scroll</span>
-<span class="k">const</span> observer = <span class="k">new</span> IntersectionObserver(
-  (entries) =&gt; {
-    entries.forEach(entry =&gt; {
-      <span class="k">if</span> (entry.isIntersecting) {
-        entry.target.classList.add(<span class="s">'visible'</span>);
-      }
-    });
-  },
-  { threshold: <span class="n">0.1</span>, rootMargin: <span class="s">'0px 0px -40px 0px'</span> }
-);
-
-document.querySelectorAll(<span class="s">'.fade-up'</span>).forEach(el =&gt; observer.observe(el));</pre>
-
-    <div class="compare-wrap fade-up" style="transition-delay: 0.12s">
-      <table class="compare">
-        <thead><tr><th>Tool</th><th>Best for</th><th>Avoid when</th></tr></thead>
-        <tbody>
-          <tr><td><code>CSS transitions</code></td><td>Hover, focus, simple state changes</td><td>Enter/exit animations, complex sequences</td></tr>
-          <tr><td><code>CSS @keyframes</code></td><td>Loops, loading states, skeleton pulses</td><td>Animations that need JS coordination</td></tr>
-          <tr><td><code>Web Animations API</code></td><td>Programmatic control, chaining, cancelling</td><td>Simple hover effects (use CSS)</td></tr>
-          <tr><td><code>Framer Motion</code></td><td>Enter/exit, layout, gestures, springs</td><td>Non-React projects, simple CSS-solvable motion</td></tr>
-        </tbody>
-      </table>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>The honest cost calculation</h4>
+      <p>AI generates a component in 30 seconds. Refactoring it to match your design system takes 20 minutes. Building it from scratch using your component library takes 25 minutes. The AI saves 5 minutes &mdash; not 25. The value is in exploration (trying 10 layouts in 5 minutes) not in production (shipping one layout in less time).</p>
     </div>
   </div>
 </section>
@@ -205,24 +147,24 @@ document.querySelectorAll(<span class="s">'.fade-up'</span>).forEach(el =&gt; ob
   <div class="container">
     <div class="fade-up">
       <div class="section-label">03 &middot; Gotchas</div>
-      <h2 class="section-title">Where motion goes wrong.</h2>
+      <h2 class="section-title">Where AI design tools fail.</h2>
     </div>
     <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
       <div class="gotcha">
-        <strong>Ignoring prefers-reduced-motion</strong>
-        <p>Some users get nauseous from parallax and sliding animations. Others have vestibular disorders. <code>@media (prefers-reduced-motion: reduce)</code> must disable or simplify every animation. This is not optional.</p>
+        <strong>Brand drift</strong>
+        <p>Every AI-generated component uses slightly different colours, spacing, and type. If you don't catch it, your product accumulates visual inconsistency faster than a team without a design system. AI accelerates drift unless someone is enforcing tokens.</p>
       </div>
       <div class="gotcha">
-        <strong>Animating layout properties</strong>
-        <p>Animating <code>width</code>, <code>height</code>, <code>top</code>, or <code>left</code> triggers layout recalculation on every frame. Stick to <code>transform</code> and <code>opacity</code> &mdash; they run on the GPU compositor and don't trigger reflow.</p>
+        <strong>Accessibility is an afterthought</strong>
+        <p>AI-generated code rarely includes ARIA attributes, focus management, or keyboard navigation. Contrast ratios are hit-or-miss. The output looks right and fails an accessibility audit. Always run axe or Lighthouse on generated code before shipping.</p>
       </div>
       <div class="gotcha">
-        <strong>will-change on everything</strong>
-        <p><code>will-change: transform</code> tells the browser to promote an element to its own compositor layer. Applying it to every element wastes GPU memory and can cause blurry text. Use it on elements that will actually animate, and remove it when the animation ends.</p>
+        <strong>Training data licensing is unresolved</strong>
+        <p>Image generation models trained on copyrighted work present legal risk for commercial use. Midjourney, DALL-E, and Stable Diffusion have different terms of service and different exposure levels. Check the licence before using generated images in a product.</p>
       </div>
       <div class="gotcha">
-        <strong>Entrance animations that delay content</strong>
-        <p>A staggered fade-in that takes 2 seconds to reveal the page content is not a "delightful experience" &mdash; it's making users wait. Keep entrance animations under 400ms total. Users came for the content, not the choreography.</p>
+        <strong>Generated code is not your component API</strong>
+        <p>v0 produces a standalone component with inline styles or arbitrary Tailwind classes. It doesn't know about your <code>Button</code> component, your <code>Card</code> component, or your variant system. The more mature your component library, the less useful raw code generation becomes.</p>
       </div>
     </div>
   </div>
@@ -233,25 +175,25 @@ document.querySelectorAll(<span class="s">'.fade-up'</span>).forEach(el =&gt; ob
   <div class="container">
     <div class="fade-up">
       <div class="section-label">04 &middot; Decision guide</div>
-      <h2 class="section-title">When to animate.</h2>
+      <h2 class="section-title">When AI design tools earn their place.</h2>
     </div>
     <div class="decision-grid fade-up" style="transition-delay: 0.05s">
       <div class="decision-card use">
-        <h4>Animate when</h4>
+        <h4>Use AI tools when</h4>
         <ul>
-          <li>Something enters or exits the DOM &mdash; the user needs spatial context for where it came from or went.</li>
-          <li>A state change happens that might be missed &mdash; loading, success, error feedback.</li>
-          <li>The layout shifts and you need to bridge the old position to the new one smoothly.</li>
-          <li>You want to reinforce direct manipulation &mdash; drag, swipe, pinch responses.</li>
+          <li>You're exploring &mdash; moodboarding, trying layout variations, generating concept art for stakeholder alignment.</li>
+          <li>You need a first-pass prototype to test an idea before investing in production code.</li>
+          <li>The team is small, there's no component library yet, and speed beats consistency for now.</li>
+          <li>You're using AI to augment a Figma workflow (content generation, accessibility audits) rather than replace it.</li>
         </ul>
       </div>
       <div class="decision-card skip">
-        <h4>Don't animate when</h4>
+        <h4>Skip AI tools when</h4>
         <ul>
-          <li>The animation is purely decorative and doesn't communicate any state change.</li>
-          <li>It delays the user from reaching content &mdash; loading screens, splash animations, staggered reveals.</li>
-          <li>CSS can do the job &mdash; don't reach for Framer Motion for a hover colour change.</li>
-          <li>You haven't added a reduced-motion fallback yet &mdash; add that first, then the animation.</li>
+          <li>You have a mature design system and component library &mdash; composing existing components is faster than refactoring AI output.</li>
+          <li>Accessibility compliance is non-negotiable and you can't afford to audit every generated component manually.</li>
+          <li>The legal risk of AI-generated imagery is unacceptable for your industry or client.</li>
+          <li>The team treats AI output as finished code rather than a starting point &mdash; this creates more problems than it solves.</li>
         </ul>
       </div>
     </div>
@@ -263,28 +205,28 @@ document.querySelectorAll(<span class="s">'.fade-up'</span>).forEach(el =&gt; ob
   <div class="container">
     <div class="fade-up">
       <div class="section-label">05 &middot; Connections</div>
-      <h2 class="section-title">Where motion links in the tree.</h2>
+      <h2 class="section-title">Where AI design tools link in the tree.</h2>
     </div>
     <div class="connect-grid fade-up" style="transition-delay: 0.05s">
       <a href="./" class="connect-node">
-        <span class="tag">tech/design</span>
+        <span class="tag">design</span>
         <div class="skill">Design hub</div>
-        <div class="why">Motion is one of the two interface craft skills &mdash; the dynamic half of the visual layer.</div>
+        <div class="why">AI tools are one of the two design-to-code skills &mdash; the newest and most volatile.</div>
+      </a>
+      <a href="figma.html" class="connect-node">
+        <span class="tag">design/figma</span>
+        <div class="skill">Figma</div>
+        <div class="why">AI plugins extend Figma. The design-to-code workflow often starts in Figma and goes through AI generation.</div>
+      </a>
+      <a href="design-systems.html" class="connect-node">
+        <span class="tag">design/systems</span>
+        <div class="skill">Design Systems</div>
+        <div class="why">Tokens are the antidote to AI-generated inconsistency. The stronger your system, the faster you can refactor AI output.</div>
       </a>
       <a href="accessibility.html" class="connect-node">
-        <span class="tag">tech/design/accessibility</span>
+        <span class="tag">design/accessibility</span>
         <div class="skill">Accessibility</div>
-        <div class="why">prefers-reduced-motion is a hard requirement. Every animation decision has an accessibility dimension.</div>
-      </a>
-      <a href="components.html" class="connect-node">
-        <span class="tag">tech/design/components</span>
-        <div class="skill">Component Libraries</div>
-        <div class="why">Components are where motion gets encapsulated &mdash; an animated toast, a transitioning modal, a skeleton loader.</div>
-      </a>
-      <a href="frameworks.html" class="connect-node">
-        <span class="tag">tech/design/frameworks</span>
-        <div class="skill">Frameworks</div>
-        <div class="why">Tailwind's transition utilities handle the simple cases. Framer Motion handles the complex ones. Both live inside the framework layer.</div>
+        <div class="why">AI-generated code almost never meets accessibility standards. Manual a11y review is required on every AI output.</div>
       </a>
     </div>
   </div>
@@ -298,25 +240,25 @@ document.querySelectorAll(<span class="s">'.fade-up'</span>).forEach(el =&gt; ob
       <h2 class="section-title">Go deeper.</h2>
     </div>
     <div class="resource-grid fade-up" style="transition-delay: 0.05s">
-      <a href="https://www.framer.com/motion/" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Library</span>
-        <span class="r-title">Framer Motion</span>
-        <span class="r-url">framer.com/motion</span>
-      </a>
-      <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Reference</span>
-        <span class="r-title">Web Animations API &mdash; MDN</span>
-        <span class="r-url">developer.mozilla.org</span>
-      </a>
-      <a href="https://web.dev/articles/animations-guide" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Guide</span>
-        <span class="r-title">Animations guide &mdash; web.dev</span>
-        <span class="r-url">web.dev/articles/animations-guide</span>
-      </a>
-      <a href="https://easings.net" class="resource" target="_blank" rel="noopener">
+      <a href="https://v0.dev" class="resource" target="_blank" rel="noopener">
         <span class="r-kind">Tool</span>
-        <span class="r-title">Easing Functions Cheat Sheet</span>
-        <span class="r-url">easings.net</span>
+        <span class="r-title">v0 by Vercel</span>
+        <span class="r-url">v0.dev</span>
+      </a>
+      <a href="https://lovable.dev" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">Lovable</span>
+        <span class="r-url">lovable.dev</span>
+      </a>
+      <a href="https://www.midjourney.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Image gen</span>
+        <span class="r-title">Midjourney</span>
+        <span class="r-url">midjourney.com</span>
+      </a>
+      <a href="https://github.com/abi/screenshot-to-code" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Open source</span>
+        <span class="r-title">screenshot-to-code</span>
+        <span class="r-url">github.com/abi/screenshot-to-code</span>
       </a>
     </div>
   </div>
@@ -327,9 +269,9 @@ document.querySelectorAll(<span class="s">'.fade-up'</span>).forEach(el =&gt; ob
     <div class="footer-brand">know.2nth.ai</div>
     <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
     <div class="footer-links">
-      <a href="../../../index.html">Skills tree</a>
-      <a href="./">Design sub-hub</a>
-      <a href="https://www.framer.com/motion/" target="_blank" rel="noopener">Framer Motion &nearr;</a>
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Design hub</a>
+      <a href="https://v0.dev" target="_blank" rel="noopener">v0 &nearr;</a>
     </div>
     <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
   </div>
