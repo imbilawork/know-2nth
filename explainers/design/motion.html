@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Accessibility — know.2nth.ai</title>
-<meta name="description" content="Accessibility — WCAG 2.2 AA, semantic HTML, ARIA, keyboard navigation, focus management, and screen reader testing. Not a layer you bolt on later.">
+<title>Motion — know.2nth.ai</title>
+<meta name="description" content="Motion — CSS transitions, Web Animations API, Framer Motion, spring physics, reduced motion, and the line between animation that communicates and animation that decorates.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="know.2nth.ai">
-<meta property="og:url" content="https://know.2nth.ai/explainers/tech/design/accessibility">
-<meta property="og:title" content="Accessibility — know.2nth.ai">
-<meta property="og:description" content="Accessibility — WCAG 2.2 AA, semantic HTML, ARIA, keyboard navigation, focus management, and screen reader testing. Not a layer you bolt on later.">
+<meta property="og:url" content="https://know.2nth.ai/explainers/design/motion">
+<meta property="og:title" content="Motion — know.2nth.ai">
+<meta property="og:description" content="Motion — CSS transitions, Web Animations API, Framer Motion, spring physics, reduced motion, and the line between animation that communicates and animation that decorates.">
 <meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="know.2nth.ai — The Knowledge Tree">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Accessibility — know.2nth.ai">
-<meta name="twitter:description" content="Accessibility — WCAG 2.2 AA, semantic HTML, ARIA, keyboard navigation, focus management, and screen reader testing. Not a layer you bolt on later.">
+<meta name="twitter:title" content="Motion — know.2nth.ai">
+<meta name="twitter:description" content="Motion — CSS transitions, Web Animations API, Framer Motion, spring physics, reduced motion, and the line between animation that communicates and animation that decorates.">
 <meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
   nav{position:sticky;top:0;z-index:100;padding:0 24px;backdrop-filter:blur(20px) saturate(1.4);background:rgba(11,17,32,0.75);border-bottom:1px solid var(--border)}[data-theme="light"] nav{background:rgba(241,245,249,0.8)}
   .nav-inner{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-primary)}.nav-brand-mark{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}.nav-brand-sub{font-size:12px;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;padding-left:10px;border-left:1px solid var(--border)}
   .nav-right{display:flex;align-items:center;gap:16px}.nav-link{font-size:13px;color:var(--text-secondary);text-decoration:none;font-weight:500;transition:color 0.2s}.nav-link:hover{color:var(--sky)}.theme-toggle{background:none;border:1px solid var(--border);color:var(--text-secondary);width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:16px;transition:all 0.2s}.theme-toggle:hover{border-color:var(--border-hover);color:var(--sky)}
-  .container{max-width:var(--max-w);margin:0 auto;padding:0 24px;position:relative;z-index:1}.read{max-width:var(--read-w)}
+  .container{max-width:var(--max-w);margin:0 auto;padding:0 24px;position:relative;z-index:1}
   .crumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;padding:28px 0 0;display:flex;gap:10px;flex-wrap:wrap}.crumb a{color:var(--text-muted);text-decoration:none;transition:color 0.2s}.crumb a:hover{color:var(--sky)}.crumb-sep{opacity:0.5}.crumb-current{color:var(--text-secondary)}
   .hero{padding:48px 0 64px}.hero .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--sky);margin-bottom:24px;display:inline-flex;align-items:center;gap:10px}.hero .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-glow);box-shadow:0 0 12px var(--blue-glow)}.hero h1{font-size:clamp(40px,6vw,66px);font-weight:800;line-height:1.04;letter-spacing:-2px;margin-bottom:22px;max-width:16ch}.hero h1 .gradient{background:linear-gradient(135deg,var(--blue-glow),var(--sky),var(--sky-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero .sub{font-size:18px;color:var(--text-secondary);max-width:680px;line-height:1.65;font-weight:300;margin-bottom:28px}
   .hero-meta{display:flex;gap:8px;flex-wrap:wrap}.pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);color:var(--text-secondary);letter-spacing:0.5px}.pill.accent{background:rgba(37,99,235,0.12);color:var(--blue-glow);border-color:rgba(37,99,235,0.25)}
@@ -57,13 +57,13 @@
 
 <nav>
   <div class="nav-inner">
-    <a href="../../../index.html" class="nav-brand">
+    <a href="../../index.html" class="nav-brand">
       <span class="nav-brand-mark">know.2nth.ai</span>
-      <span class="nav-brand-sub">tech/design/accessibility</span>
+      <span class="nav-brand-sub">design/motion</span>
     </a>
     <div class="nav-right">
       <a href="./" class="nav-link">&larr; Design</a>
-      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
     </div>
   </div>
@@ -71,30 +71,28 @@
 
 <div class="container">
   <div class="crumb">
-    <a href="../../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="../../../index.html#domains">Technology</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="../">tech</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="./">design</a><span class="crumb-sep">&rsaquo;</span>
-    <span class="crumb-current">accessibility</span>
+    <a href="../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Design</a><span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">motion</span>
   </div>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="container">
-    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; Accessibility &middot; Skill Leaf</div>
+    <div class="eyebrow fade-up"><span class="dot"></span> design &middot; Motion &middot; Skill Leaf</div>
     <h1 class="fade-up" style="transition-delay: 0.05s">
-      Built in from commit one,<br><span class="gradient">or almost impossible to retrofit.</span>
+      Motion that decorates<br><span class="gradient">is noise.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      Accessibility is not a feature you add after the design is done. It's a constraint you design within from the start. WCAG 2.2 AA is the baseline &mdash; not the aspirational target. Semantic HTML, keyboard navigation, colour contrast, and screen reader compatibility are table stakes, not bonus points.
+      Animation should communicate state change &mdash; entering, leaving, loading, error. Everything else is visual noise that slows down the interface and annoys users who've turned on reduced motion. The craft is knowing when to animate and, more importantly, when not to.
     </p>
     <div class="hero-meta fade-up" style="transition-delay: 0.15s">
       <span class="pill accent">Live</span>
-      <span class="pill">WCAG 2.2 AA</span>
-      <span class="pill">ARIA</span>
-      <span class="pill">Keyboard nav</span>
-      <span class="pill">Screen readers</span>
+      <span class="pill">CSS transitions</span>
+      <span class="pill">Framer Motion</span>
+      <span class="pill">Spring physics</span>
+      <span class="pill">prefers-reduced-motion</span>
     </div>
   </div>
 </section>
@@ -104,15 +102,13 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">01 &middot; What it is</div>
-      <h2 class="section-title">The contract between your interface and every user.</h2>
+      <h2 class="section-title">Four tools, one purpose: communicate change.</h2>
     </div>
     <div class="prose fade-up" style="transition-delay: 0.05s">
-      <p><strong>WCAG 2.2 AA</strong> defines the success criteria. The headline numbers: 4.5:1 contrast ratio for normal text, 3:1 for large text and UI components. All functionality reachable via keyboard. No information conveyed by colour alone. Focus indicators visible. Error messages associated with their fields. These aren't edge cases &mdash; they affect anyone using the interface in bright sunlight, on a small screen, with one hand, or while distracted.</p>
-      <p><strong>Semantic HTML is free accessibility.</strong> A <code>&lt;button&gt;</code> is focusable, clickable, and announced as a button by screen readers &mdash; with zero extra code. A <code>&lt;div onclick&gt;</code> does none of that without manual ARIA attributes, keyboard handlers, and role assignments. Start with the right element and you skip half the work.</p>
-    </div>
-    <div class="info-card fade-up" style="transition-delay: 0.08s">
-      <h4>The three things screen readers need</h4>
-      <p><strong>Role</strong> &mdash; what is this thing? (button, dialog, navigation, alert). <strong>Name</strong> &mdash; what is it called? (from visible text, aria-label, or aria-labelledby). <strong>State</strong> &mdash; what is it doing right now? (expanded, selected, disabled, checked). If any of these three is missing, the screen reader can't convey the element to the user.</p>
+      <p><strong>CSS transitions</strong> are the simplest tool &mdash; change a property and the browser interpolates between the old and new values. No JavaScript required. Ideal for hover states, colour changes, and layout shifts that need to feel smooth rather than instant.</p>
+      <p><strong>CSS animations</strong> use <code>@keyframes</code> for multi-step sequences. More control than transitions, still zero JS. Good for loading spinners, skeleton pulses, and anything that loops.</p>
+      <p><strong>The Web Animations API</strong> gives JavaScript control over the same engine that runs CSS animations. You get <code>.play()</code>, <code>.pause()</code>, <code>.reverse()</code>, and promises that resolve when the animation finishes. Useful when you need to coordinate animations with logic.</p>
+      <p><strong>Framer Motion</strong> (React) and similar libraries add spring physics, layout animations, gesture handling, and enter/exit transitions via <code>AnimatePresence</code>. They're the right tool when CSS can't express what you need &mdash; and overkill when it can.</p>
     </div>
   </div>
 </section>
@@ -122,78 +118,80 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">02 &middot; How it works</div>
-      <h2 class="section-title">Patterns that cover 90% of the work.</h2>
+      <h2 class="section-title">From CSS to spring physics.</h2>
     </div>
 
-    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">&lt;!-- Skip link — lets keyboard users jump past the nav --&gt;</span>
-<span class="k">&lt;a</span> href=<span class="s">"#main"</span> class=<span class="s">"skip-link"</span><span class="k">&gt;</span>Skip to main content<span class="k">&lt;/a&gt;</span>
-
-<span class="k">&lt;style&gt;</span>
-  <span class="k">.skip-link</span> {
-    position: absolute; top: -40px; left: 0;
-    background: var(--blue); color: white;
-    padding: 8px 16px; z-index: 200;
-    transition: top 0.2s;
-  }
-  <span class="k">.skip-link:focus</span> { top: 0; }
-<span class="k">&lt;/style&gt;</span></pre>
-
-    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">&lt;!-- Modal dialog with focus trap and ARIA --&gt;</span>
-<span class="k">&lt;div</span>
-  role=<span class="s">"dialog"</span>
-  aria-modal=<span class="s">"true"</span>
-  aria-labelledby=<span class="s">"dialog-title"</span>
-  aria-describedby=<span class="s">"dialog-desc"</span>
-<span class="k">&gt;</span>
-  <span class="k">&lt;h2</span> id=<span class="s">"dialog-title"</span><span class="k">&gt;</span>Delete account<span class="k">&lt;/h2&gt;</span>
-  <span class="k">&lt;p</span> id=<span class="s">"dialog-desc"</span><span class="k">&gt;</span>This will permanently remove your data.<span class="k">&lt;/p&gt;</span>
-  <span class="k">&lt;button</span> autofocus<span class="k">&gt;</span>Cancel<span class="k">&lt;/button&gt;</span>
-  <span class="k">&lt;button&gt;</span>Delete<span class="k">&lt;/button&gt;</span>
-<span class="k">&lt;/div&gt;</span>
-
-<span class="c">/* Focus trap — keep Tab cycling inside the modal */</span>
-<span class="k">function</span> <span class="n">trapFocus</span>(dialog) {
-  <span class="k">const</span> focusable = dialog.querySelectorAll(
-    <span class="s">'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'</span>
-  );
-  <span class="k">const</span> first = focusable[<span class="n">0</span>];
-  <span class="k">const</span> last = focusable[focusable.length - <span class="n">1</span>];
-
-  dialog.addEventListener(<span class="s">'keydown'</span>, (e) =&gt; {
-    <span class="k">if</span> (e.key !== <span class="s">'Tab'</span>) <span class="k">return</span>;
-    <span class="k">if</span> (e.shiftKey &amp;&amp; document.activeElement === first) {
-      e.preventDefault(); last.focus();
-    } <span class="k">else if</span> (!e.shiftKey &amp;&amp; document.activeElement === last) {
-      e.preventDefault(); first.focus();
-    }
-  });
-}</pre>
-
-    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">/* Respect reduced motion preference */</span>
-<span class="k">@media</span> (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: <span class="n">0.01ms</span> !important;
-    animation-iteration-count: <span class="n">1</span> !important;
-    transition-duration: <span class="n">0.01ms</span> !important;
-    scroll-behavior: auto !important;
-  }
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c">/* CSS transition — the 80% solution */</span>
+<span class="k">.card</span> {
+  transform: translateY(<span class="n">0</span>);
+  opacity: <span class="n">1</span>;
+  transition: transform <span class="n">0.3s</span> cubic-bezier(<span class="n">0.16, 1, 0.3, 1</span>),
+              opacity <span class="n">0.3s</span> ease;
+}
+<span class="k">.card:hover</span> {
+  transform: translateY(<span class="n">-4px</span>);
 }
 
-<span class="c">/* Visible focus indicator — don't remove outline, style it */</span>
-<span class="k">:focus-visible</span> {
-  outline: <span class="n">2px</span> solid <span class="k">var(--sky)</span>;
-  outline-offset: <span class="n">2px</span>;
-  border-radius: <span class="n">2px</span>;
+<span class="c">/* IntersectionObserver fade-in — this site uses this pattern */</span>
+<span class="k">.fade-up</span> {
+  opacity: <span class="n">0</span>;
+  transform: translateY(<span class="n">24px</span>);
+  transition: opacity <span class="n">0.6s</span> ease, transform <span class="n">0.6s</span> ease;
+}
+<span class="k">.fade-up.visible</span> {
+  opacity: <span class="n">1</span>;
+  transform: translateY(<span class="n">0</span>);
 }</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Framer Motion — enter/exit with spring physics</span>
+<span class="k">import</span> { motion, AnimatePresence } <span class="k">from</span> <span class="s">'framer-motion'</span>
+
+<span class="k">const</span> <span class="n">variants</span> = {
+  hidden:  { opacity: <span class="n">0</span>, y: <span class="n">20</span>, scale: <span class="n">0.95</span> },
+  visible: { opacity: <span class="n">1</span>, y: <span class="n">0</span>,  scale: <span class="n">1</span> },
+  exit:    { opacity: <span class="n">0</span>, y: <span class="n">-10</span>, scale: <span class="n">0.95</span> },
+}
+
+<span class="k">function</span> <span class="n">Toast</span>({ message, isVisible }) {
+  <span class="k">return</span> (
+    &lt;AnimatePresence&gt;
+      {isVisible &amp;&amp; (
+        &lt;motion.div
+          variants={<span class="n">variants</span>}
+          initial=<span class="s">"hidden"</span>
+          animate=<span class="s">"visible"</span>
+          exit=<span class="s">"exit"</span>
+          transition={{ type: <span class="s">"spring"</span>, stiffness: <span class="n">300</span>, damping: <span class="n">25</span> }}
+        &gt;
+          {message}
+        &lt;/motion.div&gt;
+      )}
+    &lt;/AnimatePresence&gt;
+  )
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">// IntersectionObserver — vanilla JS fade-in on scroll</span>
+<span class="k">const</span> observer = <span class="k">new</span> IntersectionObserver(
+  (entries) =&gt; {
+    entries.forEach(entry =&gt; {
+      <span class="k">if</span> (entry.isIntersecting) {
+        entry.target.classList.add(<span class="s">'visible'</span>);
+      }
+    });
+  },
+  { threshold: <span class="n">0.1</span>, rootMargin: <span class="s">'0px 0px -40px 0px'</span> }
+);
+
+document.querySelectorAll(<span class="s">'.fade-up'</span>).forEach(el =&gt; observer.observe(el));</pre>
 
     <div class="compare-wrap fade-up" style="transition-delay: 0.12s">
       <table class="compare">
-        <thead><tr><th>Contrast requirement</th><th>Ratio</th><th>Applies to</th></tr></thead>
+        <thead><tr><th>Tool</th><th>Best for</th><th>Avoid when</th></tr></thead>
         <tbody>
-          <tr><td>Normal text (under 18px / 14px bold)</td><td><code>4.5:1</code></td><td>Body copy, labels, links</td></tr>
-          <tr><td>Large text (18px+ / 14px+ bold)</td><td><code>3:1</code></td><td>Headings, large buttons</td></tr>
-          <tr><td>UI components and graphics</td><td><code>3:1</code></td><td>Icons, borders, focus rings</td></tr>
-          <tr><td>AAA enhanced (optional)</td><td><code>7:1</code></td><td>Maximum readability</td></tr>
+          <tr><td><code>CSS transitions</code></td><td>Hover, focus, simple state changes</td><td>Enter/exit animations, complex sequences</td></tr>
+          <tr><td><code>CSS @keyframes</code></td><td>Loops, loading states, skeleton pulses</td><td>Animations that need JS coordination</td></tr>
+          <tr><td><code>Web Animations API</code></td><td>Programmatic control, chaining, cancelling</td><td>Simple hover effects (use CSS)</td></tr>
+          <tr><td><code>Framer Motion</code></td><td>Enter/exit, layout, gestures, springs</td><td>Non-React projects, simple CSS-solvable motion</td></tr>
         </tbody>
       </table>
     </div>
@@ -205,24 +203,24 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">03 &middot; Gotchas</div>
-      <h2 class="section-title">The accessibility mistakes that ship to production.</h2>
+      <h2 class="section-title">Where motion goes wrong.</h2>
     </div>
     <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
       <div class="gotcha">
-        <strong>Removing focus outlines for "aesthetics"</strong>
-        <p><code>*:focus { outline: none; }</code> is the single most common accessibility violation on the web. Style the outline instead. Use <code>:focus-visible</code> to only show it for keyboard users.</p>
+        <strong>Ignoring prefers-reduced-motion</strong>
+        <p>Some users get nauseous from parallax and sliding animations. Others have vestibular disorders. <code>@media (prefers-reduced-motion: reduce)</code> must disable or simplify every animation. This is not optional.</p>
       </div>
       <div class="gotcha">
-        <strong>ARIA as a first resort instead of last</strong>
-        <p>The first rule of ARIA: don't use ARIA if a native HTML element does the job. <code>&lt;button&gt;</code> beats <code>&lt;div role="button"&gt;</code> every time. ARIA is a polyfill for semantics that HTML doesn't cover &mdash; dialogs, tabs, tree views &mdash; not a replacement for using the right element.</p>
+        <strong>Animating layout properties</strong>
+        <p>Animating <code>width</code>, <code>height</code>, <code>top</code>, or <code>left</code> triggers layout recalculation on every frame. Stick to <code>transform</code> and <code>opacity</code> &mdash; they run on the GPU compositor and don't trigger reflow.</p>
       </div>
       <div class="gotcha">
-        <strong>Testing with automated tools only</strong>
-        <p>axe, Lighthouse, and WAVE catch about 30% of accessibility issues. They can't test whether a screen reader announces things in a sensible order, whether the tab sequence is logical, or whether the content makes sense without visual context. Manual testing with VoiceOver, NVDA, or TalkBack is required.</p>
+        <strong>will-change on everything</strong>
+        <p><code>will-change: transform</code> tells the browser to promote an element to its own compositor layer. Applying it to every element wastes GPU memory and can cause blurry text. Use it on elements that will actually animate, and remove it when the animation ends.</p>
       </div>
       <div class="gotcha">
-        <strong>Colour as the only indicator</strong>
-        <p>A red border on an error field means nothing to a colourblind user. Add an icon, a text label, or an <code>aria-describedby</code> error message. Never rely on colour alone to convey state.</p>
+        <strong>Entrance animations that delay content</strong>
+        <p>A staggered fade-in that takes 2 seconds to reveal the page content is not a "delightful experience" &mdash; it's making users wait. Keep entrance animations under 400ms total. Users came for the content, not the choreography.</p>
       </div>
     </div>
   </div>
@@ -233,25 +231,25 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">04 &middot; Decision guide</div>
-      <h2 class="section-title">Where to invest testing time.</h2>
+      <h2 class="section-title">When to animate.</h2>
     </div>
     <div class="decision-grid fade-up" style="transition-delay: 0.05s">
       <div class="decision-card use">
-        <h4>Always test</h4>
+        <h4>Animate when</h4>
         <ul>
-          <li>Keyboard-only navigation through every user flow &mdash; tab, shift-tab, enter, escape, arrow keys.</li>
-          <li>Screen reader walkthrough of the primary happy path (VoiceOver on macOS, NVDA on Windows).</li>
-          <li>Colour contrast on every text-on-background combination using a tool like WebAIM's contrast checker.</li>
-          <li>Focus management after modal open/close, route changes, and dynamic content updates.</li>
+          <li>Something enters or exits the DOM &mdash; the user needs spatial context for where it came from or went.</li>
+          <li>A state change happens that might be missed &mdash; loading, success, error feedback.</li>
+          <li>The layout shifts and you need to bridge the old position to the new one smoothly.</li>
+          <li>You want to reinforce direct manipulation &mdash; drag, swipe, pinch responses.</li>
         </ul>
       </div>
       <div class="decision-card skip">
-        <h4>Lower priority</h4>
+        <h4>Don't animate when</h4>
         <ul>
-          <li>AAA contrast (7:1) &mdash; good goal, but AA (4.5:1) is the legal and practical baseline.</li>
-          <li>Every ARIA widget pattern for static content &mdash; semantic HTML handles most content pages.</li>
-          <li>Full cross-screen-reader matrix on every PR &mdash; test the primary reader per platform; cross-check on releases.</li>
-          <li>Automated a11y tests in CI as a sole gate &mdash; useful as a baseline, insufficient as the only check.</li>
+          <li>The animation is purely decorative and doesn't communicate any state change.</li>
+          <li>It delays the user from reaching content &mdash; loading screens, splash animations, staggered reveals.</li>
+          <li>CSS can do the job &mdash; don't reach for Framer Motion for a hover colour change.</li>
+          <li>You haven't added a reduced-motion fallback yet &mdash; add that first, then the animation.</li>
         </ul>
       </div>
     </div>
@@ -263,28 +261,28 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">05 &middot; Connections</div>
-      <h2 class="section-title">Where accessibility links in the tree.</h2>
+      <h2 class="section-title">Where motion links in the tree.</h2>
     </div>
     <div class="connect-grid fade-up" style="transition-delay: 0.05s">
       <a href="./" class="connect-node">
-        <span class="tag">tech/design</span>
+        <span class="tag">design</span>
         <div class="skill">Design hub</div>
-        <div class="why">Accessibility is one of the four foundation skills. Every design leaf must meet a11y baseline.</div>
+        <div class="why">Motion is one of the two interface craft skills &mdash; the dynamic half of the visual layer.</div>
+      </a>
+      <a href="accessibility.html" class="connect-node">
+        <span class="tag">design/accessibility</span>
+        <div class="skill">Accessibility</div>
+        <div class="why">prefers-reduced-motion is a hard requirement. Every animation decision has an accessibility dimension.</div>
       </a>
       <a href="components.html" class="connect-node">
-        <span class="tag">tech/design/components</span>
+        <span class="tag">design/components</span>
         <div class="skill">Component Libraries</div>
-        <div class="why">Radix UI and Headless UI exist because building accessible interactive components from scratch is hard.</div>
+        <div class="why">Components are where motion gets encapsulated &mdash; an animated toast, a transitioning modal, a skeleton loader.</div>
       </a>
-      <a href="motion.html" class="connect-node">
-        <span class="tag">tech/design/motion</span>
-        <div class="skill">Motion</div>
-        <div class="why">prefers-reduced-motion is an accessibility requirement. Every animation needs a reduced-motion fallback.</div>
-      </a>
-      <a href="typography.html" class="connect-node">
-        <span class="tag">tech/design/typography</span>
-        <div class="skill">Typography</div>
-        <div class="why">Readable font sizes, proper line height, and sufficient contrast are all typography decisions with accessibility implications.</div>
+      <a href="frameworks.html" class="connect-node">
+        <span class="tag">design/frameworks</span>
+        <div class="skill">Frameworks</div>
+        <div class="why">Tailwind's transition utilities handle the simple cases. Framer Motion handles the complex ones. Both live inside the framework layer.</div>
       </a>
     </div>
   </div>
@@ -298,25 +296,25 @@
       <h2 class="section-title">Go deeper.</h2>
     </div>
     <div class="resource-grid fade-up" style="transition-delay: 0.05s">
-      <a href="https://www.w3.org/WAI/WCAG22/quickref/" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Spec</span>
-        <span class="r-title">WCAG 2.2 Quick Reference</span>
-        <span class="r-url">w3.org/WAI/WCAG22/quickref</span>
+      <a href="https://www.framer.com/motion/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Library</span>
+        <span class="r-title">Framer Motion</span>
+        <span class="r-url">framer.com/motion</span>
       </a>
-      <a href="https://www.a11yproject.com/checklist/" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Checklist</span>
-        <span class="r-title">The A11Y Project checklist</span>
-        <span class="r-url">a11yproject.com/checklist</span>
+      <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">Web Animations API &mdash; MDN</span>
+        <span class="r-url">developer.mozilla.org</span>
       </a>
-      <a href="https://webaim.org/resources/contrastchecker/" class="resource" target="_blank" rel="noopener">
+      <a href="https://web.dev/articles/animations-guide" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">Animations guide &mdash; web.dev</span>
+        <span class="r-url">web.dev/articles/animations-guide</span>
+      </a>
+      <a href="https://easings.net" class="resource" target="_blank" rel="noopener">
         <span class="r-kind">Tool</span>
-        <span class="r-title">WebAIM Contrast Checker</span>
-        <span class="r-url">webaim.org/resources/contrastchecker</span>
-      </a>
-      <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Patterns</span>
-        <span class="r-title">ARIA Authoring Practices Guide</span>
-        <span class="r-url">w3.org/WAI/ARIA/apg/patterns</span>
+        <span class="r-title">Easing Functions Cheat Sheet</span>
+        <span class="r-url">easings.net</span>
       </a>
     </div>
   </div>
@@ -327,9 +325,9 @@
     <div class="footer-brand">know.2nth.ai</div>
     <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
     <div class="footer-links">
-      <a href="../../../index.html">Skills tree</a>
-      <a href="./">Design sub-hub</a>
-      <a href="https://www.w3.org/WAI/" target="_blank" rel="noopener">WAI &nearr;</a>
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Design hub</a>
+      <a href="https://www.framer.com/motion/" target="_blank" rel="noopener">Framer Motion &nearr;</a>
     </div>
     <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
   </div>

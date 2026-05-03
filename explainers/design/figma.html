@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Design Tools — know.2nth.ai</title>
-<meta name="description" content="AI design tools — image generation, design-to-code, AI-assisted workflows, and why the human with the tokens file is still the last step.">
+<title>Figma — know.2nth.ai</title>
+<meta name="description" content="Figma — auto layout, variables, dev mode, REST API for token extraction, and the bridge between design files and production components.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="know.2nth.ai">
-<meta property="og:url" content="https://know.2nth.ai/explainers/tech/design/ai-design">
-<meta property="og:title" content="AI Design Tools — know.2nth.ai">
-<meta property="og:description" content="AI design tools — image generation, design-to-code, AI-assisted workflows, and why the human with the tokens file is still the last step.">
+<meta property="og:url" content="https://know.2nth.ai/explainers/design/figma">
+<meta property="og:title" content="Figma — know.2nth.ai">
+<meta property="og:description" content="Figma — auto layout, variables, dev mode, REST API for token extraction, and the bridge between design files and production components.">
 <meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="know.2nth.ai — The Knowledge Tree">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="AI Design Tools — know.2nth.ai">
-<meta name="twitter:description" content="AI design tools — image generation, design-to-code, AI-assisted workflows, and why the human with the tokens file is still the last step.">
+<meta name="twitter:title" content="Figma — know.2nth.ai">
+<meta name="twitter:description" content="Figma — auto layout, variables, dev mode, REST API for token extraction, and the bridge between design files and production components.">
 <meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,14 +39,13 @@
   .prose p{font-size:16px;color:var(--text-secondary);line-height:1.75;max-width:var(--read-w);margin-bottom:18px}.prose p strong{color:var(--text-primary);font-weight:600}.prose code{font-family:'JetBrains Mono',monospace;font-size:0.88em;background:var(--bg-card);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--sky)}
   pre.code{background:var(--ink-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px 22px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.65;color:var(--mist);margin:0 0 20px;max-width:var(--read-w)}[data-theme="light"] pre.code{background:#0F172A;color:#E2E8F0}pre.code .k{color:var(--sky)}pre.code .s{color:#A5F3B8}pre.code .c{color:var(--text-muted);font-style:italic}pre.code .n{color:#FCD34D}
   .info-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 32px;max-width:var(--read-w);margin-bottom:20px}.info-card h4{font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-0.2px}.info-card p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:10px}.info-card p:last-child{margin-bottom:0}
-  .compare-wrap{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;max-width:var(--read-w);margin-bottom:20px}.compare{width:100%;border-collapse:collapse;font-size:13px}.compare th,.compare td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}.compare thead th{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--sky);background:rgba(37,99,235,0.04)}.compare tbody tr:last-child td{border-bottom:none}.compare td{color:var(--text-secondary)}.compare td code{font-family:'JetBrains Mono',monospace;font-size:0.9em;color:var(--sky)}
   .gotcha-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}.gotcha{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-left:3px solid var(--rose);border-radius:var(--radius-md);padding:18px 22px}.gotcha strong{display:block;color:var(--text-primary);font-weight:600;font-size:14px;margin-bottom:6px}.gotcha p{font-size:13px;color:var(--text-secondary);line-height:1.6}
   .connect-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.connect-node{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;transition:all 0.3s;text-decoration:none;color:inherit;display:block}.connect-node:hover{border-color:var(--border-hover);background:var(--bg-card-hover)}.connect-node .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px}.connect-node .skill{font-size:14px;font-weight:600;margin-bottom:4px}.connect-node .why{font-size:12px;color:var(--text-secondary);line-height:1.5}
   .resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}.resource{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 22px;text-decoration:none;transition:all 0.3s;display:flex;flex-direction:column;gap:4px}.resource:hover{border-color:var(--border-hover)}.resource .r-kind{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase}.resource .r-title{font-size:14px;font-weight:600;color:var(--text-primary)}.resource .r-url{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sky);word-break:break-all}
   .decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:var(--read-w)}@media(max-width:720px){.decision-grid{grid-template-columns:1fr}}.decision-card{background:var(--bg-card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 24px}.decision-card.use{border-left:3px solid var(--green)}.decision-card.skip{border-left:3px solid var(--rose)}.decision-card h4{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}.decision-card.use h4{color:var(--green)}.decision-card.skip h4{color:var(--rose)}.decision-card ul{list-style:none;padding:0}.decision-card li{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:6px 0;border-bottom:1px solid var(--border)}.decision-card li:last-child{border-bottom:none}
   footer{padding:60px 0 40px;border-top:1px solid var(--border);text-align:center;margin-top:40px}.footer-brand{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--blue),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}.footer-tagline{font-size:13px;color:var(--text-muted);margin-bottom:24px}.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:24px;flex-wrap:wrap}.footer-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;transition:color 0.2s}.footer-links a:hover{color:var(--sky)}.footer-copy{font-size:12px;color:var(--text-muted)}
   .fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
-  @media(max-width:768px){.nav-brand-sub{display:none}.nav-link{display:none}pre.code{font-size:11px;padding:14px 16px}.compare{font-size:12px}.compare th,.compare td{padding:10px 12px}}
+  @media(max-width:768px){.nav-brand-sub{display:none}.nav-link{display:none}pre.code{font-size:11px;padding:14px 16px}}
   *,*::before,*::after{transition-property:background-color,border-color,color,box-shadow;transition-duration:0.3s;transition-timing-function:ease}
 </style>
 </head>
@@ -57,13 +56,13 @@
 
 <nav>
   <div class="nav-inner">
-    <a href="../../../index.html" class="nav-brand">
+    <a href="../../index.html" class="nav-brand">
       <span class="nav-brand-mark">know.2nth.ai</span>
-      <span class="nav-brand-sub">tech/design/ai-tools</span>
+      <span class="nav-brand-sub">design/figma</span>
     </a>
     <div class="nav-right">
       <a href="./" class="nav-link">&larr; Design</a>
-      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
     </div>
   </div>
@@ -71,29 +70,28 @@
 
 <div class="container">
   <div class="crumb">
-    <a href="../../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="../../../index.html#domains">Technology</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="../">tech</a><span class="crumb-sep">&rsaquo;</span>
-    <a href="./">design</a><span class="crumb-sep">&rsaquo;</span>
-    <span class="crumb-current">ai design tools</span>
+    <a href="../../index.html">know.2nth.ai</a><span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Design</a><span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">figma</span>
   </div>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="container">
-    <div class="eyebrow fade-up"><span class="dot"></span> tech/design &middot; AI Design Tools &middot; Skill Leaf</div>
+    <div class="eyebrow fade-up"><span class="dot"></span> design &middot; Figma &middot; Skill Leaf</div>
     <h1 class="fade-up" style="transition-delay: 0.05s">
-      Great at first drafts,<br><span class="gradient">wrong at consistency.</span>
+      The design file<br><span class="gradient">is not the product.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      AI design tools accelerate the early stages &mdash; moodboards, layout exploration, first-pass code generation. But they don't know your tokens, your component inventory, or your accessibility requirements. The human with the design system is still the last step before production.
+      Figma is where design decisions get made. The product is what ships in the browser. The gap between those two &mdash; the handoff, the token sync, the component mapping &mdash; is where most design system implementations break. Figma's Variables, Dev Mode, and REST API narrow that gap, but they don't close it.
     </p>
     <div class="hero-meta fade-up" style="transition-delay: 0.15s">
       <span class="pill accent">Live</span>
-      <span class="pill">v0 &middot; Lovable</span>
-      <span class="pill">Image generation</span>
-      <span class="pill">Design-to-code</span>
+      <span class="pill">Auto layout</span>
+      <span class="pill">Variables</span>
+      <span class="pill">Dev mode</span>
+      <span class="pill">REST API</span>
     </div>
   </div>
 </section>
@@ -103,24 +101,12 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">01 &middot; What it is</div>
-      <h2 class="section-title">AI-assisted, not AI-replaced.</h2>
+      <h2 class="section-title">A design tool that's also a token database.</h2>
     </div>
     <div class="prose fade-up" style="transition-delay: 0.05s">
-      <p>AI design tools fall into three categories. <strong>Image generation</strong> (Midjourney, DALL-E, Stable Diffusion) creates visual concepts &mdash; moodboards, hero illustrations, icon explorations. Useful for ideation. Terrible for production assets without significant post-processing.</p>
-      <p><strong>Design-to-code generators</strong> (v0, Lovable, screenshot-to-code) take a description or image and produce working UI code. They're shockingly good at producing a first-pass component and consistently bad at using your existing design system. The output is a starting point that needs editing, not a finished product.</p>
-      <p><strong>AI-in-Figma plugins</strong> extend the design tool itself &mdash; content generation (realistic placeholder text), layout suggestions, accessibility auditing, image enhancement. These are the most practical category because they augment an existing workflow rather than replacing it.</p>
-    </div>
-
-    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
-      <table class="compare">
-        <thead><tr><th>Tool category</th><th>Good at</th><th>Bad at</th></tr></thead>
-        <tbody>
-          <tr><td>Image generation</td><td>Moodboards, concepts, hero visuals, icon exploration</td><td>Brand consistency, exact specifications, legal clarity on training data</td></tr>
-          <tr><td>Design-to-code (v0, Lovable)</td><td>First-pass components, rapid prototyping, layout scaffolding</td><td>Using your tokens, matching your component API, accessibility</td></tr>
-          <tr><td>Screenshot-to-code</td><td>Reproducing an existing UI from an image</td><td>Responsive behaviour, semantic HTML, anything beyond visual fidelity</td></tr>
-          <tr><td>Figma AI plugins</td><td>Content generation, layout suggestions, a11y checks</td><td>Replacing design judgment, handling edge cases</td></tr>
-        </tbody>
-      </table>
+      <p><strong>Auto layout</strong> is Figma's flexbox. It makes frames responsive &mdash; children stack, wrap, and distribute with padding, gap, and alignment controls. If your Figma file doesn't use auto layout, it's a picture, not a design. Engineers can't translate fixed-position rectangles into responsive components.</p>
+      <p><strong>Variables</strong> replaced the old "styles" system for colour, spacing, and sizing. They support <strong>modes</strong> &mdash; light/dark, brand A/brand B &mdash; so a single design file can represent multiple themes without duplicating frames. Variables are the Figma-side representation of design tokens.</p>
+      <p><strong>Dev Mode</strong> shows engineers the CSS, spacing values, and component properties for any selected element. It's the handoff layer &mdash; better than inspecting with a third-party plugin, but still not a substitute for a shared token file that both Figma and code consume.</p>
     </div>
   </div>
 </section>
@@ -130,17 +116,74 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">02 &middot; How it works</div>
-      <h2 class="section-title">The practical workflow.</h2>
-    </div>
-    <div class="prose fade-up" style="transition-delay: 0.05s">
-      <p><strong>The AI-assisted design loop</strong> works best when you treat AI output as a draft, not a deliverable. Generate a component with v0, then refactor it to use your tokens. Generate a hero image with Midjourney, then post-process it to match your brand palette. Generate placeholder content with an AI plugin, then review it for tone and accuracy.</p>
-      <p><strong>Code generation from designs</strong> is the most practical use case. Give v0 a prompt like "a pricing card with three tiers, dark theme, Tailwind CSS" and you get a working component in seconds. But it will use its own colours, its own spacing, its own border radius. Your job is to replace those with your design tokens &mdash; and that's where the time goes.</p>
+      <h2 class="section-title">API-driven token extraction.</h2>
+      <p class="section-lede">The Figma REST API lets you read a file's structure, styles, and variables programmatically. This is how you bridge the Figma-to-code gap without manual copy-paste.</p>
     </div>
 
-    <div class="info-card fade-up" style="transition-delay: 0.08s">
-      <h4>The honest cost calculation</h4>
-      <p>AI generates a component in 30 seconds. Refactoring it to match your design system takes 20 minutes. Building it from scratch using your component library takes 25 minutes. The AI saves 5 minutes &mdash; not 25. The value is in exploration (trying 10 layouts in 5 minutes) not in production (shipping one layout in less time).</p>
-    </div>
+    <pre class="code fade-up" style="transition-delay: 0.05s"><span class="c"># Extract variables (tokens) from a Figma file via REST API</span>
+<span class="c"># GET /v1/files/:file_key/variables/local</span>
+
+<span class="k">curl</span> -H <span class="s">"X-Figma-Token: YOUR_TOKEN"</span> \
+  <span class="s">"https://api.figma.com/v1/files/FILE_KEY/variables/local"</span>
+
+<span class="c"># Response shape (simplified):</span>
+{
+  <span class="s">"status"</span>: <span class="n">200</span>,
+  <span class="s">"meta"</span>: {
+    <span class="s">"variableCollections"</span>: {
+      <span class="s">"VariableCollectionId:123"</span>: {
+        <span class="s">"name"</span>: <span class="s">"Primitives"</span>,
+        <span class="s">"modes"</span>: [
+          { <span class="s">"modeId"</span>: <span class="s">"1:0"</span>, <span class="s">"name"</span>: <span class="s">"Light"</span> },
+          { <span class="s">"modeId"</span>: <span class="s">"1:1"</span>, <span class="s">"name"</span>: <span class="s">"Dark"</span> }
+        ]
+      }
+    },
+    <span class="s">"variables"</span>: {
+      <span class="s">"VariableId:456"</span>: {
+        <span class="s">"name"</span>: <span class="s">"color/blue/500"</span>,
+        <span class="s">"resolvedType"</span>: <span class="s">"COLOR"</span>,
+        <span class="s">"valuesByMode"</span>: {
+          <span class="s">"1:0"</span>: { <span class="s">"r"</span>: <span class="n">0.231</span>, <span class="s">"g"</span>: <span class="n">0.510</span>, <span class="s">"b"</span>: <span class="n">0.965</span>, <span class="s">"a"</span>: <span class="n">1</span> },
+          <span class="s">"1:1"</span>: { <span class="s">"r"</span>: <span class="n">0.231</span>, <span class="s">"g"</span>: <span class="n">0.510</span>, <span class="s">"b"</span>: <span class="n">0.965</span>, <span class="s">"a"</span>: <span class="n">1</span> }
+        }
+      }
+    }
+  }
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// Figma plugin scaffold — runs inside Figma's sandbox</span>
+<span class="c">// manifest.json</span>
+{
+  <span class="s">"name"</span>: <span class="s">"Token Exporter"</span>,
+  <span class="s">"id"</span>: <span class="s">"your-plugin-id"</span>,
+  <span class="s">"api"</span>: <span class="s">"1.0.0"</span>,
+  <span class="s">"main"</span>: <span class="s">"code.js"</span>,
+  <span class="s">"editorType"</span>: [<span class="s">"figma"</span>]
+}
+
+<span class="c">// code.ts — runs in Figma's plugin sandbox</span>
+<span class="k">const</span> collections = <span class="k">await</span> figma.variables
+  .getLocalVariableCollectionsAsync();
+
+<span class="k">for</span> (<span class="k">const</span> collection <span class="k">of</span> collections) {
+  <span class="k">const</span> variables = collection.variableIds.map(
+    id =&gt; figma.variables.getVariableById(id)
+  );
+
+  <span class="k">const</span> tokens = variables.map(v =&gt; ({
+    name: v.name,
+    type: v.resolvedType,
+    values: Object.fromEntries(
+      collection.modes.map(mode =&gt; [
+        mode.name,
+        v.valuesByMode[mode.modeId]
+      ])
+    ),
+  }));
+
+  console.log(JSON.stringify(tokens, <span class="k">null</span>, <span class="n">2</span>));
+}</pre>
   </div>
 </section>
 
@@ -149,24 +192,24 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">03 &middot; Gotchas</div>
-      <h2 class="section-title">Where AI design tools fail.</h2>
+      <h2 class="section-title">Where the Figma-to-code bridge leaks.</h2>
     </div>
     <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
       <div class="gotcha">
-        <strong>Brand drift</strong>
-        <p>Every AI-generated component uses slightly different colours, spacing, and type. If you don't catch it, your product accumulates visual inconsistency faster than a team without a design system. AI accelerates drift unless someone is enforcing tokens.</p>
+        <strong>Figma CSS is not production CSS</strong>
+        <p>Dev Mode generates CSS from the visual properties of a frame. It doesn't know about your tokens, your Tailwind config, or your component API. Treat it as a reference, not as copy-paste production code.</p>
       </div>
       <div class="gotcha">
-        <strong>Accessibility is an afterthought</strong>
-        <p>AI-generated code rarely includes ARIA attributes, focus management, or keyboard navigation. Contrast ratios are hit-or-miss. The output looks right and fails an accessibility audit. Always run axe or Lighthouse on generated code before shipping.</p>
+        <strong>Variables API is read-only for external tools</strong>
+        <p>The REST API lets you read variables but not write them. The sync is one-way: Figma to code. If your tokens change in code, you need a plugin or manual update to push them back into Figma.</p>
       </div>
       <div class="gotcha">
-        <strong>Training data licensing is unresolved</strong>
-        <p>Image generation models trained on copyrighted work present legal risk for commercial use. Midjourney, DALL-E, and Stable Diffusion have different terms of service and different exposure levels. Check the licence before using generated images in a product.</p>
+        <strong>Components without auto layout are static images</strong>
+        <p>A component that uses fixed positioning looks correct in Figma but tells engineers nothing about how it should behave at different sizes. Always use auto layout for any component that will be implemented as a responsive element.</p>
       </div>
       <div class="gotcha">
-        <strong>Generated code is not your component API</strong>
-        <p>v0 produces a standalone component with inline styles or arbitrary Tailwind classes. It doesn't know about your <code>Button</code> component, your <code>Card</code> component, or your variant system. The more mature your component library, the less useful raw code generation becomes.</p>
+        <strong>Variables require a paid plan</strong>
+        <p>Figma Variables (modes, collections) require a Professional plan or higher. Free plan users can view but not create variables. Factor this into budget planning before committing to a Figma-native token workflow.</p>
       </div>
     </div>
   </div>
@@ -177,25 +220,25 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">04 &middot; Decision guide</div>
-      <h2 class="section-title">When AI design tools earn their place.</h2>
+      <h2 class="section-title">Figma as the token source of truth.</h2>
     </div>
     <div class="decision-grid fade-up" style="transition-delay: 0.05s">
       <div class="decision-card use">
-        <h4>Use AI tools when</h4>
+        <h4>Use Figma as token source when</h4>
         <ul>
-          <li>You're exploring &mdash; moodboarding, trying layout variations, generating concept art for stakeholder alignment.</li>
-          <li>You need a first-pass prototype to test an idea before investing in production code.</li>
-          <li>The team is small, there's no component library yet, and speed beats consistency for now.</li>
-          <li>You're using AI to augment a Figma workflow (content generation, accessibility audits) rather than replace it.</li>
+          <li>Designers are the primary token authors and engineers consume them downstream.</li>
+          <li>You have a CI pipeline that reads the Figma REST API and generates token files on change.</li>
+          <li>The team is small enough that Figma-to-code sync is manageable with a plugin or API script.</li>
+          <li>You need mode support (light/dark) and want designers to preview both themes in context.</li>
         </ul>
       </div>
       <div class="decision-card skip">
-        <h4>Skip AI tools when</h4>
+        <h4>Use code as token source when</h4>
         <ul>
-          <li>You have a mature design system and component library &mdash; composing existing components is faster than refactoring AI output.</li>
-          <li>Accessibility compliance is non-negotiable and you can't afford to audit every generated component manually.</li>
-          <li>The legal risk of AI-generated imagery is unacceptable for your industry or client.</li>
-          <li>The team treats AI output as finished code rather than a starting point &mdash; this creates more problems than it solves.</li>
+          <li>Engineers and designers co-author tokens and code is the more natural collaboration surface.</li>
+          <li>You need tokens on platforms Figma doesn't cover (iOS, Android, CLI tools).</li>
+          <li>The Figma REST API's read-only limitation makes the sync too fragile for your workflow.</li>
+          <li>Style Dictionary or Tokens Studio already manages your tokens and pushing to Figma is secondary.</li>
         </ul>
       </div>
     </div>
@@ -207,28 +250,28 @@
   <div class="container">
     <div class="fade-up">
       <div class="section-label">05 &middot; Connections</div>
-      <h2 class="section-title">Where AI design tools link in the tree.</h2>
+      <h2 class="section-title">Where Figma links in the tree.</h2>
     </div>
     <div class="connect-grid fade-up" style="transition-delay: 0.05s">
       <a href="./" class="connect-node">
-        <span class="tag">tech/design</span>
+        <span class="tag">design</span>
         <div class="skill">Design hub</div>
-        <div class="why">AI tools are one of the two design-to-code skills &mdash; the newest and most volatile.</div>
-      </a>
-      <a href="figma.html" class="connect-node">
-        <span class="tag">tech/design/figma</span>
-        <div class="skill">Figma</div>
-        <div class="why">AI plugins extend Figma. The design-to-code workflow often starts in Figma and goes through AI generation.</div>
+        <div class="why">Figma is one of the two design-to-code skills &mdash; the primary design tool.</div>
       </a>
       <a href="design-systems.html" class="connect-node">
-        <span class="tag">tech/design/systems</span>
+        <span class="tag">design/systems</span>
         <div class="skill">Design Systems</div>
-        <div class="why">Tokens are the antidote to AI-generated inconsistency. The stronger your system, the faster you can refactor AI output.</div>
+        <div class="why">Figma Variables are the design-side representation of tokens. The system defines the values; Figma is where designers consume them.</div>
       </a>
-      <a href="accessibility.html" class="connect-node">
-        <span class="tag">tech/design/accessibility</span>
-        <div class="skill">Accessibility</div>
-        <div class="why">AI-generated code almost never meets accessibility standards. Manual a11y review is required on every AI output.</div>
+      <a href="ai-design.html" class="connect-node">
+        <span class="tag">design/ai-tools</span>
+        <div class="skill">AI Design Tools</div>
+        <div class="why">AI plugins run inside Figma. Content generation, layout suggestions, and accessibility checks all extend the Figma workflow.</div>
+      </a>
+      <a href="components.html" class="connect-node">
+        <span class="tag">design/components</span>
+        <div class="skill">Component Libraries</div>
+        <div class="why">Figma components should map 1:1 to code components. When they drift, the handoff breaks.</div>
       </a>
     </div>
   </div>
@@ -242,25 +285,25 @@
       <h2 class="section-title">Go deeper.</h2>
     </div>
     <div class="resource-grid fade-up" style="transition-delay: 0.05s">
-      <a href="https://v0.dev" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Tool</span>
-        <span class="r-title">v0 by Vercel</span>
-        <span class="r-url">v0.dev</span>
+      <a href="https://www.figma.com/developers/api" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">API</span>
+        <span class="r-title">Figma REST API documentation</span>
+        <span class="r-url">figma.com/developers/api</span>
       </a>
-      <a href="https://lovable.dev" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Tool</span>
-        <span class="r-title">Lovable</span>
-        <span class="r-url">lovable.dev</span>
+      <a href="https://www.figma.com/plugin-docs/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Figma Plugin API</span>
+        <span class="r-url">figma.com/plugin-docs</span>
       </a>
-      <a href="https://www.midjourney.com" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Image gen</span>
-        <span class="r-title">Midjourney</span>
-        <span class="r-url">midjourney.com</span>
+      <a href="https://help.figma.com/hc/en-us/articles/15339657135383" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">Variables documentation</span>
+        <span class="r-url">help.figma.com</span>
       </a>
-      <a href="https://github.com/abi/screenshot-to-code" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Open source</span>
-        <span class="r-title">screenshot-to-code</span>
-        <span class="r-url">github.com/abi/screenshot-to-code</span>
+      <a href="https://tokens.studio" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Plugin</span>
+        <span class="r-title">Tokens Studio for Figma</span>
+        <span class="r-url">tokens.studio</span>
       </a>
     </div>
   </div>
@@ -271,9 +314,9 @@
     <div class="footer-brand">know.2nth.ai</div>
     <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
     <div class="footer-links">
-      <a href="../../../index.html">Skills tree</a>
-      <a href="./">Design sub-hub</a>
-      <a href="https://v0.dev" target="_blank" rel="noopener">v0 &nearr;</a>
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Design hub</a>
+      <a href="https://www.figma.com" target="_blank" rel="noopener">Figma &nearr;</a>
     </div>
     <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
   </div>
