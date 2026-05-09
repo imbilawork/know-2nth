@@ -45,9 +45,9 @@
       overlay.style.cssText = 'position:absolute;inset:0;background:rgba(11,17,32,0.92);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:5;border-radius:inherit;padding:24px;text-align:center';
       overlay.innerHTML = [
         '<div>',
-        '  <div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#3B82F6;margin-bottom:8px">Member &middot; waitlist</div>',
-        '  <div style="font-size:14px;color:#94A3B8;margin-bottom:14px;line-height:1.5;font-family:\'Outfit\',system-ui,sans-serif">Get on the list to unlock this section.</div>',
-        '  <a href="/join.html" style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:linear-gradient(135deg,#2563EB,#3B82F6);color:#fff;padding:8px 16px;border-radius:100px;text-decoration:none;display:inline-block">Join the waitlist &rarr;</a>',
+        '  <div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#3B82F6;margin-bottom:8px">Member &middot; signup</div>',
+        '  <div style="font-size:14px;color:#94A3B8;margin-bottom:14px;line-height:1.5;font-family:\'Outfit\',system-ui,sans-serif">Sign up to unlock this section.</div>',
+        '  <a href="/join.html" style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:linear-gradient(135deg,#2563EB,#3B82F6);color:#fff;padding:8px 16px;border-radius:100px;text-decoration:none;display:inline-block">Become a Member &rarr;</a>',
         '</div>'
       ].join('\n');
       el.appendChild(overlay);
