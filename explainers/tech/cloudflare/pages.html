@@ -400,6 +400,6 @@ npx wrangler pages deploy ./dist \
   const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'\u2600\uFE0F':'\uD83C\uDF19'}
   const observer=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
 </script>
-<script src="/gate.js" defer></script>
+<script src="/know-auth.js" defer></script>
 </body>
 </html>
