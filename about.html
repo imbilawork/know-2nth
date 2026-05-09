@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access &amp; Membership &mdash; know.2nth.ai</title>
+<meta name="description" content="How access and member management work on know.2nth.ai — the three-tier model (Open / Member / Partner), single sign-on across the .2nth.ai estate, signup and partner intake flows, and the tier-gating mechanics for future Member content.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/about.html">
+<meta property="og:title" content="Access &amp; Membership &mdash; know.2nth.ai">
+<meta property="og:description" content="How access and member management work on know.2nth.ai — the three-tier model (Open / Member / Partner), single sign-on across the .2nth.ai estate, signup and partner intake flows, and the tier-gating mechanics for future Member content.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Access &amp; Membership &mdash; know.2nth.ai">
+<meta name="twitter:description" content="How access and member management work on know.2nth.ai — the three-tier model (Open / Member / Partner), single sign-on across the .2nth.ai estate, signup and partner intake flows, and the tier-gating mechanics for future Member content.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  pre.code .a { color: #FCD34D; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.blue { border-left: 3px solid var(--blue-glow); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: var(--read-w); margin-bottom: 20px; }
+  @media (max-width: 720px) { .tier-grid { grid-template-columns: 1fr; } }
+  .tier-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .tier-cell.open { border-left: 3px solid var(--sky); }
+  .tier-cell.member { border-left: 3px solid var(--blue-glow); }
+  .tier-cell.partner { border-left: 3px solid var(--warm); }
+  .tier-cell .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 8px; }
+  .tier-cell h4 { font-size: 18px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.3px; }
+  .tier-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 10px; }
+  .tier-cell .map { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); margin-top: 8px; }
+  .tier-cell ul { list-style: none; padding: 0; margin-top: 12px; }
+  .tier-cell li { font-size: 12px; color: var(--text-secondary); line-height: 1.6; padding: 4px 0; border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
+  .tier-cell li:first-child { border-top: none; }
+
+  .doc-table { width: 100%; border-collapse: collapse; font-size: 13px; max-width: var(--read-w); margin-bottom: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+  .doc-table th, .doc-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .doc-table thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .doc-table tbody tr:last-child td { border-bottom: none; }
+  .doc-table td { color: var(--text-secondary); }
+  .doc-table td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .doc-table td strong { color: var(--text-primary); }
+
+  .flow { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 20px; max-width: var(--read-w); }
+  .flow-step { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--blue-glow); font-weight: 600; min-width: 30px; flex-shrink: 0; padding-top: 2px; }
+  .flow-text { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+  .flow-text strong { color: var(--text-primary); font-weight: 600; }
+  .flow-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--sky); background: rgba(37, 99, 235, 0.08); padding: 1px 5px; border-radius: 3px; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; max-width: var(--read-w); }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .doc-table { font-size: 12px; } .doc-table th, .doc-table td { padding: 10px 12px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">about &middot; access</span>
+    </a>
+    <div class="nav-right">
+      <a href="index.html#domains" class="nav-link">Tree</a>
+      <a href="index.html#access" class="nav-link">Access</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">About &middot; Access &amp; Membership</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> About &middot; access &amp; member management</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Three tiers, one sign-on, <span class="gradient">no shadow paywall.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Access on know.2nth.ai is honest by design. Open content stays open &mdash; no email gates, no soft paywalls, no friction. Member content is new content classes (operational nodes, deployment templates, role-based bundles) authored to compound for teams that ship. Partner is bespoke. Sign-in is shared across the whole 2nth.ai estate.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live</span>
+      <span class="pill accent">Open / Member / Partner</span>
+      <span class="pill">SSO via beta.2nth.ai</span>
+      <span class="pill">Cookie scope: .2nth.ai</span>
+      <span class="pill">v1.0</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 PHILOSOPHY -->
+<section id="philosophy">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; Philosophy</div>
+      <h2 class="section-title">Open stays open.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The access model is built on a simple promise: <strong>technology explainers are always free</strong>. Every leaf in the existing tree &mdash; framework deep-dives, decision guides, the agent-context format itself &mdash; is readable without an account. That promise is on the access page; it's load-bearing.</p>
+      <p>Member is not a paywall on existing depth. It's a separate content class. <strong>Operational skill nodes</strong>, <strong>deployment templates</strong>, <strong>role-based context bundles</strong>, <strong>curated learning paths</strong> &mdash; the content classes that take work-shaped form and need community context. This kind of content does not exist by accident; it is authored deliberately, and it is what Member is for.</p>
+      <p>Partner is bespoke: private branches of the tree for organisations whose IP becomes part of the ecosystem. Co-branded domain nodes, agent-context packages keyed to one company's stack, institutional knowledge capture as an ongoing service. Different commercial frame, different intake flow.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>What we deliberately don't do</h4>
+      <p>We don't email-gate explainers. We don't dim the second half of a page. We don't run popups asking for newsletter signups. The Open / Member / Partner architecture lets the access page tell the truth: <strong>everything labelled "All technology explainers" actually is</strong>. If you're seeing depth, you can keep reading.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 THE TIERS -->
+<section id="tiers">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The three tiers</div>
+      <h2 class="section-title">What each tier is for.</h2>
+      <p class="section-lede">Display tier names (Open / Member / Partner) on this site map to backend plan names that exist across the wider 2nth.ai estate. You sign up once on <code>beta.2nth.ai</code>; the plan you have determines what gates open across every <code>.2nth.ai</code> surface.</p>
+    </div>
+
+    <div class="tier-grid fade-up" style="transition-delay: 0.05s">
+      <div class="tier-cell open">
+        <span class="tag">Tier &middot; default</span>
+        <h4>Open</h4>
+        <p>Explore the full knowledge tree without an account. The same content humans read, agents load, and partners build on.</p>
+        <ul>
+          <li>+ All technology explainers</li>
+          <li>+ Framework deep-dives</li>
+          <li>+ Decision guides</li>
+          <li>+ Agent context format</li>
+        </ul>
+        <div class="map">backend: <code>explorer</code></div>
+      </div>
+      <div class="tier-cell member">
+        <span class="tag">Tier &middot; signup</span>
+        <h4>Member</h4>
+        <p>Operational depth that's authored for teams who ship. Not gated explainers &mdash; new content classes that take ongoing curation.</p>
+        <ul>
+          <li>+ Everything in Open</li>
+          <li>+ Operational skill nodes</li>
+          <li>+ Role-based context bundles</li>
+          <li>+ Deployment &amp; integration templates</li>
+          <li>+ Community access</li>
+        </ul>
+        <div class="map">backend: <code>starter</code> &middot; <code>designer</code></div>
+      </div>
+      <div class="tier-cell partner">
+        <span class="tag">Tier &middot; intake</span>
+        <h4>Partner</h4>
+        <p>Your IP operationalised as a skills tree. Private branches, co-branded nodes, agent-context packages keyed to your stack.</p>
+        <ul>
+          <li>+ Everything in Member</li>
+          <li>+ Private skills tree branches</li>
+          <li>+ Co-branded domain nodes</li>
+          <li>+ Agent context packages for your IP</li>
+          <li>+ Institutional knowledge capture</li>
+        </ul>
+        <div class="map">backend: <code>builder</code></div>
+      </div>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Why two backend names map to "Member"</h4>
+      <p>The estate's billing layer (on <code>beta.2nth.ai</code>) supports four plans: <code>explorer</code>, <code>starter</code>, <code>designer</code>, <code>builder</code>. <code>skills.2nth.ai</code> exposes them under those names because skills consumption can fan out across four price points. <code>know.2nth.ai</code> consolidates the middle two into one display tier, "Member", because the access model on the knowledge tree is binary at the threshold &mdash; you either see the operational depth or you don't. The auth bar on this site shows "Member" for either backend plan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 AUTH -->
+<section id="auth">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Authentication</div>
+      <h2 class="section-title">Single sign-on across the .2nth.ai estate.</h2>
+      <p class="section-lede">Authentication is centralised on <code>beta.2nth.ai</code>. Cookies are set with <code>Domain=.2nth.ai</code>, which means a session is recognised on <em>every</em> subdomain &mdash; sign in once, all surfaces see you. The auth bar on this site, on <code>skills.2nth.ai</code>, and inside the <code>beta.2nth.ai</code> dashboard all read the same session payload.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The mechanics, in order:</p>
+    </div>
+
+    <div class="flow fade-up" style="transition-delay: 0.08s">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-text">Page loads, <code>know-auth.js</code> runs at the bottom of the body. It calls <code>fetch('https://beta.2nth.ai/api/auth/session', { credentials: 'include' })</code> with the <code>.2nth.ai</code> cookie attached.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-text">The auth API responds with <code>{ user }</code> &mdash; either a populated object (signed in) or <code>null</code> (signed out). The script stashes it on <code>window.__2nth_user</code>.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-text">Auth bar renders. <strong>Signed out</strong>: a "Sign In" pill linking to <code>beta.2nth.ai/join.html</code>. <strong>Signed in</strong>: a tier badge (Open / Member / Partner) plus an avatar with initials; clicking the avatar opens a dropdown with Dashboard, Projects, Upgrade, Sign out.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-text"><code>applyTierGates()</code> walks the DOM looking for <code>data-tier="open|member|partner"</code> attributes. When MEMBER content ships, those attributes will trigger an upgrade overlay for visitors below the required tier. Currently no element on the site carries the marker &mdash; explainers stay open.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">05</div>
+        <div class="flow-text"><code>window.__2nth_canAccess(tier)</code> is exposed for inline use, returning <code>true</code> / <code>false</code> based on the current session. Useful for inline <code>&lt;script&gt;</code> blocks that want to render different copy based on the visitor's plan.</div>
+      </div>
+    </div>
+
+    <div class="info-card blue fade-up" style="transition-delay: 0.11s">
+      <h4>Cookie scope, in one sentence</h4>
+      <p>The session cookie is set by <code>beta.2nth.ai</code> with <code>Domain=.2nth.ai</code>, <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite=Lax</code> &mdash; so the browser sends it to every <code>*.2nth.ai</code> surface but to no one else. That single cookie is the entire SSO mechanism.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 SIGNUP -->
+<section id="signup">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Member signup</div>
+      <h2 class="section-title">From "Sign up" to active session.</h2>
+      <p class="section-lede">There's only one signup endpoint: <code>beta.2nth.ai/join.html</code>. It runs the entire estate. From <code>know.2nth.ai/#access</code>, the "Sign up for Member access" button drops the visitor straight into it.</p>
+    </div>
+
+    <div class="flow fade-up" style="transition-delay: 0.05s">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-text">Visitor clicks <strong>Sign up for Member access</strong> on <code>know.2nth.ai/#access</code> &rarr; redirected to <code>beta.2nth.ai/join.html</code>.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-text">They register with email + password. Default plan: <code>explorer</code> (free).</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-text">Session cookie set with <code>Domain=.2nth.ai</code>. The visitor is now signed in across all 2nth.ai surfaces.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-text">If they want Member access, they upgrade to <code>starter</code> or <code>designer</code> at <code>beta.2nth.ai/bill.html</code>. The auth bar updates to show the Member badge on next page load.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">05</div>
+        <div class="flow-text">Member content (when it ships, marked with <code>data-tier="member"</code>) becomes visible. The upgrade overlay <code>know-auth.js</code> would otherwise show is replaced by the actual content.</div>
+      </div>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>What the auth bar tells you</h4>
+      <p>If you see a tier badge in the top-right of the page, you're signed in. The badge colour distinguishes the three tiers: sky for Open, blue for Member, amber for Partner. The avatar dropdown holds the upgrade and sign-out controls.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 PARTNER -->
+<section id="partner">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Partner intake</div>
+      <h2 class="section-title">When private branches make sense.</h2>
+      <p class="section-lede">The Partner tier is for organisations whose own IP &mdash; methodologies, codebase architecture, internal frameworks &mdash; should live as a co-branded branch of the 2nth.ai tree. It's a longer commercial conversation; intake is a real conversation, not a self-serve flow.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Partner intake starts at <code>partners@2nth.ai</code>. The "Request Partner intake" button on <code>know.2nth.ai/#access</code> opens a <code>mailto:</code> link with a pre-filled subject. The conversation typically covers:</p>
+      <ul>
+        <li><strong>Domain shape</strong> &mdash; what discipline does your IP belong to? It might map cleanly into an existing top-level domain (Business / Data / Design) as a sub-branch, or it might be its own.</li>
+        <li><strong>Authoring cadence</strong> &mdash; private branches are kept fresh by either your team or ours; the choice affects the commercial terms.</li>
+        <li><strong>Agent context packaging</strong> &mdash; how the resulting content is exposed to AI agents that consume it (alongside or instead of the public tree).</li>
+        <li><strong>Institutional knowledge capture</strong> &mdash; many Partner engagements include translating tacit org knowledge (currently in heads or wikis) into the canonical-skill-node format.</li>
+      </ul>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Auth-wise, Partner is just a plan</h4>
+      <p>Backend plan <code>builder</code> grants Partner-tier access on the auth side. The bespoke commercial relationship is layered on top &mdash; private subdomains, dedicated review cycles, separate publishing pipelines &mdash; but for the visitor experience, "Partner" is just one more rung of the same SSO ladder.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 GATING MECHANICS -->
+<section id="gating">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Tier-gating mechanics</div>
+      <h2 class="section-title">How content gets gated when MEMBER ships.</h2>
+      <p class="section-lede">The hook is in place; no markers exist yet. When the first piece of MEMBER content lands, all that's needed is a single attribute on the appropriate element. <code>know-auth.js</code> handles the rest at page load.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>To gate any element to a tier, add <code>data-tier="open|member|partner"</code>:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c">&lt;!-- Visible to everyone (no gate) --&gt;</span>
+<span class="k">&lt;section&gt;</span>...<span class="k">&lt;/section&gt;</span>
+
+<span class="c">&lt;!-- Visible to Member+ (signed in, starter or above) --&gt;</span>
+<span class="k">&lt;section</span> <span class="a">data-tier</span>=<span class="s">"member"</span><span class="k">&gt;</span>...<span class="k">&lt;/section&gt;</span>
+
+<span class="c">&lt;!-- Visible only to Partner (builder plan) --&gt;</span>
+<span class="k">&lt;section</span> <span class="a">data-tier</span>=<span class="s">"partner"</span><span class="k">&gt;</span>...<span class="k">&lt;/section&gt;</span>
+
+<span class="c">&lt;!-- Inline tier check inside a custom script --&gt;</span>
+<span class="k">&lt;script&gt;</span>
+  <span class="h">if</span> (window.__2nth_canAccess(<span class="s">'member'</span>)) {
+    <span class="c">// render member-only widget</span>
+  }
+<span class="k">&lt;/script&gt;</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p>What happens at runtime when a visitor below the required tier hits a gated element:</p>
+      <ol>
+        <li><code>know-auth.js</code> finds the element via <code>document.querySelectorAll('[data-tier]')</code></li>
+        <li>Checks the visitor's plan against the threshold mapping (<code>open</code> = 0, <code>member</code> = 1, <code>partner</code> = 3)</li>
+        <li>If under threshold, wraps the element in a relative container and overlays an upgrade prompt with a CTA to <code>beta.2nth.ai/bill.html</code></li>
+        <li>Visitors at or above the threshold see the element normally; the gating code never runs for them</li>
+      </ol>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.13s">
+      <h4>Authoring discipline</h4>
+      <p>Two rules. (1) Never put <code>data-tier="member"</code> on existing explainer content &mdash; it breaks the access-page promise. (2) When MEMBER content (operational nodes, templates) lands, gate at the <em>section</em> level, not the page level &mdash; the visitor still gets a useful free preview before the gate, and the upgrade decision happens with context.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 ACROSS -->
+<section id="across">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Across the estate</div>
+      <h2 class="section-title">One sign-in, every surface.</h2>
+      <p class="section-lede">A session signed in once is recognised across every <code>*.2nth.ai</code> surface. Each surface presents the auth bar in its own visual language but reads the same session payload from the same cookie. The backend plan name is canonical; each surface translates it locally for display.</p>
+    </div>
+
+    <table class="doc-table fade-up" style="transition-delay: 0.05s">
+      <thead><tr><th>Surface</th><th>Display tiers</th><th>Backend plan</th></tr></thead>
+      <tbody>
+        <tr><td><strong>know.2nth.ai</strong></td><td>Open / Member / Partner</td><td><code>explorer</code> &middot; <code>starter</code>+ &middot; <code>builder</code></td></tr>
+        <tr><td><strong>skills.2nth.ai</strong></td><td>Explorer / Starter / Designer / Builder</td><td>Same names</td></tr>
+        <tr><td><strong>beta.2nth.ai</strong></td><td>Plan + token balance</td><td>Same names + usage</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Logout, everywhere</h4>
+      <p><code>window.__2nth_logout()</code> POSTs to <code>beta.2nth.ai/api/auth/logout</code>, which clears the <code>.2nth.ai</code>-scoped cookie. The browser then has no session for any surface. The user is redirected to <code>beta.2nth.ai/join.html</code>; refreshing any other 2nth.ai tab shows the signed-out state.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Pointers</div>
+      <h2 class="section-title">For maintainers and curious visitors.</h2>
+      <p class="section-lede">The auth surface is small enough to hold in your head. The links below are the canonical entry points to the source, the signup, and the bespoke intake.</p>
+    </div>
+
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://github.com/2nth-ai/know-2nth/blob/main/know-auth.js" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">know-auth.js</span>
+        <span class="r-url">github.com/2nth-ai/know-2nth/blob/main/know-auth.js</span>
+      </a>
+      <a href="index.html#access" class="resource">
+        <span class="r-kind">Tier UI</span>
+        <span class="r-title">Access section</span>
+        <span class="r-url">/&#35;access</span>
+      </a>
+      <a href="https://beta.2nth.ai/join.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Signup</span>
+        <span class="r-title">Member access</span>
+        <span class="r-url">beta.2nth.ai/join.html</span>
+      </a>
+      <a href="https://beta.2nth.ai/bill.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Upgrade</span>
+        <span class="r-title">Plan &amp; billing</span>
+        <span class="r-url">beta.2nth.ai/bill.html</span>
+      </a>
+      <a href="mailto:partners@2nth.ai?subject=know.2nth.ai%20Partner%20intake" class="resource">
+        <span class="r-kind">Intake</span>
+        <span class="r-title">Partner intake</span>
+        <span class="r-url">partners@2nth.ai</span>
+      </a>
+      <a href="https://github.com/2nth-ai/know-2nth" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Repo</span>
+        <span class="r-title">2nth-ai/know-2nth</span>
+        <span class="r-url">github.com/2nth-ai/know-2nth</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="index.html">Skills tree</a>
+      <a href="index.html#access">Access</a>
+      <a href="https://github.com/2nth-ai/know-2nth" target="_blank" rel="noopener">GitHub &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+<script src="/know-auth.js" defer></script>
+</body>
+</html>
