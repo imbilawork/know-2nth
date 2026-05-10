@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPT &middot; OpenAI &mdash; know.2nth.ai</title>
+<meta name="description" content="GPT — OpenAI's flagship model family. Three production lines in 2026: GPT-5 for the broadest capability, the GPT-4.x line still production-current, and the o-series reasoning models (o1, o3) for hardest reasoning tasks. 200k+ context, native multimodal, leading function-calling, hosted via OpenAI Platform and Azure OpenAI. The default for production agents on OpenAI infrastructure — and the most-used closed frontier model family in 2026.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/gpt">
+<meta property="og:title" content="GPT &middot; OpenAI &mdash; know.2nth.ai">
+<meta property="og:description" content="GPT — OpenAI's flagship family. GPT-5 / GPT-4.x / o-series reasoning. 200k+ context, native multimodal, leading function-calling. The most-used closed frontier model family in 2026.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GPT &middot; OpenAI &mdash; know.2nth.ai">
+<meta name="twitter:description" content="GPT — OpenAI's family. GPT-5 / GPT-4.x / o-series. The most-used closed frontier model. Native multimodal, leading function-calling, hosted via Platform and Azure.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/gpt</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">GPT &middot; OpenAI</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; GPT &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The most-used <span class="gradient">closed frontier model.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      GPT is OpenAI's flagship model family. Three production lines in 2026: <strong>GPT-5</strong> for the broadest capability and the current frontier, the <strong>GPT-4.x line</strong> (4.1, 4o) still production-current and economical, and the <strong>o-series reasoning models</strong> (o1, o3, o4) for the hardest reasoning tasks. 200k+ context across the lineup, native multimodal (vision + audio), leading function-calling reliability, hosted via OpenAI Platform and Azure OpenAI Service. The default for production agents on OpenAI infrastructure, and the most-used closed frontier model family in the world by deployed count.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">GPT-5 &middot; current frontier</span>
+      <span class="pill indigo">Closed model</span>
+      <span class="pill accent">200k+ context</span>
+      <span class="pill warn">o-series reasoning</span>
+      <span class="pill">Native multimodal</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">OpenAI's flagship family.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>GPT (Generative Pre-trained Transformer) is the model family from <strong>OpenAI</strong>, the AI lab founded in 2015 and primarily known to most people through ChatGPT. The first GPT shipped in 2018; the family has been on near-annual major release cadence since GPT-2 (2019), with GPT-3 (2020), GPT-3.5 (2022), GPT-4 (2023), GPT-4o (2024), and GPT-5 (2025) marking the major generations. The o-series reasoning line (o1, o3, o4) launched separately in 2024 as the "thinking" complement to the main GPT lineup.</p>
+      <p>Where Claude has historically led on instruction-following and Gemini on raw context length, GPT has historically led on three things: <strong>function-calling reliability</strong> (the most consistent structured tool dispatch in the field since 2023), <strong>multimodal reach</strong> (image, audio, video input across the lineup, plus DALL-E and image generation), and <strong>API ecosystem depth</strong> (more SDKs, more tool integrations, more community examples than any competing family). Those three properties make it the default choice when ecosystem maturity is the deciding factor.</p>
+      <p>Distribution: GPT is available via the <strong>OpenAI Platform</strong> directly, via <strong>Azure OpenAI Service</strong> (including in <code>South Africa North</code> for SA-resident calls), via <strong>ChatGPT</strong> (the consumer product), and through every major aggregator (OpenRouter, LiteLLM, the LangChain ecosystem). Microsoft co-developed the platform and is the second-largest deployment surface after OpenAI Platform itself.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Naming &middot; how the family lines up</h4>
+      <p>OpenAI's naming has evolved over time. The current shape: <strong>GPT-5</strong> is the flagship "everyday" line; <strong>GPT-4.x</strong> (4o, 4.1) is the still-supported previous generation, often cheaper and adequate for many production workloads; <strong>o-series</strong> (o1, o3) are the explicit reasoning models that "think before answering" with longer latency and higher quality on hard problems. Older chat-only models (GPT-3.5, GPT-4) are deprecated or near-deprecated &mdash; check the API model list before pinning anything legacy.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 THE LINEUP -->
+<section id="lineup">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The 2026 lineup</div>
+      <h2 class="section-title">Three production lines, different jobs.</h2>
+      <p class="section-lede">The OpenAI family is deliberately segmented. GPT-5 is the broadest-capability default; GPT-4.x sits below it on cost and capability but remains good for high-volume production work; the o-series sits above it on reasoning depth at the cost of latency and price. Most production stacks use two or three lines together via tier routing.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Line &middot; current default</span>
+        <h4>GPT-5</h4>
+        <p>The flagship. Best for: agentic workflows, code generation, multimodal tasks, long-context reasoning. Released 2025; the current production default. Multiple variants (mini, nano) for different price/quality points within the line.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Line &middot; production workhorse</span>
+        <h4>GPT-4.x &middot; 4o, 4.1</h4>
+        <p>The previous-generation line, still actively maintained. GPT-4o is the multimodal default with vision + audio; GPT-4.1 is the latest 4.x text-strong variant. Cheaper than GPT-5 and good enough for the majority of production traffic.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Line &middot; reasoning</span>
+        <h4>o-series &middot; o1, o3, o4</h4>
+        <p>Explicit reasoning models. Spend more compute "thinking" before answering &mdash; meaningful quality lift on hard problems (math, code, planning, multi-step proofs) at the cost of latency and price. Use selectively, not by default.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Capability &middot; cross-line</span>
+        <h4>All lines ship</h4>
+        <p>Function calling, JSON mode for structured outputs, vision (image input), 200k+ context, streaming, prompt caching, Batch API. Realtime voice / audio is via the separate Realtime API. DALL-E image generation is a separate model family.</p>
+      </div>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>Reasoning models &mdash; OpenAI's o-series differentiator</h4>
+      <p>OpenAI introduced the o-series (o1 in late 2024, o3 in early 2025, o4 in 2026) as explicit reasoning models that allocate compute to "thinking" before responding. Hard problems get genuine quality lifts &mdash; competitive math benchmarks, complex code synthesis, multi-step planning. The trade-off: latency (10s-60s vs 1-3s for chat), and per-token cost. The OpenAI Agents SDK exposes reasoning models via the same Agent API; you select the model per agent, route easy work to GPT-5 and hard work to o3.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 VS OTHER MODELS -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs Claude, Gemini, Llama, Gemma</div>
+      <h2 class="section-title">Where GPT is the right pick &mdash; and where it isn't.</h2>
+      <p class="section-lede">Honest cross-family positioning. GPT's strengths sit on ecosystem reach, function-calling, and multimodal range; its weaknesses are around the "confidently wrong" failure mode and (for some teams) the OpenAI brand-risk profile. Claude leads on instruction-following; Gemini on context length and search grounding; open-weights on cost and residency.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Family</th><th>Strengths</th><th>Watch out for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>GPT (OpenAI)</strong></td><td>Largest API ecosystem, best function-calling, broadest multimodal (vision/audio/DALL-E), o-series reasoning</td><td>"Confidently wrong" failure mode more than Claude; brand-risk for some enterprise; Realtime / DALL-E / Whisper billed separately</td></tr>
+          <tr><td><strong>Claude (Anthropic)</strong></td><td>Best instruction-following, native extended thinking, MCP-native, Bedrock <code>af-south-1</code> for SA residency</td><td>Closed; USD billing; tighter rate limits than OpenAI on free tier</td></tr>
+          <tr><td><strong>Gemini (Google)</strong></td><td>Largest context window (1M+ on Pro/Ultra), native search grounding, voice via Live API, JHB Vertex region</td><td>Less consistent on instruction-following; weaker community / ecosystem than OpenAI</td></tr>
+          <tr><td><strong>Llama (Meta)</strong></td><td>Open weights, runs locally, largest community fine-tune ecosystem</td><td>Frontier gap; instruction-following lags closed frontier; Meta licence has commercial restrictions over 700M MAU</td></tr>
+          <tr><td><strong>Gemma (Google)</strong></td><td>Open weights, multimodal, frontier-lab safety tuning, runs locally</td><td>Smaller fine-tune ecosystem than Llama; not as code-strong as Qwen</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Why function-calling matters more than benchmark numbers</h4>
+      <p>Most production agent failures aren't reasoning failures &mdash; they're tool-use failures. The model picks the wrong function, calls it twice, returns malformed arguments, or skips a required tool. <strong>GPT has had the most reliable function-calling in the field since 2023</strong>. Claude has caught up on quality but still has more variance on edge cases; Gemini lags both. For agents where structured tool dispatch is the load-bearing capability, GPT's function-calling consistency is a real production advantage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 PRICING REALITY -->
+<section id="pricing">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Pricing reality</div>
+      <h2 class="section-title">Tiered, with three meaningful cost levers.</h2>
+      <p class="section-lede">OpenAI is USD-billed at frontier-tier rates for GPT-5 and o-series. GPT-4.x is meaningfully cheaper. The two production cost levers everyone should wire in are <strong>tier routing</strong> (don't run everything on GPT-5), <strong>prompt caching</strong> (added late 2024, ~50-90% discount on repeated context), and <strong>Batch API</strong> (~50% discount for non-urgent workloads). Always check <a href="https://openai.com/api/pricing" target="_blank" rel="noopener" style="color:var(--sky)">openai.com/api/pricing</a> for current numbers.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The shape of the pricing curve</strong> (illustrative; check the official page):</p>
+      <ul>
+        <li><strong>o-series</strong> &mdash; most expensive. Reasoning tokens billed alongside output. Use selectively for genuinely hard problems.</li>
+        <li><strong>GPT-5</strong> &mdash; flagship rates, with mini and nano variants at meaningfully lower cost for routine work. Output tokens billed roughly 4-5&times; input.</li>
+        <li><strong>GPT-4.x</strong> &mdash; cheaper than GPT-5. Often the right production default for high-volume workloads where the GPT-5 quality lift isn't structurally needed.</li>
+        <li><strong>Prompt caching</strong> &mdash; up to 90% discount on cached input tokens. Significant cost saver for RAG agents that share long system prompts or repeat document context.</li>
+        <li><strong>Batch API</strong> &mdash; 50% discount on input + output for batched non-urgent workloads. Great for nightly processing.</li>
+      </ul>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>The three-lever routing pattern</h4>
+      <p>For SA studios watching FX, all three levers matter. Build a GPT-4.x or GPT-5-mini-driven router as the first agent in the chain. Most of the work (60-80%) doesn't need GPT-5 flagship; route routine traffic to the cheaper tier. Use prompt caching for any RAG or long-system-prompt workload. Push nightly classification / extraction / enrichment to Batch API. <strong>This pattern can cut OpenAI costs by 60-80% versus running everything on GPT-5.</strong> The OpenAI Agents SDK's per-agent model selection makes this trivial &mdash; sub-agents on different tiers are a one-liner.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Decision guide</div>
+      <h2 class="section-title">When GPT is the right model.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use GPT when</h4>
+        <ul>
+          <li>Function-calling reliability is load-bearing</li>
+          <li>You need broad multimodal range (vision + audio + image gen)</li>
+          <li>You're already on Azure or want Microsoft enterprise contracting</li>
+          <li>Reasoning workloads benefit from o-series explicit thinking</li>
+          <li>Ecosystem maturity matters &mdash; you want the largest community + integrations</li>
+          <li>You need DALL-E image generation alongside text</li>
+          <li>You're standardised on OpenAI / Azure for enterprise compliance posture</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>Instruction-following reliability matters more than tool dispatch &mdash; Claude often wins</li>
+          <li>You need 1M+ context windows &mdash; Gemini Pro / Ultra leads</li>
+          <li>POPIA / data-residency requires SA-resident inference and you can't use Azure SA North</li>
+          <li>You want fully open / self-hostable models &mdash; GPT is closed</li>
+          <li>Cost-sensitive at extreme scale &mdash; open-weights via Ollama is structurally cheaper</li>
+          <li>You distrust OpenAI as a brand or vendor &mdash; Claude or Gemini fit better politically</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; South African context</div>
+      <h2 class="section-title">Where GPT lands in SA delivery work.</h2>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Enterprise &middot; Azure OpenAI in <code>South Africa North</code></h4>
+      <p>Azure OpenAI Service in <strong>South Africa North</strong> (Johannesburg) hosts GPT models with SA data residency, Microsoft enterprise contracting, and POPIA-compliant data handling. For SA banks, insurers, and telcos with existing Microsoft / Azure relationships, this is the structurally clean answer for OpenAI workloads. <strong>Caveats</strong>: not every model lands in <code>South Africa North</code> at launch &mdash; newest GPT releases sometimes lag US East regions by weeks or months. Plan for either a North Europe / UK South fallback or accept the lag if residency is non-negotiable.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; OpenAI Platform direct</h4>
+      <p>For studios without enterprise residency requirements, OpenAI Platform is simpler and cheaper than Azure. Tracing, evals, prompt management on the same Platform dashboard. New models / features land on Platform first, Azure second. The pragmatic SA path: start on Platform for prototypes and pilots; move to Azure SA North if a client requires it.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>FX exposure mitigations</h4>
+      <p>OpenAI is USD-billed. Same playbook as the Claude leaf: tier routing (GPT-4.x or GPT-5-mini default, GPT-5 / o-series only for hard cases), prompt caching for RAG workloads, Batch API for nightly. For high-volume routing tasks, also consider hybrid local+cloud where Ollama-Gemma 3 handles the 60-80% of work that doesn't structurally need a frontier closed model.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Connections</div>
+      <h2 class="section-title">Where GPT links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. GPT in the Models band; the OpenAI Agents SDK in the Frameworks band is its natural pairing.</div>
+      </a>
+      <a href="openai-agents-sdk.html" class="connect-node">
+        <span class="tag">agents/openai-agents-sdk</span>
+        <div class="skill">OpenAI Agents SDK</div>
+        <div class="why">The first-party agent framework for GPT. Five primitives, native tracing, MCP support. The default if GPT is your model.</div>
+      </a>
+      <a href="claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude</div>
+        <div class="why">The major closed-frontier alternative. Different strengths (instruction-following vs function-calling); often used together in multi-model production stacks.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">Common pairing &mdash; LangGraph's vendor-agnostic shape works well with GPT via <code>langchain-openai</code>. The right combination when you want explicit graph control on top of OpenAI.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">ADK supports GPT via LiteLLM. Less common (ADK is Gemini-first) but works for GCP-hosted teams who need OpenAI for specific capabilities.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">The local-inference complement. Common hybrid: GPT for hard reasoning, Ollama-hosted Gemma / Llama for high-volume PII pre-processing or routing.</div>
+      </a>
+      <a href="mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">OpenAI joined the MCP ecosystem in 2025. The Agents SDK ships an MCP client; same protocol, same servers as the Anthropic SDK consumes.</div>
+      </a>
+      <a href="../tech/microsoft/" class="connect-node">
+        <span class="tag">tech/microsoft</span>
+        <div class="skill">Microsoft / Azure</div>
+        <div class="why">Azure OpenAI Service in <code>South Africa North</code> is the SA-residency-clean path for GPT workloads.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 08 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Resources</div>
+      <h2 class="section-title">Primary sources.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://openai.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">openai.com</span>
+        <span class="r-url">openai.com</span>
+      </a>
+      <a href="https://platform.openai.com/docs" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">OpenAI Platform documentation</span>
+        <span class="r-url">platform.openai.com/docs</span>
+      </a>
+      <a href="https://openai.com/api/pricing" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Pricing</span>
+        <span class="r-title">openai.com/api/pricing</span>
+        <span class="r-url">openai.com/api/pricing</span>
+      </a>
+      <a href="https://platform.openai.com/docs/models" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Models</span>
+        <span class="r-title">Model lineup &amp; capabilities</span>
+        <span class="r-url">platform.openai.com/docs/models</span>
+      </a>
+      <a href="https://platform.openai.com/docs/guides/reasoning" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Feature</span>
+        <span class="r-title">Reasoning (o-series) docs</span>
+        <span class="r-url">platform.openai.com/docs/guides/reasoning</span>
+      </a>
+      <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Hosting</span>
+        <span class="r-title">Azure OpenAI Service docs</span>
+        <span class="r-url">learn.microsoft.com/.../azure/ai-services/openai</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://openai.com" target="_blank" rel="noopener">openai.com &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>

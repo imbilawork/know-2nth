@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenAI Agents SDK &mdash; know.2nth.ai</title>
+<meta name="description" content="The OpenAI Agents SDK — OpenAI's official agent framework. Python and TypeScript SDKs, the successor to the Assistants API. Built around five primitives: Agents, Handoffs, Tools, Guardrails, and Tracing. Native OpenAI Platform tracing, native MCP support, native function-calling. The default for production agents on GPT — and the cleanest path from prototype to scaled deployment for teams already on OpenAI infrastructure.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/openai-agents-sdk">
+<meta property="og:title" content="OpenAI Agents SDK &mdash; know.2nth.ai">
+<meta property="og:description" content="The OpenAI Agents SDK — official agent framework from OpenAI. Five primitives: Agents, Handoffs, Tools, Guardrails, Tracing. Successor to Assistants API. Native MCP. The default for GPT-based production agents.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OpenAI Agents SDK &mdash; know.2nth.ai">
+<meta name="twitter:description" content="OpenAI Agents SDK — the official OpenAI agent framework. Agents, Handoffs, Tools, Guardrails, Tracing. Successor to Assistants API. The GPT-first SDK.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/openai-agents-sdk</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">OpenAI Agents SDK</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; OpenAI Agents SDK &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The successor to Assistants. <span class="gradient">Five primitives. One SDK.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The OpenAI Agents SDK is OpenAI's official agent framework, released in 2025 as the production-grade successor to the Assistants API. Python and TypeScript SDKs, both open source. Built around five primitives: <strong>Agents</strong>, <strong>Handoffs</strong>, <strong>Tools</strong>, <strong>Guardrails</strong>, and <strong>Tracing</strong>. Native MCP support, native function-calling, native built-in tracing dashboard on the OpenAI Platform. The default for production agents on GPT, and the cleanest path from prototype to scaled deployment for teams already on OpenAI infrastructure.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live &middot; production-ready</span>
+      <span class="pill indigo">OpenAI-built</span>
+      <span class="pill accent">Python &middot; TypeScript</span>
+      <span class="pill">GPT + o-series</span>
+      <span class="pill warn">Native tracing</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">OpenAI's first-party agent framework, second iteration.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The <strong>OpenAI Agents SDK</strong> (<code>openai-agents</code> on PyPI, <code>@openai/agents</code> on npm) is OpenAI's official agent framework. It launched in 2025 as the successor to the older Assistants API, addressing the production gaps that platform had: opaque execution, limited debugging, no clean handoff pattern between agents, no first-party MCP integration. The new SDK is open source, available in Python and TypeScript with a third-party Go port, and ships under a permissive licence.</p>
+      <p>The thesis: <strong>OpenAI knows how their models behave best</strong>. The SDK encodes those production patterns &mdash; structured handoffs, declarative guardrails, automatic tracing, MCP-first tool integration &mdash; rather than leaving teams to invent them. For agents that run on GPT-4.x, GPT-5, or the o-series reasoning models, the Agents SDK is the framework that's tested against the model behaviour you actually get.</p>
+      <p>Distribution: the SDK works against the OpenAI Platform, Azure OpenAI Service, and any OpenAI-compatible endpoint (Ollama's <code>localhost:11434</code>, OpenRouter, vLLM-served open-weights models). That last point matters &mdash; despite the name, the SDK is not strictly OpenAI-only; it's optimised for OpenAI but works with any compatible model API.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Naming &middot; "agents" SDK vs the basic SDK</h4>
+      <p>Two OpenAI things sound similar. The <strong><code>openai</code> SDK</strong> (Python / TS) is the basic API client &mdash; chat completions, tool use, streaming. The <strong><code>openai-agents</code> SDK</strong> is the higher-level agent framework &mdash; this leaf. They're separate packages. The agent SDK depends on the basic SDK under the hood, but adds the five primitives and the tracing infrastructure. If you read about the "OpenAI Agents SDK" or "openai-agents," that's the framework this leaf covers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Five primitives that map cleanly to production patterns.</h2>
+      <p class="section-lede">Each primitive solves a specific production-agent problem. Together they cover the day-to-day shape of building agents that need to delegate to specialists, run safely, and produce auditable execution traces &mdash; without bringing in heavier framework abstractions.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Primitive 01</span>
+        <h4>Agents</h4>
+        <p>The unit of work. Has a model, instructions, tools, and optionally sub-agents to hand off to. Created via <code>Agent(name, instructions, model, tools)</code>.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Primitive 02</span>
+        <h4>Handoffs</h4>
+        <p>Structured way for one agent to delegate to another mid-conversation. The receiving agent inherits context. Solves the "how do I escalate from triage to specialist" question cleanly.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Primitive 03</span>
+        <h4>Tools</h4>
+        <p>Plain functions decorated with <code>@function_tool</code>. The SDK introspects signatures for JSON-Schema. MCP servers, hosted OpenAI tools (web search, file search, computer use), and external APIs all integrate.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Primitive 04</span>
+        <h4>Guardrails</h4>
+        <p>Declarative input/output validators that run alongside the agent. Catch policy violations, flag PII, enforce structured-output schemas. Halt execution or trigger fallback behaviour.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Primitive 05</span>
+        <h4>Tracing</h4>
+        <p>Automatic. Every agent run produces a structured trace visible in the OpenAI Platform dashboard. Spans for handoffs, tool calls, LLM calls, guardrail evaluations. The most polished out-of-the-box observability of any framework.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Cross-cutting</span>
+        <h4>Sessions</h4>
+        <p>Persistent conversation history with automatic context management. The SDK handles trimming and continuation; you pass <code>session_id</code> and it works.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p>The minimal Agent in Python:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># pip install openai-agents</span>
+<span class="h">from</span> agents <span class="h">import</span> Agent, Runner
+
+agent = Agent(
+    <span class="h">name</span>=<span class="s">"Assistant"</span>,
+    <span class="h">instructions</span>=<span class="s">"You help users analyse JSE market data."</span>,
+    <span class="h">model</span>=<span class="s">"gpt-5"</span>,
+)
+
+result = <span class="h">await</span> Runner.run(agent, <span class="s">"What's been driving SA bond yields this quarter?"</span>)
+<span class="k">print</span>(result.final_output)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.13s">
+      <p><strong>Tools as Python functions.</strong> Decorate; the SDK does the rest:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.16s"><span class="h">from</span> agents <span class="h">import</span> Agent, function_tool
+
+<span class="h">@function_tool</span>
+<span class="h">def</span> get_market_data(symbol: <span class="k">str</span>, days: <span class="k">int</span> = 30) -&gt; <span class="k">dict</span>:
+    <span class="s">"""Fetch recent market data for a JSE-listed symbol."""</span>
+    <span class="h">return</span> fetch_from_jse_api(symbol, days)
+
+agent = Agent(
+    <span class="h">name</span>=<span class="s">"JSE Analyst"</span>,
+    <span class="h">model</span>=<span class="s">"gpt-5"</span>,
+    <span class="h">tools</span>=[get_market_data],
+)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.19s">
+      <p><strong>Handoffs &mdash; the OpenAI SDK's signature primitive.</strong> A triage agent routes to specialist agents based on the user's intent:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.22s"><span class="h">from</span> agents <span class="h">import</span> Agent, handoff
+
+billing = Agent(<span class="h">name</span>=<span class="s">"Billing"</span>,
+                <span class="h">instructions</span>=<span class="s">"Handle billing-related questions."</span>)
+technical = Agent(<span class="h">name</span>=<span class="s">"Technical"</span>,
+                  <span class="h">instructions</span>=<span class="s">"Handle technical issues."</span>)
+
+triage = Agent(
+    <span class="h">name</span>=<span class="s">"Triage"</span>,
+    <span class="h">instructions</span>=<span class="s">"Route to the right specialist."</span>,
+    <span class="h">handoffs</span>=[billing, technical],  <span class="c"># SDK creates handoff tools automatically</span>
+)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.25s">
+      <p><strong>Guardrails</strong> as declarative validators. The SDK halts the agent if a guardrail trips:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.28s"><span class="h">from</span> agents <span class="h">import</span> Agent, GuardrailFunctionOutput, input_guardrail
+
+<span class="h">@input_guardrail</span>
+<span class="h">async def</span> no_pii(ctx, agent, input_text):
+    has_pii = <span class="h">await</span> classify_pii(input_text)
+    <span class="h">return</span> GuardrailFunctionOutput(
+        <span class="h">output_info</span>={<span class="s">"has_pii"</span>: has_pii},
+        <span class="h">tripwire_triggered</span>=has_pii,
+    )
+
+agent = Agent(<span class="h">name</span>=<span class="s">"Public Assistant"</span>,
+              <span class="h">model</span>=<span class="s">"gpt-5"</span>,
+              <span class="h">input_guardrails</span>=[no_pii])</pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.31s">
+      <h4>Tracing as a structural advantage</h4>
+      <p>Every agent run is automatically traced and visible in the OpenAI Platform dashboard at <a href="https://platform.openai.com/traces" target="_blank" rel="noopener" style="color:var(--sky)">platform.openai.com/traces</a>. Spans for every LLM call, every tool call, every handoff, every guardrail evaluation. <strong>You don't wire it up</strong> &mdash; it's on by default. For production debugging this is a meaningful advantage over LangGraph (where LangSmith is paid) and Anthropic SDK (where you wire up OTel yourself).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 ECOSYSTEM -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; The ecosystem</div>
+      <h2 class="section-title">OpenAI Platform, Azure OpenAI, the broader API ecosystem.</h2>
+      <p class="section-lede">The Agents SDK lives inside OpenAI's broader platform: the model API, the Tracing dashboard, the hosted tools (web search, file search, computer use, code interpreter), and the deployment surfaces. For SA enterprise, Azure OpenAI is the parallel surface &mdash; same models, regional residency options, Microsoft's enterprise contracting model.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Library</span>
+        <h4>openai-agents</h4>
+        <p>Python and TS SDKs. Open source. Self-host anywhere &mdash; Lambda, Cloud Run, Fly, your laptop, Cloudflare Workers via Node-compat.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Platform</span>
+        <h4>OpenAI Platform</h4>
+        <p>Hosts the API + Tracing + Evals + Files. Free tier; usage-based billing. The default deployment surface for SDK-built agents.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Enterprise</span>
+        <h4>Azure OpenAI</h4>
+        <p>Microsoft's parallel hosting. Same models, enterprise contracting, regional availability including SA via <code>South Africa North</code>. The path for SA enterprise that needs Microsoft / Azure compliance posture.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Hosted tools</span>
+        <h4>Web search, file search, computer use</h4>
+        <p>OpenAI hosts a small set of "first-party" tools the SDK exposes. Web search is best-known; file search is a managed RAG layer; computer use is OpenAI's vision-driven UI control.</p>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>The Realtime API is separate</h4>
+      <p>OpenAI's voice / audio agents use the Realtime API &mdash; that's a separate WebSocket-based interface, not part of the Agents SDK. For text-and-tool agents, this SDK is the path. For bidirectional voice, Realtime API is. Some teams build hybrid systems where the Realtime endpoint terminates user voice and dispatches to Agents-SDK-managed text agents for actual reasoning.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 VS OTHER FRAMEWORKS -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; vs Anthropic SDK, LangGraph, ADK</div>
+      <h2 class="section-title">Where the OpenAI SDK fits.</h2>
+      <p class="section-lede">The OpenAI SDK and Anthropic SDK are mirror images: each is the first-party framework for one frontier vendor. Same shape (tool-use loop + sub-agent delegation + MCP) but different vendor alignment. LangGraph and ADK are the cross-vendor alternatives. Choose based on which model and cloud you're already on.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Dimension</th><th>OpenAI Agents SDK</th><th>Anthropic Agent SDK</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Default model</strong></td><td>GPT + o-series (works against any OpenAI-compatible API)</td><td>Claude-only</td></tr>
+          <tr><td><strong>Sub-agent pattern</strong></td><td>Handoffs (peer transfer)</td><td>Task tool (parent spawns)</td></tr>
+          <tr><td><strong>Built-in tracing</strong></td><td>OpenAI Platform dashboard, on by default</td><td>OTel + Anthropic console</td></tr>
+          <tr><td><strong>Guardrails</strong></td><td>First-class primitive</td><td>Build your own with hooks</td></tr>
+          <tr><td><strong>Reasoning model integration</strong></td><td>Native (o-series)</td><td>Native (extended thinking)</td></tr>
+          <tr><td><strong>MCP support</strong></td><td>Native</td><td>Native (Anthropic-originated)</td></tr>
+          <tr><td><strong>Hosted tools</strong></td><td>Web search, file search, computer use</td><td>Computer use; web search via MCP server</td></tr>
+          <tr><td><strong>Voice</strong></td><td>Separate Realtime API</td><td>Separate audio endpoints</td></tr>
+          <tr><td><strong>Best fit</strong></td><td>Production agents on GPT, teams on OpenAI/Azure</td><td>Production agents on Claude, MCP-heavy stacks</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The honest cross-SDK answer</h4>
+      <p>Pick the vendor SDK that matches your model. <strong>If you're on GPT, use the OpenAI Agents SDK; if you're on Claude, use the Anthropic Agent SDK.</strong> The first-party SDKs give you tracing, model-specific optimisations, and tighter integration with their respective tooling. Use LangGraph when you want explicit graphs or vendor-neutral. Use ADK when you're on GCP. Use multiple together via A2A when production has multiple surfaces.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 USE CASES -->
+<section id="use">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Use cases</div>
+      <h2 class="section-title">Where the OpenAI SDK earns its keep.</h2>
+      <p class="section-lede">Six patterns that play to the SDK's strengths: structured handoffs, guardrails, automatic tracing, hosted tools, OpenAI's reasoning quality.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <ul>
+        <li><strong>Customer support routing &amp; handoff</strong> &mdash; the SDK's signature use case. A triage agent classifies and hands off to billing / technical / sales specialists. Handoff primitives + guardrails + tracing make this the cleanest framework for this pattern.</li>
+        <li><strong>Function-calling-heavy backend agents</strong> &mdash; OpenAI's function-calling has been the most reliable in the field since 2023. SDK + GPT for any agent where structured tool dispatch is the load-bearing capability.</li>
+        <li><strong>RAG-driven assistants</strong> &mdash; pair the SDK with OpenAI's hosted file_search tool for the path-of-least-resistance RAG. Self-hosted vector DBs work too via custom tools, but file_search is the fastest "ask the company" agent.</li>
+        <li><strong>Reasoning workflows on o-series</strong> &mdash; o3 / o-series models for problems that need explicit thinking. The SDK handles routing the reasoning context cleanly; sub-agents on cheaper tiers handle the simpler steps.</li>
+        <li><strong>Computer-use agents</strong> &mdash; OpenAI has its own computer-use API (vision + clicks). The SDK wraps it. Useful for legacy SaaS automation where there's no API to call.</li>
+        <li><strong>Internal automation with audit trails</strong> &mdash; the automatic tracing dashboard means &quot;every agent run, every tool call, every handoff&quot; is searchable in the OpenAI Platform. Audit becomes a UI query rather than custom logging.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Decision guide</div>
+      <h2 class="section-title">Pick the OpenAI SDK when. Skip when.</h2>
+      <p class="section-lede">Same logic as the Anthropic SDK leaf: if you've picked GPT as the model, this SDK is the natural choice. If you haven't, the model decision drives the framework decision. Picking the SDK without GPT only makes sense if you're using its OpenAI-compatible-API support to drive Ollama or vLLM &mdash; in which case the SDK is doing less work for you than its first-party path.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use OpenAI SDK when</h4>
+        <ul>
+          <li>GPT or o-series is your model &mdash; first-party SDK support is the win</li>
+          <li>Handoffs match your delegation pattern (peer transfer between specialists)</li>
+          <li>You want declarative guardrails baked in</li>
+          <li>Built-in tracing without setup matters &mdash; the OpenAI Platform dashboard is genuinely good</li>
+          <li>You're on Azure OpenAI for enterprise compliance posture</li>
+          <li>OpenAI's hosted tools (file_search, web_search, computer use) fit your use case</li>
+          <li>Function-calling reliability is load-bearing</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>You're on Claude &mdash; Anthropic SDK fits better</li>
+          <li>You need explicit graph control over agent flow &mdash; LangGraph wins</li>
+          <li>You want managed runtime + sessions out-of-the-box &mdash; ADK + Vertex AI Agent Engine</li>
+          <li>Voice / video native &mdash; Gemini Live (ADK) or OpenAI's separate Realtime API</li>
+          <li>Multi-vendor strategy without the SDK doing extra work &mdash; LangGraph is more vendor-neutral by default</li>
+          <li>You want the lightest-possible footprint &mdash; basic <code>openai</code> SDK with your own loop is smaller</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; South African context</div>
+      <h2 class="section-title">Where this lands in SA delivery work.</h2>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Enterprise &middot; Azure OpenAI in <code>South Africa North</code></h4>
+      <p>The Azure OpenAI Service hosts GPT models in <strong>Azure South Africa North</strong> (Johannesburg) for SA-resident inference, with Microsoft enterprise contracting and POPIA-compliant data handling. For SA banks, insurers, and telcos with existing Microsoft / Azure relationships, this is the structurally clean answer for OpenAI-on-OpenAI workloads. Caveats: not every model is available in every region (newest GPT releases sometimes lag US regions by weeks or months), and Azure pricing differs from OpenAI Platform pricing.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; OpenAI Platform direct</h4>
+      <p>For studios without enterprise residency requirements, going direct to OpenAI Platform is simpler and usually cheaper. Free tier covers pilots; usage-based billing scales to production. Tracing, evals, and prompt management all on the same Platform dashboard. The OpenAI ecosystem moves fast &mdash; new models / features land on Platform first, Azure second.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>FX exposure mitigations</h4>
+      <p>OpenAI is USD-billed. At pilot volume the cost is minor; at production volume it's a real line item. Same mitigations as the Claude leaf apply: <strong>tier routing</strong> (use cheaper models for routine traffic, escalate to flagship only when needed), <strong>prompt caching</strong> (OpenAI added this in late 2024 &mdash; significant cost saver for RAG and long-system-prompt agents), and the <strong>Batch API</strong> for nightly workloads (~50% discount). For SA studios watching FX, all three are worth wiring in from day one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Connections</div>
+      <h2 class="section-title">Where the OpenAI SDK links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. OpenAI Agents SDK in the Frameworks band; the GPT leaf in the Models band is its natural pairing.</div>
+      </a>
+      <a href="gpt.html" class="connect-node">
+        <span class="tag">agents/gpt</span>
+        <div class="skill">GPT &middot; OpenAI</div>
+        <div class="why">The model the SDK is built around. GPT-5 / GPT-4.x / o-series tiers, pricing, routing strategy &mdash; all detailed there.</div>
+      </a>
+      <a href="anthropic-agent-sdk.html" class="connect-node">
+        <span class="tag">agents/anthropic-agent-sdk</span>
+        <div class="skill">Anthropic Agent SDK</div>
+        <div class="why">The mirror-image first-party SDK for Claude. Same shape, different vendor. The OpenAI-vs-Anthropic SDK choice usually follows the model choice.</div>
+      </a>
+      <a href="mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">First-class tool integration in the SDK. OpenAI joined the MCP ecosystem in 2025; the SDK ships an MCP client.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">Common pairing &mdash; LangGraph for orchestration with explicit graphs, calling OpenAI-SDK-style sub-agents for execution. Both work well together via A2A.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">ADK supports OpenAI models via LiteLLM. Atypical (ADK is Gemini-first) but works for GCP-hosted teams who want GPT.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">The OpenAI SDK works against any OpenAI-compatible endpoint, including Ollama at <code>localhost:11434</code>. Pattern: SDK + Ollama for fully local agent dev.</div>
+      </a>
+      <a href="../tech/microsoft/" class="connect-node">
+        <span class="tag">tech/microsoft</span>
+        <div class="skill">Microsoft / Azure</div>
+        <div class="why">Azure OpenAI Service in <code>South Africa North</code> is the SA-residency-clean path for GPT workloads.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 09 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Primary sources.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://openai.github.io/openai-agents-python/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">OpenAI Agents SDK documentation</span>
+        <span class="r-url">openai.github.io/openai-agents-python</span>
+      </a>
+      <a href="https://github.com/openai/openai-agents-python" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; Python</span>
+        <span class="r-title">openai/openai-agents-python</span>
+        <span class="r-url">github.com/openai/openai-agents-python</span>
+      </a>
+      <a href="https://github.com/openai/openai-agents-js" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; TS</span>
+        <span class="r-title">openai/openai-agents-js</span>
+        <span class="r-url">github.com/openai/openai-agents-js</span>
+      </a>
+      <a href="https://platform.openai.com/traces" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tracing</span>
+        <span class="r-title">OpenAI Platform Traces dashboard</span>
+        <span class="r-url">platform.openai.com/traces</span>
+      </a>
+      <a href="https://platform.openai.com/docs/guides/agents" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">Building agents on the OpenAI Platform</span>
+        <span class="r-url">platform.openai.com/docs/guides/agents</span>
+      </a>
+      <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Hosting</span>
+        <span class="r-title">Azure OpenAI Service docs</span>
+        <span class="r-url">learn.microsoft.com/.../azure/ai-services/openai</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://openai.github.io/openai-agents-python/" target="_blank" rel="noopener">Agents SDK docs &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
