@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Node.js &mdash; know.2nth.ai</title>
+<meta name="description" content="Node.js — the original server-side JavaScript runtime. V8 engine, libuv event loop, npm ecosystem origin, 16 years of production track record. The default for most JavaScript backends, the runtime almost every npm package is tested against, and the safe choice when ecosystem maturity matters more than developer-loop ergonomics.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/tech/runtime/node">
+<meta property="og:title" content="Node.js &mdash; know.2nth.ai">
+<meta property="og:description" content="Node.js — V8 engine, libuv event loop, npm ecosystem origin, 16 years of production track record. The safe default when ecosystem maturity matters more than developer-loop ergonomics.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Node.js &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Node.js — V8 + libuv + npm. 16 years of production track record. The safe default for JavaScript backends.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.blue { border-left: 3px solid var(--blue-glow); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/runtime/node</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Runtime</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">runtime</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Node.js</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/runtime &middot; Node.js &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Sixteen years of <span class="gradient">production track record.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Node.js is the original server-side JavaScript runtime: V8 engine, libuv event loop, npm ecosystem origin. Not the fastest, not the trendiest &mdash; the safe default. Every npm package is tested against it; every cloud platform supports it; every regulated environment trusts it. When ecosystem maturity matters more than developer-loop ergonomics, Node is still the answer.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live since 2009</span>
+      <span class="pill accent">Engine &middot; V8</span>
+      <span class="pill">Built in C++</span>
+      <span class="pill">npm origin</span>
+      <span class="pill">LTS &middot; v22</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">JavaScript everywhere, since 2009.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Node.js is a JavaScript runtime built on Chrome's <strong>V8 engine</strong>, designed for non-blocking I/O via the <strong>libuv</strong> event loop. The original 2009 thesis &mdash; "JavaScript on the server, with an event-driven async model that scales better than thread-per-request" &mdash; reshaped the backend industry. Sixteen years later, that thesis is so settled it's invisible: Node is the default JavaScript runtime, and "the npm registry" is, in practice, the JavaScript ecosystem.</p>
+      <p>The runtime ships with: <strong>V8</strong> (the JS engine, shared with Chrome), <strong>libuv</strong> (the cross-platform async I/O library), and a curated set of native modules (<code>fs</code>, <code>http</code>, <code>crypto</code>, <code>stream</code>, <code>worker_threads</code>, <code>cluster</code>, etc.). Everything else &mdash; web frameworks, ORMs, test runners, bundlers, TypeScript compilers &mdash; comes from npm. Node is deliberately small at the core; the ecosystem is where the work happens.</p>
+      <p>The release cadence settles its own conservative rhythm: <strong>even-numbered releases (v18, v20, v22, v24) are LTS</strong> &mdash; supported for 30 months, the version most production deploys target. <strong>Odd-numbered releases (v19, v21, v23) are short-lived</strong>, used for previewing what the next LTS will adopt. As of 2026 the active LTS is v22; v24 ships LTS October 2026.</p>
+    </div>
+    <div class="info-card blue fade-up" style="transition-delay: 0.08s">
+      <h4>The settled architecture, in one breath</h4>
+      <p>Single-threaded JavaScript main loop, multi-threaded I/O via libuv's worker pool, V8 garbage collection, npm + node_modules dependency tree, CommonJS or ESM module resolution, native add-ons via NAPI, optional <code>worker_threads</code> for CPU-bound parallelism. Has been the same shape for a decade; will be the same shape for another decade.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Event loop, libuv, modules, npm.</h2>
+      <p class="section-lede">Most "Node knowledge" is really four things: how the event loop schedules work, how libuv multiplexes I/O, how the module system resolves imports, and how npm resolves dependency trees. Each is a small concept; together they account for almost everything that surprises a new Node developer.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The day-to-day commands:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c"># Install via nvm (recommended over system Node)</span>
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+nvm install --lts            <span class="c"># installs current LTS (v22 as of 2026)</span>
+nvm use --lts
+
+<span class="c"># Run scripts</span>
+<span class="k">node</span> server.js              <span class="c"># run a JS file</span>
+<span class="k">node</span> --watch server.js      <span class="c"># auto-reload on change (built-in since v18)</span>
+<span class="k">node</span> --env-file=.env app.js <span class="c"># load .env (built-in since v20)</span>
+
+<span class="c"># TypeScript — needs a compile/transpile step</span>
+<span class="k">npx tsx</span> server.ts          <span class="c"># tsx for development (esm-friendly)</span>
+<span class="k">npx ts-node</span> server.ts      <span class="c"># ts-node, the older default</span>
+
+<span class="c"># Built-in test runner (since v18, stable since v22)</span>
+<span class="k">node</span> --test
+<span class="k">node</span> --test --watch
+
+<span class="c"># Package management (npm bundled with Node)</span>
+<span class="k">npm install</span>                 <span class="c"># install dependencies</span>
+<span class="k">npm run script-name</span>         <span class="c"># run package.json script</span>
+<span class="k">npx some-cli</span>                 <span class="c"># run a CLI from a package</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p>The hello-world server, in vanilla Node:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.13s"><span class="c">// server.js — run with: node server.js</span>
+<span class="h">import</span> { createServer } <span class="h">from</span> <span class="s">"node:http"</span>;
+
+<span class="k">const</span> server = createServer((req, res) =&gt; {
+  <span class="k">if</span> (req.url === <span class="s">"/"</span>) {
+    res.writeHead(200, { <span class="s">"Content-Type"</span>: <span class="s">"text/plain"</span> });
+    res.end(<span class="s">"hello world"</span>);
+  } <span class="k">else</span> {
+    res.writeHead(404);
+    res.end(<span class="s">"not found"</span>);
+  }
+});
+
+server.listen(3000);</pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.16s">
+      <h4>What's actually new in modern Node (v18+)</h4>
+      <p>Built-in <code>fetch</code>, <code>WebSocket</code>, and <code>Web Streams</code> (since v18). Built-in <code>--watch</code> mode (v18) and <code>--env-file</code> (v20). Native <code>node:test</code> runner (v18, stable v22). Native <code>WebCrypto</code>. Stable Permission Model (<code>--experimental-permission</code> in v20). Modern Node has caught up to a lot of what tooling used to provide externally. Worth re-reading the v22 changelog if you last did so before v18.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Six places Node still bites in 2026.</h2>
+      <p class="section-lede">Node is the safe default, not a perfect runtime. Most of its rough edges are 16-year-old design decisions that became load-bearing &mdash; you can't fix them without breaking the world. Knowing which ones to expect saves a week of debugging.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>ESM and CommonJS interop</strong>
+        <p>Node supports both ECMAScript Modules (<code>import</code>) and CommonJS (<code>require</code>). The interop is mostly fine, occasionally surprising. Default export semantics differ; top-level <code>await</code> only works in ESM; <code>__dirname</code> and <code>require</code> aren't defined in ESM. Pick one mode per project where possible; if you must mix, read the Node docs on <code>"exports"</code> field carefully.</p>
+      </div>
+      <div class="gotcha">
+        <strong>node_modules is structurally absurd</strong>
+        <p>The "give every dependency its own copy of every dependency" model produces folder trees with hundreds of thousands of files. Most of the install-speed and disk-usage problems Bun / pnpm solve are about working around this. <code>npm ci</code> in CI helps; pnpm's content-addressable store helps more.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Single-threaded by default</strong>
+        <p>JavaScript runs on one thread. CPU-bound work blocks the event loop &mdash; everything stops, including incoming requests. Use <code>worker_threads</code> for CPU-bound tasks, or offload to a different process. The async I/O is non-blocking; the actual JS code is not.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Native addon ABI churn</strong>
+        <p>Pre-NAPI, native addons (<code>node-gyp</code> compiled C++) broke between Node major versions. NAPI fixed most of this but legacy packages still exist. Always pin the addon's known-good Node version range; check the package's release notes when bumping Node majors.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Cold start on serverless</strong>
+        <p>Node's cold-start time (~30-50ms) plus your application's bootstrap (often 200ms-1s loading dependencies) makes serverless functions feel sluggish on first request. Keep dependency count down, use bundling for serverless deploys, consider Cloudflare Workers (V8 isolates have ~5ms cold start) for cold-start-sensitive workloads.</p>
+      </div>
+      <div class="gotcha">
+        <strong>TypeScript still needs a build step</strong>
+        <p>Despite years of demand, Node still doesn't run <code>.ts</code> files natively (v23 added <code>--experimental-strip-types</code>; not stable). Use <code>tsx</code>, <code>ts-node</code>, <code>tsc --watch</code>, or a bundler. This is the gap Bun and Deno specifically address.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DECISION GUIDE -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">When Node is the right answer.</h2>
+      <p class="section-lede">"Just use Node" is unfashionable but usually correct. The cases where Node is genuinely the wrong choice are narrower than the discourse suggests &mdash; mostly cold-start-sensitive serverless and developer-ergonomics-first greenfield. For everything in the middle, Node's ecosystem maturity wins on the merits.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Stay on Node when</h4>
+        <ul>
+          <li>Production system with mature dependency chains &mdash; risk asymmetric to migrating</li>
+          <li>Heavy use of native addons (image processing, ML, native crypto, system bindings)</li>
+          <li>Targeting Cloudflare Workers (V8 isolates run Node-compat best)</li>
+          <li>Strict regulated environment &mdash; auditors trust 16 years more than 3</li>
+          <li>Long-running server processes &mdash; cold start matters less, ecosystem matters more</li>
+          <li>Team locked into Node-specific APIs (<code>worker_threads</code>, <code>vm</code>, deep <code>cluster</code>)</li>
+          <li>You'd rather be boring and ship than tweet about your runtime choice</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Consider Bun (or Deno) when</h4>
+        <ul>
+          <li>Greenfield project &mdash; you're choosing the stack, not migrating</li>
+          <li>Cold start matters &mdash; CLI tools, edge functions, short-lived agents</li>
+          <li>TypeScript-heavy &mdash; you want to skip the build chain entirely</li>
+          <li>Monorepo with frequent installs &mdash; install speed compounds across the team</li>
+          <li>Developer ergonomics &mdash; "one tool replacing five" is the value proposition</li>
+          <li>Native test runner / bundler / package manager all in one binary</li>
+          <li>The team is small enough to investigate edge-case package failures quickly</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>The hybrid pattern that's becoming common</h4>
+      <p><strong>Bun for local dev (fast install + fast test + native TypeScript), Node for production (mature long-tail + battle-tested).</strong> The <code>package.json</code> stays compatible; only the Bun-specific APIs (<code>Bun.serve</code>, <code>Bun.write</code>) need a fallback path. Many teams who started "Bun in production" experiments in 2024 settled on this hybrid by 2025 &mdash; it captures the developer-loop wins without staking production on a 3-year-old runtime. See <a href="bun.html" style="color:var(--sky)">tech/runtime/bun</a> for the full case.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where Node links in the tree.</h2>
+      <p class="section-lede">Node is the runtime layer beneath an enormous fraction of know.2nth.ai's content &mdash; Cloudflare Workers' Node compat, Frappe's bench, npm-installed CLIs across the tree, every Drizzle deployment. Where another runtime is mentioned (Bun, Deno, browser JS), Node is usually the alternative or the fallback.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">tech/runtime</span>
+        <div class="skill">Runtime hub</div>
+        <div class="why">The sub-tree landing. Comparison frame across Node, Bun, Deno; the four shared principles (cold start, ecosystem, TypeScript, single-tool ergonomics).</div>
+      </a>
+      <a href="bun.html" class="connect-node">
+        <span class="tag">tech/runtime/bun</span>
+        <div class="skill">Bun</div>
+        <div class="why">The sister leaf. Same content shape, opposite default position. Read both if you're picking a stack; the comparison table makes the decision concrete.</div>
+      </a>
+      <a href="../cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Workers run on V8 isolates with a Node compatibility layer that's mature enough for most production workloads. The way most Node code reaches the edge in 2026.</div>
+      </a>
+      <a href="../frameworks/drizzle.html" class="connect-node">
+        <span class="tag">tech/frameworks/drizzle</span>
+        <div class="skill">Drizzle ORM</div>
+        <div class="why">Drizzle works identically on Node, Bun, and Workers. Most teams using Drizzle in production today are using it on Node + Postgres or Node + SQLite.</div>
+      </a>
+      <a href="../frappe/framework.html" class="connect-node">
+        <span class="tag">tech/frappe/framework</span>
+        <div class="skill">Frappe Framework</div>
+        <div class="why">Frappe is Python, but its frontend tooling and the bench installer rely on Node + npm. The Frappe build chain is one of the more complex Node use cases in the tree.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/runtime/deno</span>
+        <div class="skill">Deno</div>
+        <div class="why">The third runtime &mdash; from Node's original creator, with security defaults reversed (no FS access without permission), URL-based imports, and web-API-first stdlib. Different design from Bun.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">Node's docs are comprehensive and well-organised; the changelog is the canonical place to learn what's new. The Node Foundation's release schedule and the LTS roadmap are the load-bearing artifacts for production planning.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://nodejs.org" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">nodejs.org</span>
+        <span class="r-url">nodejs.org</span>
+      </a>
+      <a href="https://nodejs.org/api/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Node.js API reference</span>
+        <span class="r-url">nodejs.org/api</span>
+      </a>
+      <a href="https://github.com/nodejs/Release" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Schedule</span>
+        <span class="r-title">Release &amp; LTS schedule</span>
+        <span class="r-url">github.com/nodejs/Release</span>
+      </a>
+      <a href="https://github.com/nodejs/node" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">nodejs/node</span>
+        <span class="r-url">github.com/nodejs/node</span>
+      </a>
+      <a href="https://github.com/nvm-sh/nvm" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Tool</span>
+        <span class="r-title">nvm &middot; Node version manager</span>
+        <span class="r-url">github.com/nvm-sh/nvm</span>
+      </a>
+      <a href="https://www.npmjs.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Registry</span>
+        <span class="r-title">npm registry</span>
+        <span class="r-url">npmjs.com</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Runtime hub</a>
+      <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
