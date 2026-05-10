@@ -2,192 +2,180 @@
 
 ## What this is
 
-**know.2nth.ai** is the knowledge portal and skills tree browser for 2nth.ai. It serves structured knowledge that humans read and AI agents consume as operational context. Every skill node is simultaneously an explainer (for humans), a context document (for agents), and an operational guide (for agent-managed infrastructure).
+**know.2nth.ai** is the public knowledge tree for the 2nth.ai ecosystem — a static HTML portal of explainer "leaves" grouped under top-level domains. Every leaf is both a human-readable reference and an agent-consumable context document.
 
-This is part of the broader 2nth.ai ecosystem:
-- **2nth.ai** — the framework and GTM site (Human + AI = 2ⁿ)
+Sibling sites in the ecosystem:
+- **2nth.ai** — framework / GTM site (Human + AI = 2ⁿ)
+- **dev.2nth.ai** — partner / Gridline / openBUILD AI source content (Construction domain pulls from here)
 - **2nth.io** — compute infrastructure layer
-- **know.2nth.ai** — knowledge portal and skills tree (this project)
 - **imbila.ai** — parent consultancy brand
 
-## Project structure
+## Repo & deploy
+
+- **GitHub**: `2nth-ai/know-2nth` (default branch `main`)
+- **Hosting**: Cloudflare Pages, project `know-2nth`, custom domain `know.2nth.ai`
+- **Deploy is manual.** The Pages project is NOT wired to GitHub — `git push` does not deploy. Production updates only happen when someone runs `npx wrangler pages deploy . --project-name=know-2nth --branch=main` from the repo root.
+- **Implication**: git and prod can drift in both directions. Uncommitted local files will deploy; committed files won't ship until the wrangler command is run. After every PR merge, pull main and run the deploy.
+
+## Repo layout
 
 ```
 know-2nth/
-├── CLAUDE.md              # This file
-├── index.html             # Portal landing page
-├── explainers/            # Individual skill node pages
-│   ├── infra/             # Infrastructure domain
-│   ├── ai/                # AI & ML domain
-│   ├── security/          # Security & Identity domain
-│   ├── data/              # Data & Observability domain
-│   ├── business/          # Business Operations domain
-│   └── professional/      # Professional Services domain
-├── assets/
-│   ├── css/               # Shared styles if extracted
-│   └── img/               # Logos, favicons, og-images
-└── api/                   # Cloudflare Workers for agent context API
-    └── context/           # Returns skill nodes as structured JSON/MD
+├── CLAUDE.md
+├── index.html                # root: 12 top-level domain cards
+├── about.html                # access model + how the site works
+├── join.html                 # HubSpot signup form (soft conversion play)
+├── gate.js                   # tier-gate hook, loaded on every leaf, currently inert
+├── og-image.jpg              # 1200×630 OG / Twitter card
+├── og-image.svg              # source for the OG image
+├── _redirects                # Cloudflare Pages redirects
+├── google-adk-explainer.md   # canonical source markdown for ADK leaf (PR #17)
+└── explainers/
+    ├── agents/        # Frameworks, Protocols, Models, Inference (the strategic priority)
+    ├── biz/           # ERP, CRM, HR — has erp/ and crm/ sub-hubs
+    ├── construction/  # openBIM + Gridline / openBUILD AI partner-anchored
+    ├── data/          # analytics/, warehousing/, engineering/ sub-hubs
+    ├── design/        # tokens, components, motion, AI-assisted design
+    ├── partners/      # co-branded leaves (no hub yet, not on root grid)
+    ├── people/        # coaching, leadership, typologies/
+    └── tech/          # cloudflare/, google/, microsoft/, frappe/, runtime/, android-hce/, embedded/, frameworks/
 ```
+
+Five additional domains exist on the root grid as cards but have **no folder yet**: `edu`, `fin`, `health`, `iot`, `leg`. Building any of them out means: create `explainers/<domain>/index.html` hub, ship at least one Live leaf, then the root card becomes meaningful.
+
+## How leaves are built
+
+- **Static HTML, no build step, no framework.** Every leaf is a self-contained `.html` with its CSS duplicated inline at the top. Deliberate — keeps each leaf independent and editable directly.
+- **To author a new leaf**: copy a similar existing leaf as a template, then rewrite the body. Examples by type:
+  - Framework topic → `explainers/agents/langgraph.html`
+  - Model topic → `explainers/agents/claude.html`
+  - Inference / serving → `explainers/agents/vllm.html`
+  - Cloud product → `explainers/tech/cloudflare/workers.html`
+- **Leaf section pattern** (7–9 numbered sections, varies by topic):
+  - `01 · What it is` — definition, problem solved
+  - `02 · How it works` / `vs alternatives` — concepts, comparison
+  - `03–05 · Ecosystem / Use cases / Pricing reality` — domain-appropriate
+  - `0N · Decision guide` — use when / skip when
+  - `0N · South African context` — SA delivery framing
+  - `0N · Connections` — links elsewhere in the tree
+  - `0N · Resources` — primary sources only
+- **Section labels**: JetBrains Mono, 11px, uppercase, 2px letter-spacing, sky colour. Format: `01 · Section name`.
+
+## Hubs and stubs
+
+Hubs (`explainers/<domain>/index.html` and sub-hubs) list their leaves as cards. Two patterns coexist:
+
+- `svc-card` / `svc-card soon` — used by `agents`, `tech/*`, `construction`, `design`
+- `hub-card` / `leaf-card` (with `soon` variant) — used by `biz`, `data`, `people`, `tech` (root)
+
+Both work; pick whichever the surrounding hub uses. **Stubs use the `soon` modifier**; flipping a stub to Live = swap `<div class="…-card soon">` for `<a href="…" class="…-card">`. After flipping, bump any "N Live" count in the hub heading and on the matching root domain card.
 
 ## Design system
 
-### Fonts
-- **Outfit** — headings and body text (weights: 300, 400, 500, 600, 700, 800)
-- **JetBrains Mono** — code, labels, section markers, badges, nav brand
-- Never use Inter, Roboto, Arial, or system defaults as primary
-
-### Colour palette (CSS variables)
-| Token | Dark value | Usage |
-|-------|-----------|-------|
-| `--ink` | `#0B1120` | Page background |
-| `--navy` | `#121D33` | Raised surfaces |
-| `--blue` | `#2563EB` | Primary accent |
-| `--blue-glow` | `#3B82F6` | Primary accent (lighter) |
-| `--sky` | `#38BDF8` | Secondary accent, links |
-| `--paper` | `#F8FAFC` | Text on dark |
-| `--slate` | `#94A3B8` | Secondary text |
-| `--warm` | `#F59E0B` | Business/partner accent |
-| `--green` | `#10B981` | Security/open tier accent |
-| `--violet` | `#8B5CF6` | AI/ML domain accent |
-| `--rose` | `#F43F5E` | Professional services accent |
-
-### Domain colour mapping
-- Infrastructure → blue
-- AI & ML → violet
-- Security & Identity → green
-- Data & Observability → sky
-- Business Operations → warm/amber
-- Professional Services → rose
+### Fonts (loaded from Google Fonts)
+- **Outfit** — body, headings (300, 400, 500, 600, 700, 800)
+- **JetBrains Mono** — code, labels, badges, nav brand
 
 ### Theme
 - Dark mode is default (`data-theme="dark"`)
-- Light mode toggle available, persists via localStorage
-- All colours through CSS custom properties — never hardcode hex in HTML
+- Light mode toggle persists via localStorage
+- All colours come from CSS custom properties — never hardcode hex in body markup. Define new tokens at `:root` if needed.
+
+### Colour tokens (in `:root`)
+| Token | Value | Used for |
+|---|---|---|
+| `--ink` | `#0B1120` | page bg (dark) |
+| `--ink-deep` | `#060A14` | code-block bg |
+| `--navy` | `#121D33` | raised surfaces |
+| `--blue` / `--blue-glow` | `#2563EB` / `#3B82F6` | primary accent (tech) |
+| `--sky` / `--sky-muted` | `#38BDF8` / `#7DD3FC` | secondary accent (data) |
+| `--paper` / `--mist` / `--slate` | `#F8FAFC` / `#E2E8F0` / `#94A3B8` | text on dark |
+| `--green` (+ `--green-soft`) | `#10B981` | fin / success |
+| `--warm` (+ `--warm-soft`) | `#F59E0B` | biz / edu |
+| `--violet` (+ `--violet-soft`) | `#8B5CF6` | health / design |
+| `--rose` (+ `--rose-soft`) | `#F43F5E` | leg / people |
+
+### Domain → accent mapping (root index)
+| Domain | Accent |
+|---|---|
+| tech | `--blue` |
+| biz, edu | `--warm` |
+| data, iot | `--sky` |
+| fin | `--green` |
+| leg, people | `--rose` |
+| health, design | `--violet` |
+| construction | `#EA580C` (custom orange) |
+| agents | `#6366F1` (custom indigo) |
 
 ### Component patterns
-- **Section labels**: JetBrains Mono, 11px, uppercase, leterspacing 2px, sky colour. Format: `01 · Section Name`
-- **Cards**: `var(--bg-card)` background, backdrop-filter blur, 1px border, 20px radius, hover lift + border glow
-- **Pills/badges**: JetBrains Mono, 10-11px, pill radius, domain-coloured background
-- **Buttons**: Outfit font, pill radius, primary = blue gradient, ghost = transparent + border
-- **Fade-in**: `.fade-up` class with IntersectionObserver, 24px translate, 0.6s ease
+- **Cards**: `var(--bg-card)` background, `backdrop-filter: blur(10px)`, 1px border, 20px radius (`--radius-lg`), hover lift + border glow.
+- **Pills / badges**: JetBrains Mono, 10–11px, pill radius (`--radius-pill: 100px`), domain-coloured background.
+- **Buttons**: Outfit, pill radius. Primary = blue→sky gradient. Ghost = transparent + 1px border.
+- **Fade-in**: `.fade-up` with IntersectionObserver, ~24px translate, 0.6s ease.
 
-### Radii
-- `--radius-sm`: 8px
-- `--radius-md`: 12px
-- `--radius-lg`: 20px
-- `--radius-pill`: 100px
+## Tier-gating: currently inert
 
-## Explainer pages
+Per PR #15, **all content is open**. `gate.js` is loaded on every leaf (~95 files) but does nothing because no element on the site carries `data-tier="member"`. The hook is wired to set a `2nth-know-member` localStorage flag on successful HubSpot form submit (typically from `/join.html`).
 
-Individual skill nodes follow the **imbila-explainer** pattern adapted for 2nth.ai branding:
+**Don't add new `data-tier="member"` attributes when authoring leaves** — they will silently do nothing now and create cleanup work later. Re-gating is a Phase 2 decision tied to magic-link auth; until then, the conversion play is the `/join` form for tracking who's reading.
 
-### Key differences from imbila.ai explainers
-- Nav brand: `know.2nth.ai` not `Imbila.AI`
-- Colour system: blue/sky/ink palette, not honey accent
-- Font: Outfit + JetBrains Mono, not DM Sans
-- Footer links: 2nth.ai, imbila.ai, 2nth.io
-- Section 08 becomes "2ⁿ Perspective" — how this skill compounds in the tree, what it connects to, how agents use it
-- Agent context callout: each explainer should include a "Load this context" section or download for agent consumption
+## Voice
 
-### Section pattern for explainers
-```
-01 · What Is [Topic]        — Definition, problem it solves, flow diagram
-02 · Why It Matters          — Stats, adoption, key numbers
-03 · How It Works            — Core concepts (3-5), code examples
-04 · The Ecosystem           — Related tools, comparison table
-05 · Use Cases               — Real-world applications as card grid
-06 · Evolution               — Timeline from origin to current
-07 · Decision Guide          — "Use when" vs "Skip when"
-08 · 2ⁿ Perspective          — How this node connects, compounds, agent usage
-09 · Resources               — Official links, sources, agent context download
-```
-
-## Three-tier access model
-
-| Tier | Gate | Content |
-|------|------|---------|
-| **Explore** (Open) | None | All technology explainers, framework overviews, decision guides |
-| **Build** (Member) | Email signup | Operational skill nodes, context bundles, deployment templates, learning paths |
-| **Compound** (Partner) | Contact/invite | Private branches, co-branded nodes, institutional knowledge capture |
-
-## Deployment
-
-- **Hosting**: Cloudflare Pages (static site), project `know-2nth`
-- **Domain**: `know.2nth.ai` subdomain
-- **Deploy model**: **manual via wrangler** — the Pages project is NOT wired to GitHub. `git push` does nothing. Deploys happen only when someone runs `wrangler pages deploy` from this directory.
-- **Implication**: git and prod can drift in both directions. Local-only files will deploy; committed files won't ship until the command is run.
-- **Auth**: Cloudflare Access for member tier gating
-- **Agent API**: Cloudflare Workers at `/api/context/[domain]/[skill]` — returns skill node as structured markdown or JSON
-- **Repo**: GitHub under imbilawork org (`imbilawork/know-2nth`)
-
-## Content voice
-
-Same as imbila.ai voice system:
+Same voice system as imbila.ai:
 - Sharp, experienced colleague — not a corporate brochure
 - Anti-hype: no "cutting-edge", "revolutionary", "paradigm shift"
 - Honest decision guides — tell people when NOT to use the technology
 - South African voice — natural, not performative
 - Technical depth without jargon gatekeeping
+- Sources-validated: cite primary sources only in the Resources section
 
-## Agent context format
+## Daily workflow
 
-When serving content to agents (via API or download), each skill node should include:
-
-```markdown
-# [Skill Name]
-## Domain: [domain]
-## Connects to: [list of related skill nodes]
-## Last updated: [date]
-
-### What this is
-[1-2 sentence definition]
-
-### Key concepts
-[Structured list of core concepts with brief explanations]
-
-### Operational patterns
-[Deployment, configuration, and integration patterns]
-
-### Connection map
-[How this skill interacts with adjacent nodes in the tree]
-
-### Decision context
-[When to use, when to skip, key tradeoffs]
-```
-
-## Commands
+The shipping pattern from the PR #17–#25 batch is **one git worktree per feature**, off `origin/main`, so the main checkout stays clean and multiple Claude Code terminals can run different features in parallel without colliding.
 
 ```bash
-# Local dev
-npx serve .                          # Serve locally for preview
+# From the main checkout, on main
+git fetch origin main
+git worktree add ../know-2nth-<short> -b chore/<feature> origin/main
+cd ../know-2nth-<short>
 
-# Commit to git (does NOT deploy)
-git add explainers/path/to/file.html
-git commit -m "msg"
-git push origin main
+# Work, commit specific files (avoid -A — keeps secrets out)
+git add explainers/<path>/<file>.html
+git commit -m "Author <topic> leaf"
+git push -u origin chore/<feature>
 
-# Deploy to production (know.2nth.ai) — separate step, run from this directory
-cd /Users/craigleppan/2nth/know.2nth
+# Open and merge the PR
+gh pr create --base main --head chore/<feature> --title "…" --body "…"
+gh pr merge <PR#> --squash --delete-branch
+
+# Clean up the worktree
+cd ../know-2nth          # or wherever the main checkout lives on this Mac
+git worktree remove ../know-2nth-<short>
+git branch -D chore/<feature>
+git pull origin main
+
+# Deploy (manual)
 npx wrangler pages deploy . --project-name=know-2nth --branch=main
-# wrangler uploads whatever is in the current directory, including
-# uncommitted files. Running from the wrong directory uploads every
-# nested project and trips the 25 MiB file limit — always cd first.
-
-# Create new explainer
-# Use Claude with imbila-explainer skill adapted for 2nth branding
-# Save to explainers/[domain]/[topic].html
 ```
 
-## Current state (April 2025)
+The local path of the main checkout varies per machine. On the primary Mac it's `~/2nth/know.2nth`; the `know-2nth-setup.html` reference doc at the repo's parent directory documents the canonical setup for that machine.
 
-- [x] Landing page built (index.html)
-- [ ] Domain browse pages
-- [ ] Individual explainer pages migrated/adapted from imbila pattern
-- [ ] Cloudflare Pages deployment
-- [ ] Cloudflare Access for member tier
-- [ ] Agent context API (Workers)
-- [ ] Content manifest (JSON index of all skill nodes)
-- [ ] Signup flow
-- [ ] Search
-- **Target**: May 1, 2025 go-live with landing page + initial explainers in Explore tier
+## Common operations
+
+- **Add a leaf to an existing domain**: copy a similar leaf → rewrite hero + sections + meta → flip the matching `soon` card on the domain hub to Live → bump Live count on the hub and on the root domain card if shown → worktree → PR → merge → deploy.
+- **Add a new top-level domain**: pick a unique colour + emoji → add CSS rule for `.domain-card[data-domain="X"]` in root `index.html` → add the card to `.domains-grid` → bump "N domains" count in the section title → build `explainers/X/index.html` hub → ship at least one Live leaf so the domain isn't empty on launch.
+- **Author from source markdown**: when a `*-explainer.md` file lands in the repo root (like `google-adk-explainer.md`), it's the canonical source — mine it for the rendered HTML leaf and preserve the primary-source-only discipline.
+- **OG / Twitter meta sweep**: every leaf needs the standard `og:title / og:description / og:image / twitter:card / twitter:title / twitter:description / twitter:image` block. The site's OG image is `/og-image.jpg` (source: `/og-image.svg`).
+
+## Pre-deploy sanity check
+
+```bash
+git pull origin main && git log --oneline -3 && git status --short
+```
+
+Confirm latest commit is the one just merged, working tree is clean, on `main`. Then `npx wrangler pages deploy …`.
+
+## What's NOT in this repo
+
+- The other 2nth-ai sites (`2nth.ai`, `dev.2nth.ai`, `agents.2nth.ai`, `clients.2nth.ai`, `skills.2nth.ai`, `2nth-skills.pages.dev`) are separate repos with their own deploy flows.
+- There is no agent-context API (`/api/context/…`) and no Workers in this repo. If a structured-export endpoint is added later, document it here.
