@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Llama &mdash; know.2nth.ai</title>
+<meta name="description" content="Llama — Meta's open-weights model family. The most-used open-weights workhorse in the field, with the largest community fine-tune ecosystem of any model family. Llama 3.x and Llama 4 generations cover 1B / 8B / 70B / 405B sizes plus vision variants. Available on Hugging Face, Ollama, Together AI, Groq, AWS Bedrock, and Vertex AI Model Garden. Permissive licence with commercial restrictions only over 700M monthly active users — practically open for almost every business case.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/llama">
+<meta property="og:title" content="Llama &mdash; know.2nth.ai">
+<meta property="og:description" content="Llama — Meta's open-weights flagship. Largest community ecosystem. 1B/8B/70B/405B sizes + vision variants. Runs on Ollama, Together, Groq, Bedrock. Open for almost every business case.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Llama &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Llama — Meta's open-weights flagship. Largest community fine-tune ecosystem. The open-weights workhorse for non-multimodal production work.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/llama</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Llama</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Llama &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Open weights, <span class="gradient">at frontier scale.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Llama is Meta's open-weights model family &mdash; the most-deployed open-weights family in the world by a meaningful margin, with the largest community fine-tune ecosystem of any model. The Llama 3.x and Llama 4 generations cover sizes from 1B (mobile / edge) to 405B+ (frontier-scale, runs on small-server GPUs). Vision variants, code variants, instruction-tuned and base variants all ship. Available through Hugging Face, Ollama, Together AI, Groq, AWS Bedrock, Vertex AI Model Garden, and direct from llama.com. Permissive licence with commercial restrictions only above 700M monthly active users &mdash; practically open for almost every business.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Llama 3.x &amp; Llama 4 &middot; current</span>
+      <span class="pill indigo">Open weights</span>
+      <span class="pill accent">1B &middot; 8B &middot; 70B &middot; 405B+</span>
+      <span class="pill warn">Llama Community Licence</span>
+      <span class="pill">Largest fine-tune ecosystem</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">Meta's open-weights flagship.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Llama is the model family from <strong>Meta AI</strong>, originally launched in February 2023 with Llama 1 (which leaked publicly and arguably catalysed the entire open-weights movement) and continued through Llama 2 (July 2023, the first commercially-licensed Meta open-weights release), Llama 3 (April 2024), Llama 3.1 (July 2024), Llama 3.2 (September 2024, including vision), Llama 3.3 (December 2024), and Llama 4 (early 2025). Each release ships in multiple sizes covering edge devices through small-server GPUs.</p>
+      <p>Where Gemma is the <em>frontier-lab</em> open-weights family from Google DeepMind, Llama is the <em>workhorse</em> open-weights family. The structural advantages: <strong>the largest community fine-tune ecosystem of any model</strong> (tens of thousands of community fine-tunes on Hugging Face), <strong>broad inference platform support</strong> (every credible LLM hosting provider supports Llama as a default), and <strong>steady frontier-adjacent quality</strong> (Llama 70B and 405B class models are competitive with mid-tier closed models on most general-purpose benchmarks).</p>
+      <p>Distribution is wide. Direct downloads from <a href="https://www.llama.com" target="_blank" rel="noopener" style="color:var(--sky)">llama.com</a> with licence acceptance. Hugging Face hosts the canonical model cards. Ollama exposes Llama as one of its default model collections (<code>ollama run llama3.3</code>). Hosted inference: Together AI, Groq (specialises in low-latency Llama inference at production scale), Fireworks, AWS Bedrock (in <code>af-south-1</code> for SA residency on some variants), Google Vertex AI Model Garden. The <strong>distribution breadth</strong> is itself the practical advantage &mdash; you can swap hosting providers without changing the model.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The licence reality &middot; Llama Community Licence</h4>
+      <p>Llama is <strong>not</strong> released under a fully open licence like Apache 2.0 or MIT. The <strong>Llama Community Licence</strong> permits free commercial use except for organisations with more than 700 million monthly active users at the time the model is released &mdash; in which case Meta requires you to request a separate licence. This affects only a handful of global tech companies. For 99.9% of business users, it's a practically permissive licence. The other notable restriction: Meta requires you to display "Built with Llama" attribution on user-facing applications, and you can't use Llama outputs to train competing models. Read <a href="https://www.llama.com/llama3/license/" target="_blank" rel="noopener" style="color:var(--sky)">the licence text</a> if your use case might fall in the edge cases.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 THE LINEUP -->
+<section id="lineup">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The lineup</div>
+      <h2 class="section-title">Five sizes, two generations actively current.</h2>
+      <p class="section-lede">Llama 3.x and Llama 4 are the active generations as of mid-2026. Llama 4 represents the modern frontier of the family with native multimodal and longer context; Llama 3.x remains widely deployed for production work and has the biggest community fine-tune library. The size points are deliberate &mdash; each maps to a hardware target most teams have access to.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Size &middot; edge</span>
+        <h4>1B / 3B</h4>
+        <p>Phones, edge devices, lightweight serverless. On-device assistants, classification, basic chat. Llama 3.2 1B / 3B are the canonical size points; Llama 4 nano-class continues the trajectory.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Size &middot; default</span>
+        <h4>8B</h4>
+        <p>Laptops, single GPU 12GB+. The "good enough for most things" tier; runs comfortably on consumer hardware and is the default for many open-weights production deployments. Llama 3.3 8B is the most-fine-tuned 8B class model in the field.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Size &middot; flagship</span>
+        <h4>70B</h4>
+        <p>RTX 4090 / single H100 / multi-GPU server. Where Llama starts feeling competitive with mid-tier closed-frontier models. The most popular size for production self-hosted deployments. Llama 3.3 70B and Llama 4 70B-class models are workhorses.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Size &middot; frontier</span>
+        <h4>405B / Maverick</h4>
+        <p>Multi-H100 / cluster. Llama 3.1 405B and Llama 4 frontier variants. Genuine frontier-adjacent quality on hard reasoning. Most teams access this via hosted providers (Together AI, Groq) rather than self-hosting.</p>
+      </div>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>Vision and code variants</h4>
+      <p><strong>Llama 3.2 Vision</strong> ships in 11B and 90B variants with vision-text understanding. <strong>Llama 4</strong> brings native multimodal across the family at most size points. <strong>Code Llama</strong> (the code-specialised variant) is now largely superseded by general Llama variants for code, plus dedicated open-weights coding models (Qwen Coder, DeepSeek Coder). For specifically code-heavy work, Qwen 2.5 Coder remains a stronger pick than Llama at most size points.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 VS OTHER MODELS -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs Gemma, Qwen, Mistral, closed frontier</div>
+      <h2 class="section-title">Where Llama is the right pick.</h2>
+      <p class="section-lede">Honest open-weights positioning. Llama's strengths sit on community ecosystem reach, hosting breadth, and steady frontier-adjacent quality. Its weaknesses are around vision (Gemma is more consistent), code (Qwen Coder is stronger), and the &gt;700M MAU licence edge cases. Against closed frontier (Claude, GPT, Gemini), Llama wins on cost predictability and residency, loses on absolute frontier-tier reasoning quality.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Family</th><th>Strengths</th><th>Watch out for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Llama (Meta)</strong></td><td>Largest fine-tune ecosystem, broadest hosting, steady production quality, runs on Ollama</td><td>700M MAU restriction; "Built with Llama" attribution; vision less consistent than Gemma; code lags Qwen</td></tr>
+          <tr><td><strong>Gemma (Google)</strong></td><td>Frontier-lab safety tuning, native multimodal, 128k context, more permissive licence terms</td><td>Smaller community fine-tune ecosystem than Llama; smaller deployment surface</td></tr>
+          <tr><td><strong>Qwen (Alibaba)</strong></td><td>Best open-weights for code (Qwen Coder), strong multilingual, fast cadence</td><td>Chinese training emphasis means English benchmarks slightly lag; less Western community presence</td></tr>
+          <tr><td><strong>Mistral</strong></td><td>Function-calling reliability, French / European multilingual, strong instruction-following</td><td>Smaller variant range than Llama; less open ecosystem; some variants are commercial-licence-restricted</td></tr>
+          <tr><td><strong>Claude / GPT / Gemini</strong></td><td>Frontier reasoning quality on hardest tasks, native extended thinking / search grounding / 1M context</td><td>Closed weights; USD billing; cross-border data residency concerns</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Why Llama is still the open-weights default</h4>
+      <p>Several open-weights families now match or exceed Llama on specific tasks &mdash; Gemma on multimodal safety tuning, Qwen on code, Mistral on function-calling. <strong>What Llama still has that none of them match: ecosystem breadth.</strong> If you self-host, you'll find the most pre-built fine-tunes for Llama. If you use hosted inference, you'll find the most provider options for Llama. If you read research papers, you'll see Llama as the baseline. That ecosystem-network-effect is durable, and explains why Llama remains the default choice when the team doesn't have a specific reason to prefer something else.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 PRICING REALITY -->
+<section id="pricing">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Pricing &amp; hosting reality</div>
+      <h2 class="section-title">Free to download, multiple paths to run.</h2>
+      <p class="section-lede">The model weights are free under the Llama Community Licence; you pay for compute. Three structurally different cost paths: self-host on your hardware (cheapest at high volume, highest ops cost), run on Ollama for local dev (free), use hosted inference providers (per-token billing, no ops). The right answer depends on volume, latency requirements, and operational appetite.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Local &middot; dev</span>
+        <h4>Ollama</h4>
+        <p><code>ollama run llama3.3</code> for instant local inference. Free, fast, works offline. Default for development and prototyping. Quantised by default; full precision available on capable hardware.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Self-host &middot; prod</span>
+        <h4>vLLM / TensorRT-LLM</h4>
+        <p>Production-grade serving on your own GPUs. PagedAttention, continuous batching, OpenAI-compatible API. Cheapest per-token at high volume but highest operational complexity (GPU management, scaling, monitoring).</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Hosted &middot; speed</span>
+        <h4>Groq</h4>
+        <p>Specialises in extreme low-latency Llama inference using their custom LPU hardware. Often 5-10&times; faster than other hosted providers. The right pick for latency-sensitive production agents.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Hosted &middot; throughput</span>
+        <h4>Together AI / Fireworks</h4>
+        <p>Production hosted-inference providers with the broadest Llama variant catalogue. Per-token pricing similar to closed-frontier flash tiers. The most-flexible hosted path for production workloads.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Cloud &middot; managed</span>
+        <h4>AWS Bedrock</h4>
+        <p>Llama on Bedrock with regional residency including <code>af-south-1</code> Cape Town for SA-resident inference. Microsoft enterprise contracting model. The path for SA enterprise that wants AWS commercial relationships.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Cloud &middot; managed</span>
+        <h4>Vertex AI Model Garden</h4>
+        <p>Llama on Vertex AI with regional residency including <code>africa-south1</code> Johannesburg. Path for SA enterprise on GCP. Some Llama variants only available in US regions; check the model availability matrix.</p>
+      </div>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>The cost-per-token reality</h4>
+      <p>Llama 70B on hosted providers (Together, Fireworks) typically costs <em>well below</em> Claude Haiku or GPT-4o-mini per token. Llama 405B / Maverick costs more but still meaningfully below frontier closed models. <strong>For volume workloads where the closed frontier's quality lift isn't structurally required, Llama via hosted inference can be 5-10&times; cheaper than running everything on Claude Sonnet or GPT-5.</strong> The pattern that wins: tier-route Haiku/Sonnet/Opus or Llama-8B/70B/405B based on task difficulty, mixing both closed and open as needed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Decision guide</div>
+      <h2 class="section-title">When Llama is the right model.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use Llama when</h4>
+        <ul>
+          <li>You want the largest open-weights community fine-tune library</li>
+          <li>Cost predictability matters &mdash; per-token costs are meaningfully below closed frontier</li>
+          <li>POPIA / data-residency forbids closed-frontier US-hosted inference</li>
+          <li>You self-host on your own GPUs and want broad inference-server support</li>
+          <li>You need the broadest hosting-provider flexibility (Together / Groq / Bedrock / Vertex)</li>
+          <li>You're building dev tools or research where Llama is the de-facto baseline</li>
+          <li>Latency-sensitive workloads where Groq's LPU speed is structural</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>You need frontier reasoning quality &mdash; Claude Opus / GPT-5 / Gemini Ultra still lead</li>
+          <li>1M+ context is structural &mdash; Gemini wins on extreme context</li>
+          <li>You hit the 700M MAU edge case &mdash; rare, but check before committing at scale</li>
+          <li>Native search grounding matters &mdash; Gemini's grounding is the only credible answer</li>
+          <li>Code-specific workloads at smaller sizes &mdash; Qwen Coder is structurally stronger</li>
+          <li>Frontier-lab safety tuning on multimodal &mdash; Gemma is a more consistent open-weights pick</li>
+          <li>You want the absolute simplest licensing &mdash; Apache 2.0 / MIT models avoid attribution requirements</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; South African context</div>
+      <h2 class="section-title">Where Llama lands in SA delivery work.</h2>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Enterprise &middot; AWS Bedrock <code>af-south-1</code></h4>
+      <p>For SA banks, insurers, telcos, and government with POPIA cross-border concerns, <strong>Llama on AWS Bedrock in Cape Town (<code>af-south-1</code>)</strong> is one of the cleanest residency stories. Not every Llama variant lands in Bedrock <code>af-south-1</code> at launch &mdash; check the model availability matrix &mdash; but Llama 3.x 70B and the Llama 4 mid-tier are typically available with full regional residency. AWS enterprise contracting handles the commercial side; the data stays on-region.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; Ollama + Together</h4>
+      <p>The cheap and fast SA studio path: develop locally on Ollama-Llama 70B (free, runs on a maxed MacBook), ship to Together AI or Groq for production. Together's per-token costs are very competitive; Groq's LPU latency is genuinely best-in-class for chat agents. <strong>For most SA studios watching FX, the Llama-on-Together pattern is meaningfully cheaper than Claude or GPT for the same quality bar at production volume.</strong> Tier-route to closed frontier only for the genuinely hard 5-15% of traffic.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>Self-hosting on Hetzner / on-prem</h4>
+      <p>Hetzner has no SA region; their nearest GPU-equipped DC is Helsinki / Frankfurt. For genuinely SA-resident self-hosted Llama, options narrow to: GCP Johannesburg with custom GPU instances, AWS Cape Town with EC2 GPU SKUs, or local hosting providers with GPU SKUs. None are as cheap as Hetzner, but all keep data SA-resident. For most SA studios, the self-hosting path makes sense only at scale (above ~50M tokens / month) where the per-token economics structurally beat hosted inference.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Connections</div>
+      <h2 class="section-title">Where Llama links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. Llama in the Models band as the open-weights workhorse alongside Gemma.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">The default local serving path for Llama. <code>ollama run llama3.3</code> is the canonical "try it" command. Most SA studio dev work runs through this combination.</div>
+      </a>
+      <a href="gemma.html" class="connect-node">
+        <span class="tag">agents/gemma</span>
+        <div class="skill">Gemma</div>
+        <div class="why">The other major open-weights family. Gemma leads on multimodal and frontier-lab safety tuning; Llama leads on community ecosystem and hosting breadth. Often paired in production stacks.</div>
+      </a>
+      <a href="claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude</div>
+        <div class="why">The closed-frontier comparison. Common production pattern: Llama-via-Together for routine traffic, Claude for the hardest 5-15%. Tier routing across closed + open is the cost-optimal path.</div>
+      </a>
+      <a href="gpt.html" class="connect-node">
+        <span class="tag">agents/gpt</span>
+        <div class="skill">GPT &middot; OpenAI</div>
+        <div class="why">Same pattern as Claude. GPT for hardest reasoning, Llama for volume. Llama via Together is the practical alternative when GPT-5 cost or POPIA residency is the constraint.</div>
+      </a>
+      <a href="gemini.html" class="connect-node">
+        <span class="tag">agents/gemini</span>
+        <div class="skill">Gemini</div>
+        <div class="why">Closed-frontier with extreme context. Pair Gemini for 1M-context analysis steps with Llama for routing and high-volume routine work &mdash; both can run via Vertex Model Garden in <code>africa-south1</code>.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">Vendor-neutral framework that pairs naturally with Llama. <code>langchain-community</code> integrations cover Together, Groq, Bedrock, Vertex Llama hosting endpoints uniformly.</div>
+      </a>
+      <a href="../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Cloudflare Workers AI hosts a curated subset of Llama variants. Useful for low-latency edge-served Llama agents without standing up dedicated infrastructure.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 08 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.llama.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">llama.com</span>
+        <span class="r-url">llama.com</span>
+      </a>
+      <a href="https://github.com/meta-llama/llama-models" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">meta-llama/llama-models</span>
+        <span class="r-url">github.com/meta-llama/llama-models</span>
+      </a>
+      <a href="https://huggingface.co/meta-llama" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Weights</span>
+        <span class="r-title">Hugging Face &middot; meta-llama org</span>
+        <span class="r-url">huggingface.co/meta-llama</span>
+      </a>
+      <a href="https://www.llama.com/llama3/license/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Licence</span>
+        <span class="r-title">Llama Community Licence</span>
+        <span class="r-url">llama.com/llama3/license</span>
+      </a>
+      <a href="https://ollama.com/library/llama3.3" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Local serve</span>
+        <span class="r-title">Llama 3.3 on Ollama</span>
+        <span class="r-url">ollama.com/library/llama3.3</span>
+      </a>
+      <a href="https://docs.together.ai/docs/inference-models" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Hosted serve</span>
+        <span class="r-title">Together AI Llama hosting</span>
+        <span class="r-url">docs.together.ai/docs/inference-models</span>
+      </a>
+      <a href="https://groq.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Hosted serve</span>
+        <span class="r-title">Groq &middot; low-latency Llama inference</span>
+        <span class="r-url">groq.com</span>
+      </a>
+      <a href="https://aws.amazon.com/bedrock/llama/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Cloud</span>
+        <span class="r-title">Llama on AWS Bedrock</span>
+        <span class="r-url">aws.amazon.com/bedrock/llama</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://www.llama.com" target="_blank" rel="noopener">llama.com &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
