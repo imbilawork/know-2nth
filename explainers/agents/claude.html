@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude &mdash; know.2nth.ai</title>
+<meta name="description" content="Claude — Anthropic's flagship model family. Three production tiers: Opus 4.7 for hardest reasoning, Sonnet 4.6 for everyday agent work, Haiku 4.5 for high-volume routing. 200k standard context, 1M extended on premium tiers. Native extended thinking, MCP-first tool layer, vision and computer-use built in. The default for production agents that need long-context reasoning, reliable function-calling, and instruction-following beyond what open-weights models reach.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/claude">
+<meta property="og:title" content="Claude &mdash; know.2nth.ai">
+<meta property="og:description" content="Claude — Anthropic's flagship family. Opus 4.7 / Sonnet 4.6 / Haiku 4.5. 200k–1M context, extended thinking, MCP-native, vision + computer use. The default for reasoning-heavy production agents.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Claude &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Claude — Opus 4.7 / Sonnet 4.6 / Haiku 4.5. Extended thinking, MCP-native, vision + computer use. The default for reasoning-heavy production agents.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/claude</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Claude</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Claude &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Reasoning quality, <span class="gradient">priced and tiered.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Claude is Anthropic's flagship model family. Three production tiers in 2026: <strong>Opus 4.7</strong> for the hardest reasoning, <strong>Sonnet 4.6</strong> for everyday agent work, <strong>Haiku 4.5</strong> for high-volume routing and classification. 200k standard context window, 1M extended on premium tiers. Native extended thinking, MCP-first tool layer, vision and computer use built in. The default for production agents that need long-context reasoning, reliable function-calling, and instruction-following beyond what current open-weights models reach.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Claude 4.x family &middot; current</span>
+      <span class="pill indigo">Opus 4.7 &middot; Sonnet 4.6 &middot; Haiku 4.5</span>
+      <span class="pill accent">200k &rarr; 1M context</span>
+      <span class="pill warn">Extended thinking</span>
+      <span class="pill">MCP-native</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">Anthropic's flagship family.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Claude is the model family from <strong>Anthropic</strong>, the AI safety company founded in 2021 by former OpenAI researchers. The first Claude model shipped in early 2023; the family has been on a steady release cadence since, with Claude 4.x being the current generation as of mid-2026.</p>
+      <p>Where GPT and Gemini compete on raw capability and ecosystem reach, Claude has historically led on three things: <strong>instruction-following reliability</strong> (does what you ask, even when you ask weird things), <strong>long-context reasoning quality</strong> (uses 200k+ context windows well, doesn't degrade like cheaper models), and <strong>safety-focused behaviour</strong> (refuses cleanly, hallucinates less in adversarial domains, avoids the "confidently wrong" failure mode that plagues mid-tier models). Those three properties make it the default choice for production agents that have to be right and have to be auditable.</p>
+      <p>Distribution: Claude is available via the <strong>Anthropic API</strong> directly, via <strong>AWS Bedrock</strong> (including in <code>af-south-1</code> Cape Town for SA-resident calls), via <strong>Google Cloud Vertex AI</strong>, via the <strong>Claude.ai web app</strong>, the <strong>Claude Desktop</strong> app, the <strong>Claude Code</strong> CLI, and through every major aggregator (OpenRouter, LangSmith, etc.). Enterprise plans include Claude Enterprise with SSO, audit logging, and admin controls.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The family naming convention</h4>
+      <p>Claude versions follow <code>Claude {Tier} {Major.Minor}</code>. <strong>Tier</strong> is the size class (Opus / Sonnet / Haiku &mdash; large / medium / small). <strong>Major</strong> is the model generation; <strong>minor</strong> is the within-generation iteration. So <strong>Claude Opus 4.7</strong> is the seventh Opus 4.x release. The full model ID for API calls drops the "Claude" prefix and uses dashes: <code>claude-opus-4-7</code>, <code>claude-sonnet-4-6</code>, <code>claude-haiku-4-5</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 THE LINEUP -->
+<section id="lineup">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The Claude 4.x lineup</div>
+      <h2 class="section-title">Three tiers, one quality curve.</h2>
+      <p class="section-lede">The Claude family is deliberately tiered. Each tier is meaningfully cheaper than the one above and meaningfully less capable on the hardest tasks. The right production pattern is multi-tier routing: Haiku for the volume work, Sonnet for the default, Opus for the hard cases. The Anthropic Agent SDK supports this routing trivially &mdash; sub-agents can run on different tiers.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Tier &middot; frontier</span>
+        <h4>Claude Opus 4.7</h4>
+        <p>The hardest-reasoning tier. Best for: deep research, complex code review, multi-step planning, agentic problem-solving. Frontier-level on reasoning benchmarks. Most expensive of the three. 200k standard / 1M extended context.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Tier &middot; default</span>
+        <h4>Claude Sonnet 4.6</h4>
+        <p>The "good for almost everything" tier. ~80% of Opus quality at meaningfully lower cost. The right default for most production agents. 200k context. Most teams' day-to-day workhorse.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Tier &middot; volume</span>
+        <h4>Claude Haiku 4.5</h4>
+        <p>The fastest, cheapest tier. Best for: classification, routing, summarisation, structured-extraction at high throughput. Lower reasoning depth but very fast and cheap. Good fit for "first-pass" agents that escalate to Sonnet/Opus when needed.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Capability &middot; cross-tier</span>
+        <h4>All tiers ship</h4>
+        <p>Tool use / function calling, vision (image input), MCP-native integration, JSON mode for structured outputs, extended thinking on Opus and Sonnet, computer use on Sonnet (vision + UI control), 200k+ context, streaming.</p>
+      </div>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>Extended thinking &mdash; the Claude differentiator</h4>
+      <p>Claude Opus and Sonnet 4.x support <strong>extended thinking</strong>: when the prompt indicates complex reasoning is required, the model can allocate a separately-billed thinking-token budget to "think before answering" &mdash; producing internal reasoning traces that improve final answer quality on hard tasks. The Anthropic Agent SDK exposes this as <code>thinking={"budget_tokens": 16000}</code>. Most other model families either don't have this or expose it only via specialised "reasoning" SKUs (OpenAI's o-series, Gemini Thinking).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 VS OTHER MODELS -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs GPT, Gemini, Llama</div>
+      <h2 class="section-title">Where Claude is the right pick &mdash; and where it isn't.</h2>
+      <p class="section-lede">Honest cross-family positioning. Each model family has a real strength and a real constraint. Most production stacks in 2026 use multiple families for different work; few teams pick one and use it for everything.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Family</th><th>Strengths</th><th>Watch out for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Claude (Anthropic)</strong></td><td>Best instruction-following, strong long-context reasoning, native extended thinking, tight MCP integration</td><td>Closed model; USD billing; rate limits hit hard at high volume on free tier</td></tr>
+          <tr><td><strong>GPT (OpenAI)</strong></td><td>Largest API ecosystem, broadest tooling, strong structured outputs, leading on multimodal extremes</td><td>Voice / video / DALL-E billed separately; more "confidently wrong" failure mode than Claude</td></tr>
+          <tr><td><strong>Gemini (Google)</strong></td><td>Largest context window (1M+ on Pro/Ultra), native search grounding, voice via Live API, GCP integration</td><td>Less consistent on instruction-following than Claude; Gemini-only via ADK/Vertex unless via OpenRouter</td></tr>
+          <tr><td><strong>Llama (Meta, open-weights)</strong></td><td>Open weights, runs locally via Ollama, largest community fine-tune ecosystem</td><td>Smaller frontier gap; instruction-following lags Claude/GPT; Meta licence has commercial restrictions over 700M MAU</td></tr>
+          <tr><td><strong>Gemma (Google, open-weights)</strong></td><td>Open weights, multimodal, frontier-lab safety tuning, runs locally</td><td>Smaller community fine-tune ecosystem than Llama; not as code-strong as Qwen-coder</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>The hybrid that's actually shipping in 2026</h4>
+      <p>Most production agent teams use <strong>two or three model families together</strong>. Common patterns: Claude for the orchestrator + reasoning steps, GPT for tool-calling-heavy sub-agents, local Ollama-Gemma for PII-bearing pre-processing, Gemini for very-long-context tasks (1M+). The Agents domain hub frames this explicitly: "the question isn't which framework or which model, it's which framework where and which model when." Multi-model is the production reality.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 PRICING REALITY -->
+<section id="pricing">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Pricing reality</div>
+      <h2 class="section-title">Frontier-tier pricing, with real production trade-offs.</h2>
+      <p class="section-lede">Claude is not cheap at the frontier tier. Sonnet 4.6 is meaningfully more affordable than Opus 4.7 and very close in quality &mdash; for most production work, Sonnet is the right default. Haiku 4.5 is cheap enough for high-volume tasks. Pricing is USD per million tokens, with separate input and output rates, and extended thinking tokens billed at output rate. Always check <a href="https://www.anthropic.com/pricing" target="_blank" rel="noopener" style="color:var(--sky)">anthropic.com/pricing</a> for current numbers &mdash; the rates here are accurate to mid-2026 but Anthropic adjusts pricing as model generations evolve.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The shape of the pricing curve</strong> (illustrative; check the official page for exact numbers):</p>
+      <ul>
+        <li><strong>Opus 4.7</strong> &mdash; frontier-tier rates. Output tokens billed roughly 5&times; input. Extended thinking tokens billed at output rate. The most expensive tier.</li>
+        <li><strong>Sonnet 4.6</strong> &mdash; meaningfully cheaper than Opus, similar 5&times; output multiplier. The right default for production volume.</li>
+        <li><strong>Haiku 4.5</strong> &mdash; cheapest of the three by an order of magnitude. The right tier for routing, classification, and structured extraction at scale.</li>
+        <li><strong>Prompt caching</strong> &mdash; 90% discount on cached input tokens for repeated context. Significant cost saver for RAG agents that share common prompts across calls.</li>
+        <li><strong>Batch API</strong> &mdash; 50% discount on input + output for non-urgent batch workloads. Useful for nightly processing.</li>
+      </ul>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>The cost-saving routing pattern</h4>
+      <p>Build a Haiku-driven router as the first agent in the chain. It classifies incoming requests by type and difficulty, then dispatches to: a Haiku agent for simple cases (60%+ of traffic typically), a Sonnet agent for the default case, and an Opus agent only for the genuinely hard cases (5-15% typically). This pattern can cut Claude costs by 50-80% versus running everything on a single tier. The Anthropic Agent SDK's sub-agent pattern fits this routing model directly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Decision guide</div>
+      <h2 class="section-title">When Claude is the right model. When it isn't.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use Claude when</h4>
+        <ul>
+          <li>Instruction-following reliability is load-bearing &mdash; the model has to do exactly what you ask</li>
+          <li>Long-context reasoning matters (200k+ tokens, real use of the context)</li>
+          <li>You want extended thinking for hard reasoning steps</li>
+          <li>You're building production agents that need auditable behaviour</li>
+          <li>MCP-native tool integration is a feature you want</li>
+          <li>Computer-use or vision-heavy workflows where Claude leads</li>
+          <li>You're already standardised on Claude (most SA enterprise that's picked one frontier model)</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip Claude when</h4>
+        <ul>
+          <li>POPIA / data-residency forbids cross-border to US (mitigate via AWS Bedrock <code>af-south-1</code>)</li>
+          <li>Cost-sensitive at extreme scale &mdash; open-weights via Ollama is cheaper</li>
+          <li>You need 1M+ context windows &mdash; Gemini Pro / Ultra leads</li>
+          <li>Voice / video native &mdash; Gemini Live or specialised voice APIs</li>
+          <li>DALL-E or specialised image-gen integration &mdash; OpenAI ecosystem fits</li>
+          <li>You want a fully open / self-hostable model &mdash; Claude is closed</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; South African context</div>
+      <h2 class="section-title">Where Claude lands in SA delivery work.</h2>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Enterprise &middot; AWS Bedrock <code>af-south-1</code> as the residency-clean path</h4>
+      <p>For SA enterprise (banks, insurers, telcos) with POPIA cross-border concerns, <strong>AWS Bedrock in Cape Town hosts Claude Sonnet and Haiku</strong> with full SA data residency. That's the structurally clean answer for PII-bearing workloads &mdash; data stays on-region, audit logs flow into CloudWatch, IAM controls integrate with existing AWS posture. Opus 4.7 availability on Bedrock <code>af-south-1</code> can lag the Anthropic API by weeks; if you need bleeding-edge Opus, plan for direct API access with documented Section 72 cross-border consent flows.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; the daily-driver tier</h4>
+      <p>Many SA studios have made Claude the daily driver via Claude Code (the CLI), Claude Desktop, or Cursor's Claude integration. The honest reality: <strong>this site was substantially written with Claude</strong> running through Claude Code. For studio dev work where productivity-per-engineer matters more than per-token cost, Claude is hard to beat &mdash; and the SDK leaf in this domain explains how to extend that productivity into your own production agents.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>FX exposure note</h4>
+      <p>Claude is USD-billed. At pilot volume (single-digit thousands of requests / month), the cost is invisible. At production volume, it's a real line item. Mitigations that work in practice: (a) the Haiku router pattern in the previous section, (b) prompt caching for RAG agents, (c) the Batch API for nightly workloads, (d) hybrid local+cloud where Ollama-Gemma 3 handles the 60-80% of work that doesn't need frontier reasoning. Most SA studios that run Claude in production end up with all four mitigations in place.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Connections</div>
+      <h2 class="section-title">Where Claude links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. Claude sits in the Models band; the Anthropic Agent SDK in the Frameworks band is its natural framework pairing.</div>
+      </a>
+      <a href="anthropic-agent-sdk.html" class="connect-node">
+        <span class="tag">agents/anthropic-agent-sdk</span>
+        <div class="skill">Anthropic Agent SDK</div>
+        <div class="why">The Claude-first agent framework. MCP-native, Task-tool sub-agents, native extended thinking. The default SDK if Claude is your model.</div>
+      </a>
+      <a href="mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">Anthropic-originated. Claude is MCP's reference consumer; Claude Desktop's MCP integration is the canonical pattern.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">Most-common LangGraph pairing &mdash; LangGraph + Claude is one of the production stacks. Use <code>langchain-anthropic</code> for the integration.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">ADK supports Claude via LiteLLM. The combination is unusual (ADK is Gemini-first) but works for teams on GCP infrastructure who want Claude as the model.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">The local-inference complement. Common hybrid: Claude for hard reasoning + Ollama-Gemma for high-volume PII pre-processing. Cost and POPIA story improves significantly.</div>
+      </a>
+      <a href="gemma.html" class="connect-node">
+        <span class="tag">agents/gemma</span>
+        <div class="skill">Gemma</div>
+        <div class="why">The open-weights complement. When Claude is overkill or POPIA-residency requires local inference, Gemma 3 27B is the pragmatic step down.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">agents/gpt</span>
+        <div class="skill">GPT &middot; OpenAI</div>
+        <div class="why">The major frontier alternative. Different strengths (broader API ecosystem, more multimodal extremes); often used together with Claude in multi-model production stacks.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.anthropic.com/claude" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">anthropic.com/claude</span>
+        <span class="r-url">anthropic.com/claude</span>
+      </a>
+      <a href="https://docs.anthropic.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Anthropic API documentation</span>
+        <span class="r-url">docs.anthropic.com</span>
+      </a>
+      <a href="https://www.anthropic.com/pricing" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Pricing</span>
+        <span class="r-title">anthropic.com/pricing</span>
+        <span class="r-url">anthropic.com/pricing</span>
+      </a>
+      <a href="https://docs.anthropic.com/en/docs/about-claude/models" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Models</span>
+        <span class="r-title">Model card &amp; capability matrix</span>
+        <span class="r-url">docs.anthropic.com/.../models</span>
+      </a>
+      <a href="https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Feature</span>
+        <span class="r-title">Extended thinking docs</span>
+        <span class="r-url">docs.anthropic.com/.../extended-thinking</span>
+      </a>
+      <a href="https://aws.amazon.com/bedrock/claude/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Hosting</span>
+        <span class="r-title">Claude on AWS Bedrock (af-south-1)</span>
+        <span class="r-url">aws.amazon.com/bedrock/claude</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://www.anthropic.com/claude" target="_blank" rel="noopener">Claude &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
