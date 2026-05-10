@@ -168,15 +168,17 @@
   <div class="container">
     <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Top-level domain hub</div>
     <h1 class="fade-up" style="transition-delay: 0.05s">
-      Six frameworks. <span class="gradient">Two protocols. One layer.</span>
+      Frameworks, protocols, <span class="gradient">models, inference. The full stack.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      The Agents domain is the operational heart of know.2nth.ai going forward. Now that the data layer (BI, warehousing, engineering) and systems-of-record (ERP, CRM, construction BIM) are in place, the orchestration question is which agentic framework runs the work and which protocol it speaks. Six frameworks worth taking seriously, two protocols (A2A and MCP) that make them composable, and the principle that agents are software &mdash; not prompt soup.
+      The Agents domain is the operational heart of know.2nth.ai going forward. Now that the data layer and systems-of-record are in place, agents are how that infrastructure turns into work. The full stack lives here: <strong>frameworks</strong> (how agents orchestrate), <strong>protocols</strong> (how they talk to each other and to tools), <strong>models</strong> (what they actually call), and <strong>inference platforms</strong> (where models run). All four layers matter. Most production agent stacks in 2026 have a strong opinion at every layer.
     </p>
     <div class="hub-stats fade-up" style="transition-delay: 0.15s">
       <div class="hub-stat"><div class="num">6</div><div class="label">Frameworks</div></div>
       <div class="hub-stat"><div class="num">2</div><div class="label">Protocols</div></div>
-      <div class="hub-stat"><div class="num">1</div><div class="label">Live leaf</div></div>
+      <div class="hub-stat"><div class="num">5</div><div class="label">Models</div></div>
+      <div class="hub-stat"><div class="num">4</div><div class="label">Inference</div></div>
+      <div class="hub-stat"><div class="num">5</div><div class="label">Live leaves</div></div>
     </div>
   </div>
 </section>
@@ -187,7 +189,7 @@
     <div class="fade-up">
       <div class="hub-label">01 &middot; Skills</div>
       <h2 class="hub-title">The agentic stack, mapped.</h2>
-      <p class="hub-lede">Each framework has its own canonical leaf with the same content shape: hero + what-it-is + how-it-works + ecosystem + use-cases + decision-guide + SA-context + connections + resources. The protocol leaves (A2A, MCP) cover the cross-framework interop layer that makes mixing frameworks practical.</p>
+      <p class="hub-lede">Each leaf follows the same content shape: hero + what-it-is + how-it-works + ecosystem + decision-guide + SA-context + connections + resources. Four bands organise the sub-tree: orchestration <strong>frameworks</strong>, the interop <strong>protocols</strong> that connect them, the <strong>models</strong> they call, and the <strong>inference platforms</strong> that run those models.</p>
     </div>
 
     <!-- Frameworks -->
@@ -260,22 +262,121 @@
     </div>
     <div class="svc-grid fade-up" style="transition-delay: 0.03s">
 
-      <div class="svc-card soon">
+      <a href="a2a.html" class="svc-card">
         <div class="svc-head">
           <div class="svc-name">A2A Protocol</div>
-          <span class="svc-state soon">Soon</span>
+          <span class="svc-state live">Live</span>
         </div>
         <span class="svc-path">agents/a2a</span>
         <p>Agent-to-Agent Protocol. JSON-RPC over HTTP, Agent Card discovery at <code>/.well-known/agent-card.json</code>, streaming and push notifications. Released by Google, now under Linux Foundation governance. The cross-framework interop layer that makes "ADK orchestrates LangGraph and CrewAI" practical.</p>
+      </a>
+
+      <a href="mcp.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Model Context Protocol</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">agents/mcp</span>
+        <p>The tool / data protocol. Anthropic-originated, broadly adopted. Lets any framework consume tools and data from any MCP server. ADK's <code>MCPToolset</code>, Claude Desktop's MCP integrations, Cursor's MCP support &mdash; all the same protocol. The lingua franca of agent tooling in 2026.</p>
+      </a>
+
+    </div>
+
+    <!-- Models -->
+    <div class="category-band fade-up">
+      <span class="c-label">Models &middot; 5</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="gemma.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Gemma</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">agents/gemma</span>
+        <p>Google's open-weights family from the Gemini research line. Gemma 3 (March 2025) ships at 270M / 1B / 4B / 12B / 27B with multimodal vision-text and 128k context. The strongest "frontier-lab safety tuning" choice in open weights; runs locally via Ollama or in production via vLLM and Vertex AI Model Garden.</p>
+      </a>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Claude</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/claude</span>
+        <p>Anthropic's flagship family. Claude Opus / Sonnet / Haiku tiers. Closed model, frontier reasoning, native MCP and tool-use, extended thinking. The default for production agents that need long-context reasoning and reliable function-calling.</p>
       </div>
 
       <div class="svc-card soon">
         <div class="svc-head">
-          <div class="svc-name">Model Context Protocol</div>
+          <div class="svc-name">GPT &middot; OpenAI</div>
           <span class="svc-state soon">Soon</span>
         </div>
-        <span class="svc-path">agents/mcp</span>
-        <p>The tool / data protocol. Anthropic-originated, broadly adopted. Lets any framework consume tools and data from any MCP server. ADK's <code>MCPToolset</code>, Claude Desktop's MCP integrations, Cursor's MCP support &mdash; all the same protocol. The lingua franca of agent tooling in 2026.</p>
+        <span class="svc-path">agents/gpt</span>
+        <p>OpenAI's flagship family. GPT-5 / GPT-4.x / o-series reasoning models. Closed model, native function-calling, broadest API ecosystem, embedding and DALL-E integrations. The default for teams already on OpenAI infrastructure.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Llama</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/llama</span>
+        <p>Meta's open-weights family. Largest community fine-tune ecosystem; Llama 3.3 / 4 series ship at 8B / 70B / 405B. The most-used open-weights workhorse for non-multimodal tasks; Meta-licence has commercial restrictions over 700M MAU.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Mistral / Qwen</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/mistral-qwen</span>
+        <p>The two strong "second-tier" open-weights families. Mistral Large 2 leads on function-calling reliability and European multilingual; Qwen 2.5 / Coder leads on code-specific work. Often the right pick when Gemma or Llama don't fit the use-case profile.</p>
+      </div>
+
+    </div>
+
+    <!-- Inference -->
+    <div class="category-band fade-up">
+      <span class="c-label">Inference &middot; 4</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="ollama.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Ollama</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">agents/ollama</span>
+        <p>Local LLM runtime. MIT-licensed, llama.cpp under the hood, OpenAI-compatible API at <code>localhost:11434</code>. <code>ollama run gemma3:4b</code> and the model works. The default for laptop / single-machine / dev work. POPIA-friendly, FX-free, load-shedding-resilient.</p>
+      </a>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">vLLM</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/vllm</span>
+        <p>Production-grade inference server for open-weights models. PagedAttention, continuous batching, OpenAI-compatible API. The default when you've moved past Ollama and need real throughput on a dedicated GPU host.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">LiteLLM</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/litellm</span>
+        <p>Proxy / SDK that gives every model an OpenAI-compatible interface. ADK uses it under the hood for non-Gemini models. The seam where you can swap a Claude call for a local Ollama call by changing one config line.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">OpenRouter</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/openrouter</span>
+        <p>Hosted multiplexer over hundreds of models from dozens of providers. One API key, one billing relationship, every frontier model. The pragmatic choice for teams that want vendor flexibility without managing N billing relationships.</p>
       </div>
 
     </div>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ollama &mdash; know.2nth.ai</title>
+<meta name="description" content="Ollama — local LLM runtime, MIT-licensed, llama.cpp under the hood. Run Gemma, Llama, Qwen, Mistral, Phi, and 200+ open models on your laptop or on a Hetzner droplet. OpenAI-compatible API endpoint, zero cloud dependency, POPIA-friendly by default. The default local-inference platform for SA teams managing FX exposure on agent infrastructure.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/ollama">
+<meta property="og:title" content="Ollama &mdash; know.2nth.ai">
+<meta property="og:description" content="Ollama — local LLM runtime, MIT-licensed. Run Gemma, Llama, Qwen, Mistral, Phi, and 200+ open models on your laptop. OpenAI-compatible API, zero cloud dependency, POPIA-friendly. The default local-inference platform.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ollama &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Ollama — local LLM runtime. MIT-licensed, llama.cpp under the hood, OpenAI-compatible API. Run Gemma, Llama, Qwen, Mistral on your laptop. POPIA-friendly.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/ollama</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Ollama</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Ollama &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      LLMs on your laptop. <span class="gradient">No cloud. No FX bill.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Ollama is the simplest way to run LLMs locally. <code>ollama run gemma3:4b</code> and you have a working model. MIT-licensed, llama.cpp under the hood, OpenAI-compatible API endpoint at <code>http://localhost:11434</code>. Pull from a registry of 200+ open models &mdash; Gemma, Llama, Qwen, Mistral, Phi, DeepSeek, and the long tail of fine-tuned community variants. Zero cloud dependency, POPIA-friendly by default, the inference layer that survives load-shedding.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live since 2023</span>
+      <span class="pill indigo">MIT licensed</span>
+      <span class="pill accent">llama.cpp engine</span>
+      <span class="pill">200+ models</span>
+      <span class="pill">OpenAI-compatible API</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A registry, a runtime, and a really good developer experience.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Ollama is three things bundled into one CLI: <strong>a model registry</strong> (Docker-Hub-for-LLMs at <a href="https://ollama.com/library" target="_blank" rel="noopener" style="color:var(--sky)">ollama.com/library</a>), <strong>a local runtime</strong> built on top of <code>llama.cpp</code> for efficient quantised inference on CPU and GPU, and <strong>an OpenAI-compatible HTTP server</strong> running on <code>localhost:11434</code> that any agent framework can call as if it were OpenAI.</p>
+      <p>The core promise: <strong>"<code>ollama run gemma3:4b</code> and the model works."</strong> No CUDA setup, no Hugging Face authentication dance, no virtualenv configuration, no quantisation guessing. The CLI handles model pulls, GPU detection, KV cache management, context window sizing, and concurrent request scheduling. For a developer who just wants to test "does Llama 3.3 70B answer this query the way Claude does?" without standing up a Hugging Face Inference Endpoint, Ollama is the path of least resistance.</p>
+      <p>The runtime under Ollama is <strong>llama.cpp</strong> &mdash; Georgi Gerganov's open-source C++ inference engine. Ollama wraps llama.cpp in a Go server with model management, a registry, and an HTTP API. That's the whole architecture. No proprietary pieces; the underlying engine is the same one shipped in every other "run LLMs locally" project (LM Studio, Jan, GPT4All).</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Why "OpenAI-compatible" matters</h4>
+      <p>Ollama exposes <code>/v1/chat/completions</code> with OpenAI's exact request/response format. That means: <strong>any code written against the OpenAI SDK runs against Ollama by changing a single environment variable</strong> (<code>OPENAI_BASE_URL=http://localhost:11434/v1</code>). LangChain, LlamaIndex, OpenAI Agents SDK, ADK via LiteLLM, custom curl calls &mdash; all work unchanged. That's the structural advantage: Ollama isn't trying to win on its own API, it's trying to be the place OpenAI-compatible code lands when you don't want to pay OpenAI.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Pull, run, query. That's the whole loop.</h2>
+      <p class="section-lede">Three CLI verbs do most of the work. <code>ollama pull</code> downloads a model. <code>ollama run</code> starts it interactively. <code>ollama serve</code> exposes the HTTP API. The HTTP server runs in the background by default on macOS and Linux, so most users never explicitly call <code>serve</code> &mdash; the API is just always there at <code>localhost:11434</code>.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The day-to-day commands:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c"># Install (macOS / Linux)</span>
+curl -fsSL https://ollama.com/install.sh | sh
+
+<span class="c"># Or on macOS via Homebrew</span>
+brew install ollama
+
+<span class="c"># Pull and run a model — combined</span>
+<span class="k">ollama run</span> gemma3:4b
+<span class="k">ollama run</span> llama3.3:70b
+<span class="k">ollama run</span> qwen2.5-coder:32b
+
+<span class="c"># List local models, sizes, last-used</span>
+<span class="k">ollama list</span>
+
+<span class="c"># Remove a model to free disk</span>
+<span class="k">ollama rm</span> llama3.3:70b
+
+<span class="c"># Show GPU / CPU usage of running models</span>
+<span class="k">ollama ps</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>The HTTP API</strong> is OpenAI-shaped. Every framework that already speaks OpenAI works without modification:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.13s"><span class="c"># curl — direct OpenAI-format request</span>
+curl http://localhost:11434/v1/chat/completions \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{
+    "model": "gemma3:4b",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }'</span>
+
+<span class="c"># Python — OpenAI SDK pointed at Ollama</span>
+<span class="h">from</span> openai <span class="h">import</span> OpenAI
+
+client = OpenAI(<span class="h">base_url</span>=<span class="s">"http://localhost:11434/v1"</span>, <span class="h">api_key</span>=<span class="s">"ollama"</span>)
+resp = client.chat.completions.create(
+    <span class="h">model</span>=<span class="s">"gemma3:4b"</span>,
+    <span class="h">messages</span>=[{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: <span class="s">"Hello"</span>}]
+)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.16s">
+      <p><strong>Calling Ollama from ADK</strong> via LiteLLM (the model-agnostic layer ADK uses for non-Gemini models):</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.19s"><span class="h">from</span> google.adk.agents <span class="h">import</span> Agent
+<span class="h">from</span> google.adk.models.lite_llm <span class="h">import</span> LiteLlm
+
+local_model = LiteLlm(<span class="h">model</span>=<span class="s">"ollama/gemma3:4b"</span>)
+agent = Agent(<span class="h">name</span>=<span class="s">"local"</span>, <span class="h">model</span>=local_model,
+              <span class="h">instruction</span>=<span class="s">"You are a helpful assistant."</span>)</pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.22s">
+      <h4>Quantisation: why a 70B model fits on a MacBook</h4>
+      <p>llama.cpp ships quantised weights &mdash; 4-bit, 5-bit, 8-bit instead of 16-bit FP16. A 70B model that's 140GB at FP16 becomes ~40GB at Q4 &mdash; and quality on most tasks is barely affected. Ollama defaults to good quantisation choices per model; you can override (<code>ollama pull llama3.3:70b-q5_K_M</code>) for finer control. The economics: you can run "frontier-grade" 70B models on a 64GB consumer machine. Five years ago this required a $30k server.</p>
+    </div>
+  </div>
+</section>
+
+<section id="hardware">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Hardware reality</div>
+      <h2 class="section-title">What machine runs what model.</h2>
+      <p class="section-lede">The honest answer most "run local LLMs" guides skip. Different model sizes need different hardware. Below is the rough fit as of mid-2026, assuming Q4 quantisation (Ollama's default) and reasonable context windows (8-32k).</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Hardware</th><th>Comfortable</th><th>Stretches</th></tr></thead>
+        <tbody>
+          <tr><td><strong>MacBook Air M2 / M3 (16GB)</strong></td><td>Gemma3:1b, Phi-3, Llama 3.2:3b</td><td>Gemma3:4b is borderline</td></tr>
+          <tr><td><strong>MacBook Pro M3/M4 (32GB)</strong></td><td>Gemma3:4b/12b, Llama 3.3:8b, Qwen 2.5:7b</td><td>Gemma3:27b, Mistral Large fits but slow</td></tr>
+          <tr><td><strong>MacBook Pro M3 Max (64GB)</strong></td><td>Gemma3:27b, Qwen 2.5:32b, Llama 3.3:70b at Q4</td><td>Llama 3.3:70b at Q5+ is slow but works</td></tr>
+          <tr><td><strong>Hetzner GEX44 (Ryzen + 64GB, no GPU)</strong></td><td>Up to 14B comfortably (CPU inference)</td><td>27B+ runs but at chat speed, not stream</td></tr>
+          <tr><td><strong>Single RTX 4090 (24GB VRAM)</strong></td><td>Up to 32B at Q4 fully on GPU</td><td>70B with offloading; faster than M3 Max</td></tr>
+          <tr><td><strong>Dual RTX 4090 / single H100</strong></td><td>70B at Q5+, 405B at Q4 with offload</td><td>The "small server" tier</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Apple Silicon punches above its weight</h4>
+      <p>Unified memory architecture means Apple Silicon Macs run larger models than Linux + GPU systems with similar nominal RAM. A 64GB M3 Max comfortably runs Llama 70B at Q4; a 64GB Linux box with a 24GB GPU has to offload aggressively and is meaningfully slower. For local-LLM dev work in 2026, a maxed-out MacBook Pro is genuinely the most cost-effective hardware if you don't need extreme throughput.</p>
+    </div>
+  </div>
+</section>
+
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Local vs cloud: when each wins.</h2>
+      <p class="section-lede">Local inference is not always cheaper, faster, or better &mdash; it has its own trade-offs. The honest framing: cloud inference wins on absolute performance and frontier-model quality; local inference wins on cost predictability, data residency, and "the laptop works on the plane".</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use Ollama when</h4>
+        <ul>
+          <li>POPIA / GDPR / data-residency: data must not leave your hardware</li>
+          <li>Cost predictability: no per-token billing, no usage spikes</li>
+          <li>Offline / load-shedding: laptop on battery still works</li>
+          <li>Local development / testing: iterate without paying per request</li>
+          <li>RAG over private corpora: keep documents off third-party servers</li>
+          <li>Coding agents: small fast models like <code>qwen2.5-coder:7b</code> + IDE</li>
+          <li>Edge/embedded: on-device assistants, single-tenant kiosks</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Cloud LLMs win when</h4>
+        <ul>
+          <li>Frontier reasoning: GPT-5, Claude Opus 4.7, Gemini 2.5 Pro genuinely beat any open-weights model</li>
+          <li>Massive context: 1M+ tokens needs cloud (Gemini 1.5/2.5 Pro)</li>
+          <li>Throughput at scale: cloud APIs handle 1000s of concurrent requests</li>
+          <li>Multimodal extremes: state-of-the-art vision/voice often closed</li>
+          <li>You don't have local hardware: 16GB MacBook Air can't run 70B</li>
+          <li>Specialised features: extended thinking, tools API, search grounding</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The hybrid most teams actually run</h4>
+      <p><strong>Local for development, cloud for production hero work, local fallback for outages.</strong> Build agents against an Ollama-hosted Gemma/Llama for the dev loop; deploy production agents pointing at Claude or Gemini APIs; configure a circuit-breaker that flips back to a local Ollama instance during cloud outages or load-shedding. The OpenAI-compatible API on Ollama makes this trivial &mdash; same code, different <code>OPENAI_BASE_URL</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; South African context</div>
+      <h2 class="section-title">Why this matters more here than most places.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Load-shedding resilience.</strong> A laptop on battery with Ollama installed survives a stage 6 cycle just fine. Cloud LLMs need uplink + provider availability + the international peering being calm. For SA teams that need their tooling to work during a 4-hour outage, local inference is the difference between productive and idle.</p>
+      <p><strong>FX cost predictability.</strong> Ollama is free. Hardware is a one-time purchase. There is no per-token billing in USD, no surprise quarterly revaluation, no quota throttling at month-end. For a SA team running heavy iterative-dev work (10k+ requests/day during a feature push), the math gets compelling fast: $200/mo USD = R3,800/mo on a Claude Max heavy plan vs <strong>R0/mo on a maxed-out MacBook</strong>. You amortise the laptop in 6-12 months.</p>
+      <p><strong>POPIA + cross-border.</strong> Section 72 of POPIA restricts personal information transfer outside SA without consent / adequate protection. Cloud LLMs in the US are one such transfer. Ollama on a local machine is no transfer at all. For workloads on PII-bearing data, local-first inference removes the cross-border issue entirely. The honest constraint: you sacrifice frontier-model quality. But for many enterprise workflows (summarisation, classification, structured extraction), an open-weights 27B-70B model is good enough.</p>
+      <p><strong>Hetzner SA region note.</strong> Hetzner has no SA region; their closest is Frankfurt. For SA-resident production deployments needing more inference throughput than a laptop, options narrow: GCP Johannesburg + Vertex AI hosting open-weights, AWS Cape Town + SageMaker, or a local hosting provider with GPU SKUs. None are as cheap as Ollama on local hardware, but all keep data SA-resident.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where Ollama links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. Frameworks call models; Ollama is one of the most useful local-inference platforms for the models band.</div>
+      </a>
+      <a href="gemma.html" class="connect-node">
+        <span class="tag">agents/gemma</span>
+        <div class="skill">Gemma</div>
+        <div class="why">Google's open-weights family. <code>ollama run gemma3:4b</code> is the canonical "try it now" command for Gemma 3.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">ADK consumes Ollama via LiteLLM (<code>LiteLlm("ollama/gemma3:4b")</code>). The framework-to-local-model bridge.</div>
+      </a>
+      <a href="mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">Local Ollama models can call MCP servers too. Ollama agent + local MCP server = fully on-device tool use, no cloud at all.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">agents/llama</span>
+        <div class="skill">Llama</div>
+        <div class="why">Meta's open-weights family. The most-pulled model class on Ollama; the workhorse for most local-inference setups.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">agents/qwen</span>
+        <div class="skill">Qwen / Qwen-coder</div>
+        <div class="why">Alibaba's open-weights family. Particularly strong for code (Qwen 2.5 Coder); a common Ollama choice for coding agents.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">Site, source, registry.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://ollama.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">ollama.com</span>
+        <span class="r-url">ollama.com</span>
+      </a>
+      <a href="https://ollama.com/library" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Registry</span>
+        <span class="r-title">Model library</span>
+        <span class="r-url">ollama.com/library</span>
+      </a>
+      <a href="https://github.com/ollama/ollama" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">ollama/ollama</span>
+        <span class="r-url">github.com/ollama/ollama</span>
+      </a>
+      <a href="https://github.com/ggerganov/llama.cpp" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Engine</span>
+        <span class="r-title">llama.cpp (under the hood)</span>
+        <span class="r-url">github.com/ggerganov/llama.cpp</span>
+      </a>
+      <a href="https://github.com/ollama/ollama/blob/main/docs/api.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">API reference</span>
+        <span class="r-url">github.com/ollama/ollama/.../api.md</span>
+      </a>
+      <a href="https://github.com/ollama/ollama/blob/main/docs/openai.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">OpenAI compatibility</span>
+        <span class="r-url">github.com/ollama/ollama/.../openai.md</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://ollama.com" target="_blank" rel="noopener">ollama.com &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>

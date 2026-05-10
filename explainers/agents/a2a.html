@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A2A Protocol &mdash; know.2nth.ai</title>
+<meta name="description" content="The Agent-to-Agent (A2A) Protocol — open standard for cross-framework agent communication. JSON-RPC over HTTP, Agent Card discovery, streaming and push notifications. Released by Google, now under Linux Foundation governance. The interop layer that lets ADK orchestrate LangGraph and CrewAI agents in production.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/a2a">
+<meta property="og:title" content="A2A Protocol &mdash; know.2nth.ai">
+<meta property="og:description" content="The Agent-to-Agent (A2A) Protocol — open standard for cross-framework agent communication. JSON-RPC over HTTP, Agent Card discovery, streaming and push notifications. Released by Google, now under Linux Foundation governance. The interop layer that lets ADK orchestrate LangGraph and CrewAI agents in production.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A2A Protocol &mdash; know.2nth.ai">
+<meta name="twitter:description" content="A2A Protocol — open standard for agent-to-agent communication. Linux Foundation governed. JSON-RPC + Agent Card discovery. The cross-framework interop layer.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/a2a</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">A2A Protocol</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; A2A Protocol &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Agents talk. <span class="gradient">Whatever framework they're written in.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The Agent2Agent (A2A) Protocol is the open standard that lets agents from different frameworks call each other. JSON-RPC over HTTP, Agent Card discovery at <code>/.well-known/agent-card.json</code>, native streaming, push notifications. Originally released by Google, now governed by the Linux Foundation. The interop layer that turns "ADK + LangGraph + CrewAI in production" from an aspiration into a deployment.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live spec</span>
+      <span class="pill indigo">Linux Foundation</span>
+      <span class="pill accent">JSON-RPC 2.0 over HTTP</span>
+      <span class="pill">Agent Card discovery</span>
+      <span class="pill">Streaming + push</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">An open protocol, not another framework.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>A2A is a <strong>wire protocol</strong>, not a framework. It defines how an agent in one process announces what it can do (Agent Card), how a remote caller discovers and invokes those capabilities (JSON-RPC over HTTP), and how long-running interactions are handled (streaming responses, push notifications, task lifecycle states). It does not define what the agent is, how it reasons, or what tools it uses internally &mdash; those are framework concerns.</p>
+      <p>The thesis is simple: <strong>agentic workloads in production will span multiple frameworks</strong>. One team builds with Google ADK because they're on GCP. Another team uses LangGraph because they need explicit graph control. A third runs CrewAI for fast prototypes. Without a shared protocol, integrating them means custom HTTP wrappers, brittle JSON contracts, and bespoke retry logic at every boundary. With A2A, every agent advertises a standard Agent Card; every caller speaks the same JSON-RPC dialect; the integration is the protocol.</p>
+      <p>Originally released by Google as part of the broader agent stack, A2A was donated to the <strong>Linux Foundation</strong> in 2026 to neutralise vendor concerns and accelerate adoption. The spec lives at <a href="https://a2a-protocol.org/latest/" target="_blank" rel="noopener" style="color:var(--sky)">a2a-protocol.org</a>; the reference implementations and tooling are at <a href="https://github.com/a2aproject/A2A" target="_blank" rel="noopener" style="color:var(--sky)">github.com/a2aproject/A2A</a>.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The four primitives</h4>
+      <p><strong>Agent Card</strong> &mdash; JSON descriptor at <code>/.well-known/agent-card.json</code> declaring capabilities, skills, authentication, and endpoints. <strong>Tasks</strong> &mdash; the unit of work, with a lifecycle (submitted &rarr; working &rarr; input-required / completed / failed / canceled). <strong>Messages</strong> &mdash; the conversation payload, JSON-RPC formatted, with support for text, files, and structured data. <strong>Streams</strong> &mdash; for long-running tasks, the server pushes intermediate updates; clients can also subscribe to push notifications via webhook for fully async patterns.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Discovery, invocation, lifecycle.</h2>
+      <p class="section-lede">Three flows cover almost every A2A interaction. Discovery: a client fetches the Agent Card to know what an agent can do. Invocation: a client sends a JSON-RPC <code>tasks/send</code> with a message. Lifecycle: the client receives intermediate updates (sync or streamed) until the task completes, fails, or asks for human input.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The Agent Card</strong> is the entry point. Every A2A-compliant server hosts one at <code>/.well-known/agent-card.json</code>:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c">// /.well-known/agent-card.json</span>
+{
+  <span class="h">"name"</span>: <span class="s">"pricing-agent"</span>,
+  <span class="h">"description"</span>: <span class="s">"Generates competitive pricing analyses from market data"</span>,
+  <span class="h">"version"</span>: <span class="s">"1.2.0"</span>,
+  <span class="h">"protocol"</span>: <span class="s">"a2a/1.0"</span>,
+  <span class="h">"endpoint"</span>: <span class="s">"https://pricing.example.com/a2a"</span>,
+  <span class="h">"skills"</span>: [
+    {
+      <span class="h">"id"</span>: <span class="s">"price-product"</span>,
+      <span class="h">"name"</span>: <span class="s">"Price a product"</span>,
+      <span class="h">"description"</span>: <span class="s">"Returns recommended pricing given SKU + region"</span>,
+      <span class="h">"tags"</span>: [<span class="s">"pricing"</span>, <span class="s">"competitive-analysis"</span>]
+    }
+  ],
+  <span class="h">"authentication"</span>: { <span class="h">"schemes"</span>: [<span class="s">"bearer"</span>] },
+  <span class="h">"capabilities"</span>: { <span class="h">"streaming"</span>: <span class="k">true</span>, <span class="h">"pushNotifications"</span>: <span class="k">true</span> }
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Invoking the agent</strong> uses JSON-RPC 2.0 over HTTP POST. The minimum viable call is a <code>tasks/send</code> with a message:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.13s"><span class="c"># Client sends a task</span>
+POST /a2a HTTP/1.1
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+{
+  <span class="h">"jsonrpc"</span>: <span class="s">"2.0"</span>,
+  <span class="h">"id"</span>: <span class="s">"req-001"</span>,
+  <span class="h">"method"</span>: <span class="s">"tasks/send"</span>,
+  <span class="h">"params"</span>: {
+    <span class="h">"id"</span>: <span class="s">"task-abc-123"</span>,
+    <span class="h">"message"</span>: {
+      <span class="h">"role"</span>: <span class="s">"user"</span>,
+      <span class="h">"parts"</span>: [{ <span class="h">"type"</span>: <span class="s">"text"</span>, <span class="h">"text"</span>: <span class="s">"Price SKU-9981 for ZA region"</span> }]
+    }
+  }
+}</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.16s">
+      <p><strong>Long-running tasks</strong> stream intermediate updates via Server-Sent Events on a <code>tasks/sendSubscribe</code> call, or fire push notifications to a registered webhook. The task lifecycle has explicit states: <code>submitted</code>, <code>working</code>, <code>input-required</code> (the agent is asking the human or another agent for clarification), <code>completed</code>, <code>failed</code>, <code>canceled</code>. Clients can poll with <code>tasks/get</code> or watch the stream &mdash; both equivalent.</p>
+      <p><strong>Cross-framework call from ADK</strong> &mdash; the canonical example. ADK ships helpers that turn an ADK agent into an A2A server (<code>to_a2a()</code>) or wrap a remote A2A agent so it looks local (<code>RemoteA2aAgent</code>):</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.19s"><span class="c"># Expose your ADK agent as A2A — one line</span>
+<span class="h">from</span> google.adk.a2a.utils.agent_to_a2a <span class="h">import</span> to_a2a
+app = to_a2a(root_agent)  <span class="c"># serves Agent Card + JSON-RPC endpoint</span>
+
+<span class="c"># Consume a remote A2A agent (could be LangGraph, CrewAI, anything) as if local</span>
+<span class="h">from</span> google.adk.agents <span class="h">import</span> RemoteA2aAgent
+pricing = RemoteA2aAgent(<span class="h">name</span>=<span class="s">"pricing"</span>,
+                         <span class="h">agent_card</span>=<span class="s">"https://pricing.example.com"</span>)
+
+<span class="c"># Use it like any other ADK sub-agent</span>
+root = Agent(<span class="h">name</span>=<span class="s">"coordinator"</span>, <span class="h">sub_agents</span>=[pricing])</pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.22s">
+      <h4>Why this matters more than another HTTP API</h4>
+      <p>Every framework has its own way of representing an agent. ADK has <code>Agent</code>, LangGraph has graph nodes, CrewAI has roles, OpenAI Agents SDK has assistants. A2A flattens all of them to <em>"a thing that takes a Message and returns a Task"</em>. The framework-specific shape stays inside its own process; the protocol layer is uniform. That's what makes "ADK orchestrator + LangGraph specialist + CrewAI sub-team" composable rather than custom integration work.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adoption">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Adoption</div>
+      <h2 class="section-title">Who's shipping A2A in 2026.</h2>
+      <p class="section-lede">A2A went from "Google project" to "Linux Foundation project" inside a year. Adoption is uneven by framework but expanding fast. Native first-class support is in ADK; LangGraph and CrewAI have community A2A bridges; OpenAI and Anthropic SDKs are MCP-first but A2A wrappers exist.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr><th>Framework / Tool</th><th>A2A support</th><th>Maturity</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Google ADK</strong></td><td>Native &mdash; <code>to_a2a()</code> + <code>RemoteA2aAgent</code></td><td>Stable, in core</td></tr>
+          <tr><td><strong>LangGraph</strong></td><td>Community wrapper (<code>langgraph-a2a</code>)</td><td>Functional, third-party</td></tr>
+          <tr><td><strong>CrewAI</strong></td><td>Community adapter</td><td>Functional, third-party</td></tr>
+          <tr><td><strong>OpenAI Agents SDK</strong></td><td>Manual JSON-RPC; MCP is the OpenAI-preferred protocol</td><td>Possible, no first-party SDK helpers</td></tr>
+          <tr><td><strong>Anthropic Agent SDK</strong></td><td>Manual JSON-RPC; MCP-native</td><td>Possible, no first-party SDK helpers</td></tr>
+          <tr><td><strong>AutoGen / AG2</strong></td><td>Community wrapper in progress</td><td>Early</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>A2A vs MCP &mdash; not competing</h4>
+      <p><strong>A2A is for agent-to-agent communication.</strong> Two agents, possibly in different frameworks or different processes, calling each other for capability delegation. <strong>MCP is for tool / data access.</strong> An agent calling out to read a file, query a database, or use a tool. Both protocols often appear in the same architecture: agents talk to each other via A2A, agents talk to tools and data via MCP. They're complementary, not alternatives.</p>
+    </div>
+  </div>
+</section>
+
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">When to wire A2A. When not to.</h2>
+      <p class="section-lede">A2A is overhead. If your whole agent stack is one framework in one process, the protocol adds latency, JSON-RPC parsing, network calls, and authentication concerns for no benefit. The honest answer: only adopt A2A when you actually have multiple frameworks or multiple deployment processes that need to talk.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use A2A when</h4>
+        <ul>
+          <li>Multiple agent frameworks in production (ADK + LangGraph, etc.)</li>
+          <li>Agents in different processes / containers / languages</li>
+          <li>One team owns orchestration; other teams own specialist agents</li>
+          <li>Long-running tasks that benefit from streaming or push semantics</li>
+          <li>You want a stable contract that survives framework changes</li>
+          <li>External agents from partners or third parties need to integrate</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip A2A when</h4>
+        <ul>
+          <li>Single-framework, single-process agent &mdash; native sub-agents are simpler</li>
+          <li>Latency-sensitive (sub-100ms) workloads &mdash; JSON-RPC + HTTP adds 10-50ms</li>
+          <li>Very small task volumes where per-call overhead dominates</li>
+          <li>You haven't actually decided your second framework yet &mdash; premature</li>
+          <li>Your stack is OpenAI- or Anthropic-only; MCP covers the integration story</li>
+          <li>Fully isolated deployments where one process owns everything</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; South African context</div>
+      <h2 class="section-title">Why open protocols matter more here.</h2>
+      <p class="section-lede">A2A's open-protocol shape has practical leverage in SA delivery contexts: fewer tied-to-vendor integrations, lower switching cost, and the ability to compose agents across the cheap-or-free framework choice (ADK on Cloud Run for the orchestrator, Ollama-backed local agents on a developer's laptop for prototyping, CrewAI in a Hetzner droplet for a specialist).</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Latency tolerance:</strong> A2A's optional <em>push notification</em> mode is genuinely useful for SA bandwidth conditions. Long-running tasks don't require the client to keep an HTTP connection open; the server fires a webhook when the task finishes. A 30-second LLM call survives a 5-second cellular hiccup that would kill a streaming connection.</p>
+      <p><strong>POPIA + cross-border:</strong> Because the protocol is wire-level, you can mix and match where each agent runs. The orchestrator runs in <code>africa-south1</code> (Johannesburg GCP); the specialist that processes PII runs on-prem; the analytics agent runs on a US edge platform. A2A doesn't care &mdash; the calls are HTTPS with bearer auth. Data residency choices follow the agent's deployment, not the protocol.</p>
+      <p><strong>Cost:</strong> A2A itself is free &mdash; it's a spec. The cost is the network egress between agent processes, which is usually negligible compared to model inference cost. For SA teams worried about FX-billed proprietary agent platforms, A2A is the seam where you can swap a US-billed agent for a local one without touching any other code.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where A2A links in the tree.</h2>
+      <p class="section-lede">A2A is referenced in every agent framework leaf because cross-framework interop is the load-bearing reason to adopt it. It also touches Cloudflare Workers (Workers as A2A endpoints), Tech/Google (ADK's first-party A2A support), and the MCP leaf (the complementary tool-protocol).</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. Both protocols (A2A, MCP) and all six frameworks reference each other through the lens this hub frames.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">Native A2A in core. <code>to_a2a()</code> and <code>RemoteA2aAgent</code> are first-party. The reference implementation for "ADK as A2A hub calling other frameworks".</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">The complementary protocol. A2A for agent-to-agent; MCP for agent-to-tool / agent-to-data. Both often appear in the same architecture.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">Community A2A wrapper exists. Common pattern: ADK orchestrator delegates to LangGraph specialist with explicit graph control.</div>
+      </div>
+      <a href="../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">A common A2A endpoint deployment surface. Workers serve the Agent Card + JSON-RPC handler for ~5ms cold starts and per-request scaling.</div>
+      </a>
+      <a href="../tech/google/" class="connect-node">
+        <span class="tag">tech/google</span>
+        <div class="skill">Google Cloud</div>
+        <div class="why">Where A2A originated. Vertex AI Agent Engine's deployment model assumes A2A-compatible agents; cross-platform interop is part of the pitch.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">Specifications and reference implementations.</h2>
+      <p class="section-lede">A2A's spec is the canonical reference. The Linux Foundation's <code>a2aproject/A2A</code> repo has reference implementations in Python and TypeScript; ADK's first-party A2A integration is the most-shipped consumer example.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://a2a-protocol.org/latest/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec</span>
+        <span class="r-title">A2A Protocol specification</span>
+        <span class="r-url">a2a-protocol.org/latest</span>
+      </a>
+      <a href="https://github.com/a2aproject/A2A" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">a2aproject/A2A (Linux Foundation)</span>
+        <span class="r-url">github.com/a2aproject/A2A</span>
+      </a>
+      <a href="https://google.github.io/adk-docs/a2a/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Implementation</span>
+        <span class="r-title">ADK's A2A integration docs</span>
+        <span class="r-url">google.github.io/adk-docs/a2a</span>
+      </a>
+      <a href="https://www.linuxfoundation.org/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Governance</span>
+        <span class="r-title">Linux Foundation</span>
+        <span class="r-url">linuxfoundation.org</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://a2a-protocol.org/latest/" target="_blank" rel="noopener">A2A spec &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>

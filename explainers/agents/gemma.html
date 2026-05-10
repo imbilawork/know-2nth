@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gemma &mdash; know.2nth.ai</title>
+<meta name="description" content="Gemma — Google's open-weights model family from the Gemini research line. Gemma 3 is the current generation (270M / 1B / 4B / 12B / 27B variants), multimodal vision-text, 128k context window, available under a permissive licence and runnable on Ollama, vLLM, Hugging Face. The local-first option for teams that want frontier-quality inference without cloud dependency.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/gemma">
+<meta property="og:title" content="Gemma &mdash; know.2nth.ai">
+<meta property="og:description" content="Gemma — Google's open-weights model family. Gemma 3 (270M-27B), multimodal, 128k context. Runs on Ollama, vLLM, Hugging Face. Local-first frontier-quality inference.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gemma &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Gemma — Google's open-weights family. Gemma 3 multimodal, 128k context, runs locally. Frontier quality without cloud dependency.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/gemma</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Gemma</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Gemma &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Gemini's research, <span class="gradient">in open weights you can run.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Gemma is Google's open-weights model family, built from the same research line that produces Gemini. Gemma 3 (the current generation, March 2025) ships in five sizes &mdash; 270M / 1B / 4B / 12B / 27B &mdash; with multimodal vision-text understanding, a 128k-token context window, and a permissive licence allowing commercial use. Available on Ollama, Hugging Face, and Vertex AI Model Garden. The local-first option for teams that want frontier-quality inference without the cloud dependency.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Gemma 3 &middot; Mar 2025</span>
+      <span class="pill indigo">Open weights</span>
+      <span class="pill accent">270M &middot; 1B &middot; 4B &middot; 12B &middot; 27B</span>
+      <span class="pill">128k context</span>
+      <span class="pill warn">Multimodal &middot; vision-text</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">Open weights from the team that makes Gemini.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Gemma is a family of open-weights models from Google DeepMind</strong>, distilled from the research and training infrastructure that produces Gemini. The first release was Gemma 1 (February 2024) at 2B and 7B sizes; Gemma 2 added 9B and 27B; <strong>Gemma 3 (March 2025)</strong> is the current generation and the one most teams should default to.</p>
+      <p>Gemma 3 ships in five sizes (270M, 1B, 4B, 12B, 27B), all multimodal vision-text capable, with a 128k-token context window. The licence is permissive enough for commercial deployments &mdash; Google's <em>Gemma Terms of Use</em> grants free use including for commercial work, with restrictions on harmful applications. Not a fully open-source licence (e.g. Apache 2.0) but practically permissive for almost every business case.</p>
+      <p><strong>What "Gemma 4" looks like.</strong> As of mid-2026, Gemma 3 is the current line and Google has signalled the next generation in research papers but not shipped it. Treat any "Gemma 4" mention as forward-looking until Google confirms; this leaf will refresh when it does. The cadence so far has been ~12 months between major versions, so a follow-up generation is plausible in 2026.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Why "open weights from a frontier lab" matters</h4>
+      <p>Most open-weights families are either research-lab (academic-quality benchmarks but production-rough deployment), or post-frontier (the lab's earlier-generation models released after the frontier moves on). Gemma is closer to the latter &mdash; not the same as Gemini Pro 2.5, but produced by the team that ships Gemini, with the production-grade tokeniser, training data curation, and safety tuning that comes from a frontier-lab pipeline. The size-for-size quality is competitive with Llama 3.x and meaningfully ahead of Mistral / Qwen for most multimodal benchmarks.</p>
+    </div>
+  </div>
+</section>
+
+<section id="lineup">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The Gemma 3 line</div>
+      <h2 class="section-title">Five sizes, one quality curve.</h2>
+      <p class="section-lede">The Gemma 3 family covers a deliberate range &mdash; from edge devices (270M, 1B) to laptops (4B, 12B) to small servers (27B). The breakpoints map roughly to which hardware you'd actually deploy on. All five share the same multimodal capability and 128k context window; the difference is parameter count, throughput, and quality-on-hard-tasks.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Size</th><th>Hardware</th><th>Best at</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Gemma 3 270M</strong></td><td>Phones, embedded, Raspberry Pi 5</td><td>On-device assistants, classification, basic chat</td></tr>
+          <tr><td><strong>Gemma 3 1B</strong></td><td>16GB RAM laptops, edge devices</td><td>Lightweight RAG, summarisation, simple agents</td></tr>
+          <tr><td><strong>Gemma 3 4B</strong></td><td>32GB MacBook, mid-tier laptops</td><td>The default "good local model" — agents, chat, RAG</td></tr>
+          <tr><td><strong>Gemma 3 12B</strong></td><td>64GB MacBook Pro, single GPU 12GB+ VRAM</td><td>Where Gemma starts feeling like Claude Haiku</td></tr>
+          <tr><td><strong>Gemma 3 27B</strong></td><td>64GB+ MacBook, RTX 4090, single H100</td><td>Frontier-grade open-weights tasks; reasoning, code</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>The default pick for most workloads</h4>
+      <p><strong>Gemma 3:4b is the local-LLM default for 2026.</strong> Fits on a 32GB MacBook, runs at chat speed (15-30 tokens/sec on M3), handles multimodal input, supports 128k context. Quality is comparable to GPT-3.5 / Claude Haiku from a year or two ago &mdash; good enough for the vast majority of internal tooling and agent use cases. <code>ollama run gemma3:4b</code> is the canonical "try it now" command.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs Llama, Qwen, Mistral, and Gemini Pro</div>
+      <h2 class="section-title">When Gemma is the right open-weights pick &mdash; and when it isn't.</h2>
+      <p class="section-lede">Gemma has direct open-weights competitors at every size point. The honest comparison: Llama 3.3 dominates the long tail of community fine-tunes; Qwen 2.5 leads on coding-specific work; Mistral Large 2 has stronger function-calling. Gemma 3 leads on multimodal vision and is the most consistently safety-tuned for general business use.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Family</th><th>Strengths</th><th>Watch out for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Gemma 3</strong></td><td>Multimodal vision, safety tuning, 128k context, broad licence</td><td>Smaller community fine-tune ecosystem than Llama; not as code-strong as Qwen-coder</td></tr>
+          <tr><td><strong>Llama 3.3</strong></td><td>Largest community ecosystem, best fine-tunes, best instruction-following at 70B</td><td>Meta licence has commercial restrictions over 700M MAU; vision support uneven</td></tr>
+          <tr><td><strong>Qwen 2.5</strong></td><td>Best for code (Qwen Coder), strong multilingual</td><td>Chinese training emphasis means English-only benchmarks lag slightly</td></tr>
+          <tr><td><strong>Mistral Large 2</strong></td><td>Function-calling reliability, French/European multilingual</td><td>Smaller, less open ecosystem</td></tr>
+          <tr><td><strong>Phi-4</strong></td><td>Smallest credible reasoning model; runs on phones</td><td>Limited context, no multimodal</td></tr>
+          <tr><td><strong>Gemini 2.5 Pro (closed)</strong></td><td>1M+ context, frontier reasoning, native search grounding</td><td>Cloud-only, USD per-token billing, data leaves device</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Gemma 3 vs Gemini 2.5 Pro &mdash; not the same model</h4>
+      <p>It's tempting to read "Gemma 3 27B" as "smaller Gemini." It isn't. Gemini 2.5 Pro is a much larger, much more capable closed model with proprietary training data and post-training. Gemma 3 is a deliberate distillation that runs locally; the gap to Gemini 2.5 Pro on hard reasoning, long context, or specialist domains is real. <strong>Use Gemma 3 for tasks that don't need frontier; use Gemini 2.5 Pro (or Claude Opus, GPT-5) when they do.</strong> Both running side-by-side via the same agent framework is increasingly the production pattern.</p>
+    </div>
+  </div>
+</section>
+
+<section id="running">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Running it</div>
+      <h2 class="section-title">Three platforms cover almost every deployment.</h2>
+      <p class="section-lede">Gemma is hosted in many places, but three cover almost every real workload: <strong>Ollama</strong> for laptop / single-machine / dev work, <strong>vLLM</strong> for production server deployments needing throughput, and <strong>Vertex AI Model Garden</strong> when you want a managed endpoint inside Google Cloud.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Local &middot; dev</span>
+        <h4>Ollama</h4>
+        <p><code>ollama run gemma3:4b</code>. The simplest path. OpenAI-compatible API at <code>localhost:11434</code>. Full quantisation options. Default for development.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Server &middot; prod</span>
+        <h4>vLLM</h4>
+        <p>Production-grade serving with PagedAttention, continuous batching, OpenAI-compatible API. Optimal for high-throughput single-tenant deployments on a dedicated GPU.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Managed &middot; GCP</span>
+        <h4>Vertex AI Model Garden</h4>
+        <p>One-click deploy to a Vertex endpoint with managed scaling, IAM, and audit logs. The path of least resistance for SA enterprise on GCP.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Discovery</span>
+        <h4>Hugging Face</h4>
+        <p>Where Google publishes the weights. Use for fine-tuning, evaluation, and model cards. Not typically the production serving path.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p>The "try Gemma 3 in five minutes" path:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># Install Ollama (macOS / Linux)</span>
+curl -fsSL https://ollama.com/install.sh | sh
+
+<span class="c"># Pull and run Gemma 3 4B</span>
+<span class="k">ollama run</span> gemma3:4b
+
+<span class="c"># Or via the OpenAI-compatible API</span>
+curl http://localhost:11434/v1/chat/completions \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{
+    "model": "gemma3:4b",
+    "messages": [
+      {"role": "user", "content": "Summarise the last 18 months of SA reserve bank policy in 3 bullets."}
+    ]
+  }'</span></pre>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; South African context</div>
+      <h2 class="section-title">Open weights solve the cross-border problem.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>POPIA + cross-border.</strong> A SA bank running customer-data summarisation on Claude or GPT-4 is making a Section 72 cross-border transfer. Same workload on a locally-hosted Gemma 3 is no transfer at all. For PII-bearing automation (loan summary, claim triage, complaint classification) where frontier-model quality isn't required, Gemma 3 27B running on a SA-resident GPU is genuinely the regulatory-clean answer.</p>
+      <p><strong>Cost vs Vertex AI.</strong> If your data residency story doesn't require local inference, Vertex AI Model Garden hosts Gemma in <code>africa-south1</code> (Johannesburg). Per-token costs are billed in USD and depend on the variant; for high-volume workloads, hosting on dedicated Vertex AI endpoints can be more cost-effective than per-token API consumption, but worse than self-hosted on Hetzner Frankfurt with regional latency tolerance.</p>
+      <p><strong>Load-shedding fit.</strong> Same as Ollama in general &mdash; a maxed MacBook running Gemma 3 4B on battery is genuinely productive during stage 6. The "your AI dev tooling works through outages" story is a real differentiator for SA teams.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where Gemma links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. Frameworks call models; Gemma is one of the strongest open-weights options for "I want frontier-adjacent quality without cloud dependency".</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">The default local serving path for Gemma. <code>ollama run gemma3:4b</code> is the canonical "try it" command.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">Same Google research lineage. ADK + Gemma 3 is the all-Google open-weights stack, useful when you want the framework and model to share assumptions.</div>
+      </a>
+      <a href="../tech/google/" class="connect-node">
+        <span class="tag">tech/google</span>
+        <div class="skill">Google Cloud</div>
+        <div class="why">Vertex AI Model Garden hosts Gemma in <code>africa-south1</code>. The managed-endpoint path for SA enterprise on GCP.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">agents/llama</span>
+        <div class="skill">Llama</div>
+        <div class="why">The other dominant open-weights family. Larger fine-tune ecosystem; pick Llama if community variants matter, Gemma if frontier-lab safety tuning matters.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">agents/qwen</span>
+        <div class="skill">Qwen</div>
+        <div class="why">Alibaba's open-weights family; particularly strong for code work. A common alternative to Gemma at similar size points.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">Model card, weights, and serving paths.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://ai.google.dev/gemma" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">Gemma official site</span>
+        <span class="r-url">ai.google.dev/gemma</span>
+      </a>
+      <a href="https://huggingface.co/google/gemma-3-27b-it" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Weights</span>
+        <span class="r-title">Gemma 3 27B IT (Hugging Face)</span>
+        <span class="r-url">huggingface.co/google/gemma-3-27b-it</span>
+      </a>
+      <a href="https://ollama.com/library/gemma3" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Local serve</span>
+        <span class="r-title">Gemma 3 on Ollama</span>
+        <span class="r-url">ollama.com/library/gemma3</span>
+      </a>
+      <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Managed serve</span>
+        <span class="r-title">Gemma on Vertex AI Model Garden</span>
+        <span class="r-url">cloud.google.com/.../use-gemma</span>
+      </a>
+      <a href="https://ai.google.dev/gemma/terms" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Licence</span>
+        <span class="r-title">Gemma Terms of Use</span>
+        <span class="r-url">ai.google.dev/gemma/terms</span>
+      </a>
+      <a href="https://github.com/google-deepmind/gemma" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">google-deepmind/gemma reference impl</span>
+        <span class="r-url">github.com/google-deepmind/gemma</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://ai.google.dev/gemma" target="_blank" rel="noopener">Gemma &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
