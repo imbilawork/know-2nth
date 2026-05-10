@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bun &mdash; know.2nth.ai</title>
+<meta name="description" content="Bun — the all-in-one JavaScript runtime that bundles a runtime, package manager, test runner, and bundler into a single tool. Built on JavaScriptCore in Zig, ~10x faster install than npm, native TypeScript, drop-in npm-compatible. The modern alternative to Node + npm + webpack + tsc + jest.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/tech/runtime/bun">
+<meta property="og:title" content="Bun &mdash; know.2nth.ai">
+<meta property="og:description" content="Bun — the all-in-one JavaScript runtime that bundles a runtime, package manager, test runner, and bundler into a single tool. Built on JavaScriptCore in Zig, ~10x faster install than npm, native TypeScript, drop-in npm-compatible. The modern alternative to Node + npm + webpack + tsc + jest.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bun &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Bun — the all-in-one JavaScript runtime. JavaScriptCore + Zig, ~10x faster install, native TypeScript, drop-in npm-compatible. The modern alternative to the Node + npm + webpack + tsc + jest stack.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.blue { border-left: 3px solid var(--blue-glow); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/runtime/bun</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Runtime</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">runtime</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Bun</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/runtime &middot; Bun &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      One tool, <span class="gradient">five tools' worth of work.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Bun is a JavaScript runtime, package manager, test runner, and bundler in a single binary. Built on JavaScriptCore (Safari's engine) and written in Zig, it installs ~10x faster than npm, runs TypeScript natively, and replaces the <code>node + npm + webpack + tsc + jest</code> stack with one command. Three years old, production-credible since 1.0, and aggressively shipping.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live since 2023</span>
+      <span class="pill accent">Engine &middot; JavaScriptCore</span>
+      <span class="pill">Built in Zig</span>
+      <span class="pill warn">Drop-in npm-compatible</span>
+      <span class="pill">v1.x stable</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A runtime, a package manager, a test runner, and a bundler &mdash; in one binary.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Bun is the load-bearing tool collapse of the JavaScript ecosystem. The pitch isn't "we built a faster Node" &mdash; it's "we built a single tool that replaces <code>node</code>, <code>npm</code>/<code>pnpm</code>, <code>tsc</code>, <code>webpack</code>/<code>esbuild</code>, and <code>jest</code>, and each individual replacement happens to be the fastest in its category." That's a different value proposition than "shave 30ms off cold starts."</p>
+      <p>Under the hood: <strong>JavaScriptCore</strong> as the JS engine (Safari's engine, not V8), <strong>Zig</strong> as the implementation language (manual memory management, fast compiles, tight FFI), and a small army of native APIs that mirror Node's where they exist and add new ones (<code>Bun.serve</code>, <code>Bun.write</code>, <code>Bun.file</code>) where they don't.</p>
+      <p>The result that matters most in day-to-day work: <strong><code>bun install</code> on a typical Next.js app finishes in 1-3 seconds vs 20-60 seconds for npm</strong>. <strong><code>bun test</code> runs roughly 4x faster than Jest on the same suite</strong>. Cold start is <strong>~5ms vs Node's ~30-50ms</strong>. None of these are individually transformative; together they change how the development loop feels.</p>
+    </div>
+    <div class="info-card blue fade-up" style="transition-delay: 0.08s">
+      <h4>The all-in-one frame, in one breath</h4>
+      <p>Bun = <code>bun</code> (run) + <code>bun install</code> (npm) + <code>bun test</code> (jest) + <code>bun build</code> (webpack/esbuild) + <code>bun x</code> (npx) + <code>bunx</code> + <code>bun init</code> + native TypeScript + native JSX + native env-var loading + native SQLite + native HTTP server. One binary, one config file, one mental model. The "no JavaScript build chain" thesis, made executable.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Drop-in for Node, plus the rest of the toolchain.</h2>
+      <p class="section-lede">If you can run a project with <code>node script.ts</code> (or <code>tsx</code>), you can probably run it with <code>bun script.ts</code>. The <code>package.json</code> stays unchanged, the <code>node_modules</code> structure is the same, the dependency resolution is npm-compatible. Bun then layers on the bits Node doesn't include: native TypeScript, the package manager, the test runner, the bundler.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The day-to-day commands:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c"># Install bun (macOS / Linux)</span>
+curl -fsSL https://bun.sh/install | bash
+
+<span class="c"># In an existing Node project — drop in</span>
+<span class="k">bun install</span>                  <span class="c"># replaces npm install</span>
+<span class="k">bun run</span> <span class="s">"any-script-name"</span>    <span class="c"># replaces npm run script-name</span>
+<span class="k">bun</span> server.ts             <span class="c"># run TypeScript directly, no transpile step</span>
+
+<span class="c"># Test runner (Jest-API-compatible)</span>
+<span class="k">bun test</span>
+<span class="k">bun test</span> --watch
+<span class="k">bun test</span> --coverage
+
+<span class="c"># Bundler (esbuild-compatible API)</span>
+<span class="k">bun build</span> ./src/index.ts --outdir=./dist --target=node
+
+<span class="c"># Greenfield project — one command</span>
+<span class="k">bun init</span>                     <span class="c"># project + package.json + tsconfig + entrypoint</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p>The hello-world server, in seven lines, no dependencies, no build step:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.13s"><span class="c">// server.ts — run with: bun server.ts</span>
+Bun.serve({
+  <span class="h">port</span>: 3000,
+  <span class="h">fetch</span>(req) {
+    <span class="k">const</span> url = <span class="k">new</span> URL(req.url);
+    <span class="k">if</span> (url.pathname === <span class="s">"/"</span>) <span class="k">return</span> <span class="k">new</span> Response(<span class="s">"hello world"</span>);
+    <span class="k">return</span> <span class="k">new</span> Response(<span class="s">"not found"</span>, { <span class="h">status</span>: 404 });
+  },
+});</pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.16s">
+      <h4>Why JavaScriptCore, not V8</h4>
+      <p>JavaScriptCore is Apple's JS engine, used in Safari. Compared to V8: faster cold start (lower startup overhead), better memory profile under sustained load, comparable peak throughput on optimised hot loops. JSC matters for cold-start-sensitive workloads (edge functions, CLI tools, serverless) where V8's optimisation budget hasn't paid off yet. For long-running servers, the difference is small &mdash; both engines are excellent.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Gotchas</div>
+      <h2 class="section-title">Six places Bun bites if you're new to it.</h2>
+      <p class="section-lede">Bun is genuinely production-ready, but it's three years old, not sixteen. There are real edges &mdash; mostly around long-tail npm packages, platform-specific behaviour, and the pace at which Bun itself ships breaking changes. Knowing where it bites means you can plan around it.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Native Node addon compatibility</strong>
+        <p>Packages that use <code>node-gyp</code> to compile C++ addons (e.g. <code>better-sqlite3</code>, some <code>canvas</code> bindings, ML/native libs) usually work but have edge cases. Bun's NAPI implementation is good; not 100%. Always check the project's "Bun compatibility" badge or test before committing to a stack choice.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Cloudflare Workers isn't a Bun target</strong>
+        <p>Workers run on V8 isolates with Cloudflare's runtime; Bun isn't the runtime there. Use Bun for local dev, build, and tests; deploy to Workers using <code>wrangler</code> as normal. Don't try to ship Bun-specific APIs (<code>Bun.serve</code>, <code>Bun.write</code>) to Workers &mdash; they don't exist there. See <a href="../cloudflare/workers.html" style="color:var(--sky)">tech/cloudflare/workers</a>.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Breaking changes in minor versions</strong>
+        <p>Bun ships fast. v1.0 to v1.x has had semantic-version compliance &mdash; but minor releases occasionally fix bugs by changing behaviour, and that has bitten teams pinned to specific versions. Pin your Bun version in <code>.bunversion</code> or CI; review release notes before bumping.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Lockfile is binary, not text</strong>
+        <p><code>bun.lockb</code> is a binary lockfile (faster to parse than text). Diffs in PRs are unreadable; some hosting platforms can't render it cleanly. Mitigations: <code>bun install --print-text-lock</code> for human-readable output; or convert to <code>bun.lock</code> JSON format (introduced 2024) for diff-friendly history.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Windows is officially supported but second-class</strong>
+        <p>Native Windows support shipped 2024 but lags macOS / Linux for some package compatibility and performance. If your team is mixed-OS, test on the actual OS the dev runs &mdash; don't assume parity. WSL2 is a reliable fallback.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Some Node patterns work, some surprise you</strong>
+        <p><code>process.env</code>, <code>fs</code>, <code>path</code>, <code>http</code>, <code>https</code>, <code>events</code>, <code>stream</code> &mdash; all work. <code>worker_threads</code> works but with edge cases. <code>vm</code> module has gaps. <code>child_process</code> works but spawning is slightly different. The "drop-in for Node" frame is true for 95% of code; that 5% is where to test before betting the project on it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 VS NODE -->
+<section id="vs-node">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; vs Node</div>
+      <h2 class="section-title">When Bun wins. When Node still wins.</h2>
+      <p class="section-lede">Both runtimes are credible production choices in 2026. The interesting question is when each one is the better fit for a given project, not whether one is universally superior. The honest answer: Node is the safe default for production with mature dependency chains; Bun is the upgrade for greenfield projects, edge / cold-start workloads, and teams that value developer-loop ergonomics.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr><th>Concern</th><th>Node.js</th><th>Bun</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Cold start</strong></td><td>~30-50ms</td><td>~3-10ms (4-10x faster)</td></tr>
+          <tr><td><strong>Install speed</strong></td><td>npm: 20-60s typical / pnpm: ~5-15s</td><td>bun install: 1-3s (~10x npm, ~3x pnpm)</td></tr>
+          <tr><td><strong>Test runner</strong></td><td>node:test (built-in but rough) / vitest / jest</td><td>bun test (Jest-compatible API, ~4x Jest)</td></tr>
+          <tr><td><strong>TypeScript</strong></td><td>Needs tsx / ts-node / tsc compile step</td><td>Native, no config needed</td></tr>
+          <tr><td><strong>Bundler</strong></td><td>External (webpack / esbuild / rollup / vite)</td><td>bun build (esbuild-API-compatible)</td></tr>
+          <tr><td><strong>Ecosystem maturity</strong></td><td>16 years, every package tested</td><td>3 years, ~99% npm compat with edge cases</td></tr>
+          <tr><td><strong>Cloudflare Workers</strong></td><td>Workers Node compat layer is solid</td><td>Not a Workers runtime; use for local dev</td></tr>
+          <tr><td><strong>Native addons (node-gyp)</strong></td><td>Universal support</td><td>Mostly works, some edge cases</td></tr>
+          <tr><td><strong>Production track record</strong></td><td>Massive (Netflix, Uber, LinkedIn, etc.)</td><td>Growing fast (Vercel uses internally, many startups)</td></tr>
+          <tr><td><strong>"Just works" for developer ergonomics</strong></td><td>Five separate tools to configure</td><td>One tool, opinionated defaults</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="decision-grid fade-up" style="transition-delay: 0.08s">
+      <div class="decision-card use">
+        <h4>Pick Bun when</h4>
+        <ul>
+          <li>Greenfield project &mdash; you're choosing the stack, not migrating</li>
+          <li>Cold start matters &mdash; CLI tools, edge functions, serverless</li>
+          <li>TypeScript-heavy &mdash; you want to skip the build chain</li>
+          <li>Monorepo with frequent installs &mdash; the speed compounds</li>
+          <li>Developer ergonomics &mdash; one tool replacing five is the value</li>
+          <li>You can afford to pin and test &mdash; smaller team, faster iteration</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Stay on Node when</h4>
+        <ul>
+          <li>Production system with mature dependency chains &mdash; risk asymmetric</li>
+          <li>Heavy use of <code>node-gyp</code> native addons &mdash; check compatibility per-package</li>
+          <li>Targeting Cloudflare Workers &mdash; Bun isn't the runtime; use Node compat instead</li>
+          <li>Strict regulated environment &mdash; auditors trust 16 years more than 3</li>
+          <li>Team locked into Node-specific tooling &mdash; <code>worker_threads</code>, <code>vm</code>, deep <code>cluster</code></li>
+          <li>You don't have time to investigate edge-case package failures &mdash; Node still surprises less</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.11s">
+      <h4>The hybrid pattern most teams adopt</h4>
+      <p><strong>Local development on Bun, production on Node</strong> &mdash; or even <strong>local on Bun, production on Workers</strong>. Bun gives you the fast install + native TS + fast tests during development; Node (or Workers) handles the production runtime where the long compatibility tail matters. Only the Bun-specific APIs (<code>Bun.serve</code>, <code>Bun.write</code>, <code>Bun.file</code>) need a fallback; everything else is portable. The <code>package.json</code> stays compatible with both.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where Bun links in the tree.</h2>
+      <p class="section-lede">Bun is the runtime layer beneath modern JavaScript projects, which means it touches almost every other tech sub-tree &mdash; databases (Drizzle works on both Bun and Node), edge platforms (Workers isn't Bun but Node-compat is), serverside-rendered frameworks (most Vite/Next.js dev experiences benefit from <code>bun dev</code>), and the MCP / agent ecosystem (Bun's startup speed is a real advantage for spawning short-lived agent processes).</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">tech/runtime</span>
+        <div class="skill">Runtime hub</div>
+        <div class="why">The sub-tree landing page. Comparison frame, the three runtime options (Node, Bun, Deno), and the principles that show up in each leaf.</div>
+      </a>
+      <a href="node.html" class="connect-node">
+        <span class="tag">tech/runtime/node</span>
+        <div class="skill">Node.js</div>
+        <div class="why">The sister leaf. Same content shape, opposite default. Use Node when ecosystem maturity matters more than developer ergonomics; use Bun when the reverse.</div>
+      </a>
+      <a href="../cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Workers is a V8-isolate runtime, not a Bun target. Use Bun for local dev + build; deploy to Workers via wrangler. The Node compat layer on Workers is what actually runs your code in production.</div>
+      </a>
+      <a href="../frameworks/drizzle.html" class="connect-node">
+        <span class="tag">tech/frameworks/drizzle</span>
+        <div class="skill">Drizzle ORM</div>
+        <div class="why">Drizzle is runtime-agnostic &mdash; works identically on Bun, Node, and Workers. Bun's fast startup makes Drizzle's CLI tooling (<code>drizzle-kit</code>) noticeably snappier in development.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/runtime/deno</span>
+        <div class="skill">Deno</div>
+        <div class="why">The third runtime &mdash; built by Node's original creator, security-first, URL-imports, web-API-first. Different design choices than Bun but adjacent in the modern-runtime conversation.</div>
+      </div>
+      <a href="../../data/engineering/liteparse.html" class="connect-node">
+        <span class="tag">data/engineering/liteparse</span>
+        <div class="skill">LiteParse</div>
+        <div class="why">A document-parsing skill that Bun's startup speed favours &mdash; spawning many short-lived parser processes is faster on Bun than Node.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 06 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+      <p class="section-lede">Bun's documentation is unusually good for a young runtime &mdash; the docs site is the right place to start. The GitHub repo is where the actual development happens; the changelog is where you find out what just broke or just got faster.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://bun.sh" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">bun.sh</span>
+        <span class="r-url">bun.sh</span>
+      </a>
+      <a href="https://bun.sh/docs" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Bun documentation</span>
+        <span class="r-url">bun.sh/docs</span>
+      </a>
+      <a href="https://github.com/oven-sh/bun" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">oven-sh/bun</span>
+        <span class="r-url">github.com/oven-sh/bun</span>
+      </a>
+      <a href="https://bun.sh/blog" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Releases</span>
+        <span class="r-title">Bun release blog</span>
+        <span class="r-url">bun.sh/blog</span>
+      </a>
+      <a href="https://bun.sh/guides" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Cookbook</span>
+        <span class="r-title">Bun guides &middot; recipes for common tasks</span>
+        <span class="r-url">bun.sh/guides</span>
+      </a>
+      <a href="https://github.com/oven-sh/bun/blob/main/docs/cli/install.md" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">bun install &middot; CLI reference</span>
+        <span class="r-url">github.com/oven-sh/bun/.../install.md</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Runtime hub</a>
+      <a href="https://bun.sh" target="_blank" rel="noopener">bun.sh &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>

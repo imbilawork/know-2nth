@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Runtime &mdash; know.2nth.ai</title>
+<meta name="description" content="The Runtime sub-domain of the 2nth.ai technology branch. JavaScript runtimes that matter in 2026 — Node.js (the safe default), Bun (the modern challenger), and Deno (the security-first alternative). The decision frame for which runtime to pick, and why the hybrid pattern (Bun for dev, Node for prod) wins for most teams.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/tech/runtime/">
+<meta property="og:title" content="Runtime &mdash; know.2nth.ai">
+<meta property="og:description" content="The Runtime sub-domain of the 2nth.ai technology branch. JavaScript runtimes that matter in 2026 — Node, Bun, Deno. The decision frame for which to pick.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Runtime &mdash; know.2nth.ai">
+<meta name="twitter:description" content="The Runtime sub-domain — Node, Bun, Deno. Decision frame for the JavaScript runtime layer in 2026.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hub-hero { padding: 48px 0 64px; }
+  .hub-hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hub-hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hub-hero h1 { font-size: clamp(44px, 7vw, 72px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 24px; max-width: 16ch; }
+  .hub-hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hub-hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 32px; }
+  .hub-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hub-stat { padding-right: 32px; border-right: 1px solid var(--border); }
+  .hub-stat:last-child { border-right: none; padding-right: 0; }
+  .hub-stat .num { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--blue-glow), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 6px; }
+  .hub-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  section.hub-section { padding: 32px 0 48px; position: relative; }
+  .hub-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .hub-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 14px; line-height: 1.2; }
+  .hub-lede { font-size: 16px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 36px; }
+
+  .category-band { display: flex; align-items: center; gap: 16px; margin: 40px 0 18px; }
+  .category-band:first-of-type { margin-top: 0; }
+  .category-band .c-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: var(--sky); white-space: nowrap; }
+  .category-band .c-rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-hover), transparent); }
+
+  .svc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .svc-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; text-decoration: none; color: inherit; display: block; transition: all 0.3s; position: relative; }
+  .svc-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
+  .svc-card.soon { cursor: default; opacity: 0.74; }
+  .svc-card.soon:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .svc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .svc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .svc-state { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; padding: 3px 9px; border-radius: var(--radius-pill); font-weight: 600; flex-shrink: 0; }
+  .svc-state.live { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); }
+  .svc-state.soon { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
+  .svc-path { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .svc-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; max-width: 1040px; }
+  .principle { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--blue-glow); border-radius: var(--radius-md); padding: 22px 26px; }
+  .principle h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.2px; }
+  .principle p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+  .cross-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cross-link { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px 20px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--bg-card); text-decoration: none; color: var(--text-secondary); transition: all 0.3s; letter-spacing: 0.5px; }
+  .cross-link:hover { border-color: var(--border-hover); color: var(--sky); transform: translateY(-1px); }
+  .cross-link.soon { opacity: 0.5; cursor: default; border-style: dashed; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 60px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } .hub-stats { gap: 20px; } .hub-stat { padding-right: 20px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/runtime</span>
+    </a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">&larr; Tech</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">runtime</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hub-hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/runtime &middot; Sub-domain hub</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Three runtimes.<br><span class="gradient">One JavaScript.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The JavaScript runtime layer is where the language meets the operating system. In 2026, three runtimes matter: <strong>Node.js</strong> &mdash; the safe default with sixteen years of production track record; <strong>Bun</strong> &mdash; the modern challenger collapsing five tools into one binary; and <strong>Deno</strong> &mdash; the security-first alternative from Node's original creator. This sub-hub covers all three with shared decision frames and connections back into the rest of the tree.
+    </p>
+    <div class="hub-stats fade-up" style="transition-delay: 0.15s">
+      <div class="hub-stat"><div class="num">3</div><div class="label">Runtimes</div></div>
+      <div class="hub-stat"><div class="num">2</div><div class="label">Live leaves</div></div>
+      <div class="hub-stat"><div class="num">v1.0</div><div class="label">Frame published</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">01 &middot; Skills</div>
+      <h2 class="hub-title">The runtime layer, three perspectives.</h2>
+      <p class="hub-lede">Each leaf is a canonical decision-grade explainer for its runtime: hero, what-it-is, how-it-works, gotchas, decision guide, vs-the-others, connections, resources. Read both Node and Bun if you're picking a stack today &mdash; the comparison frame across the two is the actual decision.</p>
+    </div>
+
+    <!-- The pair -->
+    <div class="category-band fade-up">
+      <span class="c-label">Default vs modern &middot; 2</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="node.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Node.js</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">tech/runtime/node</span>
+        <p>The original server-side JavaScript runtime. V8 + libuv + npm origin. Sixteen years old, every package tested against it, the safe default for production. The runtime almost every cloud platform supports first-class.</p>
+      </a>
+
+      <a href="bun.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Bun</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">tech/runtime/bun</span>
+        <p>The all-in-one alternative. Runtime + package manager + test runner + bundler in one binary. JavaScriptCore + Zig. Drop-in npm-compatible, ~10x faster install, native TypeScript, ~5ms cold start. Three years old, production-credible, aggressively shipping.</p>
+      </a>
+
+    </div>
+
+    <!-- The third option -->
+    <div class="category-band fade-up">
+      <span class="c-label">Adjacent &middot; 1</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Deno</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">tech/runtime/deno</span>
+        <p>The third runtime. Built by Ryan Dahl (Node's original creator). Security-first defaults (no FS / network access without explicit permission). URL-based imports. Web-API-first standard library. Deno Deploy as the natively-paired edge platform. Different design philosophy from Bun; quiet but credible.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PRINCIPLES ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">02 &middot; Principles</div>
+      <h2 class="hub-title">The four positions every runtime leaf inherits.</h2>
+      <p class="hub-lede">Whatever runtime you pick, four operating concerns shape how the choice plays out. Each leaf in this sub-tree treats them as load-bearing &mdash; the gotchas section of every runtime page maps to one or more of these.</p>
+    </div>
+    <div class="principles fade-up" style="transition-delay: 0.05s">
+      <div class="principle">
+        <h4>Cold start matters &mdash; sometimes a lot</h4>
+        <p>For long-running servers, cold start is irrelevant. For CLI tools, edge functions, short-lived agents, and serverless: a 30ms vs 5ms gap on every invocation is the difference between snappy and sluggish. Pick the runtime whose cold-start profile fits the workload.</p>
+      </div>
+      <div class="principle">
+        <h4>Ecosystem compatibility is the long tail</h4>
+        <p>Most runtimes claim "Node-compatible" and mostly deliver. The 5% of packages that don't work is where you spend the debugging time. Older codebases with deep <code>node-gyp</code> dependencies should default to Node; greenfield projects can experiment more freely.</p>
+      </div>
+      <div class="principle">
+        <h4>TypeScript is first-class or it isn't</h4>
+        <p>Native TS support (Bun, Deno) means no separate build step, no <code>tsx</code>/<code>ts-node</code>, no transpile-time vs runtime divergence. Native TS is a developer-loop win, not a production win &mdash; production usually compiles to JS anyway. But the loop-feel difference is real.</p>
+      </div>
+      <div class="principle">
+        <h4>One tool replacing five is a real value</h4>
+        <p>Bun's pitch &mdash; runtime + pm + test + build in one binary &mdash; isn't just speed. It's <em>fewer tools to learn, configure, debug, and version-pin</em>. For teams or solo devs, that's a real cognitive load reduction. For mature teams already invested in their npm/pnpm/jest/webpack/tsc setup, the migration cost can outweigh the consolidation benefit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CROSS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">03 &middot; Related branches</div>
+      <h2 class="hub-title">Where Runtime connects.</h2>
+      <p class="hub-lede">The runtime layer touches almost every other tech sub-tree. Cloudflare Workers (V8 isolates with Node compat), frameworks (Drizzle + others run on all three), Frappe (Node + npm in its build chain), agent skills that spawn short-lived processes (where Bun's startup speed becomes a real lever).</p>
+    </div>
+    <div class="cross-links fade-up" style="transition-delay: 0.05s">
+      <a href="../" class="cross-link">&larr; Tech</a>
+      <a href="../cloudflare/" class="cross-link">tech/cloudflare &rarr;</a>
+      <a href="../cloudflare/workers.html" class="cross-link">tech/cloudflare/workers &rarr;</a>
+      <a href="../frameworks/drizzle.html" class="cross-link">tech/frameworks/drizzle &rarr;</a>
+      <a href="../frappe/" class="cross-link">tech/frappe &rarr;</a>
+      <span class="cross-link soon">data/engineering &middot; soon</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Tech hub</a>
+      <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org &nearr;</a>
+      <a href="https://bun.sh" target="_blank" rel="noopener">bun.sh &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
