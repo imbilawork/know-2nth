@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenBIM &mdash; know.2nth.ai</title>
+<meta name="description" content="OpenBIM — the open, vendor-neutral building information modeling stack. IFC as the ISO standard, IfcOpenShell + BlenderBIM + Speckle as the open tooling, BCF for coordination. The cost-honest alternative to SmartBIM and other proprietary BIM platforms, with South African construction practice and regulations as a first-class concern.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/construction/openbim">
+<meta property="og:title" content="OpenBIM &mdash; know.2nth.ai">
+<meta property="og:description" content="OpenBIM — the open, vendor-neutral building information modeling stack. IFC as the ISO standard, IfcOpenShell + BlenderBIM + Speckle as the open tooling, BCF for coordination. The cost-honest alternative to SmartBIM and other proprietary BIM platforms, with South African construction practice and regulations as a first-class concern.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OpenBIM &mdash; know.2nth.ai">
+<meta name="twitter:description" content="OpenBIM — open, vendor-neutral building information modeling. IFC + IfcOpenShell + BlenderBIM + Speckle + BCF. The cost-honest alternative to SmartBIM, with SA construction context.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --clay: #EA580C; --clay-soft: rgba(234, 88, 12, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--clay); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--clay); box-shadow: 0 0 12px var(--clay); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.clay { background: var(--clay-soft); color: var(--clay); border-color: rgba(234, 88, 12, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.clay { border-left: 3px solid var(--clay); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--blue-glow); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">construction/openbim</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Construction</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Construction</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">openBIM</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> construction &middot; openBIM &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Open standards <span class="gradient">for the buildings we build.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      openBIM is the vendor-neutral building information modeling stack. IFC is the ISO standard, IfcOpenShell + BlenderBIM + Speckle are the open tools, BCF coordinates the issues. The model becomes data your AI agents can actually read &mdash; and the licence isn't a recurring six-figure ZAR line item. Cost-honest, vendor-portable, ready for AI takeoff.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live</span>
+      <span class="pill clay">openBIM &middot; v1.0</span>
+      <span class="pill accent">ISO 16739 &middot; IFC</span>
+      <span class="pill">buildingSMART standard</span>
+      <span class="pill warn">SA-context first-class</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A file format, a standards body, and an open tool ecosystem.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>openBIM (note the lowercase "open" &mdash; it's a buildingSMART trademark) is the umbrella term for vendor-neutral building information modeling. The load-bearing standard is <strong>IFC (Industry Foundation Classes)</strong>, registered as ISO 16739. IFC describes <em>what a building is made of</em>: walls, slabs, beams, doors, MEP runs, spaces, storeys, and the geometric and alphanumeric properties that go with them. It's a data model first, a file format second.</p>
+      <p>Around IFC sits a real ecosystem of open tools. <strong>IfcOpenShell</strong> reads, writes, and queries IFC programmatically (Python and C++). <strong>BlenderBIM</strong> is a Blender add-on that turns the world's most popular open-source 3D suite into a credible BIM authoring tool. <strong>Speckle</strong> federates models across Revit, ArchiCAD, Tekla, and Rhino with a Git-style versioned data layer. <strong>BCF (BIM Collaboration Format)</strong> handles model-coordination issues across vendors &mdash; the JIRA of construction.</p>
+      <p>The reason this matters now: <strong>IFC is structured data, not a drawing</strong>. AI agents, quantity-takeoff engines, programme schedulers, cost models, and compliance checkers can all read it directly without scraping PDFs or interpreting CAD lines. The model <em>is</em> the source of truth, and openBIM makes it portable across the supply chain.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Construction is the least digitalised major industry on earth</h4>
+      <p>QSs measure from 2D PDFs &mdash; a 200-page BOQ takes 3-4 weeks manually. Cost estimates live in Excel with version control by filename. Site instructions go out as voice notes; RFIs get lost in chat threads. Building completes, the O&amp;M manuals are PDFs nobody reads, no digital twin survives. The data leaves with the team. openBIM is what makes that pattern fixable.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 THE OPEN STACK -->
+<section data-tier="member" id="stack">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The open stack</div>
+      <h2 class="section-title">IFC at the centre, four open tools around it.</h2>
+      <p class="section-lede">A working openBIM stack on a project: an authoring tool that exports IFC, a query and processing layer over the IFC, a federation surface that lets disciplines coordinate across formats, and a coordination protocol for issues. Each component has a credible open option.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Layer &middot; standard</span>
+        <h4>IFC</h4>
+        <p>ISO 16739. The data model. Walls, slabs, beams, MEP, spaces, properties. Versions matter (IFC4 is current, IFC2x3 is the lowest common denominator). Schema published; readers exist for everything.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Layer &middot; processing</span>
+        <h4>IfcOpenShell</h4>
+        <p>Open-source Python + C++ library to read, write, query, and convert IFC. AI takeoff engines, automated checks, custom queries. The lever for "treat the model as data".</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Layer &middot; authoring</span>
+        <h4>BlenderBIM</h4>
+        <p>Blender add-on. Full BIM authoring inside an open 3D suite. IFC-native: opens, edits, and saves IFC without conversion. Real alternative to ArchiCAD / Revit for projects that don't need vendor-specific extensions.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Layer &middot; federation</span>
+        <h4>Speckle</h4>
+        <p>Connects Revit, ArchiCAD, Tekla, Rhino, AutoCAD, IFC. Git-style versioned data layer over geometry. Federates the disciplines without forcing a single authoring tool.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Layer &middot; coordination</span>
+        <h4>BCF</h4>
+        <p>BIM Collaboration Format. Open issue-tracking protocol for clashes, RFIs, and design questions. Camera viewpoint + comment + linked IFC element. Vendor-neutral; works across any BIM tool that respects it.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Layer &middot; viewing</span>
+        <h4>Web viewers</h4>
+        <p>xeokit, three.js + IFC.js, BIMsurfer. Stream IFC to a browser. No plugin install, no per-seat licence. The site engineer opens the model on their phone.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p>A canonical "extract quantities from IFC" snippet to make this concrete:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># Quantity takeoff with IfcOpenShell — extract all walls and their volumes</span>
+<span class="h">import</span> ifcopenshell
+<span class="h">import</span> ifcopenshell.util.element <span class="h">as</span> util
+
+model = ifcopenshell.<span class="k">open</span>(<span class="s">"silvercroft.ifc"</span>)
+
+<span class="h">for</span> wall <span class="h">in</span> model.by_type(<span class="s">"IfcWall"</span>):
+    psets = util.get_psets(wall)
+    qto = psets.get(<span class="s">"Qto_WallBaseQuantities"</span>, {})
+    volume = qto.get(<span class="s">"NetVolume"</span>)
+    storey = util.get_container(wall)
+    <span class="k">print</span>(<span class="s">f"</span>{wall.Name}<span class="s">  </span>{storey.Name}<span class="s">  </span>{volume}<span class="s">m³"</span>)</pre>
+
+    <div class="info-card clay fade-up" style="transition-delay: 0.13s">
+      <h4>Why this matters more than "open == cheaper"</h4>
+      <p>The cost case is real (no recurring vendor lock-in), but the structural advantage is that <strong>the model becomes data your AI agents can read directly</strong>. No scraping PDFs, no interpreting drawings, no fighting a vendor's API rate limit. <code>model.by_type("IfcWall")</code> is the entire takeoff engine. Everything we want to do downstream &mdash; takeoff, programme, cost, compliance, handover &mdash; starts from IFC being a queryable data structure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 VS SMARTBIM -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs proprietary BIM (SmartBIM, Autodesk Construction Cloud, Trimble Connect)</div>
+      <h2 class="section-title">The cost case is also the lock-in case.</h2>
+      <p class="section-lede">SmartBIM, Autodesk Construction Cloud, Trimble Connect, and similar proprietary platforms solve real problems &mdash; especially for mega-project coordination at scale. The trade-off is recurring per-seat / per-project licensing in foreign currency, vendor-controlled data formats, and an integration story that runs through the vendor's API roadmap. openBIM solves enough of the same problems for most SA projects at a fraction of the cost, with a portable data layer that survives the vendor.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead>
+          <tr><th>Concern</th><th>SmartBIM &amp; peers</th><th>openBIM stack</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Licence cost (10-seat team, 1 year)</strong></td><td>USD $30k&ndash;$120k+ (R570k&ndash;R2.3m at R19/USD)</td><td>R0 (infra + integration time only)</td></tr>
+          <tr><td><strong>Data format</strong></td><td>Vendor-proprietary; export via vendor API</td><td>IFC (ISO 16739); fully readable without the tool</td></tr>
+          <tr><td><strong>Authoring tool lock-in</strong></td><td>Tied to vendor's authoring product</td><td>Bring any tool that exports IFC (200+)</td></tr>
+          <tr><td><strong>AI agent integration</strong></td><td>Through vendor API (rate-limited, billed)</td><td>Direct file access via IfcOpenShell</td></tr>
+          <tr><td><strong>Federation across disciplines</strong></td><td>Inside the vendor's ecosystem</td><td>Speckle, federated IFCs, BCF for issues</td></tr>
+          <tr><td><strong>FX exposure (ZAR billing)</strong></td><td>USD pricing, quarterly revaluation risk</td><td>None for the tooling layer</td></tr>
+          <tr><td><strong>Survives the contract</strong></td><td>Data trapped if subscription lapses</td><td>IFC files are yours, readable forever</td></tr>
+          <tr><td><strong>Where they win</strong></td><td>Mega-project coordination at scale, vendor-dedicated support, integrated cost+programme platforms</td><td>Anything where the licence cost can fund a junior dev or three site instruments instead</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>The pragmatic SA pattern</h4>
+      <p>For most SA mid-market construction projects (R50m&ndash;R2bn build value, 5&ndash;30 seat coordination team), the openBIM stack covers the same operational ground &mdash; takeoff, federation, clash coordination, RFIs, handover &mdash; while the licence saving funds the on-site sensors and the agent infrastructure that turn the IFC into operational intelligence. <strong>Build Smarter. Build Open.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Gotchas</div>
+      <h2 class="section-title">Six places openBIM bites if you're new to it.</h2>
+      <p class="section-lede">openBIM is the right answer; it isn't the easy answer. The standards are real but complex; the tooling is improving fast but rough in spots; the SA market still leans Revit-and-Excel by default. Knowing where it bites means you can plan around it.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>IFC version drift</strong>
+        <p>IFC4 is current; IFC2x3 is widely deployed; IFC4.3 adds infrastructure (rail, road, ports). Mixing versions on a project causes silent property loss. Pin a target version in the BIM Execution Plan and convert on intake.</p>
+      </div>
+      <div class="gotcha">
+        <strong>IFC export quality varies wildly</strong>
+        <p>"Revit can export IFC" is true but flatter than the live model. ArchiCAD's IFC export is generally cleaner. Always validate exported IFC against your acceptance checks before downstream use.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Geometry vs alphanumerics</strong>
+        <p>You usually want <em>both</em> the 3D geometry and the property sets. Some workflows extract one and not the other. Check that quantities (<code>Qto_*</code>) and property sets (<code>Pset_*</code>) are present, not just walls drawn in 3D.</p>
+      </div>
+      <div class="gotcha">
+        <strong>BlenderBIM is great, not Revit</strong>
+        <p>For greenfield small/mid projects, BlenderBIM is genuinely usable. For large projects with structural-engineering plugins, MEP routing tools, or specific consultant workflows tied to Revit, the migration cost is real. Pick the battle.</p>
+      </div>
+      <div class="gotcha">
+        <strong>SA market reality</strong>
+        <p>Most SA architectural and structural consultants use Revit or ArchiCAD; some use Allplan or Bentley. Asking for an IFC export <em>is</em> in their existing workflow &mdash; getting a clean IFC takes one upfront conversation per discipline. Don't assume; specify.</p>
+      </div>
+      <div class="gotcha">
+        <strong>BIM Execution Plan or it doesn't happen</strong>
+        <p>An openBIM project without a written BIM Execution Plan (BEP) drifts within weeks. The BEP names the IFC version, the federation tool, the BCF cadence, the LOD per phase, and the handover spec. Skip it and you're back to PDFs by month 4.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; South African context</div>
+      <h2 class="section-title">Why this lands harder in SA than most markets.</h2>
+      <p class="section-lede">South African construction has the right shape for openBIM adoption: most consultants already use BIM-capable tools, the cost case is sharp because of FX-denominated licences, the regulatory load (NHBRC, OHSA, SANS, B-BBEE procurement) is heavy and structured, and the contractor ecosystem is varied enough that no single proprietary platform dominates. The pattern fits.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>FX-cost lever.</strong> SmartBIM-class platforms bill in USD. A 10-seat team at $120/seat/month (USD) runs ~R273k/year at R19/USD &mdash; before FX revaluation. The same money funds a junior BIM coordinator local hire <em>and</em> the IFC viewer infrastructure. ZAR-denominated cost stack vs USD-denominated. That's the lever.</p>
+      <p><strong>Regulatory automation.</strong> NHBRC enrolment + technical inspections, OHSA Construction Regulations 2014 (CR), SANS 10400 building regs, Section 21A construction VAT, Section 25 procurement preferential points &mdash; SA's regulatory load is structured and queryable. An IFC model with property sets aligned to these requirements lets compliance be checked automatically. <em>Property exists, fire rating present, structural calc reference present</em> &mdash; queries, not paperwork.</p>
+      <p><strong>BIM Execution in the JBCC and NEC contracts.</strong> The Joint Building Contracts Committee (JBCC) and NEC4 (used by larger SA contractors and SOEs) both increasingly contemplate BIM deliverables. JBCC Edition 6.2 includes provisions for digital deliverables; NEC4 Option Y(UK)1 is BIM-aware. SA government infrastructure contracts under DPSA and NDPW are starting to mandate IFC handover for major projects.</p>
+      <p><strong>The contractor ecosystem.</strong> WBHO, Group Five, Stefanutti Stocks, Aveng &mdash; tier-1 contractors run heterogeneous tooling stacks per project. SmartBIM-style single-vendor lock-in actively conflicts with how SA tier-1s actually deliver projects. openBIM lets the contractor coordinate without forcing a vendor on every consultant.</p>
+    </div>
+
+    <div class="info-card clay fade-up" style="transition-delay: 0.08s">
+      <h4>The Gridline Properties / openBUILD AI lens</h4>
+      <p>The flagship SA case for openBIM-as-AI-substrate is the work with <a href="https://gridlineprop.co.za" target="_blank" rel="noopener" style="color:var(--sky)">Gridline Properties</a> and Grant Kneale &mdash; a developer building openBUILD AI as the open smart-building platform. AI takeoff from IFC, 4D programme tied to the model, material tracking, quality capture linked to IFC GUIDs, safety intelligence from site photos, automated SA compliance checking. <strong>Silvercroft</strong> is the pilot. The full pitch is at <a href="https://dev.2nth.ai/preview/gridlineprop/construction-ai.html" target="_blank" rel="noopener" style="color:var(--sky)">dev.2nth.ai/preview/gridlineprop/construction-ai</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where openBIM links in the tree.</h2>
+      <p class="section-lede">openBIM is the data substrate for every other Construction skill. It also connects outward into Data (the model is queryable structured data), Tech (the agents that read it), and Design (the architectural authoring tools that produce it).</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">construction</span>
+        <div class="skill">Construction hub</div>
+        <div class="why">The domain landing — all sub-skills (takeoff, programme, RFIs, compliance, handover) sit on this hub.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">construction/smartbim-vs-openbim</span>
+        <div class="skill">SmartBIM vs openBIM</div>
+        <div class="why">The cost-and-lock-in case in detail. ZAR-denominated worked example for a typical SA mid-market project.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">construction/sa-compliance</span>
+        <div class="skill">SA compliance automation</div>
+        <div class="why">NHBRC, OHSA CR 2014, SANS 10400, JBCC and NEC4 BIM provisions, DPSA / NDPW handover requirements &mdash; queried from IFC property sets.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">construction/silvercroft</span>
+        <div class="skill">Silvercroft case study</div>
+        <div class="why">Gridline Properties' pilot site for openBUILD AI. From IFC takeoff to material tracking to handover.</div>
+      </div>
+      <a href="../data/engineering/liteparse.html" class="connect-node">
+        <span class="tag">data/engineering/liteparse</span>
+        <div class="skill">LiteParse</div>
+        <div class="why">When IFC isn't available and you're back to scraping a 200-page BOQ from PDF, LiteParse is the bridge. Use IFC where it exists; LiteParse for the legacy long-tail.</div>
+      </a>
+      <a href="../tech/cloudflare/r2.html" class="connect-node">
+        <span class="tag">tech/cloudflare/r2</span>
+        <div class="skill">Cloudflare R2</div>
+        <div class="why">IFC files are big (50&ndash;500 MB common). R2 is the cheap, S3-compatible blob store for serving them to viewers + agents.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 07 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">The canonical reading.</h2>
+      <p class="section-lede">openBIM has a small number of authoritative sources. buildingSMART is the standards body, IfcOpenShell + BlenderBIM are the workhorse open tools, Speckle is the modern federation layer, and the academic literature on IFC-driven AI takeoff is rich and accessible.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.buildingsmart.org/about/openbim/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Standards body</span>
+        <span class="r-title">buildingSMART &middot; openBIM</span>
+        <span class="r-url">buildingsmart.org/about/openbim</span>
+      </a>
+      <a href="https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec</span>
+        <span class="r-title">IFC 4.3 schema</span>
+        <span class="r-url">standards.buildingsmart.org/IFC/RELEASE/IFC4_3</span>
+      </a>
+      <a href="https://ifcopenshell.org/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Library</span>
+        <span class="r-title">IfcOpenShell</span>
+        <span class="r-url">ifcopenshell.org</span>
+      </a>
+      <a href="https://blenderbim.org/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Authoring</span>
+        <span class="r-title">BlenderBIM Add-on</span>
+        <span class="r-url">blenderbim.org</span>
+      </a>
+      <a href="https://speckle.systems/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Federation</span>
+        <span class="r-title">Speckle</span>
+        <span class="r-url">speckle.systems</span>
+      </a>
+      <a href="https://github.com/buildingSMART/BCF-API" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Coordination</span>
+        <span class="r-title">BCF API spec</span>
+        <span class="r-url">github.com/buildingSMART/BCF-API</span>
+      </a>
+      <a href="https://dev.2nth.ai/preview/gridlineprop/construction-ai.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Pitch</span>
+        <span class="r-title">openBUILD AI &middot; Gridline Properties &times; 2nth.ai</span>
+        <span class="r-url">dev.2nth.ai/preview/gridlineprop/construction-ai</span>
+      </a>
+      <a href="https://gridlineprop.co.za" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Partner</span>
+        <span class="r-title">Gridline Properties</span>
+        <span class="r-url">gridlineprop.co.za</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Construction hub</a>
+      <a href="https://www.buildingsmart.org/about/openbim/" target="_blank" rel="noopener">buildingSMART openBIM &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
