@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gemini &mdash; know.2nth.ai</title>
+<meta name="description" content="Gemini — Google's flagship multimodal model family. Three production tiers in 2026: Gemini 2.5 Pro / Ultra for the hardest reasoning, Gemini 2.5 Flash for everyday work, Gemini Flash-Lite for high-volume routing. 1M+ token context window — the largest in the field by a meaningful margin. Native multimodal across text, image, video, and audio. Native search grounding. Hosted via Google AI Studio, Vertex AI (including africa-south1 in Johannesburg), and OpenRouter. The default for production agents that need extreme context length, Google search integration, or bidirectional voice via the Live API.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/gemini">
+<meta property="og:title" content="Gemini &mdash; know.2nth.ai">
+<meta property="og:description" content="Gemini — Google's flagship family. 1M+ context, native multimodal, native search grounding, voice via Live API. Hosted via Vertex AI in africa-south1.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gemini &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Gemini — Google's flagship family. 1M+ context, native multimodal, native search grounding, voice via Live. Vertex AI in JHB.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/gemini</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Gemini</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Gemini &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      One million tokens of context. <span class="gradient">Native voice. Native search.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Gemini is Google DeepMind's flagship model family. Three production tiers in 2026: <strong>Gemini 2.5 Pro / Ultra</strong> for the hardest reasoning, <strong>Gemini 2.5 Flash</strong> for everyday agent work, <strong>Gemini Flash-Lite</strong> for high-volume routing. The differentiators that matter: <strong>1M+ token context</strong> (the largest in the field by a meaningful margin), <strong>native multimodal across text, image, video, and audio</strong>, <strong>native Google Search grounding</strong>, and <strong>native bidirectional voice</strong> via the Live API. Hosted via Google AI Studio, Vertex AI (including <code>africa-south1</code> in Johannesburg), and OpenRouter. The default closed-frontier model when extreme context, search grounding, or voice is the load-bearing capability.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Gemini 2.5 family &middot; current</span>
+      <span class="pill indigo">Pro / Ultra &middot; Flash &middot; Flash-Lite</span>
+      <span class="pill accent">1M+ context</span>
+      <span class="pill warn">Native search grounding</span>
+      <span class="pill">Live API &middot; voice + video</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">Google DeepMind's flagship multimodal family.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Gemini is the model family from <strong>Google DeepMind</strong>, the merged Google research lab that combines DeepMind's frontier-AI work with the production model engineering that powers Google's products. The first Gemini family shipped in late 2023 (Gemini 1.0 Pro, Ultra, Nano); subsequent generations followed roughly annually, with Gemini 1.5 expanding context to 1M tokens, Gemini 2.0 adding native multimodal generation, and Gemini 2.5 (the current line) bringing the production-grade reasoning and live-API capabilities.</p>
+      <p>Where Claude leads on instruction-following and GPT on function-calling reach, Gemini has historically led on three things: <strong>extreme context length</strong> (1M+ tokens reliably used, not just nominally supported), <strong>native multimodality</strong> (text, image, video, audio in a single model rather than bolted-together components), and <strong>native search grounding</strong> (the model can search Google and ground responses in current information without external RAG infrastructure). Those three properties make it the default choice for use cases where any of them is structurally needed.</p>
+      <p>Distribution: Gemini is available via <strong>Google AI Studio</strong> (the developer-friendly direct path, also free up to a quota), <strong>Vertex AI</strong> (the enterprise GCP path, including the JHB <code>africa-south1</code> region for SA-resident calls), <strong>Gemini.google.com</strong> (the consumer product), and through every major aggregator (OpenRouter, LiteLLM). Inside Google's own products &mdash; Search AI Overviews, Workspace AI features, Pixel devices &mdash; Gemini is the model behind much of what users actually interact with daily, making it one of the most-deployed model families by raw query count.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Naming &middot; how the family lines up</h4>
+      <p>Gemini's naming pattern: <code>Gemini {version} {tier}</code>. <strong>Version</strong> is the generation (1.0, 1.5, 2.0, 2.5). <strong>Tier</strong> is the size class &mdash; Pro (everyday flagship), Ultra (the "hardest reasoning" SKU at the top), Flash (cheaper / faster), Flash-Lite (cheapest / fastest), and Nano (on-device, mobile-targeted). The full model ID for API calls uses dashes: <code>gemini-2.5-pro</code>, <code>gemini-2.5-flash</code>, <code>gemini-2.5-flash-lite</code>. Older 1.5 models (<code>gemini-1.5-pro</code>) are still supported but on a deprecation track &mdash; check the model availability matrix before pinning legacy versions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 THE LINEUP -->
+<section id="lineup">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The Gemini 2.5 lineup</div>
+      <h2 class="section-title">Three tiers, one quality curve, one differentiating context window.</h2>
+      <p class="section-lede">The Gemini family is tiered like Claude and GPT: flagship at the top for hard reasoning, mid-tier for the everyday default, lighter tier for high-volume routine work. The difference: the entire family ships with the same 1M+ context window. Where Claude tops out at 200k and GPT at ~200k for most variants, Gemini Flash &mdash; the cheap, fast tier &mdash; gives you a million tokens.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Tier &middot; frontier</span>
+        <h4>Gemini 2.5 Pro / Ultra</h4>
+        <p>The flagship. Best for: complex reasoning, deep research, code generation, long-context analysis. 1M+ token window. Native extended thinking on hard prompts.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Tier &middot; default</span>
+        <h4>Gemini 2.5 Flash</h4>
+        <p>The "good for almost everything" tier. Materially cheaper than Pro, very close in quality on most tasks. 1M context. The right default for production agent volume.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Tier &middot; volume</span>
+        <h4>Gemini Flash-Lite</h4>
+        <p>The cheapest tier. Best for: routing, classification, summarisation, structured extraction at scale. Still supports the 1M context window &mdash; useful for "scan a long document, answer one question" patterns where a heavier tier would be overkill.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Capability &middot; cross-tier</span>
+        <h4>All tiers ship</h4>
+        <p>1M+ context, native multimodal (text/image/video/audio in, text/image out), function-calling, JSON mode, structured outputs, native Google Search grounding (paid feature), the Live API for bidirectional streaming voice and video.</p>
+      </div>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>The 1M context isn't just a number</h4>
+      <p>Many models nominally support 200k+ context but degrade meaningfully past 32k or 64k. Gemini 2.5 Pro is the rare model that genuinely uses its full 1M window &mdash; you can pass an entire codebase, a 200-page document, or several hours of audio transcription and get coherent reasoning back. <strong>For "ask the company" agents over large internal corpora, Gemini's context advantage often beats the RAG-engineering complexity Claude or GPT would otherwise require</strong>. The trade-off: latency grows with context (multiple seconds for full 1M) and per-call cost rises with token count.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 VS OTHER MODELS -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs Claude, GPT, Llama, Gemma</div>
+      <h2 class="section-title">Where Gemini is the right pick &mdash; and where it isn't.</h2>
+      <p class="section-lede">Honest cross-family positioning. Gemini's strengths sit on context length, multimodal range, search grounding, and voice; its weaknesses are around instruction-following consistency (relative to Claude) and ecosystem reach (relative to OpenAI). For specific use cases, Gemini is the only credible answer in 2026.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Family</th><th>Strengths</th><th>Watch out for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Gemini (Google)</strong></td><td>1M+ context (the largest), native multimodal across all media, native Google Search grounding, voice via Live API, JHB Vertex region for SA residency</td><td>Less consistent on instruction-following than Claude; smaller community / ecosystem than OpenAI; Live API still maturing on TS/JS support</td></tr>
+          <tr><td><strong>Claude (Anthropic)</strong></td><td>Best instruction-following, native extended thinking, MCP-native, Bedrock <code>af-south-1</code> for SA residency</td><td>Closed; 200k context cap; weaker multimodal range than Gemini</td></tr>
+          <tr><td><strong>GPT (OpenAI)</strong></td><td>Largest API ecosystem, best function-calling reliability, broadest multimodal (vision/audio/DALL-E)</td><td>"Confidently wrong" failure mode more than Claude; context tops at 200k for most variants</td></tr>
+          <tr><td><strong>Llama (Meta)</strong></td><td>Open weights, runs locally, largest community fine-tune ecosystem</td><td>Frontier gap; smaller context than Gemini Pro; Meta licence has commercial restrictions</td></tr>
+          <tr><td><strong>Gemma (Google)</strong></td><td>Open weights, multimodal, frontier-lab safety tuning, runs locally via Ollama</td><td>Smaller fine-tune ecosystem than Llama; not as code-strong as Qwen-coder</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>When Gemini is the only credible answer</h4>
+      <p>Three use-case shapes where the other frontier families simply can't compete: <strong>(1) genuine 1M+ context reasoning</strong> &mdash; codebase analysis, multi-document synthesis, video understanding; <strong>(2) bidirectional voice agents with vision</strong> &mdash; the Live API is the cleanest implementation of streaming multimodal interaction available; <strong>(3) agents that need fresh information without external RAG</strong> &mdash; Google Search grounding gives you up-to-date answers without standing up your own search infrastructure. For any of these three shapes, Gemini wins by default in 2026.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 PRICING REALITY -->
+<section id="pricing">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Pricing reality</div>
+      <h2 class="section-title">Tiered, with a context-length cost asymmetry.</h2>
+      <p class="section-lede">Gemini is USD-billed at frontier-tier rates for Pro/Ultra and meaningfully cheaper for Flash and Flash-Lite. The unique cost lever: <strong>context length scales output cost linearly</strong> &mdash; passing 500k tokens of context costs roughly 5&times; what passing 100k tokens costs for the same model. Always check <a href="https://ai.google.dev/pricing" target="_blank" rel="noopener" style="color:var(--sky)">ai.google.dev/pricing</a> for current numbers.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The shape of the pricing curve</strong> (illustrative; check the official page):</p>
+      <ul>
+        <li><strong>Gemini 2.5 Pro / Ultra</strong> &mdash; frontier-tier rates. Output tokens billed roughly 4-5&times; input. Long context (above the standard 200k threshold) often billed at higher rates.</li>
+        <li><strong>Gemini 2.5 Flash</strong> &mdash; meaningfully cheaper than Pro; very competitive with Claude Haiku and GPT-4o for routine production work.</li>
+        <li><strong>Gemini Flash-Lite</strong> &mdash; cheapest of the three. Often the right tier for routing, classification, and structured extraction at high volume.</li>
+        <li><strong>Search grounding</strong> &mdash; billed per grounded query in addition to model tokens. Cheap per query but adds up for high-volume agents.</li>
+        <li><strong>Context caching</strong> &mdash; Google supports cached context for repeated long-context calls, materially cutting cost for RAG-style workloads with shared context.</li>
+        <li><strong>Batch API</strong> &mdash; ~50% discount on input + output for non-urgent batched workloads. Useful for nightly long-context processing.</li>
+      </ul>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>The Flash-default routing pattern</h4>
+      <p>Same logic as the Claude and GPT leaves: don't run everything on Pro. Build a Flash-Lite-driven router that classifies incoming requests, dispatches the routine 60-80% to Flash, and escalates the genuinely hard 5-15% to Pro / Ultra. <strong>Combined with Google's context caching for any repeated-context workload (common with 1M-token RAG), this pattern cuts Gemini costs 60-80% versus running everything on Pro.</strong> Across closed-frontier models in 2026, Gemini Flash plus context caching is often the most cost-effective path for long-context-heavy agents.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Decision guide</div>
+      <h2 class="section-title">When Gemini is the right model. When it isn't.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use Gemini when</h4>
+        <ul>
+          <li>You need genuine 1M+ context (codebase, multi-document, hours of transcription)</li>
+          <li>Bidirectional voice + video native is load-bearing &mdash; the Live API leads</li>
+          <li>You want native Google Search grounding without standing up RAG infra</li>
+          <li>Multimodal range matters &mdash; text + image + video + audio in one model</li>
+          <li>You're already on GCP and want Vertex AI's managed integrations</li>
+          <li>POPIA / data-residency requires SA-resident inference and you want JHB <code>africa-south1</code></li>
+          <li>Cost-effective long-context agents &mdash; Flash + context caching is hard to beat</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip Gemini when</h4>
+        <ul>
+          <li>Instruction-following reliability matters more than reach &mdash; Claude often wins</li>
+          <li>Function-calling is the load-bearing capability &mdash; GPT wins</li>
+          <li>You need the largest API ecosystem / community &mdash; OpenAI wins</li>
+          <li>You want fully open / self-hostable models &mdash; Gemini is closed (try Gemma instead)</li>
+          <li>Cost-sensitive at extreme scale and the Live / search / context features aren't structural &mdash; open-weights via Ollama is cheaper</li>
+          <li>You distrust Google as a vendor or want to avoid Google's data practices</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; South African context</div>
+      <h2 class="section-title">Where Gemini lands in SA delivery work.</h2>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Enterprise &middot; Vertex AI in <code>africa-south1</code></h4>
+      <p>Vertex AI's <strong>Johannesburg region (<code>africa-south1</code>)</strong> hosts Gemini 2.5 Flash and (in most cases) Pro for SA-resident inference, with full POPIA compliance, IAM controls, and Cloud Logging audit trails. For SA banks, insurers, and telcos already on GCP &mdash; or evaluating it &mdash; this is the structurally cleanest path among closed frontier models. The honest constraint: not every Gemini variant lands in <code>africa-south1</code> at launch. Newest models (Ultra tier, latest preview models) sometimes lag the US regions by weeks or months. Plan for either a US-East fallback or accept the lag if residency is non-negotiable.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; Google AI Studio direct</h4>
+      <p>For SA studios without enterprise residency requirements, Google AI Studio is the simplest path. Free tier covers prototypes; usage-based billing scales to production. The Studio UI is genuinely good for prompt iteration &mdash; better than OpenAI Platform for context-heavy workflows. Pragmatic SA studio path: prototype in AI Studio direct, ship pilots from there, only move to Vertex AI if a client requires it.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>Live API &middot; voice agents with SA infrastructure</h4>
+      <p>The Live API is the most-credible answer for "build a voice agent in SA" in 2026. Bidirectional streaming voice + video, native multilingual (English + Afrikaans + isiZulu work meaningfully well), low-latency from <code>africa-south1</code>. For SA studios building voice agents for telcos, banks, or government, Gemini Live + Vertex JHB is structurally easier than the OpenAI Realtime API or Anthropic's separate audio endpoints &mdash; both of which lack a regional SA hosting story.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Connections</div>
+      <h2 class="section-title">Where Gemini links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. Gemini in the Models band; Google ADK in the Frameworks band is its natural pairing.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">The first-party agent framework for Gemini. Native Live API integration, Vertex AI Agent Engine deployment. The default SDK if Gemini is your model.</div>
+      </a>
+      <a href="claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude</div>
+        <div class="why">The major closed-frontier alternative. Claude leads on instruction-following; Gemini leads on context and multimodal. Often used together in multi-model production stacks.</div>
+      </a>
+      <a href="gpt.html" class="connect-node">
+        <span class="tag">agents/gpt</span>
+        <div class="skill">GPT &middot; OpenAI</div>
+        <div class="why">The other major closed-frontier alternative. GPT leads on function-calling and ecosystem; Gemini leads on context and search grounding.</div>
+      </a>
+      <a href="gemma.html" class="connect-node">
+        <span class="tag">agents/gemma</span>
+        <div class="skill">Gemma</div>
+        <div class="why">The open-weights complement from the same lab. Gemma 3 inherits Gemini's training pipeline at smaller sizes &mdash; useful when you want Google-lineage models you can host locally.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">Common cross-vendor pairing &mdash; LangGraph for orchestration, Gemini for the long-context reasoning steps via <code>langchain-google-genai</code>.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">The local-inference complement. Common hybrid: Gemini Pro for the long-context analysis step, Ollama-Gemma for high-volume PII pre-processing or routing.</div>
+      </a>
+      <a href="../tech/google/" class="connect-node">
+        <span class="tag">tech/google</span>
+        <div class="skill">Google Cloud</div>
+        <div class="why">Vertex AI in <code>africa-south1</code> is the SA-residency-clean path for Gemini workloads. The full GCP integration (IAM, audit logging, Cloud Run, Memory Bank) lives there.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 08 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://deepmind.google/technologies/gemini/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">deepmind.google/technologies/gemini</span>
+        <span class="r-url">deepmind.google/technologies/gemini</span>
+      </a>
+      <a href="https://ai.google.dev" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Studio</span>
+        <span class="r-title">Google AI Studio &amp; Gemini API docs</span>
+        <span class="r-url">ai.google.dev</span>
+      </a>
+      <a href="https://ai.google.dev/pricing" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Pricing</span>
+        <span class="r-title">ai.google.dev/pricing</span>
+        <span class="r-url">ai.google.dev/pricing</span>
+      </a>
+      <a href="https://ai.google.dev/gemini-api/docs/models" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Models</span>
+        <span class="r-title">Gemini model lineup &amp; capabilities</span>
+        <span class="r-url">ai.google.dev/gemini-api/docs/models</span>
+      </a>
+      <a href="https://ai.google.dev/gemini-api/docs/live" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Feature</span>
+        <span class="r-title">Live API documentation</span>
+        <span class="r-url">ai.google.dev/gemini-api/docs/live</span>
+      </a>
+      <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Hosting</span>
+        <span class="r-title">Gemini on Vertex AI (incl. africa-south1)</span>
+        <span class="r-url">cloud.google.com/.../models</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://deepmind.google/technologies/gemini/" target="_blank" rel="noopener">Gemini &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
