@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LangGraph &mdash; know.2nth.ai</title>
+<meta name="description" content="LangGraph — the graph-based orchestration framework from LangChain Inc. MIT-licensed, Python + TypeScript, built around a StateGraph primitive with explicit nodes, edges, and shared state. Native checkpointing, time-travel debugging, human-in-the-loop interrupts, LangSmith observability. The de-facto choice when you want full control over agent flow rather than letting an LLM decide. Used in production by Klarna, Replit, Elastic, and the LangChain ecosystem itself.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/langgraph">
+<meta property="og:title" content="LangGraph &mdash; know.2nth.ai">
+<meta property="og:description" content="LangGraph — graph-based orchestration framework from LangChain Inc. MIT-licensed, Python + TypeScript. StateGraph primitive, native checkpointing, time-travel debugging, human-in-the-loop interrupts. The de-facto choice when you want full control over agent flow.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LangGraph &mdash; know.2nth.ai">
+<meta name="twitter:description" content="LangGraph — graph-based agent orchestration. MIT, Python + TS, StateGraph primitive, checkpointing, time-travel, LangSmith. The control-first framework choice.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/langgraph</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">LangGraph</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; LangGraph &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Pick the path. <span class="gradient">Don't ask the model.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      LangGraph is the graph-based orchestration framework from LangChain Inc. Built around a <code>StateGraph</code> primitive with explicit nodes, edges, and shared state &mdash; you draw the agent flow, the framework runs it. MIT-licensed, Python and TypeScript SDKs, native checkpointing, time-travel debugging, human-in-the-loop interrupts, deep LangSmith observability. The de-facto choice in 2026 when you want full control over agent behaviour rather than letting an LLM decide what happens next. Used in production at Klarna, Replit, Elastic, AppFolio, and across the broader LangChain ecosystem.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">v1.0+ &middot; production-ready</span>
+      <span class="pill indigo">MIT licensed</span>
+      <span class="pill accent">Python &middot; TypeScript</span>
+      <span class="pill">17,000+ stars</span>
+      <span class="pill warn">LangSmith integrated</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">An agent runtime where the graph is the program.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>LangGraph is a low-level orchestration framework for building stateful, multi-step agent workflows. Released in early 2024 by LangChain Inc. and shipped as a sibling library to LangChain itself, it took a deliberately different design from the &quot;chain&quot; abstraction that made LangChain famous.</p>
+      <p>The thesis: <strong>most production agent failures are control-flow failures, not reasoning failures</strong>. The LLM picks the wrong tool, calls it twice, loops forever, or misses a step. LangGraph's answer is to lift the flow out of the prompt and into the framework. You define a <code>StateGraph</code> &mdash; nodes, edges, shared state &mdash; and the graph runs deterministically. The LLM still reasons inside nodes; the framework decides which node runs next.</p>
+      <p>That single architectural choice cascades into the things LangGraph does well: <strong>checkpointing</strong> (the state at every node is persisted, so you can resume, inspect, or fork from any step), <strong>time-travel debugging</strong> (rewind state to a previous node and re-run), <strong>human-in-the-loop interrupts</strong> (pause the graph, ask a human, resume), and <strong>fan-out / fan-in patterns</strong> (parallel branches that merge cleanly). All of which are awkward to bolt onto a "let the agent decide" framework.</p>
+      <p>LangGraph is MIT-licensed and lives across <code>langchain-ai/langgraph</code> (Python) and <code>langchain-ai/langgraphjs</code> (TypeScript). The Python repo crossed 17,000 GitHub stars in 2026 and ships ~weekly releases. The framework reached its <strong>1.0 stable release</strong> in late 2024, signalling production-readiness; v1.x has been the recommended track since.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Why "graph" not "chain" not "agent"</h4>
+      <p>LangChain's original abstraction was the <strong>chain</strong> &mdash; linear pipelines of LLM calls. The <strong>agent</strong> abstraction (ReAct loops) added autonomy but lost predictability. LangGraph's <strong>graph</strong> sits between: as flexible as an agent (cycles, branches, dynamic routing) but as predictable as a chain (you can read the graph and know what it does). For most production workloads, that middle position is structurally where the work lives.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Five primitives carry almost everything.</h2>
+      <p class="section-lede">State, Nodes, Edges, Checkpointer, and Interrupts. Master those five and 90% of LangGraph clicks. The rest is integration: which LLM, which tool layer, which deployment surface.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>State</strong> is the single shared object every node reads from and writes to. Defined as a <code>TypedDict</code> in Python (or a Zod schema in TS), it's the contract between nodes. <strong>Nodes</strong> are plain functions that take state and return a partial state update. <strong>Edges</strong> connect nodes &mdash; either statically (always go from A to B) or conditionally (a function inspects state and returns the next node name).</p>
+      <p>The minimal LangGraph in Python:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="h">from</span> typing <span class="h">import</span> TypedDict, Annotated
+<span class="h">from</span> langgraph.graph <span class="h">import</span> StateGraph, START, END
+<span class="h">from</span> langgraph.graph.message <span class="h">import</span> add_messages
+<span class="h">from</span> langchain_anthropic <span class="h">import</span> ChatAnthropic
+
+<span class="h">class</span> State(TypedDict):
+    messages: Annotated[<span class="k">list</span>, add_messages]
+
+<span class="h">def</span> chatbot(state: State):
+    llm = ChatAnthropic(<span class="h">model</span>=<span class="s">"claude-sonnet-4-6"</span>)
+    <span class="h">return</span> {<span class="s">"messages"</span>: [llm.invoke(state[<span class="s">"messages"</span>])]}
+
+graph = StateGraph(State)
+graph.add_node(<span class="s">"chatbot"</span>, chatbot)
+graph.add_edge(START, <span class="s">"chatbot"</span>)
+graph.add_edge(<span class="s">"chatbot"</span>, END)
+app = graph.compile()
+
+<span class="c"># Run it</span>
+result = app.invoke({<span class="s">"messages"</span>: [(<span class="s">"user"</span>, <span class="s">"Hello"</span>)]})</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Conditional edges</strong> are where LangGraph earns its keep. A function reads state and decides which node runs next. This is how you build routing, retries, and tool-use loops without the LLM picking from a freeform menu:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.13s"><span class="h">def</span> route(state: State) -&gt; <span class="k">str</span>:
+    last = state[<span class="s">"messages"</span>][-1]
+    <span class="h">if</span> last.tool_calls:
+        <span class="h">return</span> <span class="s">"tools"</span>
+    <span class="h">return</span> END
+
+graph.add_conditional_edges(<span class="s">"chatbot"</span>, route, {
+    <span class="s">"tools"</span>: <span class="s">"tool_node"</span>,
+    END: END,
+})
+graph.add_edge(<span class="s">"tool_node"</span>, <span class="s">"chatbot"</span>)  <span class="c"># back to the LLM</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.16s">
+      <p><strong>Checkpointing.</strong> Every node executes inside a transaction. If you compile the graph with a <code>Checkpointer</code> (in-memory, SQLite, Postgres, or Redis backends), the state at every step is persisted. That gives you free wins:</p>
+      <ul>
+        <li><strong>Resume after crash</strong> &mdash; pick up where the graph left off</li>
+        <li><strong>Time travel</strong> &mdash; rewind to any prior state and re-run from there</li>
+        <li><strong>Multi-turn conversations</strong> &mdash; same <code>thread_id</code> keeps history</li>
+        <li><strong>Audit trail</strong> &mdash; every step is recorded, with input and output</li>
+      </ul>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.19s"><span class="h">from</span> langgraph.checkpoint.postgres <span class="h">import</span> PostgresSaver
+
+checkpointer = PostgresSaver.from_conn_string(<span class="s">"postgresql://..."</span>)
+app = graph.compile(<span class="h">checkpointer</span>=checkpointer)
+
+<span class="c"># Same thread_id keeps state across calls</span>
+config = {<span class="s">"configurable"</span>: {<span class="s">"thread_id"</span>: <span class="s">"user-42"</span>}}
+app.invoke({<span class="s">"messages"</span>: [(<span class="s">"user"</span>, <span class="s">"Hi"</span>)]}, config)
+app.invoke({<span class="s">"messages"</span>: [(<span class="s">"user"</span>, <span class="s">"What did I just say?"</span>)]}, config)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.22s">
+      <p><strong>Human-in-the-loop interrupts.</strong> Pause the graph mid-execution, let a human review or edit state, then resume. This is the load-bearing feature for any agent that touches money, sends external messages, or has compliance constraints:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.25s"><span class="h">from</span> langgraph.types <span class="h">import</span> interrupt, Command
+
+<span class="h">def</span> approve_payment(state: State):
+    decision = interrupt({<span class="s">"amount"</span>: state[<span class="s">"amount"</span>]})
+    <span class="h">if</span> decision[<span class="s">"approved"</span>]:
+        <span class="h">return</span> {<span class="s">"status"</span>: <span class="s">"approved"</span>}
+    <span class="h">return</span> {<span class="s">"status"</span>: <span class="s">"rejected"</span>}
+
+<span class="c"># Run; graph pauses at interrupt(). Resume with a Command:</span>
+app.invoke(Command(<span class="h">resume</span>={<span class="s">"approved"</span>: <span class="k">True</span>}), config)</pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.28s">
+      <h4>The structural advantage over &quot;agent decides&quot; frameworks</h4>
+      <p>In a freeform agent, "did the model approve a $50,000 transfer?" is a prompt-engineering question. In LangGraph, it's an architectural fact &mdash; the approval node either ran or it didn't, the interrupt either fired or it didn't, and you can read the graph to know which is true. <strong>Predictable control flow makes audit and compliance tractable.</strong> That's the productivity argument for the extra boilerplate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 ECOSYSTEM -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; The ecosystem</div>
+      <h2 class="section-title">LangChain inheritance, LangSmith observability, LangGraph Platform.</h2>
+      <p class="section-lede">LangGraph alone is a graph runtime. Plug it into the LangChain ecosystem and you get the largest tool integration library in agent-land. Plug LangSmith on top and you get the most mature observability story in the field. Wire in LangGraph Platform (the commercial managed runtime) and you get hosted deployment with checkpointing, scaling, and monitoring as managed services.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Library &middot; runtime</span>
+        <h4>LangGraph</h4>
+        <p>The MIT-licensed graph runtime itself. Python and TypeScript SDKs. Self-host anywhere &mdash; Docker, Cloud Run, Lambda, Hetzner droplets, your laptop.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Library &middot; tools</span>
+        <h4>LangChain</h4>
+        <p>The sibling library. 700+ tool integrations, retrievers, document loaders, output parsers, agents. LangGraph nodes typically use LangChain tools internally.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">SaaS &middot; observability</span>
+        <h4>LangSmith</h4>
+        <p>Commercial observability for LangChain &amp; LangGraph runs. Traces, evaluations, prompt management, dataset curation. Free tier available; paid tiers for production volume.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">SaaS &middot; runtime</span>
+        <h4>LangGraph Platform</h4>
+        <p>Managed runtime for LangGraph apps. Hosted checkpointing, autoscaling, threads API, Studio (visual graph debugger). Self-host or cloud-host options.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>The honest commercial picture.</strong> LangGraph the library is genuinely free MIT. The free tier of LangSmith covers small teams. <strong>At production scale &mdash; high throughput, long retention, multi-seat &mdash; LangSmith and LangGraph Platform are the revenue model.</strong> Most teams that adopt LangGraph end up paying LangChain Inc. for one or both. That's the trade compared with Google ADK + Vertex AI Agent Engine (different vendor, similar pattern) or self-hosting LangGraph + a roll-your-own observability layer (more work, no SaaS bill).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 VS OTHER FRAMEWORKS -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; vs other frameworks</div>
+      <h2 class="section-title">Where LangGraph wins, where it doesn't.</h2>
+      <p class="section-lede">LangGraph and Google ADK are the two strongest "build production agents" frameworks in 2026. They make different bets. The right choice depends less on quality &mdash; both are excellent &mdash; and more on ecosystem alignment, deployment surface, and how much explicit control you want.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Dimension</th><th>LangGraph</th><th>Google ADK</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Default control style</strong></td><td>Explicit graph &mdash; you draw it</td><td>Hierarchical agents &mdash; LLM routes</td></tr>
+          <tr><td><strong>Cloud alignment</strong></td><td>Vendor-agnostic; runs anywhere</td><td>GCP-first; managed surface on Vertex AI</td></tr>
+          <tr><td><strong>Tool ecosystem</strong></td><td>LangChain &mdash; the largest in agent-land</td><td>MCP + LangchainTool / CrewaiTool adapters</td></tr>
+          <tr><td><strong>Observability</strong></td><td>LangSmith (paid) &mdash; the most mature</td><td>OpenTelemetry GenAI + Cloud Trace</td></tr>
+          <tr><td><strong>Voice / multimodal</strong></td><td>Possible, not native</td><td>Native via Gemini Live API</td></tr>
+          <tr><td><strong>Checkpointing &amp; time-travel</strong></td><td>Native, with multiple backends</td><td>Sessions + Memory Bank (managed)</td></tr>
+          <tr><td><strong>Boilerplate</strong></td><td>Higher &mdash; you write the graph</td><td>Lower &mdash; agents wire themselves up</td></tr>
+          <tr><td><strong>Languages</strong></td><td>Python, TypeScript</td><td>Python, TypeScript, Go, Java</td></tr>
+          <tr><td><strong>A2A interop</strong></td><td>Community wrapper</td><td>First-party (<code>to_a2a()</code>)</td></tr>
+          <tr><td><strong>Best fit</strong></td><td>Predictable flows, compliance-heavy work, multi-vendor stacks</td><td>GCP deployments, Gemini-first, voice agents, faster prototypes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>The combine-them pattern most production teams use</h4>
+      <p>LangGraph and ADK aren't mutually exclusive. The pattern that's emerging in 2026: <strong>LangGraph for the orchestration "control plane"</strong> (where you want explicit edges and audit), <strong>ADK or specialist frameworks for the "data plane"</strong> (Gemini-Live voice agents, Vertex-managed sub-agents). The two talk via A2A. LangGraph's strength as the orchestrator is the explicit graph; ADK's strength as a sub-agent is the managed runtime. Use both for what each is best at.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 USE CASES -->
+<section id="use">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Use cases</div>
+      <h2 class="section-title">Where LangGraph earns its keep.</h2>
+      <p class="section-lede">Six patterns where LangGraph has shipped at scale, drawn from the LangChain Inc. case studies, public reference architectures, and production engineering blogs.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <ul>
+        <li><strong>Customer support routing</strong> &mdash; Klarna's LangGraph-based AI assistant handles ~2.3M conversations and saved an estimated $40M annually (LangChain case study). Graph encodes routing logic, escalation thresholds, and human handoff rules.</li>
+        <li><strong>Code agent orchestration</strong> &mdash; Replit Agent uses LangGraph to manage multi-step coding flows: plan, execute, test, fix, retry. Checkpointing means the agent can resume after a build fails or a sandbox times out.</li>
+        <li><strong>Document processing pipelines</strong> &mdash; multi-stage extract / classify / enrich / validate flows, where each step needs explicit retry rules and the final output triggers downstream business logic.</li>
+        <li><strong>Compliance-heavy automation</strong> &mdash; banking, insurance, healthcare. Human-in-the-loop interrupts at known decision points; the audit trail comes from the checkpointer; the graph itself is the policy document reviewers can read.</li>
+        <li><strong>Research / report generation</strong> &mdash; multi-agent fan-out: parallel sub-agents research different angles, results merge into a single report. <code>ParallelAgent</code>-style patterns natively expressed as graph branches.</li>
+        <li><strong>Internal developer agents</strong> &mdash; PR review, ticket triage, on-call assist. LangGraph's checkpointing means the agent can pause, ask the engineer for clarification, and resume without losing context.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Decision guide</div>
+      <h2 class="section-title">Pick LangGraph when. Skip LangGraph when.</h2>
+      <p class="section-lede">LangGraph is opinionated. The opinion is that explicit control beats implicit reasoning for production work, and the cost is more boilerplate. That trade is right for some teams and wrong for others. Honest two-sided guidance follows.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use LangGraph when</h4>
+        <ul>
+          <li>You need explicit control over agent flow &mdash; not "let the LLM decide"</li>
+          <li>Compliance or audit requirements demand a readable control-flow document</li>
+          <li>Human-in-the-loop interrupts are load-bearing (payments, content moderation, contracts)</li>
+          <li>Long-running flows that need to resume after crash or pause</li>
+          <li>Your team already uses LangChain &mdash; tool ecosystem inheritance is the win</li>
+          <li>Multi-vendor LLM strategy: Claude + GPT + Gemini + Ollama in one graph</li>
+          <li>You're fine paying for LangSmith / LangGraph Platform at scale</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip LangGraph when</h4>
+        <ul>
+          <li>Single-shot agents or short ReAct loops &mdash; the boilerplate isn't worth it</li>
+          <li>You're fully on GCP and Gemini-first &mdash; ADK fits better</li>
+          <li>You need bidirectional voice / video natively &mdash; ADK's Gemini Live integration wins</li>
+          <li>Rapid-prototype-and-throw-away work &mdash; CrewAI is faster to first demo</li>
+          <li>Cost-sensitive at scale and avoiding LangSmith fees &mdash; self-host plus your own observability is harder than expected</li>
+          <li>Your team has zero LangChain context and the team's main language isn't Python or TypeScript</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Pinning advice</h4>
+      <p>LangGraph is on a stable v1.x track. Pin minor versions in production (<code>langgraph~=1.x</code>) but expect to update monthly &mdash; the API is stable but the ecosystem moves. LangChain itself has a faster cadence; if you depend on specific LangChain integrations, pin those more conservatively. The graph definition itself is the durable artefact &mdash; you can usually upgrade the runtime without rewriting the graph.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; South African context</div>
+      <h2 class="section-title">Why explicit graphs matter more in SA delivery.</h2>
+      <p class="section-lede">LangGraph's vendor-agnostic shape and explicit control flow have practical leverage in SA delivery contexts. POPIA compliance is easier when the audit trail is a checkpointer table, not a vendor's proprietary log. Multi-cloud is easier when the framework runs anywhere. Cost predictability is easier when you can swap an expensive cloud LLM for a local Ollama call by changing one node.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Enterprise &middot; SA banks, insurers, telcos</h4>
+      <p>For SA banks, insurers, and telcos with mixed-cloud or AWS-first estates, LangGraph is the right framework choice if ADK's GCP-bias is a problem. Run on EKS in Cape Town (AWS <code>af-south-1</code>), checkpoint to RDS Postgres in the same region, observe via LangSmith or self-hosted Phoenix. The audit trail stays on-region; the framework doesn't care which LLM you call. POPIA Section 72 cross-border-transfer concerns become a per-node decision: which nodes call Claude (US), which call Vertex (JHB), which call local Ollama. The graph itself documents the policy.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; mid-market builds</h4>
+      <p>For mid-market builds, LangGraph + Cloud Run + a small Postgres instance for checkpointing is a productive stack. LangSmith free tier covers most pilots; you can defer the paid SKU until volume actually justifies it. The pragmatic path for SA studios: start in LangGraph dev mode on a developer laptop, ship to Cloud Run for staging, only move to LangGraph Platform if a client wants the managed runtime + Studio visual debugger.</p>
+    </div>
+    <div class="info-card green fade-up" style="transition-delay: 0.09s">
+      <h4>Learning &middot; explicit control flow as a teaching tool</h4>
+      <p>LangGraph is one of the better frameworks to learn agent patterns on, precisely because the abstractions are explicit. You can see the nodes, the edges, the state. The official LangChain Academy course is free and SA-friendly (no Google Cloud account or paid model needed &mdash; pair with Ollama-hosted Gemma 3 for the model layer). For SA developers learning agentic patterns in 2026, LangGraph + Ollama is a credible zero-cost learning stack.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.11s">
+      <p><strong>FX cost note.</strong> LangSmith is USD-billed and the paid tiers add up at production volume. If FX exposure is a constraint, plan for either: (a) self-hosting an OpenTelemetry-based observability stack (more engineering work upfront), (b) using LangSmith's free tier and accepting the 14-day retention limit, or (c) treating LangSmith as a strategic line item and locking in annual pricing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Connections</div>
+      <h2 class="section-title">Where LangGraph links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. LangGraph sits in the Frameworks band alongside ADK, CrewAI, and the model-vendor SDKs.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">The major comparison anchor. ADK and LangGraph both target production agents but make different bets on control style and cloud alignment. Often combined via A2A.</div>
+      </a>
+      <a href="a2a.html" class="connect-node">
+        <span class="tag">agents/a2a</span>
+        <div class="skill">A2A Protocol</div>
+        <div class="why">Cross-framework interop layer. Community wrapper for LangGraph; the seam where ADK orchestrators talk to LangGraph specialists.</div>
+      </a>
+      <a href="mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">Tool / data protocol. LangGraph nodes commonly call MCP servers via community adapters or wrap them as LangChain tools.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">Local LLM runtime. Plug into a LangGraph node via <code>ChatOllama</code> from <code>langchain-ollama</code>; same node code works against frontier APIs and local models.</div>
+      </a>
+      <a href="gemma.html" class="connect-node">
+        <span class="tag">agents/gemma</span>
+        <div class="skill">Gemma</div>
+        <div class="why">Google's open-weights family. Common pairing with LangGraph for cost-sensitive or POPIA-residency workloads &mdash; same graph, different model, no vendor lock-in.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">agents/anthropic-agent-sdk</span>
+        <div class="skill">Anthropic Agent SDK</div>
+        <div class="why">Claude-first agent framework. LangGraph + Claude is one of the most common combinations in production; LangGraph nodes call Claude via <code>langchain-anthropic</code>.</div>
+      </div>
+      <a href="../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Possible deployment surface for LangGraph TS via Node-compat. Less common than Cloud Run / Lambda but viable for low-latency edge orchestrators.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 09 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Primary sources.</h2>
+      <p class="section-lede">Authored from the canonical <code>langchain-ai/langgraph</code> repo, the LangGraph documentation, the LangChain Academy course materials, and LangChain Inc.'s public case studies and engineering blog posts. Last reviewed 2026-05-10.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://langchain-ai.github.io/langgraph/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">LangGraph documentation</span>
+        <span class="r-url">langchain-ai.github.io/langgraph</span>
+      </a>
+      <a href="https://github.com/langchain-ai/langgraph" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; Python</span>
+        <span class="r-title">langchain-ai/langgraph</span>
+        <span class="r-url">github.com/langchain-ai/langgraph</span>
+      </a>
+      <a href="https://github.com/langchain-ai/langgraphjs" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; TypeScript</span>
+        <span class="r-title">langchain-ai/langgraphjs</span>
+        <span class="r-url">github.com/langchain-ai/langgraphjs</span>
+      </a>
+      <a href="https://academy.langchain.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Course</span>
+        <span class="r-title">LangChain Academy &middot; LangGraph track (free)</span>
+        <span class="r-url">academy.langchain.com</span>
+      </a>
+      <a href="https://www.langchain.com/langgraph" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">LangGraph product page</span>
+        <span class="r-url">langchain.com/langgraph</span>
+      </a>
+      <a href="https://www.langchain.com/langgraph-platform" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Platform</span>
+        <span class="r-title">LangGraph Platform (managed runtime)</span>
+        <span class="r-url">langchain.com/langgraph-platform</span>
+      </a>
+      <a href="https://smith.langchain.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Observability</span>
+        <span class="r-title">LangSmith</span>
+        <span class="r-url">smith.langchain.com</span>
+      </a>
+      <a href="https://blog.langchain.dev" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Blog</span>
+        <span class="r-title">LangChain engineering blog</span>
+        <span class="r-url">blog.langchain.dev</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://langchain-ai.github.io/langgraph/" target="_blank" rel="noopener">LangGraph docs &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
