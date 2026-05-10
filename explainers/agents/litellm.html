@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteLLM &mdash; know.2nth.ai</title>
+<meta name="description" content="LiteLLM — the multi-vendor LLM proxy and SDK. Apache 2.0, Python and TypeScript. Maps every LLM provider's API (OpenAI, Anthropic, Gemini, Bedrock, Ollama, Together, Vertex, Azure, and 100+ more) to a single unified OpenAI-compatible interface. Used under the hood by Google ADK, CrewAI, and many other frameworks for cross-vendor model support. The seam where you swap a Claude call for a local Ollama call by changing one config line.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/litellm">
+<meta property="og:title" content="LiteLLM &mdash; know.2nth.ai">
+<meta property="og:description" content="LiteLLM — multi-vendor LLM proxy. Apache 2.0. Maps 100+ providers to one OpenAI-compatible API. Used by ADK and CrewAI. The seam for vendor-neutral agents.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LiteLLM &mdash; know.2nth.ai">
+<meta name="twitter:description" content="LiteLLM — multi-vendor LLM proxy. 100+ providers, one OpenAI-compatible API. The vendor-neutral seam.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/litellm</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">LiteLLM</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; LiteLLM &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      One API. <span class="gradient">A hundred providers.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      LiteLLM is the multi-vendor LLM proxy and SDK. Apache 2.0, Python and TypeScript, built by BerriAI. It maps every major LLM provider's API &mdash; OpenAI, Anthropic, Gemini, AWS Bedrock, Azure OpenAI, Vertex AI, Ollama, Together, Groq, Cohere, Mistral, Replicate, and 100+ more &mdash; to a single unified <strong>OpenAI-compatible interface</strong>. Used under the hood by <strong>Google ADK</strong>, <strong>CrewAI</strong>, and many other frameworks for cross-vendor model support. Available as a Python library, a TypeScript library, and a hosted proxy server with cost tracking, virtual keys, and rate limiting. The seam where you swap a Claude call for a local Ollama call by changing one config line.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live &middot; v1.0+</span>
+      <span class="pill indigo">Apache 2.0</span>
+      <span class="pill accent">100+ providers</span>
+      <span class="pill warn">Library + proxy server</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A vendor-neutral abstraction over every LLM provider.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>LiteLLM is a Python (and TypeScript) library and proxy server that abstracts the differences between LLM provider APIs. Originated by BerriAI in 2023 and now one of the most-depended-on libraries in the LLM ecosystem &mdash; over 13 million downloads per month at the time of writing &mdash; LiteLLM solves a structural problem most teams encounter: <strong>every LLM provider has a slightly different API shape, and supporting multiple providers means writing per-provider integrations</strong>.</p>
+      <p>The thesis: <strong>OpenAI's API shape has effectively become the LLM API standard</strong>. Anthropic, Google, AWS Bedrock, Azure OpenAI, every hosted-inference provider, and many open-weights serving stacks (Ollama, vLLM) either natively support it or can be wrapped to look like it. LiteLLM operationalises this: every model call goes through one OpenAI-shaped function, and the library handles the per-provider translation under the hood.</p>
+      <p>The library ships in two surfaces. <strong>Python / TS SDK</strong> for direct embedding in your application code &mdash; the lightweight integration most agent frameworks use. <strong>Proxy server</strong> for production deployments where you want centralised cost tracking, virtual API keys, rate limiting, and observability. Many teams start with the SDK and graduate to the proxy as their LLM usage grows.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Where LiteLLM is hidden under the surface</h4>
+      <p>You're probably using LiteLLM whether you know it or not. <strong>Google ADK</strong>'s <code>LiteLlm</code> model class wraps it for non-Gemini models. <strong>CrewAI</strong> uses it for multi-vendor model support. <strong>OpenAI Agents SDK</strong> can use it via custom model routing. <strong>LangChain</strong>'s litellm integration plugs every LiteLLM-supported provider into LangGraph. Many internal AI platforms at companies use the LiteLLM proxy as the central gateway for all LLM traffic. <strong>The library has become the <em>de facto</em> vendor-abstraction layer for the agent ecosystem.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">SDK call or proxy gateway. Same API.</h2>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>SDK mode</strong> &mdash; embed LiteLLM directly. The <code>completion()</code> function takes an OpenAI-shaped request, inspects the model string, dispatches to the right provider, returns an OpenAI-shaped response:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c"># pip install litellm</span>
+<span class="h">from</span> litellm <span class="h">import</span> completion
+
+<span class="c"># Same call, four different providers — model string changes</span>
+resp = completion(<span class="h">model</span>=<span class="s">"gpt-5"</span>,                       <span class="h">messages</span>=msgs)
+resp = completion(<span class="h">model</span>=<span class="s">"claude-sonnet-4-6"</span>,          <span class="h">messages</span>=msgs)
+resp = completion(<span class="h">model</span>=<span class="s">"gemini/gemini-2.5-flash"</span>,    <span class="h">messages</span>=msgs)
+resp = completion(<span class="h">model</span>=<span class="s">"ollama/llama3.3"</span>,           <span class="h">messages</span>=msgs)
+resp = completion(<span class="h">model</span>=<span class="s">"bedrock/anthropic.claude-sonnet-4-6"</span>, <span class="h">messages</span>=msgs)
+
+<span class="c"># Response shape is OpenAI's for all of them</span>
+<span class="k">print</span>(resp.choices[0].message.content)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Proxy mode</strong> &mdash; run LiteLLM as a hosted gateway in front of all your LLM traffic. Useful when you want centralised cost tracking, rotating virtual keys, rate limiting per team, fallback chains, and a single audit log:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.13s"><span class="c"># Start proxy server</span>
+litellm --config config.yaml
+
+<span class="c"># config.yaml routes "production-llm" to whatever you choose,</span>
+<span class="c"># with fallback if primary fails:</span>
+model_list:
+  - model_name: production-llm
+    litellm_params:
+      model: claude-opus-4-7
+      api_key: os.environ/ANTHROPIC_API_KEY
+  - model_name: production-llm  <span class="c"># fallback</span>
+    litellm_params:
+      model: gpt-5
+      api_key: os.environ/OPENAI_API_KEY
+
+<span class="c"># Apps point at proxy as if it's OpenAI:</span>
+<span class="c"># OPENAI_API_KEY=sk-litellm-team-1 OPENAI_BASE_URL=http://proxy:4000</span></pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.16s">
+      <h4>The fallback pattern is the killer feature</h4>
+      <p>LiteLLM's proxy supports <strong>fallback chains</strong>: if the primary provider returns an error, retry on a secondary, then a tertiary. This solves a real production problem &mdash; one hour of OpenAI degradation should not take down your customer-facing agent. Configure Claude Sonnet as primary, GPT-4o as fallback, local Ollama-Llama as final fallback, and your agent stays up through any single-provider outage. <strong>For SA studios building production agents on USD-billed APIs, the fallback pattern is essential resilience infrastructure</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs OpenRouter, vendor SDKs</div>
+      <h2 class="section-title">Where LiteLLM fits in the abstraction layer.</h2>
+      <p class="section-lede">Three things compete for the "multi-provider abstraction" job: LiteLLM (open-source library + self-host proxy), OpenRouter (hosted multiplexer), and rolling-your-own per-provider clients. LiteLLM and OpenRouter are complementary at different levels of the stack, not direct competitors.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Solution</th><th>What it is</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LiteLLM SDK</strong></td><td>Library that translates between provider APIs in your code</td><td>Agent frameworks needing multi-vendor support; lightweight integration</td></tr>
+          <tr><td><strong>LiteLLM Proxy</strong></td><td>Self-hosted gateway with cost tracking + virtual keys + fallbacks</td><td>Internal AI platforms; centralising team-wide LLM traffic; resilience</td></tr>
+          <tr><td><strong>OpenRouter</strong></td><td>Hosted SaaS with one API key for hundreds of providers</td><td>Don't want to self-host; one billing relationship; pay per token</td></tr>
+          <tr><td><strong>Vendor SDKs direct</strong></td><td>OpenAI / Anthropic / Google SDKs called directly</td><td>Single-vendor stacks; first-party integration features; lowest abstraction overhead</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>LiteLLM and OpenRouter aren't either-or</h4>
+      <p>LiteLLM is an open-source library you self-host or embed; OpenRouter is a SaaS aggregator. Many production setups use both: <strong>LiteLLM proxy for internal-team gateway and routing logic, OpenRouter as one of the upstream providers behind it</strong>. LiteLLM can route to OpenRouter for "any model not directly supported" while routing high-volume traffic directly to vendor APIs for lower per-token cost.</p>
+    </div>
+  </div>
+</section>
+
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Pick LiteLLM when. Skip when.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use LiteLLM when</h4>
+        <ul>
+          <li>You support multiple LLM vendors and want unified API surface</li>
+          <li>You need fallback chains for production resilience</li>
+          <li>Centralised cost tracking + virtual keys for team-wide LLM access</li>
+          <li>Building an internal AI platform / gateway</li>
+          <li>You want to swap models in config rather than code</li>
+          <li>Your agent framework needs cross-vendor support (ADK, CrewAI both use LiteLLM)</li>
+          <li>You self-host vLLM or Ollama and want OpenAI-compatible facade for it</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>You're single-vendor and have no plans to change &mdash; vendor SDK direct is simpler</li>
+          <li>You want managed multi-vendor without self-hosting &mdash; OpenRouter fits better</li>
+          <li>You need first-party features that LiteLLM may abstract away (e.g. Anthropic prompt caching specifics)</li>
+          <li>Tight latency requirements where any abstraction overhead matters</li>
+          <li>You don't want to operate a proxy server &mdash; use SDK mode only or OpenRouter</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; South African context</div>
+      <h2 class="section-title">Where LiteLLM lands in SA delivery work.</h2>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>The FX-resilient gateway pattern</h4>
+      <p>For SA studios watching FX exposure on USD-billed LLM APIs, LiteLLM proxy is genuinely useful. <strong>Centralise all LLM traffic through one self-hosted proxy; track costs in ZAR-equivalent in real time; configure fallback to local Ollama when USD-billed providers exceed budget thresholds</strong>. The proxy lets you implement spending limits, alerts, and per-team quotas without touching application code.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; the multi-vendor router</h4>
+      <p>For SA studios using multiple LLM vendors across client projects, LiteLLM SDK in agent code is the simplest way to keep client-specific model choices centralised. Client A's project uses Claude; client B's uses GPT; client C's uses Gemini. One LiteLLM-aware codebase handles all three by config alone. Fallback chains add resilience for client-facing systems where outages are visible.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>Enterprise &middot; the internal AI platform</h4>
+      <p>For SA enterprise standing up internal AI platforms, LiteLLM proxy is one of the strongest open-source options for the gateway layer. Self-hosted in <code>africa-south1</code> or <code>af-south-1</code>, it provides team-level virtual keys, audit logging, and multi-vendor routing without vendor lock-in. Pair with LangSmith or self-hosted Phoenix for observability above the gateway layer.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where LiteLLM links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. LiteLLM in the Inference band as the multi-vendor abstraction layer alongside Ollama, vLLM, and OpenRouter.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">ADK uses LiteLLM under the hood for non-Gemini model support. <code>LiteLlm("ollama/gemma3:4b")</code> is the canonical pattern.</div>
+      </a>
+      <a href="crewai.html" class="connect-node">
+        <span class="tag">agents/crewai</span>
+        <div class="skill">CrewAI</div>
+        <div class="why">CrewAI uses LiteLLM internally for multi-vendor model support. Any LiteLLM-supported model works in a Crew without extra integration code.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">LiteLLM treats Ollama as one of its providers. Pattern: write code against LiteLLM, swap from cloud providers to local Ollama by changing one model string.</div>
+      </a>
+      <a href="vllm.html" class="connect-node">
+        <span class="tag">agents/vllm</span>
+        <div class="skill">vLLM</div>
+        <div class="why">LiteLLM proxies vLLM endpoints transparently. Common pattern: vLLM serves the model, LiteLLM proxy handles auth + cost tracking + fallback.</div>
+      </a>
+      <a href="openrouter.html" class="connect-node">
+        <span class="tag">agents/openrouter</span>
+        <div class="skill">OpenRouter</div>
+        <div class="why">Complementary, not competing. LiteLLM proxy can route to OpenRouter as one of its upstreams for model coverage you don't directly host.</div>
+      </a>
+      <a href="claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude / GPT / Gemini</div>
+        <div class="why">All three closed-frontier vendors are first-class LiteLLM providers. Same code calls them all.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">LangGraph + LiteLLM: vendor-neutral orchestration over vendor-neutral inference. The most flexible cost-optimised production pattern.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.litellm.ai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">litellm.ai</span>
+        <span class="r-url">litellm.ai</span>
+      </a>
+      <a href="https://docs.litellm.ai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">LiteLLM documentation</span>
+        <span class="r-url">docs.litellm.ai</span>
+      </a>
+      <a href="https://github.com/BerriAI/litellm" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">BerriAI/litellm</span>
+        <span class="r-url">github.com/BerriAI/litellm</span>
+      </a>
+      <a href="https://docs.litellm.ai/docs/proxy/quick_start" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">Proxy server quick start</span>
+        <span class="r-url">docs.litellm.ai/docs/proxy/quick_start</span>
+      </a>
+      <a href="https://docs.litellm.ai/docs/providers" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">100+ supported providers</span>
+        <span class="r-url">docs.litellm.ai/docs/providers</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://docs.litellm.ai" target="_blank" rel="noopener">LiteLLM docs &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>

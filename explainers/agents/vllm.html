@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vLLM &mdash; know.2nth.ai</title>
+<meta name="description" content="vLLM — the production-grade open-source inference server for open-weights LLMs. Apache 2.0, originated at UC Berkeley's Sky Lab, now broadly adopted across hosting providers including Together AI, Fireworks, and many self-hosted deployments. PagedAttention for memory-efficient KV cache, continuous batching for high-throughput serving, OpenAI-compatible API surface, native CUDA / ROCm support. The default when you've outgrown Ollama and need real production throughput on dedicated GPUs.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/vllm">
+<meta property="og:title" content="vLLM &mdash; know.2nth.ai">
+<meta property="og:description" content="vLLM — production-grade inference server. PagedAttention, continuous batching, OpenAI-compatible API. The default when you've outgrown Ollama. Apache 2.0.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="vLLM &mdash; know.2nth.ai">
+<meta name="twitter:description" content="vLLM — production-grade open-weights inference. PagedAttention + continuous batching. The Ollama-graduation path.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/vllm</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">vLLM</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; vLLM &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Production-grade open-weights inference. <span class="gradient">PagedAttention. Continuous batching.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      vLLM is the production-grade open-source inference server for open-weights LLMs. Originated at UC Berkeley's Sky Lab and released under Apache 2.0, vLLM is now the canonical inference engine for self-hosted production deployments and the under-the-hood serving layer for many hosted providers including Together AI and Fireworks. <strong>PagedAttention</strong> for memory-efficient KV cache management, <strong>continuous batching</strong> for high-throughput multi-user serving, OpenAI-compatible API surface, native CUDA / ROCm / TPU support. The default when you've outgrown Ollama and need real production throughput on dedicated GPUs.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live &middot; v0.6+</span>
+      <span class="pill indigo">Apache 2.0</span>
+      <span class="pill accent">Python &middot; CUDA / ROCm / TPU</span>
+      <span class="pill warn">UC Berkeley Sky Lab origin</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">An open-source inference engine, with two architectural breakthroughs.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>vLLM is a Python library for high-throughput LLM inference. Released as an academic project from UC Berkeley's Sky Lab (formerly RISELab) in mid-2023 and now maintained as an open-source project with broad industry contribution, vLLM has become the de-facto serving layer for self-hosted open-weights LLMs and the hidden infrastructure behind many hosted-inference providers.</p>
+      <p>Two architectural ideas distinguish vLLM from earlier inference servers:</p>
+      <p><strong>PagedAttention</strong>, the original research contribution, applies virtual-memory-style paging to the KV cache. Conventional inference servers allocate KV cache contiguously, leaving large fragmented gaps when sequences finish at different times. PagedAttention stores KV in fixed-size blocks managed like virtual memory pages, dramatically reducing memory waste &mdash; typically 4&times; better memory utilisation, which translates directly to higher throughput on the same GPU.</p>
+      <p><strong>Continuous batching</strong> (sometimes called dynamic batching or in-flight batching) means new requests can join an in-progress batch instead of waiting for the current batch to finish. Combined with PagedAttention, this lets vLLM serve far more concurrent users on the same hardware than naive batching approaches. The result: hosted providers running vLLM can offer Llama / Qwen / Mistral inference at very competitive per-token prices because the per-GPU throughput is genuinely high.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Why it's the production default</h4>
+      <p>By 2026, vLLM is the inference engine you'll find under the hood at most hosted-inference providers serving open-weights models. Together AI uses vLLM-derived infrastructure. Fireworks builds on vLLM. NVIDIA's TensorRT-LLM is the main alternative; SGLang and TGI are smaller competitors. <strong>If you're self-hosting open-weights models for production, vLLM is the path of least resistance and the broadest ecosystem.</strong> If you're consuming hosted inference, you're probably using vLLM-served endpoints whether you know it or not.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Two ways to run it: server or library.</h2>
+      <p class="section-lede">vLLM exposes two surfaces. The <strong>API server</strong> mode launches an OpenAI-compatible HTTP endpoint at <code>localhost:8000</code> &mdash; drop-in replacement for OpenAI in any code that speaks the OpenAI SDK. The <strong>library</strong> mode embeds vLLM directly in your Python process for offline batched inference. Both modes share the same engine.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Server mode</strong> &mdash; the production default. Single command launches an OpenAI-compatible API:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c"># pip install vllm</span>
+<span class="c"># Start an OpenAI-compatible server</span>
+vllm serve meta-llama/Llama-3.3-70B-Instruct \
+  --tensor-parallel-size 2 \
+  --max-model-len 32768 \
+  --port 8000
+
+<span class="c"># Query it like OpenAI</span>
+curl http://localhost:8000/v1/chat/completions \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{
+    "model": "meta-llama/Llama-3.3-70B-Instruct",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }'</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>Library mode</strong> &mdash; for offline batch inference, evaluations, or embedding into a custom serving stack:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.13s"><span class="h">from</span> vllm <span class="h">import</span> LLM, SamplingParams
+
+llm = LLM(<span class="h">model</span>=<span class="s">"meta-llama/Llama-3.3-70B-Instruct"</span>, <span class="h">tensor_parallel_size</span>=2)
+prompts = [<span class="s">"Summarise SA fiscal policy in 2026."</span>, <span class="s">"What's stage 6 load shedding?"</span>]
+sampling = SamplingParams(<span class="h">temperature</span>=0.3, <span class="h">max_tokens</span>=512)
+
+outputs = llm.generate(prompts, sampling)
+<span class="h">for</span> output <span class="h">in</span> outputs:
+    <span class="k">print</span>(output.outputs[0].text)</pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.16s">
+      <h4>The OpenAI compatibility shortcut</h4>
+      <p>vLLM's OpenAI-compatible mode means agent frameworks that speak OpenAI work unchanged. Point LangGraph's <code>ChatOpenAI</code> at <code>http://your-vllm-server:8000/v1</code>, set the model name, and your LangGraph stack runs against your self-hosted Llama 70B. Same trick works for the OpenAI Agents SDK, ADK via LiteLLM, CrewAI, and AutoGen. <strong>This is what makes vLLM operationally pragmatic</strong> &mdash; you can swap closed-frontier APIs for self-hosted vLLM by changing one config value.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs Ollama, TensorRT-LLM, hosted</div>
+      <h2 class="section-title">Where vLLM fits.</h2>
+      <p class="section-lede">vLLM sits between Ollama (dev / single-user) and TensorRT-LLM (extreme NVIDIA-specific optimisation) in the inference stack. Hosted providers (Together / Fireworks / Groq) abstract everything below the API surface; vLLM is what you reach for when you want self-host control and broad model + hardware support.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Layer</th><th>Best for</th><th>Trade-off</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ollama</strong></td><td>Dev, prototyping, single-user laptop / server</td><td>Single-tenant, lower throughput; not for production multi-user</td></tr>
+          <tr><td><strong>vLLM</strong></td><td>Production self-host, multi-user, broad model + HW support</td><td>More ops complexity than Ollama; less NVIDIA-specific tuning than TensorRT-LLM</td></tr>
+          <tr><td><strong>TensorRT-LLM</strong></td><td>Maximum throughput on NVIDIA hardware specifically</td><td>NVIDIA-only, more setup complexity, narrower model support</td></tr>
+          <tr><td><strong>Together AI / Fireworks</strong></td><td>Don't want to self-host; hosted inference simplicity</td><td>Per-token billing; less control; vendor lock-in on pricing</td></tr>
+          <tr><td><strong>Groq</strong></td><td>Extreme low-latency on a curated model set</td><td>LPU hardware-specific; narrower model catalogue</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Pick vLLM when. Skip when.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use vLLM when</h4>
+        <ul>
+          <li>You self-host open-weights LLMs in production</li>
+          <li>You want OpenAI-compatible API on your own infrastructure</li>
+          <li>Multi-user / multi-tenant serving with continuous batching matters</li>
+          <li>You're on AMD ROCm or Google TPU and need broad hardware support</li>
+          <li>You're building hosted-inference infrastructure for others (vLLM is the standard engine)</li>
+          <li>You've outgrown Ollama's single-tenant performance</li>
+          <li>Your scale justifies the GPU + ops investment over hosted per-token billing</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>You're a single developer doing dev work &mdash; Ollama is simpler</li>
+          <li>You don't have GPUs and don't want them &mdash; use hosted inference</li>
+          <li>You need maximum NVIDIA-specific throughput &mdash; TensorRT-LLM may edge out vLLM</li>
+          <li>You're at low volume and per-token hosted billing is cheaper than ops + GPU rental</li>
+          <li>You only run closed-frontier APIs (Claude / GPT / Gemini) &mdash; vLLM is for open-weights</li>
+          <li>You don't have ops capacity to run a production inference stack</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; South African context</div>
+      <h2 class="section-title">Where vLLM lands in SA delivery work.</h2>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Self-host vs hosted &middot; the SA volume question</h4>
+      <p>For most SA studios, <strong>hosted inference (Together AI, Fireworks, Groq) is the right answer until you cross meaningful volume</strong> &mdash; roughly 50M+ tokens / month on a single model. Below that, the per-token economics of hosted providers beat the ops cost of running vLLM on dedicated GPUs. Above that, self-hosted vLLM on dedicated hardware can structurally undercut hosted billing &mdash; particularly relevant when FX exposure on USD-billed hosted services is a concern.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>SA hosting reality</h4>
+      <p>Hetzner doesn't have an SA region; their nearest GPU-equipped DC is Helsinki / Frankfurt. For genuinely SA-resident vLLM hosting, options narrow to: <strong>GCP Johannesburg</strong> with custom GPU instances (A100s available), <strong>AWS Cape Town</strong> with EC2 GPU SKUs, or <strong>local hosting providers</strong> with GPU infrastructure. None are as cheap as Hetzner Frankfurt, but all keep data SA-resident. A practical compromise for SA enterprise: vLLM on AWS Cape Town for residency-sensitive workloads, hosted Together AI for everything else.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>POPIA-clean self-host</h4>
+      <p>For POPIA-sensitive workloads, vLLM on SA-region GPU instances is the cleanest open-weights inference path. Llama / Mistral / Qwen weights downloaded once, served from SA-region infrastructure, no inference data crossing borders. Audit trail flows into Cloud Logging or CloudWatch; IAM controls integrate with existing AWS / GCP enterprise posture.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where vLLM links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. vLLM in the Inference band as the production-grade self-host option alongside Ollama (dev), LiteLLM (proxy), and OpenRouter (hosted multiplexer).</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">The dev-tier alternative. Ollama for laptop, vLLM for production. Same OpenAI-compatible API surface; same models work on both. The Ollama-to-vLLM graduation path.</div>
+      </a>
+      <a href="litellm.html" class="connect-node">
+        <span class="tag">agents/litellm</span>
+        <div class="skill">LiteLLM</div>
+        <div class="why">Common pairing: vLLM serves the model, LiteLLM proxies multi-vendor traffic and adds observability. Both can sit between agents and any backend.</div>
+      </a>
+      <a href="llama.html" class="connect-node">
+        <span class="tag">agents/llama</span>
+        <div class="skill">Llama</div>
+        <div class="why">The most-served open-weights family on vLLM. Llama 70B and Llama 4 variants are the canonical "production-grade self-hosted on vLLM" choices.</div>
+      </a>
+      <a href="gemma.html" class="connect-node">
+        <span class="tag">agents/gemma</span>
+        <div class="skill">Gemma</div>
+        <div class="why">vLLM has first-class Gemma 3 support including the multimodal variants. Vertex AI Model Garden's Gemma serving is built on vLLM-derived infrastructure.</div>
+      </a>
+      <a href="mistral-qwen.html" class="connect-node">
+        <span class="tag">agents/mistral-qwen</span>
+        <div class="skill">Mistral / Qwen</div>
+        <div class="why">vLLM serves both families well, including Mixtral MoE variants and Qwen Coder. Together AI's Mistral / Qwen hosting runs on vLLM-derived infrastructure.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">Common pairing &mdash; LangGraph's <code>ChatOpenAI</code> works against any vLLM endpoint by setting <code>base_url</code>. Self-hosted Llama / Qwen behind LangGraph orchestration is a popular SA cost-optimised stack.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://docs.vllm.ai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">docs.vllm.ai</span>
+        <span class="r-url">docs.vllm.ai</span>
+      </a>
+      <a href="https://github.com/vllm-project/vllm" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">vllm-project/vllm</span>
+        <span class="r-url">github.com/vllm-project/vllm</span>
+      </a>
+      <a href="https://blog.vllm.ai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Blog</span>
+        <span class="r-title">vLLM engineering blog</span>
+        <span class="r-url">blog.vllm.ai</span>
+      </a>
+      <a href="https://arxiv.org/abs/2309.06180" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Paper</span>
+        <span class="r-title">PagedAttention paper (SOSP 2023)</span>
+        <span class="r-url">arxiv.org/abs/2309.06180</span>
+      </a>
+      <a href="https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Guide</span>
+        <span class="r-title">OpenAI-compatible server guide</span>
+        <span class="r-url">docs.vllm.ai/.../openai_compatible_server</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://docs.vllm.ai" target="_blank" rel="noopener">vLLM docs &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
