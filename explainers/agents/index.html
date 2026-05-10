@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agents &mdash; know.2nth.ai</title>
+<meta name="description" content="The Agents domain on know.2nth.ai — the agentic frameworks and protocols that matter in 2026. Six framework leaves (Google ADK live, plus LangGraph, CrewAI, OpenAI Agents SDK, Anthropic Agent SDK, AutoGen coming) and two protocol leaves (A2A, MCP). Built around the principle that agents are software, not prompt soup.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/">
+<meta property="og:title" content="Agents &mdash; know.2nth.ai">
+<meta property="og:description" content="The Agents domain — agentic frameworks and protocols. Google ADK live; LangGraph, CrewAI, OpenAI / Anthropic / AutoGen coming. A2A and MCP as the interop layer.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agents &mdash; know.2nth.ai">
+<meta name="twitter:description" content="The Agents domain — frameworks (ADK live, LangGraph + CrewAI + OpenAI/Anthropic/AutoGen coming) and protocols (A2A, MCP). Agents are software.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hub-hero { padding: 48px 0 64px; }
+  .hub-hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hub-hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hub-hero h1 { font-size: clamp(44px, 7vw, 72px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 24px; max-width: 16ch; }
+  .hub-hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hub-hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 32px; }
+  .hub-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hub-stat { padding-right: 32px; border-right: 1px solid var(--border); }
+  .hub-stat:last-child { border-right: none; padding-right: 0; }
+  .hub-stat .num { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--blue-glow), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 6px; }
+  .hub-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  section.hub-section { padding: 32px 0 48px; position: relative; }
+  .hub-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .hub-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 14px; line-height: 1.2; }
+  .hub-lede { font-size: 16px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 36px; }
+
+  .category-band { display: flex; align-items: center; gap: 16px; margin: 40px 0 18px; }
+  .category-band:first-of-type { margin-top: 0; }
+  .category-band .c-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: var(--indigo); white-space: nowrap; }
+  .category-band .c-rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-hover), transparent); }
+
+  .svc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .svc-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; text-decoration: none; color: inherit; display: block; transition: all 0.3s; position: relative; }
+  .svc-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
+  .svc-card.soon { cursor: default; opacity: 0.74; }
+  .svc-card.soon:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .svc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .svc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .svc-state { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; padding: 3px 9px; border-radius: var(--radius-pill); font-weight: 600; flex-shrink: 0; }
+  .svc-state.live { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); }
+  .svc-state.soon { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
+  .svc-path { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .svc-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; max-width: 1040px; }
+  .principle { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 22px 26px; }
+  .principle h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.2px; }
+  .principle p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+  .cross-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cross-link { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px 20px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--bg-card); text-decoration: none; color: var(--text-secondary); transition: all 0.3s; letter-spacing: 0.5px; }
+  .cross-link:hover { border-color: var(--border-hover); color: var(--sky); transform: translateY(-1px); }
+  .cross-link.soon { opacity: 0.5; cursor: default; border-style: dashed; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 60px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } .hub-stats { gap: 20px; } .hub-stat { padding-right: 20px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">agents</span>
+    </a>
+    <div class="nav-right">
+      <a href="../../index.html#domains" class="nav-link">&larr; Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Agents</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hub-hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Top-level domain hub</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Six frameworks. <span class="gradient">Two protocols. One layer.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The Agents domain is the operational heart of know.2nth.ai going forward. Now that the data layer (BI, warehousing, engineering) and systems-of-record (ERP, CRM, construction BIM) are in place, the orchestration question is which agentic framework runs the work and which protocol it speaks. Six frameworks worth taking seriously, two protocols (A2A and MCP) that make them composable, and the principle that agents are software &mdash; not prompt soup.
+    </p>
+    <div class="hub-stats fade-up" style="transition-delay: 0.15s">
+      <div class="hub-stat"><div class="num">6</div><div class="label">Frameworks</div></div>
+      <div class="hub-stat"><div class="num">2</div><div class="label">Protocols</div></div>
+      <div class="hub-stat"><div class="num">1</div><div class="label">Live leaf</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">01 &middot; Skills</div>
+      <h2 class="hub-title">The agentic stack, mapped.</h2>
+      <p class="hub-lede">Each framework has its own canonical leaf with the same content shape: hero + what-it-is + how-it-works + ecosystem + use-cases + decision-guide + SA-context + connections + resources. The protocol leaves (A2A, MCP) cover the cross-framework interop layer that makes mixing frameworks practical.</p>
+    </div>
+
+    <!-- Frameworks -->
+    <div class="category-band fade-up">
+      <span class="c-label">Frameworks &middot; 6</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="google-adk.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Google ADK</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">agents/google-adk</span>
+        <p>Google's open-source, code-first agent framework. Apache 2.0, Python + TS + Go + Java, native A2A and MCP, one-command deploy to Cloud Run / GKE / Vertex AI Agent Engine. Optimised for Gemini, model-agnostic via LiteLLM. The hub of the Google agent stack.</p>
+      </a>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">LangGraph</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/langgraph</span>
+        <p>The graph-based orchestration framework from the LangChain team. Explicit state machines, the largest tool ecosystem via LangChain, LangSmith observability, the de-facto "I want full control over the graph" choice. Higher boilerplate; deeper learning curve.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">CrewAI</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/crewai</span>
+        <p>Role-based "team" metaphor for multi-agent systems. Fastest path from zero to a working multi-agent prototype. Limited checkpointing, less suited to dynamic flows &mdash; but for rapid prototyping or pitching the multi-agent concept, hard to beat.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">OpenAI Agents SDK</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/openai-agents-sdk</span>
+        <p>OpenAI's first-party agent framework. Tight integration with OpenAI models, built-in tracing, native function-calling. The default if you're already on OpenAI and want minimal setup; the constraint is OpenAI-only model support.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Anthropic Agent SDK</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/anthropic-agent-sdk</span>
+        <p>Claude-first agent framework. MCP-native, extended thinking integration, sub-agent orchestration via Claude Code's task model. The default if Claude is the model; the constraint is Claude-only.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">AutoGen / AG2</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/autogen</span>
+        <p>Microsoft's conversational multi-agent framework, now community-maintained as AG2. Strongest at "research workflow" patterns where agents debate and converge on answers. Production tooling still maturing; useful for prototypes and research more than production.</p>
+      </div>
+
+    </div>
+
+    <!-- Protocols -->
+    <div class="category-band fade-up">
+      <span class="c-label">Protocols &middot; 2</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">A2A Protocol</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/a2a</span>
+        <p>Agent-to-Agent Protocol. JSON-RPC over HTTP, Agent Card discovery at <code>/.well-known/agent-card.json</code>, streaming and push notifications. Released by Google, now under Linux Foundation governance. The cross-framework interop layer that makes "ADK orchestrates LangGraph and CrewAI" practical.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Model Context Protocol</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">agents/mcp</span>
+        <p>The tool / data protocol. Anthropic-originated, broadly adopted. Lets any framework consume tools and data from any MCP server. ADK's <code>MCPToolset</code>, Claude Desktop's MCP integrations, Cursor's MCP support &mdash; all the same protocol. The lingua franca of agent tooling in 2026.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PRINCIPLES ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">02 &middot; Principles</div>
+      <h2 class="hub-title">The four positions every Agents leaf inherits.</h2>
+      <p class="hub-lede">These show up in every framework page in the sub-tree. They're the opinions that determine how each framework is evaluated, what gets called a strength vs a weakness, and which decisions in the field actually matter.</p>
+    </div>
+    <div class="principles fade-up" style="transition-delay: 0.05s">
+      <div class="principle">
+        <h4>Agents are software, not prompt soup</h4>
+        <p>Code-first definitions, version control, unit tests, evaluation harnesses, CI/CD. Frameworks that treat agent development as software engineering compound; ones that treat it as prompt-tweaking don't. This is the bar every leaf in the sub-tree is held to.</p>
+      </div>
+      <div class="principle">
+        <h4>Open standards over vendor lock-in</h4>
+        <p>A2A is now Linux Foundation. MCP is broadly adopted across vendors. OpenTelemetry GenAI semantic conventions are the tracing baseline. When a framework chooses these standards over vendor-specific protocols, that's signal &mdash; it expects to coexist with frameworks it doesn't own.</p>
+      </div>
+      <div class="principle">
+        <h4>The interop layer is the question</h4>
+        <p>Most teams in production by mid-2026 will run two or more agent frameworks. The interesting question isn't "which framework?" but "which framework where, and how do they talk?". A2A and MCP are the answer, which is why they sit in the sub-tree as first-class leaves alongside the frameworks themselves.</p>
+      </div>
+      <div class="principle">
+        <h4>Decisions follow data and systems-of-record</h4>
+        <p>Agents are useful in proportion to the data they can read and the systems they can act on. The Agents sub-tree assumes the Data domain (BI, warehousing, engineering) and Business / Construction domains (ERP, CRM, BIM) are already in place. Without that substrate, agent demos look impressive and produce nothing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CROSS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">03 &middot; Related branches</div>
+      <h2 class="hub-title">Where Agents connects.</h2>
+      <p class="hub-lede">Agents is the orchestration layer over the rest of the tree. Data feeds the agents (BI tools and warehouses they query). Business and Construction systems are what the agents act on (ERPs, CRMs, BIM models). Tech provides the runtime substrate (Node, Bun, Cloudflare Workers, Google Cloud, Frappe-as-API). Design covers the surfaces agents render. People is the human-loop side &mdash; coaching, leadership, review.</p>
+    </div>
+    <div class="cross-links fade-up" style="transition-delay: 0.05s">
+      <a href="../../index.html#domains" class="cross-link">&larr; Tree</a>
+      <a href="../data/" class="cross-link">data &rarr;</a>
+      <a href="../tech/" class="cross-link">tech &rarr;</a>
+      <a href="../tech/runtime/" class="cross-link">tech/runtime &rarr;</a>
+      <a href="../tech/cloudflare/workers.html" class="cross-link">tech/cloudflare/workers &rarr;</a>
+      <a href="../tech/google/" class="cross-link">tech/google &rarr;</a>
+      <a href="../biz/" class="cross-link">biz &rarr;</a>
+      <a href="../construction/" class="cross-link">construction &rarr;</a>
+      <a href="../design/" class="cross-link">design &rarr;</a>
+      <a href="../people/" class="cross-link">people &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="../../index.html#domains">All domains</a>
+      <a href="https://github.com/a2aproject/A2A" target="_blank" rel="noopener">A2A Protocol &nearr;</a>
+      <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>

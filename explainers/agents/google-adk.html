@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google ADK &mdash; know.2nth.ai</title>
+<meta name="description" content="Google Agent Development Kit (ADK) — Apache-2.0, code-first framework for building production AI agents across Python, TypeScript, Go, and Java. Optimised for Gemini, model-agnostic via LiteLLM, native A2A and MCP support, one-command deploy to Cloud Run / GKE / Vertex AI Agent Engine.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/google-adk">
+<meta property="og:title" content="Google ADK &mdash; know.2nth.ai">
+<meta property="og:description" content="Google Agent Development Kit (ADK) — Apache-2.0, code-first framework for building production AI agents across Python, TypeScript, Go, and Java. Optimised for Gemini, model-agnostic via LiteLLM, native A2A and MCP support, one-command deploy to Cloud Run / GKE / Vertex AI Agent Engine.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Google ADK &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Google Agent Development Kit — Apache-2.0, code-first agent framework. Python/TS/Go/Java, native A2A + MCP, one-command deploy. Optimised for Gemini, model-agnostic.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px; --read-w: 760px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .timeline { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 20px; max-width: var(--read-w); }
+  .timeline-step { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .timeline-step:last-child { border-bottom: none; }
+  .timeline-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--indigo); font-weight: 600; min-width: 110px; flex-shrink: 0; padding-top: 2px; }
+  .timeline-text { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+  .timeline-text strong { color: var(--text-primary); font-weight: 600; }
+  .timeline-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--sky); }
+
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">agents/google-adk</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Google ADK</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Google ADK &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Agent development should <span class="gradient">feel like software development.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Google's open-source, code-first framework for building, evaluating, and deploying production AI agents — across Python, TypeScript, Go, and Java. Apache 2.0, optimised for Gemini, model-agnostic via LiteLLM, native A2A and MCP support, one-command deploy to Cloud Run, GKE, or Vertex AI Agent Engine. Code-first definitions, version control, unit tests, evaluation harnesses, CI/CD &mdash; not prompt soup glued together with retries.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live since April 2025</span>
+      <span class="pill indigo">Apache 2.0</span>
+      <span class="pill accent">Python &middot; TS &middot; Go &middot; Java</span>
+      <span class="pill">17,500+ stars (adk-python)</span>
+      <span class="pill warn">v2.0 Beta &middot; v1.23 stable</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">An agent runtime, a tool ecosystem, and a deploy story.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Agent Development Kit (ADK) is an open-source framework, released by Google in April 2025, for building and deploying AI agents and multi-agent systems. It's licensed under Apache 2.0 and lives across four sibling repos: <code>google/adk-python</code>, <code>google/adk-js</code>, <code>google/adk-go</code>, and <code>google/adk-java</code>, with shared docs at <code>google/adk-docs</code>.</p>
+      <p>The core idea: <strong>agent development should feel like software development</strong>. Code-first definitions, version control, unit tests, evaluation harnesses, and CI/CD &mdash; not prompt soup glued together with retries.</p>
+      <p>ADK ships three things in one framework:</p>
+      <ol>
+        <li><strong>An agent runtime</strong> &mdash; <code>LlmAgent</code> for reasoning, plus deterministic workflow agents (<code>SequentialAgent</code>, <code>ParallelAgent</code>, <code>LoopAgent</code>) for predictable orchestration.</li>
+        <li><strong>A tool ecosystem</strong> &mdash; pre-built tools, custom Python/TS functions, OpenAPI specs, MCP servers, and adapter classes (<code>LangchainTool</code>, <code>CrewaiTool</code>) that consume tools from other frameworks.</li>
+        <li><strong>A deploy story</strong> &mdash; local dev UI, <code>adk api_server</code>, then one of three production paths on Google Cloud (Cloud Run, GKE, or Vertex AI Agent Engine), or any container runtime you prefer.</li>
+      </ol>
+      <p>ADK is optimised for Gemini but explicitly <strong>model-agnostic</strong> via a <code>BaseLlm</code> interface and LiteLLM integration, so OpenAI, Anthropic, Mistral, and self-hosted models all work.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.08s">
+      <div class="stack-cell">
+        <span class="layer">Stat &middot; reach</span>
+        <h4>17,500+ stars</h4>
+        <p><code>adk-python</code> alone. Four language SDKs in active development.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Stat &middot; cadence</span>
+        <h4>~bi-weekly</h4>
+        <p>Release cadence on Python. 25+ minor releases between launch and v2.0 Beta.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Stat &middot; protocol</span>
+        <h4>A2A &middot; MCP &middot; OpenAPI</h4>
+        <p>Native protocol surface. A2A is now under Linux Foundation governance.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Stat &middot; license</span>
+        <h4>Apache 2.0</h4>
+        <p>True open source. Fork, embed, ship. No vendor lock-in at the framework layer.</p>
+      </div>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.11s">
+      <h4>The bet ADK is making</h4>
+      <p>Be the orchestration hub, not the only framework you use. ADK arrived in a crowded field &mdash; LangGraph, CrewAI, AutoGen, OpenAI Agents SDK, Anthropic Agent SDK &mdash; but brought three things most others didn't have on day one: <strong>native A2A protocol support</strong>, <strong>Gemini Live API streaming</strong> for voice and video, and a <strong>one-command path to managed deployment</strong> on Vertex AI. The framework isn't trying to replace LangChain or CrewAI; it's trying to be the glue that lets all three coexist in production.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Four primitives carry the framework.</h2>
+      <p class="section-lede">Agents, Tools, Sessions, and Runners. Master those four and 90% of ADK clicks. The rest is which deployment surface you ship to and which protocol (A2A, MCP, OpenAPI) you pick for cross-framework interop.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The minimal agent.</strong> A working agent is roughly ten lines of Python. From the official <code>adk-python</code> README:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="h">from</span> google.adk.agents <span class="h">import</span> Agent
+<span class="h">from</span> google.adk.tools <span class="h">import</span> google_search
+
+root_agent = Agent(
+    <span class="h">name</span>=<span class="s">"search_assistant"</span>,
+    <span class="h">model</span>=<span class="s">"gemini-2.5-flash"</span>,
+    <span class="h">instruction</span>=<span class="s">"You are a helpful assistant. Use search when needed."</span>,
+    <span class="h">description</span>=<span class="s">"An assistant that can search the web."</span>,
+    <span class="h">tools</span>=[google_search],
+)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p>Run it with <code>adk web</code> (dev UI), <code>adk run</code> (CLI), or <code>adk api_server</code> (REST API).</p>
+      <p><strong>Multi-agent hierarchies.</strong> ADK's native pattern is a tree: a root agent delegates to sub-agents, which can have their own sub-agents. The framework handles routing based on agent descriptions and the LLM's reasoning.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.13s"><span class="h">from</span> google.adk.agents <span class="h">import</span> Agent
+
+greeter = Agent(<span class="h">name</span>=<span class="s">"greeter"</span>, <span class="h">model</span>=<span class="s">"gemini-2.5-flash"</span>,
+                <span class="h">instruction</span>=<span class="s">"Handle greetings only."</span>)
+
+weather = Agent(<span class="h">name</span>=<span class="s">"weather"</span>, <span class="h">model</span>=<span class="s">"gemini-2.5-flash"</span>,
+                <span class="h">instruction</span>=<span class="s">"Answer weather questions."</span>,
+                <span class="h">tools</span>=[get_weather])
+
+root = Agent(
+    <span class="h">name</span>=<span class="s">"coordinator"</span>,
+    <span class="h">model</span>=<span class="s">"gemini-2.5-flash"</span>,
+    <span class="h">instruction</span>=<span class="s">"Route to the right specialist."</span>,
+    <span class="h">sub_agents</span>=[greeter, weather],
+)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.16s">
+      <p><strong>Workflow agents (deterministic).</strong> When you don't want the LLM deciding the order:</p>
+      <ul>
+        <li><code>SequentialAgent</code> &mdash; runs sub-agents in order</li>
+        <li><code>ParallelAgent</code> &mdash; runs sub-agents concurrently</li>
+        <li><code>LoopAgent</code> &mdash; repeats until a condition is met</li>
+      </ul>
+      <p><strong>ADK 2.0 graph workflows (Beta).</strong> ADK 2.0, currently Beta in Python only, adds explicit graph-based workflows where every node is an Agent, Tool, function, or human-input step, connected by edges that can route conditionally. The <code>Workflow</code> class replaces deeply nested prompt instructions with explicit DAGs:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.19s"><span class="h">from</span> google.adk <span class="h">import</span> Agent, Workflow, Event
+
+root_agent = Workflow(
+    <span class="h">name</span>=<span class="s">"routing_workflow"</span>,
+    <span class="h">edges</span>=[
+        (<span class="s">"START"</span>, classify_message, router),
+        (router, {
+            <span class="s">"BUG"</span>: handle_bug,
+            <span class="s">"SUPPORT"</span>: handle_support,
+            <span class="s">"LOGISTICS"</span>: handle_logistics,
+        }),
+    ],
+)</pre>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.22s">
+      <h4>Sessions vs Memory &mdash; deliberately separated</h4>
+      <p><strong>Sessions</strong> hold the state of a single conversation. Backends include <code>InMemorySessionService</code>, <code>VertexAiSessionService</code>, and the community-contributed <code>FirestoreSessionService</code>. <strong>Memory</strong> holds long-term facts across sessions. <code>InMemoryMemoryService</code> for tests, <code>VertexAiMemoryBankService</code> for production.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.25s">
+      <p><strong>Tool interop.</strong> ADK consumes tools from outside its own ecosystem: MCP toolsets via <code>MCPToolset</code>, LangChain tools wrapped with <code>LangchainTool</code>, CrewAI tools via <code>CrewaiTool</code>, OpenAPI specs auto-generated into tools, and plain Python functions via signature introspection.</p>
+      <p><strong>A2A: agent-to-agent.</strong> For talking to agents in other processes, languages, or frameworks, ADK uses the Agent2Agent (A2A) Protocol &mdash; originally released by Google and now an open-source project under the Linux Foundation:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.28s"><span class="c"># Expose your ADK agent as an A2A server</span>
+<span class="h">from</span> google.adk.a2a.utils.agent_to_a2a <span class="h">import</span> to_a2a
+app = to_a2a(root_agent)  <span class="c"># serves an Agent Card at /.well-known/agent-card.json</span>
+
+<span class="c"># Consume a remote A2A agent (any framework) as if it were local</span>
+<span class="h">from</span> google.adk.agents <span class="h">import</span> RemoteA2aAgent
+remote = RemoteA2aAgent(<span class="h">name</span>=<span class="s">"pricing"</span>, <span class="h">agent_card</span>=<span class="s">"https://pricing.example.com"</span>)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.31s">
+      <p>A2A advertises agent skills via an Agent Card (JSON at <code>/.well-known/agent-card.json</code>), uses JSON-RPC over HTTP for messages, and supports streaming and push notifications. <strong>ADK agents can call LangGraph or CrewAI agents &mdash; and vice versa &mdash; through the same protocol.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 ECOSYSTEM -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; The ecosystem</div>
+      <h2 class="section-title">Where ADK fits in Google's stack &mdash; and against the field.</h2>
+      <p class="section-lede">ADK sits inside Google's broader agent stack and against a field of competing frameworks. Both contexts matter: the Google integration is what makes ADK uniquely capable for managed deployment; the cross-framework comparison is what makes the framework choice non-obvious.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Where ADK fits in Google's stack.</strong></p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.07s">
+      <table class="compare">
+        <thead>
+          <tr><th>Layer</th><th>Component</th><th>What it does</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Framework</td><td><strong>ADK</strong></td><td>Open-source code-first SDK (Apache 2.0)</td></tr>
+          <tr><td>Visual builder</td><td>Agent Studio</td><td>Low-code canvas, part of Vertex AI Agent Builder</td></tr>
+          <tr><td>Templates</td><td>Agent Garden</td><td>Prebuilt agent samples and one-click deploys</td></tr>
+          <tr><td>Models</td><td>Model Garden / Gemini</td><td>200+ foundation models including Gemini, Claude, Gemma, Llama</td></tr>
+          <tr><td>Runtime</td><td><strong>Vertex AI Agent Engine</strong></td><td>Managed runtime &mdash; sessions, memory, scaling</td></tr>
+          <tr><td>Memory</td><td>Memory Bank</td><td>Long-term, cross-session memory store</td></tr>
+          <tr><td>Protocol</td><td><strong>A2A</strong></td><td>Cross-framework agent communication (Linux Foundation)</td></tr>
+          <tr><td>Tool protocol</td><td><strong>MCP</strong></td><td>Model Context Protocol for tools and data</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>When to use ADK vs peer frameworks.</strong> The honest field picture as of 2026:</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.12s">
+      <table class="compare">
+        <thead>
+          <tr><th>Framework</th><th>Best at</th><th>Watch out for</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Google ADK</strong></td><td>GCP-native deployments, multi-agent hierarchies, voice/multimodal via Gemini Live, A2A interop</td><td>Native experience leans Google Cloud &mdash; value drops off-platform</td></tr>
+          <tr><td><strong>LangGraph</strong></td><td>Explicit graph control, LangSmith observability, the largest tool ecosystem via LangChain</td><td>Higher boilerplate; steeper learning curve</td></tr>
+          <tr><td><strong>CrewAI</strong></td><td>Role-based "team" metaphors, fastest to a first prototype</td><td>Limited checkpointing; less suited to dynamic flows</td></tr>
+          <tr><td><strong>OpenAI Agents SDK</strong></td><td>Tight integration with OpenAI models and built-in tracing</td><td>OpenAI-only model support</td></tr>
+          <tr><td><strong>Anthropic Agent SDK</strong></td><td>Claude-first agents, MCP-native, extended thinking</td><td>Claude-only</td></tr>
+          <tr><td><strong>AutoGen / AG2</strong></td><td>Conversational multi-agent group chats, research workflows</td><td>Production tooling still maturing</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.15s">
+      <h4>The frameworks aren't mutually exclusive</h4>
+      <p>A2A means you can run an ADK orchestrator that calls a LangGraph specialist that calls a CrewAI sub-team &mdash; each in its own container, each in its own language. That's the bet ADK is making: be the orchestration hub, not the only framework you use. For most teams shipping production agents in 2026, the question isn't "which framework?" but "which framework where?", and A2A is what makes the answer composable.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 USE CASES + EVOLUTION -->
+<section id="use">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Use cases and evolution</div>
+      <h2 class="section-title">Where ADK earns its keep, and how it got here.</h2>
+      <p class="section-lede">Six patterns where ADK has shipped concrete value, drawn from Google's official samples and community deployments. Plus the timeline of how the framework went from zero to ADK 2.0 Beta inside thirteen months.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <ul>
+        <li><strong>Customer support concierge</strong> &mdash; a root agent that routes to billing, technical, or returns sub-agents, with A2A escalation to human-handoff agents</li>
+        <li><strong>BigQuery analyst</strong> &mdash; agent + BigQuery MCP toolset for natural-language data exploration, deployed on Cloud Run with Agent Engine sessions</li>
+        <li><strong>Voice agents</strong> &mdash; bidirectional audio/video via Gemini Live API, the one place ADK has a meaningful edge over LangGraph and CrewAI</li>
+        <li><strong>Document processing pipelines</strong> &mdash; <code>SequentialAgent</code> chains for extract → classify → enrich → store, with <code>LoopAgent</code> retries on validation failures</li>
+        <li><strong>Cross-framework orchestration</strong> &mdash; ADK as the A2A hub calling LangGraph and CrewAI specialists for use cases where a single team owns the orchestration but other teams own the sub-agents</li>
+        <li><strong>Internal developer agents</strong> &mdash; code review, PR triage, doc generation; Google itself uses ADK-powered agents to manage the ADK GitHub repo (per their public Q3 2025 roadmap)</li>
+      </ul>
+    </div>
+
+    <div class="timeline fade-up" style="transition-delay: 0.08s">
+      <div class="timeline-step">
+        <div class="timeline-date">Apr 9, 2025</div>
+        <div class="timeline-text">ADK Python launches as open source under <strong>Apache 2.0</strong>. Google Developers Blog announcement.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-date">Mid-2025</div>
+        <div class="timeline-text"><strong>A2A Protocol</strong> announced; ADK ships native A2A integration.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-date">Aug 2025</div>
+        <div class="timeline-text">ADK Python v1.12 introduces <strong>YAML-based Agent Config</strong> (no-code agent authoring) and Bigtable toolset.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-date">Oct 2025</div>
+        <div class="timeline-text">First ADK community meeting; Cloud Run + GKE + Agent Engine deployment paths formalised.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-date">Jan 2026</div>
+        <div class="timeline-text">ADK Python <strong>v1.23</strong> lands; OpenTelemetry GenAI semantic conventions adopted for tracing.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-date">Mar 2026</div>
+        <div class="timeline-text">ADK Java 1.0 ships; <strong>ADK 2.0 Alpha</strong> announced with graph-based workflows.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-date">Apr 2026</div>
+        <div class="timeline-text">Vertex AI Agent Builder rebranded to <strong>Gemini Enterprise Agent Platform</strong> at Cloud Next 2026.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-date">May 2026</div>
+        <div class="timeline-text">ADK 2.0 in <strong>Beta</strong> for Python; ADK TypeScript 1.0 GA; A2A Protocol now under <strong>Linux Foundation</strong> governance.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Decision guide</div>
+      <h2 class="section-title">Pick ADK when. Skip ADK when.</h2>
+      <p class="section-lede">Honest two-sided guidance. ADK isn't universally the right answer; it's the right answer for a specific shape of project and team. The shape it fits best is GCP-native, voice/multimodal-relevant, hierarchical multi-agent &mdash; with comfort for weekly framework churn during the v2.0 stabilisation window.</p>
+    </div>
+
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use ADK when</h4>
+        <ul>
+          <li>You're already on Google Cloud and standardising on Gemini</li>
+          <li>You need bidirectional voice or video &mdash; Gemini Live integration is genuinely unique</li>
+          <li>You're building hierarchical multi-agent systems with clear role delegation</li>
+          <li>A2A interop matters &mdash; you want to mix ADK with LangGraph or CrewAI agents</li>
+          <li>You want a managed runtime (Agent Engine) to handle sessions, memory, and scaling</li>
+          <li>You're comfortable with weekly-to-bi-weekly framework churn during v2.0 stabilisation</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip ADK when</h4>
+        <ul>
+          <li>Your team already runs LangChain in production and the ecosystem familiarity is the win</li>
+          <li>You need a single-file prototype, not a framework &mdash; a 50-line script with the OpenAI or Anthropic SDK is shorter</li>
+          <li>You're on AWS or Azure and have no GCP plans &mdash; ADK runs there, but Agent Engine, Memory Bank, and the IAM integrations don't</li>
+          <li>You need predictable monthly costs &mdash; Agent Engine plus per-token model billing plus Search grounding surcharges can be hard to forecast</li>
+          <li>ADK 2.0's graph workflows are the headline feature you want &mdash; wait for GA before shipping production</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Pre-GA pinning</h4>
+      <p>ADK 2.0 is pre-GA at the time of writing. Install with <code>pip install --pre google-adk</code>. Don't ship it to production until it goes GA. The official 2.0 docs flag breaking changes from 1.x. For production, pin to v1.23+ stable until 2.0 GA lands.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; South African context</div>
+      <h2 class="section-title">Where ADK fits in SA delivery work.</h2>
+      <p class="section-lede">ADK plays differently across the three tiers most SA delivery teams operate in: enterprise (banks, insurers, telcos), mid-market studio builds, and learning paths. Each tier has a different cost-and-value calculus, and ADK isn't always the answer &mdash; but it's a credible answer in the cases where it is.</p>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Enterprise &middot; SA banks, insurers, telcos already on GCP</h4>
+      <p>For South African banks, insurers, and telcos already on Google Cloud (or running Vertex AI for ML workloads), ADK is a natural fit. Agent Engine with <code>VertexAiSessionService</code> and Memory Bank gives the audit trail, IAM controls, and data-residency story that POPIA and SA regulators expect. Pair ADK orchestrators with the Johannesburg or Cape Town GCP regions to keep agent-to-tool latency under 50ms for customer-facing flows. The honest constraint: if the client's data lives mostly in AWS or on-prem, the cross-cloud egress and token-billing overhead usually makes a different framework cheaper.</p>
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; mid-market builds</h4>
+      <p>For mid-market builds, ADK's deploy-to-Cloud-Run path is hard to beat. One container, scales to zero, no managed-runtime fees, A2A still works. Start in <code>adk web</code> on a developer laptop, ship to Cloud Run for staging, and only move to Agent Engine if the client wants the managed sessions and Memory Bank UI. ADK 2.0 graph workflows are interesting for studio work &mdash; but keep them out of production until GA.</p>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.09s">
+      <h4>Learning &middot; agentic patterns from explicit primitives</h4>
+      <p>ADK is one of the better frameworks to learn agentic patterns on, because the abstractions are explicit. You can see the agent tree, the tool calls, the session state. Pair it with the official quickstart, the free Gemini API key tier, and the open-source <code>adk-samples</code> repo, and you have a genuine learning path that doesn't require a credit card. The A2A Protocol is also worth learning here, because it's the open standard that lets your ADK agent talk to whatever framework comes next.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.11s">
+      <p><strong>POPIA notes for SA enterprise.</strong> ADK on Vertex AI Agent Engine in JHB (<code>africa-south1</code>) keeps customer data in-region by default. Memory Bank stores cross-session facts &mdash; configure retention policies aligned to your data subject's POPIA rights (right to erasure, right to access). Agent Engine's audit logs flow into Cloud Logging; pipe them into your standard SIEM for the audit chain regulators expect.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 CONNECTIONS + RESOURCES -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Connections</div>
+      <h2 class="section-title">Where ADK links in the tree.</h2>
+      <p class="section-lede">ADK touches several other sub-trees: Google (the cloud platform and Gemini models), Cloudflare Workers (alternative deployment surface for agents), the agentic-protocol stack (A2A, MCP), and downstream of every other framework via A2A interop.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. Frameworks band (ADK, LangGraph, CrewAI, OpenAI Agents SDK, Anthropic Agent SDK, AutoGen) plus Protocols band (A2A, MCP).</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">agents/a2a</span>
+        <div class="skill">A2A Protocol</div>
+        <div class="why">The agent-to-agent protocol ADK natively supports. Linux Foundation governed. The open standard that makes "ADK + LangGraph + CrewAI in one stack" work.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">The tool / data protocol. ADK consumes MCP servers via <code>MCPToolset</code>. MCP is becoming the lingua franca of agent tooling.</div>
+      </div>
+      <a href="../tech/google/" class="connect-node">
+        <span class="tag">tech/google</span>
+        <div class="skill">Google Cloud</div>
+        <div class="why">Where ADK feels native. Vertex AI Agent Engine, Memory Bank, Cloud Run, GKE, BigQuery toolsets &mdash; all Google-Cloud-first integrations.</div>
+      </a>
+      <a href="../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Alternative deployment surface. ADK agents can run on Workers via the Node-compat layer, though Agent Engine + Memory Bank specifics don't follow.</div>
+      </a>
+      <a href="../tech/runtime/node.html" class="connect-node">
+        <span class="tag">tech/runtime/node</span>
+        <div class="skill">Node.js</div>
+        <div class="why">ADK TypeScript runs on Node. The runtime layer underneath much of the JS-side agent tooling, including LangChain.js.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 08 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+      <p class="section-lede">This page was assembled from primary sources: Google's <code>adk-python</code> README, CHANGELOG, and release tags; the canonical docs site at <code>google.github.io/adk-docs</code>; the Google Developers Blog launch post; the A2A Protocol repository and specification; and Google Cloud's official Vertex AI documentation. Anything that couldn't be verified against a primary source was removed. Last reviewed 2026-05-10.</p>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://google.github.io/adk-docs/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">ADK documentation (canonical)</span>
+        <span class="r-url">google.github.io/adk-docs</span>
+      </a>
+      <a href="https://github.com/google/adk-python" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; Python</span>
+        <span class="r-title">google/adk-python</span>
+        <span class="r-url">github.com/google/adk-python</span>
+      </a>
+      <a href="https://github.com/google/adk-js" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; TypeScript</span>
+        <span class="r-title">google/adk-js</span>
+        <span class="r-url">github.com/google/adk-js</span>
+      </a>
+      <a href="https://github.com/google/adk-go" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; Go</span>
+        <span class="r-title">google/adk-go</span>
+        <span class="r-url">github.com/google/adk-go</span>
+      </a>
+      <a href="https://github.com/google/adk-java" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; Java</span>
+        <span class="r-title">google/adk-java</span>
+        <span class="r-url">github.com/google/adk-java</span>
+      </a>
+      <a href="https://github.com/google/adk-samples" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Examples</span>
+        <span class="r-title">adk-samples</span>
+        <span class="r-url">github.com/google/adk-samples</span>
+      </a>
+      <a href="https://github.com/a2aproject/A2A" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Protocol</span>
+        <span class="r-title">A2A Protocol (Linux Foundation)</span>
+        <span class="r-url">github.com/a2aproject/A2A</span>
+      </a>
+      <a href="https://modelcontextprotocol.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Protocol</span>
+        <span class="r-title">Model Context Protocol</span>
+        <span class="r-url">modelcontextprotocol.io</span>
+      </a>
+      <a href="https://developers.googleblog.com/en/agent-development-kit-easy-to-build-multi-agent-applications/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Launch post</span>
+        <span class="r-title">ADK launch &middot; Google Developers Blog</span>
+        <span class="r-url">developers.googleblog.com/.../agent-development-kit</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://google.github.io/adk-docs/" target="_blank" rel="noopener">ADK docs &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
