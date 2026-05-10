@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construction &mdash; know.2nth.ai</title>
+<meta name="description" content="The Construction sub-tree of know.2nth.ai — open building information modeling (openBIM, IFC, IfcOpenShell, BlenderBIM, Speckle, BCF), AI-driven quantity takeoff, 4D programme management, RFIs, materials and quality capture, and South African construction compliance. Built around the Gridline Properties × 2nth.ai openBUILD AI partnership.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/construction/">
+<meta property="og:title" content="Construction &mdash; know.2nth.ai">
+<meta property="og:description" content="The Construction sub-tree of know.2nth.ai — openBIM, IFC, AI-driven quantity takeoff, 4D programme, materials and quality, SA compliance. Built around the Gridline Properties × 2nth.ai openBUILD AI partnership.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Construction &mdash; know.2nth.ai">
+<meta name="twitter:description" content="The Construction sub-tree of know.2nth.ai — openBIM, IFC, AI-driven quantity takeoff, programme + cost + compliance built on open standards. Cost-honest, vendor-portable.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12);
+    --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12);
+    --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12);
+    --clay: #EA580C; --clay-soft: rgba(234, 88, 12, 0.12);
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hub-hero { padding: 48px 0 64px; }
+  .hub-hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--clay); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hub-hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--clay); box-shadow: 0 0 12px var(--clay); }
+  .hub-hero h1 { font-size: clamp(44px, 7vw, 72px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 24px; max-width: 16ch; }
+  .hub-hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hub-hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 32px; }
+  .hub-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hub-stat { padding-right: 32px; border-right: 1px solid var(--border); }
+  .hub-stat:last-child { border-right: none; padding-right: 0; }
+  .hub-stat .num { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--blue-glow), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 6px; }
+  .hub-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  section.hub-section { padding: 32px 0 48px; position: relative; }
+  .hub-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .hub-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 14px; line-height: 1.2; }
+  .hub-lede { font-size: 16px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 36px; }
+
+  .category-band { display: flex; align-items: center; gap: 16px; margin: 40px 0 18px; }
+  .category-band:first-of-type { margin-top: 0; }
+  .category-band .c-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: var(--clay); white-space: nowrap; }
+  .category-band .c-rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-hover), transparent); }
+
+  .svc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .svc-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; text-decoration: none; color: inherit; display: block; transition: all 0.3s; position: relative; }
+  .svc-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
+  .svc-card.soon { cursor: default; opacity: 0.74; }
+  .svc-card.soon:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .svc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .svc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .svc-state { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.1px; text-transform: uppercase; padding: 3px 9px; border-radius: var(--radius-pill); font-weight: 600; flex-shrink: 0; }
+  .svc-state.live { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); }
+  .svc-state.soon { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
+  .svc-path { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .svc-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; max-width: 1040px; }
+  .principle { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--clay); border-radius: var(--radius-md); padding: 22px 26px; }
+  .principle h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.2px; }
+  .principle p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+  .cross-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cross-link { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px 20px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--bg-card); text-decoration: none; color: var(--text-secondary); transition: all 0.3s; letter-spacing: 0.5px; }
+  .cross-link:hover { border-color: var(--border-hover); color: var(--sky); transform: translateY(-1px); }
+  .cross-link.soon { opacity: 0.5; cursor: default; border-style: dashed; }
+
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 60px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } .hub-stats { gap: 20px; } .hub-stat { padding-right: 20px; } }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">construction</span>
+    </a>
+    <div class="nav-right">
+      <a href="../../index.html#domains" class="nav-link">&larr; Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Construction</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hub-hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> construction &middot; Top-level domain hub</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Build smart. <span class="gradient">Build open.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The construction industry is the least digitalised major industry on earth. The Construction sub-tree on know.2nth.ai is built around a thesis: that openBIM (IFC + open tooling) plus AI agents that read the model directly is the right architecture &mdash; cost-honest, vendor-portable, regulation-aware. Anchored in the <a href="https://gridlineprop.co.za" target="_blank" rel="noopener" style="color:var(--sky)">Gridline Properties</a> &times; 2nth.ai openBUILD AI partnership.
+    </p>
+    <div class="hub-stats fade-up" style="transition-delay: 0.15s">
+      <div class="hub-stat"><div class="num">5</div><div class="label">Sub-skills</div></div>
+      <div class="hub-stat"><div class="num">3</div><div class="label">Category bands</div></div>
+      <div class="hub-stat"><div class="num">v1.0</div><div class="label">openBIM live</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">01 &middot; Skills</div>
+      <h2 class="hub-title">Construction craft, broken open.</h2>
+      <p class="hub-lede">Five sub-skills across three bands &mdash; the open standards substrate, the operational layer, and the SA-specific compliance and partner work. openBIM is the centerpiece; everything else either consumes it or layers on top of it.</p>
+    </div>
+
+    <!-- Foundations -->
+    <div class="category-band fade-up">
+      <span class="c-label">Foundations &middot; 1</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="openbim.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">openBIM</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">construction/openbim</span>
+        <p>The open building-information-modeling stack. IFC (ISO 16739) at the centre, IfcOpenShell + BlenderBIM + Speckle + BCF as the open tools. Cost-honest alternative to SmartBIM and proprietary BIM platforms; queryable data substrate for AI.</p>
+      </a>
+
+    </div>
+
+    <!-- Operations -->
+    <div class="category-band fade-up">
+      <span class="c-label">Operational layer &middot; 3</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">SmartBIM vs openBIM</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">construction/smartbim-vs-openbim</span>
+        <p>The cost-and-lock-in case in detail. Worked example for a 10-seat SA mid-market team: USD-billed proprietary licences vs ZAR-cost openBIM stack. FX exposure, data portability, post-contract data ownership.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Quantity surveying &amp; takeoff</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">construction/quantity-surveying</span>
+        <p>From IFC to BOQ. AI takeoff engines that read <code>IfcWall</code> + <code>Qto_WallBaseQuantities</code> directly. Living rate database, regional adjustments, tender analysis with anomaly detection. Three weeks of QS work compressed to hours.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Site operations &amp; programme</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">construction/site-operations</span>
+        <p>4D programme tied to the model. Material tracking with BIM-extracted quantities. Quality capture linked to IFC GUIDs. Safety intelligence from site photos. Digital RFIs with 5-day-to-5-hour response time. Cost control flagged 4-6 weeks ahead of overruns.</p>
+      </div>
+
+    </div>
+
+    <!-- SA + Partner -->
+    <div class="category-band fade-up">
+      <span class="c-label">SA &amp; Partner &middot; 2</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">SA construction compliance</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">construction/sa-compliance</span>
+        <p>NHBRC, OHSA Construction Regulations 2014, SANS 10400, JBCC Edition 6.2 BIM provisions, NEC4 Y(UK)1, DPSA / NDPW handover. IFC property sets aligned to regulatory checks &mdash; queries, not paperwork.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Silvercroft &middot; pilot case</div>
+          <span class="svc-state soon">Soon</span>
+        </div>
+        <span class="svc-path">construction/silvercroft</span>
+        <p>The Gridline Properties pilot for openBUILD AI. From IFC takeoff through 4D programme + material tracking + handover. The case study every other openBIM-on-SA-mid-market project will read first.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PRINCIPLES ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">02 &middot; Principles</div>
+      <h2 class="hub-title">The opinions that shape every leaf.</h2>
+      <p class="hub-lede">Four positions that show up in every Construction sub-skill. They reflect a specific view: that the construction industry's data layer should be open, that AI agents are first-class consumers of that data, and that South African regulatory and commercial reality is a feature to design around, not an afterthought.</p>
+    </div>
+    <div class="principles fade-up" style="transition-delay: 0.05s">
+      <div class="principle">
+        <h4>The model is the data</h4>
+        <p>If the building's information lives in PDFs and spreadsheets, no AI can read it without scraping. If it lives in IFC, a Python loop reads it in three lines. Every Construction skill assumes IFC is the substrate.</p>
+      </div>
+      <div class="principle">
+        <h4>Open standards beat vendor APIs</h4>
+        <p>buildingSMART standards (IFC, BCF, IDS) are ISO-grade open. Vendor APIs are rate-limited, billed, and version-controlled by the vendor's roadmap. Build on the standards; integrate with the vendors only where they earn it.</p>
+      </div>
+      <div class="principle">
+        <h4>SA context is first-class</h4>
+        <p>NHBRC, JBCC, NEC4 SA conditions, Section 25 procurement, B-BBEE, SANS 10400, OHSA CR 2014. SA construction reality differs from US/EU defaults; every leaf treats local regulation as the design constraint, not a footnote.</p>
+      </div>
+      <div class="principle">
+        <h4>AI consumes IFC, not site photos</h4>
+        <p>AI in construction is most valuable as a structured-data agent: takeoff, programme, cost, compliance. Computer vision on site photos is real but secondary. The leverage is in the data already produced by the design team &mdash; we just need to read it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CROSS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">03 &middot; Related branches</div>
+      <h2 class="hub-title">Where Construction connects.</h2>
+      <p class="hub-lede">The Construction sub-tree leans heavily on Data (the model is queryable), Tech (Cloudflare R2 for IFC blob storage, agents that read it), and Design (the architectural authoring tools that produce it). Partners is where the Gridline Properties relationship lives.</p>
+    </div>
+    <div class="cross-links fade-up" style="transition-delay: 0.05s">
+      <a href="../../index.html#domains" class="cross-link">&larr; Tree</a>
+      <a href="../data/" class="cross-link">data &rarr;</a>
+      <a href="../tech/" class="cross-link">tech &rarr;</a>
+      <a href="../design/" class="cross-link">design &rarr;</a>
+      <a href="../partners/" class="cross-link">partners &rarr;</a>
+      <span class="cross-link soon">construction/handover &middot; soon</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="../../index.html#domains">All domains</a>
+      <a href="https://www.buildingsmart.org/about/openbim/" target="_blank" rel="noopener">buildingSMART openBIM &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
