@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoGen / AG2 &mdash; know.2nth.ai</title>
+<meta name="description" content="AutoGen — Microsoft Research's multi-agent conversation framework, with the AG2 community fork as its sibling. Python, MIT-licensed, built around the metaphor of agents talking to each other in a group chat to converge on answers. AutoGen v0.4 is the modular rewrite by Microsoft; AG2 is the community continuation of the original v0.2 design. The framework that pioneered conversational multi-agent patterns and remains the strongest fit for research workflows, agent-debate experiments, and academic / R&D use cases. Production tooling is still maturing; for production agents most teams choose LangGraph, CrewAI, or vendor SDKs instead.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/autogen">
+<meta property="og:title" content="AutoGen / AG2 &mdash; know.2nth.ai">
+<meta property="og:description" content="AutoGen — Microsoft Research's multi-agent conversation framework, with AG2 as the community fork. Pioneered conversational multi-agent patterns. Strongest fit for research, agent-debate, and R&D work.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AutoGen / AG2 &mdash; know.2nth.ai">
+<meta name="twitter:description" content="AutoGen — Microsoft Research's multi-agent framework, AG2 community fork. Conversational multi-agent debate. Strongest for research / R&D.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); } pre.code .s { color: #A5F3B8; } pre.code .c { color: var(--text-muted); font-style: italic; } pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/autogen</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">AutoGen / AG2</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; AutoGen / AG2 &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Agents in conversation. <span class="gradient">Debate to converge.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      AutoGen is Microsoft Research's multi-agent conversation framework. Released in late 2023, it pioneered the idea that <strong>multi-agent systems should look like a group chat</strong> &mdash; agents take turns talking, debate, refine answers, and converge through dialogue rather than explicit graph orchestration. Two flavours coexist in 2026: <strong>Microsoft's AutoGen v0.4+</strong> (the modular rewrite under active Microsoft Research development) and <strong>AG2</strong> (the community fork that continues the original v0.2 design). Both are MIT-licensed Python frameworks. The strongest fit for research workflows, agent-debate experiments, and academic / R&D use cases &mdash; with the honest caveat that production tooling lags LangGraph and CrewAI.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live &middot; v0.4+ (Microsoft) &middot; AG2 (community)</span>
+      <span class="pill indigo">MIT licensed</span>
+      <span class="pill accent">Python</span>
+      <span class="pill">Microsoft Research origin</span>
+      <span class="pill warn">Research-strong, production-mixed</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT IT IS -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A multi-agent framework where the metaphor is conversation.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>AutoGen is a Python framework for building multi-agent systems where the agents primarily communicate through structured conversation. Released by Microsoft Research in <strong>October 2023</strong> as one of the first serious multi-agent frameworks, it pioneered patterns that other frameworks later borrowed: a "group chat" with multiple LLM-driven agents and optionally a human, the <code>ConversableAgent</code> base class, and the use of agent-to-agent dialogue as the primary control flow.</p>
+      <p>The thesis: <strong>real reasoning often emerges from disagreement and debate</strong>. A single agent monologue tends to commit early to one approach; multiple agents arguing through a problem produces better answers on hard tasks &mdash; especially research, planning, and analysis where multiple perspectives genuinely matter. AutoGen codified this pattern when most frameworks were still single-agent ReAct loops.</p>
+      <p>What confuses people in 2026 is the framework's <strong>two-track present</strong>. After the original v0.2 design caught on, Microsoft restructured the project: <strong>Microsoft AutoGen v0.4+</strong> is a substantial rewrite with a more modular, message-passing-driven architecture, maintained inside the AutoGen GitHub org. <strong>AG2</strong> (originally also called "AutoGen 2") is the community-led fork that continued the original v0.2 design and APIs, governed independently. Both are still active. Both work well. They share design DNA but diverge on specific APIs &mdash; pick one and stick with it; mixing examples from both creates pain.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Which one to use?</h4>
+      <p>For new projects in 2026, the honest pragmatic answer: <strong>start with Microsoft AutoGen v0.4+</strong> if you want active Microsoft research backing, the newest features, and Magentic-One (their multi-agent research framework built on top of AutoGen). <strong>Use AG2</strong> if you want continuity with the v0.2 patterns most older tutorials and papers use, or if you prefer community-governed projects. Both are MIT, both are production-capable for research-shaped workloads, and both run against any LLM. Don't agonise over the choice &mdash; the design ideas transfer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">ConversableAgent + GroupChat + an optional human.</h2>
+      <p class="section-lede">Two primitives carry most use cases. <code>ConversableAgent</code> represents an LLM-driven participant; <code>UserProxyAgent</code> represents a human (or a programmatic stand-in for a human, used to drive automated experiments). Several agents go into a <code>GroupChat</code>, and a <code>GroupChatManager</code> picks who speaks next. That's the structural core.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The minimal AG2 (v0.2-style) example &mdash; a researcher and a critic debating:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.07s"><span class="c"># pip install ag2  (or autogen-agentchat for v0.4+)</span>
+<span class="h">from</span> autogen <span class="h">import</span> AssistantAgent, UserProxyAgent, GroupChat, GroupChatManager
+
+llm_config = {<span class="s">"model"</span>: <span class="s">"gpt-5"</span>, <span class="s">"api_key"</span>: <span class="s">"..."</span>}
+
+researcher = AssistantAgent(
+    <span class="h">name</span>=<span class="s">"researcher"</span>,
+    <span class="h">system_message</span>=<span class="s">"You research SA fintech trends with rigor."</span>,
+    <span class="h">llm_config</span>=llm_config,
+)
+
+critic = AssistantAgent(
+    <span class="h">name</span>=<span class="s">"critic"</span>,
+    <span class="h">system_message</span>=<span class="s">"You challenge weak claims and ask for evidence."</span>,
+    <span class="h">llm_config</span>=llm_config,
+)
+
+human = UserProxyAgent(<span class="h">name</span>=<span class="s">"human"</span>, <span class="h">human_input_mode</span>=<span class="s">"NEVER"</span>)
+
+groupchat = GroupChat(
+    <span class="h">agents</span>=[human, researcher, critic],
+    <span class="h">messages</span>=[],
+    <span class="h">max_round</span>=10,
+)
+manager = GroupChatManager(<span class="h">groupchat</span>=groupchat, <span class="h">llm_config</span>=llm_config)
+
+human.initiate_chat(manager, <span class="h">message</span>=<span class="s">"Identify 3 emerging SA fintech trends. Researcher proposes; critic challenges; reach consensus."</span>)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>The conversational loop.</strong> The <code>GroupChatManager</code> uses an LLM to pick the next speaker based on the conversation so far and each agent's role description. Agents take turns; the chat continues until a termination condition fires (max rounds, a specific keyword, or the manager deciding the conversation has converged). The human or a programmatic stand-in can interject at any point.</p>
+      <p><strong>v0.4+ changes the surface API</strong> meaningfully &mdash; messages are now first-class objects, agents communicate through a runtime, and the architecture is built for distributed deployment. The mental model is the same; the code looks different. The <code>autogen-agentchat</code> package provides v0.2-compatible high-level APIs over the v0.4 runtime if you want both: modern architecture, familiar API.</p>
+      <p><strong>Tools and code execution.</strong> AutoGen's signature feature from day one was <strong>code-executing agents</strong> &mdash; an agent that writes Python, runs it in a sandbox, observes output, and refines. Useful for analytical tasks where the agent benefits from actually computing rather than reasoning about computation. v0.4 cleaned up the security model around this; in production, run code execution in containers with explicit sandboxing.</p>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.13s">
+      <h4>Where conversation beats orchestration</h4>
+      <p>The structural advantage AutoGen has over LangGraph or CrewAI: tasks where the answer benefits from explicit disagreement. Research where one agent advocates and another critiques; planning where one agent proposes and another stress-tests; coding where one agent writes and another reviews. These work because the conversation surface forces both agents to engage with each other's reasoning &mdash; producing better outputs than either alone. <strong>If your task naturally decomposes into &quot;A says X, B should challenge X,&quot; AutoGen / AG2 is the right framework.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 ECOSYSTEM -->
+<section id="ecosystem">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; The ecosystem</div>
+      <h2 class="section-title">Two libraries, AutoGen Studio, Magentic-One on top.</h2>
+      <p class="section-lede">The framework's ecosystem in 2026 is split between Microsoft and the community. Both publish their own packages, docs, and tutorials. The split is real but pragmatically manageable.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Library &middot; Microsoft</span>
+        <h4>AutoGen v0.4+</h4>
+        <p>Python package <code>autogen-agentchat</code> (high-level) + <code>autogen-core</code> (runtime). Microsoft Research-backed. Modular architecture, distributed-deployment-ready, active development cadence.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Library &middot; community</span>
+        <h4>AG2</h4>
+        <p>Python package <code>ag2</code>. Continues the original v0.2 API. Community-led after Microsoft restructured. Independent governance, MIT, broadly compatible with the v0.2 examples in older tutorials and research papers.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Tool &middot; visual</span>
+        <h4>AutoGen Studio</h4>
+        <p>Microsoft's no-code / low-code UI for designing and running AutoGen workflows. Useful for prototyping conversation patterns and evaluating outputs before committing to code.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Framework &middot; on top</span>
+        <h4>Magentic-One</h4>
+        <p>Microsoft's research-grade multi-agent framework built on AutoGen v0.4. Specialised orchestrator + four pre-built agents (FileSurfer, WebSurfer, Coder, ComputerTerminal) for "complete tasks the way a research assistant would." Open source, still research-leaning.</p>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Production tooling lags the research output</h4>
+      <p>AutoGen / AG2 has been more researcher-focused than production-focused since launch. Compared to LangGraph (LangSmith observability), CrewAI (CrewAI Enterprise), or vendor SDKs (built-in tracing), AutoGen's production-grade tooling story is thinner. Microsoft Azure offers some integration paths, but expect to build observability, retry logic, and audit yourself if AutoGen is your production framework. <strong>For research and R&amp;D &mdash; the framework's strongest fit &mdash; this isn't a blocker. For audit-heavy production agents, it is.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 VS OTHER FRAMEWORKS -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; vs LangGraph, CrewAI, vendor SDKs</div>
+      <h2 class="section-title">Where AutoGen / AG2 fits.</h2>
+      <p class="section-lede">All four production-agent frameworks make different bets. AutoGen's bet is conversational debate. CrewAI's is role-based teams. LangGraph's is explicit graph control. Vendor SDKs bet on first-party model alignment. Each is right for a specific shape of project.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Dimension</th><th>AutoGen / AG2</th><th>CrewAI</th><th>LangGraph</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Mental model</strong></td><td>Group chat &middot; debate &middot; converge</td><td>Roles &middot; goals &middot; tasks</td><td>Graph nodes &middot; edges &middot; state</td></tr>
+          <tr><td><strong>Best for</strong></td><td>Research, planning, agent-debate</td><td>Role-decomposable workflows</td><td>Compliance-heavy, audit-driven</td></tr>
+          <tr><td><strong>Production tooling</strong></td><td>Lean &mdash; build it yourself</td><td>CrewAI Enterprise (paid)</td><td>LangSmith (paid)</td></tr>
+          <tr><td><strong>Code execution</strong></td><td>First-class since v0.2</td><td>Via tools</td><td>Via tool nodes</td></tr>
+          <tr><td><strong>Visual UI</strong></td><td>AutoGen Studio</td><td>CrewAI Studio (in Enterprise)</td><td>LangGraph Studio</td></tr>
+          <tr><td><strong>Multi-vendor LLMs</strong></td><td>Yes (any compatible API)</td><td>Yes (LiteLLM)</td><td>Yes (any model)</td></tr>
+          <tr><td><strong>Worst fit</strong></td><td>Production agents needing audit; latency-sensitive flows</td><td>Workflows that don't decompose into roles</td><td>Single-shot agents; non-graph thinkers</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The three multi-agent frameworks side-by-side</h4>
+      <p>If you're choosing a multi-agent framework in 2026, you're effectively choosing between AutoGen / AG2, CrewAI, and LangGraph. <strong>AutoGen / AG2 wins on agent-debate research and code-execution-heavy work. CrewAI wins on role-decomposable workflows and prototyping speed. LangGraph wins on production-grade audit and explicit control.</strong> Vendor SDKs (Anthropic, OpenAI) sit one layer below this &mdash; they're the framework choice when the model is the load-bearing pick. Many production stacks combine two or three via A2A.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 USE CASES -->
+<section id="use">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Use cases</div>
+      <h2 class="section-title">Where AutoGen / AG2 plays best.</h2>
+      <p class="section-lede">Six patterns that play to the conversational-debate metaphor and code-executing-agent strength. Most are research-leaning rather than customer-facing; that's not a bug &mdash; that's the framework's structural fit.</p>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <ul>
+        <li><strong>Multi-agent research workflows</strong> &mdash; the canonical use case. Researcher + critic + summariser agents debate a topic and produce a balanced output. Common pattern in academic / R&amp;D applications and the source of most early AutoGen papers.</li>
+        <li><strong>Code-executing analysis agents</strong> &mdash; an agent writes Python, runs it in a sandbox, observes output, refines. Strong fit for data analysis, ML experiments, mathematical proofs. AutoGen's code-execution surface was designed for this from day one.</li>
+        <li><strong>Planning + critique workflows</strong> &mdash; one agent proposes a plan; another stress-tests for failure modes; they converge through revision. Useful for project planning, architecture decisions, risk analysis.</li>
+        <li><strong>Conversational evaluations and red-teaming</strong> &mdash; multi-agent debate as an evaluation method, where critic agents probe for hallucinations, weak reasoning, or policy violations in another agent's outputs. Increasingly used in eval pipelines.</li>
+        <li><strong>Magentic-One research-assistant pattern</strong> &mdash; web research, file analysis, code execution, computer-use. Microsoft's reference implementation of "the research assistant agent" built on AutoGen v0.4. Useful as a starting template for similar workflows.</li>
+        <li><strong>Educational / curriculum agents</strong> &mdash; tutor + student + evaluator agents working through a problem. Common pattern in academic AI / education research; fits the conversation metaphor naturally.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Decision guide</div>
+      <h2 class="section-title">Pick AutoGen / AG2 when. Skip when.</h2>
+      <p class="section-lede">The honest framing: AutoGen / AG2 is the right choice for research-shaped work and agent-debate patterns. It's a less-good choice for production agents that need audit, observability, or vendor-tight integrations. Pick the framework that fits the shape of your project &mdash; for research that shape is often AutoGen.</p>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use AutoGen / AG2 when</h4>
+        <ul>
+          <li>The task benefits from explicit agent-to-agent debate or critique</li>
+          <li>Code-executing agents are load-bearing (analysis, ML experiments, math)</li>
+          <li>Research, R&amp;D, or academic work where novel agent patterns matter</li>
+          <li>You're building eval / red-teaming infrastructure that uses multi-agent dialogue</li>
+          <li>Magentic-One's research-assistant pattern fits your use case</li>
+          <li>You don't need vendor-tight tracing or paid observability tools</li>
+          <li>Multi-vendor LLM strategy with no preference for a specific cloud</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>You need production-grade audit / tracing / RBAC out-of-the-box &mdash; LangGraph + LangSmith wins</li>
+          <li>The task fits role-based decomposition more than conversational debate &mdash; CrewAI fits better</li>
+          <li>You're on a specific cloud and want first-party SDK alignment &mdash; ADK / vendor SDKs win</li>
+          <li>Latency-sensitive (sub-second) workflows &mdash; multi-round conversation adds variance</li>
+          <li>Compliance-heavy domains (banking, healthcare) where the framework choice signals "we built this seriously" &mdash; LangGraph is a more conservative pick</li>
+          <li>You want managed runtime + scaling + monitoring as paid SaaS &mdash; LangGraph Platform / CrewAI Enterprise / Vertex AI Agent Engine all fit better</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; South African context</div>
+      <h2 class="section-title">Where AutoGen / AG2 lands in SA delivery work.</h2>
+      <p class="section-lede">AutoGen / AG2 has a narrow but valuable role in SA work: research projects, academic / university partnerships, evaluation infrastructure, and the small subset of production work where conversational debate is structurally the right pattern. For mainstream production agent work, other frameworks fit better.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Academia &middot; SA universities and research labs</h4>
+      <p>For SA universities (Wits, UCT, Stellenbosch) and research-leaning organisations, AutoGen / AG2 is genuinely useful. The framework's strength on multi-agent research patterns aligns with academic AI work, and the open-source MIT licence removes commercial barriers. SA AI research groups working on multi-agent debate, evaluation methods, or curriculum agents will find AutoGen the right primary framework.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; eval / red-team infrastructure</h4>
+      <p>For SA studios that need to build evaluation infrastructure for client projects &mdash; "test this customer-support agent for hallucinations" or "red-team this RAG system" &mdash; AutoGen's multi-agent dialogue patterns are a strong fit. Pair AutoGen for the eval layer with LangGraph or vendor SDKs for the production agent itself; AutoGen runs the tests, the production framework runs the work.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>Production caution</h4>
+      <p>For SA enterprise production agents (banking, insurance, healthcare), AutoGen / AG2 is rarely the right primary framework. The thinner production tooling story creates audit and observability gaps that compliance-heavy domains struggle with. Use AutoGen patterns where they shine (research, eval, code-execution) and choose LangGraph or vendor SDKs for the customer-facing production layer. The frameworks aren't mutually exclusive &mdash; an AutoGen-driven eval layer testing a LangGraph-driven production agent is a sensible architecture.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Connections</div>
+      <h2 class="section-title">Where AutoGen / AG2 links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. AutoGen / AG2 sits in the Frameworks band as the conversational-debate option alongside ADK, LangGraph, CrewAI, and the vendor SDKs.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">The major comparison anchor for production work. Where AutoGen wins on debate / research, LangGraph wins on explicit graph audit. Often combined: AutoGen for eval, LangGraph for production.</div>
+      </a>
+      <a href="crewai.html" class="connect-node">
+        <span class="tag">agents/crewai</span>
+        <div class="skill">CrewAI</div>
+        <div class="why">The other major multi-agent framework. AutoGen is debate / converge; CrewAI is roles / tasks. Different mental models, different fits.</div>
+      </a>
+      <a href="google-adk.html" class="connect-node">
+        <span class="tag">agents/google-adk</span>
+        <div class="skill">Google ADK</div>
+        <div class="why">ADK provides hierarchical agent orchestration with managed runtime. ADK + AutoGen via A2A: ADK for production orchestration, AutoGen for sub-tasks where debate matters.</div>
+      </a>
+      <a href="anthropic-agent-sdk.html" class="connect-node">
+        <span class="tag">agents/anthropic-agent-sdk</span>
+        <div class="skill">Anthropic Agent SDK</div>
+        <div class="why">First-party Claude SDK. AutoGen runs against Claude via the OpenAI-compatible Anthropic endpoint or directly. Common pairing for research workflows on Claude.</div>
+      </a>
+      <a href="openai-agents-sdk.html" class="connect-node">
+        <span class="tag">agents/openai-agents-sdk</span>
+        <div class="skill">OpenAI Agents SDK</div>
+        <div class="why">First-party GPT SDK. AutoGen and OpenAI SDK overlap on patterns &mdash; OpenAI's Handoffs are similar to AutoGen's GroupChat. Pick OpenAI SDK for production GPT agents; AutoGen for research patterns.</div>
+      </a>
+      <a href="a2a.html" class="connect-node">
+        <span class="tag">agents/a2a</span>
+        <div class="skill">A2A Protocol</div>
+        <div class="why">Cross-framework interop. Community A2A wrappers exist for AutoGen and AG2; AutoGen sub-systems can plug into A2A-orchestrated production stacks.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">AutoGen / AG2 runs against any OpenAI-compatible endpoint, including Ollama. Pattern: AutoGen multi-agent research on local Ollama-Gemma 3 for cost-free experimentation.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 09 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://microsoft.github.io/autogen/stable/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs &middot; MS</span>
+        <span class="r-title">AutoGen v0.4+ documentation</span>
+        <span class="r-url">microsoft.github.io/autogen/stable</span>
+      </a>
+      <a href="https://github.com/microsoft/autogen" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; MS</span>
+        <span class="r-title">microsoft/autogen</span>
+        <span class="r-url">github.com/microsoft/autogen</span>
+      </a>
+      <a href="https://docs.ag2.ai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs &middot; AG2</span>
+        <span class="r-title">AG2 documentation</span>
+        <span class="r-url">docs.ag2.ai</span>
+      </a>
+      <a href="https://github.com/ag2ai/ag2" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; AG2</span>
+        <span class="r-title">ag2ai/ag2</span>
+        <span class="r-url">github.com/ag2ai/ag2</span>
+      </a>
+      <a href="https://github.com/microsoft/autogen/tree/main/python/packages/autogen-magentic-one" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Framework</span>
+        <span class="r-title">Magentic-One (research multi-agent on AutoGen)</span>
+        <span class="r-url">github.com/microsoft/autogen/.../magentic-one</span>
+      </a>
+      <a href="https://www.microsoft.com/en-us/research/project/autogen/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Research</span>
+        <span class="r-title">Microsoft Research AutoGen project page</span>
+        <span class="r-url">microsoft.com/.../research/project/autogen</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://microsoft.github.io/autogen/stable/" target="_blank" rel="noopener">AutoGen docs &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
