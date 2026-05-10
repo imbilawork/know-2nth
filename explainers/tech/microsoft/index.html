@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft — know.2nth.ai</title>
+<meta name="description" content="The Microsoft sub-tree on the 2nth technology branch. Azure AI, M365 Copilot, Copilot Studio, and Entra ID — the only major LLM stack with a South Africa inference region, and the production patterns that wire it up.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/tech/microsoft/">
+<meta property="og:title" content="Microsoft — know.2nth.ai">
+<meta property="og:description" content="The Microsoft sub-tree on the 2nth technology branch. Azure AI, M365 Copilot, Copilot Studio, and Entra ID — the only major LLM stack with a South Africa inference region, and the production patterns that wire it up.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai — The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Microsoft — know.2nth.ai">
+<meta name="twitter:description" content="The Microsoft sub-tree on the 2nth technology branch. Azure AI, M365 Copilot, Copilot Studio, and Entra ID — the only major LLM stack with a South Africa inference region, and the production patterns that wire it up.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33;
+    --blue: #2563EB; --blue-glow: #3B82F6;
+    --sky: #38BDF8; --sky-muted: #7DD3FC;
+    --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8;
+    --warm: #F59E0B; --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12);
+    --violet: #8B5CF6; --rose: #F43F5E;
+    --bg: var(--ink); --bg-raised: var(--navy);
+    --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06);
+    --text-primary: var(--paper); --text-secondary: var(--slate);
+    --text-muted: #64748B;
+    --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3);
+    --max-w: 1200px;
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --bg-raised: #FFFFFF;
+    --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04);
+    --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8;
+    --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    background: rgba(11, 17, 32, 0.75);
+    border-bottom: 1px solid var(--border);
+  }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark {
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); color: var(--text-secondary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .crumb {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.5px; padding: 28px 0 0;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+
+  .hub-hero { padding: 48px 0 64px; }
+  .hub-hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--sky);
+    margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hub-hero .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow);
+  }
+  .hub-hero h1 {
+    font-size: clamp(44px, 7vw, 72px); font-weight: 800;
+    line-height: 1.04; letter-spacing: -2px; margin-bottom: 24px; max-width: 16ch;
+  }
+  .hub-hero h1 .gradient {
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hub-hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 32px; }
+  .hub-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hub-stat { padding-right: 32px; border-right: 1px solid var(--border); }
+  .hub-stat:last-child { border-right: none; padding-right: 0; }
+  .hub-stat .num {
+    font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700;
+    background: linear-gradient(135deg, var(--blue-glow), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1; margin-bottom: 6px;
+  }
+  .hub-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  section.hub-section { padding: 32px 0 48px; position: relative; }
+  .hub-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .hub-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 14px; line-height: 1.2; }
+  .hub-lede { font-size: 16px; color: var(--text-secondary); max-width: 720px; line-height: 1.7; font-weight: 300; margin-bottom: 36px; }
+
+  .category-band { display: flex; align-items: center; gap: 16px; margin: 40px 0 18px; }
+  .category-band:first-of-type { margin-top: 0; }
+  .category-band .c-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: 1.6px; text-transform: uppercase; color: var(--sky);
+    white-space: nowrap;
+  }
+  .category-band .c-rule {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border-hover), transparent);
+  }
+
+  .svc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .svc-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 22px 24px;
+    text-decoration: none; color: inherit; display: block;
+    transition: all 0.3s; position: relative;
+  }
+  .svc-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  .svc-card.soon { cursor: default; opacity: 0.74; }
+  .svc-card.soon:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .svc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .svc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .svc-state {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1.1px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: var(--radius-pill);
+    font-weight: 600; flex-shrink: 0;
+  }
+  .svc-state.live { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); }
+  .svc-state.prod { background: var(--green-soft); color: var(--green); }
+  .svc-state.stub { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
+  .svc-path { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .svc-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  .pattern-card {
+    background: var(--bg-card); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); border-left: 3px solid var(--blue-glow);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: 780px; margin-bottom: 20px;
+  }
+  .pattern-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  .pattern-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+  .pattern-card p:last-of-type { margin-bottom: 16px; }
+  .pattern-card pre {
+    background: var(--ink-deep); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    line-height: 1.65; color: var(--mist); overflow-x: auto;
+  }
+  [data-theme="light"] .pattern-card pre { background: #0F172A; color: #E2E8F0; }
+  .pattern-card pre .c { color: var(--text-muted); font-style: italic; }
+  .pattern-card pre .s { color: #A5F3B8; }
+  .pattern-card pre .k { color: var(--sky); }
+
+  .geo-callout {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(56, 189, 248, 0.04));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px; max-width: 780px;
+  }
+  .geo-callout .label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--green);
+    margin-bottom: 10px;
+  }
+  .geo-callout h4 { font-size: 18px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .geo-callout p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+  .geo-callout p + p { margin-top: 10px; }
+
+  .cross-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cross-link {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    padding: 10px 20px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); background: var(--bg-card);
+    text-decoration: none; color: var(--text-secondary);
+    transition: all 0.3s; letter-spacing: 0.5px;
+  }
+  .cross-link:hover { border-color: var(--border-hover); color: var(--sky); transform: translateY(-1px); }
+  .cross-link.soon { opacity: 0.5; cursor: default; border-style: dashed; }
+
+  footer {
+    padding: 60px 0 40px; border-top: 1px solid var(--border);
+    text-align: center; margin-top: 60px;
+  }
+  .footer-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .nav-brand-sub { display: none; }
+    .nav-link { display: none; }
+    .hub-stats { gap: 20px; }
+    .hub-stat { padding-right: 20px; }
+  }
+
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">tech/microsoft</span>
+    </a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">← Technology</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀️</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">›</span>
+    <a href="../../../index.html#domains">Technology</a>
+    <span class="crumb-sep">›</span>
+    <a href="../">tech</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb-current">microsoft</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hub-hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech/microsoft · Sub-domain hub</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The only LLM stack<br><span class="gradient">in country.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Microsoft is the only major LLM vendor with a South Africa inference region. For the regulated workloads that have to keep prompts and grounding data in country — banking, healthcare, public sector, FAIS-covered advisory — that single fact is the deciding architectural input. This sub-tree maps the strategy decision (which Copilot surface fits the workload), the implementation patterns (how a Worker actually calls <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">gpt-4o</code> in Joburg), and the auth model that holds it all together.
+    </p>
+    <div class="hub-stats fade-up" style="transition-delay: 0.15s">
+      <div class="hub-stat"><div class="num">6</div><div class="label">Skill nodes</div></div>
+      <div class="hub-stat"><div class="num">3</div><div class="label">Live explainers</div></div>
+      <div class="hub-stat"><div class="num">SA-North</div><div class="label">Only ZA-resident region</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EXPLAINERS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">01 · Explainers</div>
+      <h2 class="hub-title">The branch, by what it teaches.</h2>
+      <p class="hub-lede">Three live nodes today: the strategy-level explainer for the in-country LLM decision, the implementation node for the headless Worker pattern, and the AI Gateway upgrade that wraps it with observability. Three more in the pipeline — the Azure AI Agent Service alternative for full-code agents, M365 Copilot deep dive on the SA M365 Geo, and the Copilot Studio BYO-model playbook.</p>
+    </div>
+
+    <!-- Strategy -->
+    <div class="category-band fade-up">
+      <span class="c-label">Strategy &amp; Decision · 1</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="copilot-sa.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Copilot in South Africa</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">tech/microsoft/copilot</span>
+        <p>The in-country LLM decision tree. Six Copilot surfaces, three viable patterns, a comparison against Anthropic / OpenAI / Bedrock, and the use-case grid for banking, public sector, healthcare, and FAIS advisory.</p>
+      </a>
+
+    </div>
+
+    <!-- Implementation -->
+    <div class="category-band fade-up">
+      <span class="c-label">Implementation Patterns · 2 live · 1 planned</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <a href="azure-openai-workers.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Azure OpenAI from Workers</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">tech/microsoft/azure-ai/sa</span>
+        <p>The headless pattern — a JNB-colocated Worker calling <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">gpt-4o</code> in <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">southafricanorth</code>. Four production-grade concepts: api-key fetch, SSE streaming, throttle handling with KV idempotency, and Entra ID OAuth client credentials.</p>
+      </a>
+
+      <a href="ai-gateway-aoai.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">+ AI Gateway in front</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">tech/microsoft/azure-ai/sa + tech/cloudflare/ai-gateway</span>
+        <p>The observability and resilience upgrade. One URL change buys cache, retry, prompt logs, cost dashboards, and per-tenant rate limits — for ~5 ms latency overhead. The default for any LLM workload heading to production.</p>
+      </a>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Azure AI Agent Service</div>
+          <span class="svc-state stub">Soon</span>
+        </div>
+        <span class="svc-path">tech/microsoft/azure-ai</span>
+        <p>The full-code escape hatch when Copilot Studio's low-code ceiling isn't enough. Threads, tool calls, file search, code interpreter — orchestrated against the same SA-North gpt-4o substrate.</p>
+      </div>
+
+    </div>
+
+    <!-- Copilot family deep dives -->
+    <div class="category-band fade-up">
+      <span class="c-label">Copilot Family · 2 planned</span>
+      <span class="c-rule"></span>
+    </div>
+    <div class="svc-grid fade-up" style="transition-delay: 0.03s">
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">M365 Copilot — SA Geo</div>
+          <span class="svc-state stub">Soon</span>
+        </div>
+        <span class="svc-path">tech/microsoft/copilot/m365</span>
+        <p>Tenant-Geo verification, the surfaces that leak data out of country (Bing grounding, plugins, Loop, Whiteboard), Purview controls, and the audit log path for a POPIA-defensible "where does my data go" answer.</p>
+      </div>
+
+      <div class="svc-card soon">
+        <div class="svc-head">
+          <div class="svc-name">Copilot Studio — BYO model</div>
+          <span class="svc-state stub">Soon</span>
+        </div>
+        <span class="svc-path">tech/microsoft/copilot/studio</span>
+        <p>Wiring a Copilot Studio agent to a customer-owned Azure OpenAI deployment in SA North. The full audit evidence pack — Power env region, AOAI policy, BYO config, live trace verification.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── THE SHARED PATTERN ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">02 · The shared pattern</div>
+      <h2 class="hub-title">One auth model. Every Microsoft API.</h2>
+      <p class="hub-lede">Azure OpenAI, Microsoft Graph, Power Platform, and Copilot Studio all share the same identity layer: <strong style="color: var(--text-primary);">Entra ID</strong> (formerly Azure AD). Learn the OAuth client-credentials flow once and it works for every API in this branch. Two scopes cover almost everything an integration needs.</p>
+    </div>
+    <div class="pattern-card fade-up" style="transition-delay: 0.05s">
+      <h4>Client credentials, scope-per-API</h4>
+      <p>Register an app in Entra ID, generate a client secret, request a token from <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">login.microsoftonline.com</code> with the scope for the API you want. Tokens are 60-minute by default — cache them in KV with a 55-minute TTL and rotate the secret in Key Vault without touching code.</p>
+      <pre><span class="c">// Two scopes cover the whole Microsoft surface</span>
+<span class="k">const</span> aiScope    = <span class="s">'https://cognitiveservices.azure.com/.default'</span>;  <span class="c">// Azure OpenAI</span>
+<span class="k">const</span> graphScope = <span class="s">'https://graph.microsoft.com/.default'</span>;          <span class="c">// M365 / Copilot</span>
+
+<span class="c">// Same flow, different scope</span>
+<span class="k">const</span> body = <span class="k">new</span> URLSearchParams({
+  client_id:     env.AZURE_CLIENT_ID,
+  client_secret: env.AZURE_CLIENT_SECRET,
+  scope:         aiScope,                  <span class="c">// or graphScope</span>
+  grant_type:    <span class="s">'client_credentials'</span>,
+});</pre>
+      <p style="margin-top: 14px;">The payoff: every leaf in this hub uses the same auth function. The Worker that calls Azure OpenAI is one scope away from being the Worker that reads a user's mailbox. See <a href="azure-openai-workers.html#how" style="color: var(--sky);">concept 04 in the Workers explainer</a> for the production-grade KV-cached implementation.</p>
+    </div>
+
+    <div class="geo-callout fade-up" style="transition-delay: 0.1s">
+      <div class="label">⬩ South Africa data residency footnote</div>
+      <h4>What "in country" means across this branch</h4>
+      <p>Three different residency commitments, three different boundaries. <strong style="color: var(--text-primary);">Azure OpenAI in <code style="font-family: 'JetBrains Mono', monospace; color: var(--sky);">southafricanorth</code></strong> is fully in country — both the resource and the inference compute are in Joburg. <strong style="color: var(--text-primary);">M365 Copilot with the SA M365 Geo</strong> stores prompts, completions, and grounding data at rest in country; LLM compute uses the global Azure OpenAI pool. <strong style="color: var(--text-primary);">Copilot Studio with BYO model</strong> matches the AOAI guarantee — fully in country.</p>
+      <p>The strict reading (SARB Directive 6, certain DPSA mandates) requires the AOAI guarantee. The pragmatic reading (most POPIA s.72 cases) accepts the M365 Geo guarantee. The decision is in the strategy explainer — implementation lives in the patterns explainer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CROSS ── -->
+<section class="hub-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="hub-label">03 · Related branches</div>
+      <h2 class="hub-title">Where the Microsoft branch connects.</h2>
+      <p class="hub-lede">Microsoft is the LLM substrate. Cloudflare is the runtime that calls it. ERP / CRM systems are what the agents talk to. The legal branch is the constraint layer. Every Microsoft leaf depends on all four.</p>
+    </div>
+    <div class="cross-links fade-up" style="transition-delay: 0.05s">
+      <a href="../" class="cross-link">← Technology</a>
+      <a href="../cloudflare/" class="cross-link">tech/cloudflare →</a>
+      <a href="../cloudflare/workers.html" class="cross-link">cloudflare/workers →</a>
+      <a href="../cloudflare/ai-gateway.html" class="cross-link">cloudflare/ai-gateway →</a>
+      <span class="cross-link soon">biz/erp · soon</span>
+      <span class="cross-link soon">biz/crm · soon</span>
+      <span class="cross-link soon">leg/data-privacy · soon</span>
+      <span class="cross-link soon">data/sa · soon</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Tech hub</a>
+      <a href="https://github.com/2nth-ai/skills/tree/main/tech/microsoft" target="_blank" rel="noopener">Canonical skills</a>
+    </div>
+    <p class="footer-copy">© 2026 2nth.ai · Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('theme', next);
+  }
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
