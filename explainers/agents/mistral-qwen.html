@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mistral / Qwen &mdash; know.2nth.ai</title>
+<meta name="description" content="Mistral and Qwen — the two strongest 'second-tier' open-weights model families. Mistral (Mistral AI, France) leads on function-calling reliability, European multilingual, and apache-licensed releases. Qwen (Alibaba) leads on code-specific work via Qwen Coder and on multilingual including Chinese and Asian languages. Together they cover use cases where Llama and Gemma are the wrong shape — function-calling-heavy production, code-strong agents, multilingual deployments. Both run on Ollama, vLLM, Together AI, and major hosted platforms.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/mistral-qwen">
+<meta property="og:title" content="Mistral / Qwen &mdash; know.2nth.ai">
+<meta property="og:description" content="Mistral and Qwen — the two strongest 'second-tier' open-weights families. Mistral leads on function-calling and European multilingual. Qwen leads on code (Qwen Coder) and Asian multilingual. Together they cover what Llama and Gemma don't.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mistral / Qwen &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Mistral and Qwen — second-tier open-weights families. Mistral for function-calling, Qwen Coder for code. The right pick when Llama and Gemma don't fit.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); } .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); } .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); } .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/mistral-qwen</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Mistral / Qwen</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Mistral / Qwen &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Two open-weights families. <span class="gradient">Picked for what they do best.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Mistral and Qwen are the two strongest "second-tier" open-weights model families in 2026 &mdash; below Llama on raw ecosystem reach but each leading on a specific dimension that matters in production. <strong>Mistral AI</strong> (France) leads on <strong>function-calling reliability</strong>, <strong>European multilingual</strong>, and Apache-2.0-licensed releases. <strong>Qwen</strong> (Alibaba) leads on <strong>code-specific work</strong> via Qwen Coder and on <strong>Asian multilingual</strong> including Chinese, Japanese, and Korean. Together they cover use cases where Llama and Gemma are the wrong shape.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Both Live &middot; production-ready</span>
+      <span class="pill indigo">Open weights</span>
+      <span class="pill accent">Mistral &middot; Apache 2.0 (most variants)</span>
+      <span class="pill warn">Qwen &middot; Apache 2.0 / Tongyi licence</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT THEY ARE -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What they are</div>
+      <h2 class="section-title">The two families that handle what Llama and Gemma don't.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Mistral AI</strong> is the French AI lab founded in 2023 by ex-DeepMind and ex-Meta researchers. The company shipped Mistral 7B in late 2023, Mixtral 8x7B (the first popular open-weights mixture-of-experts model) in early 2024, Mistral Large in 2024, and continues to ship at frequent cadence. The pattern: <strong>most Mistral models are released under Apache 2.0</strong> &mdash; genuinely open-source, commercially unrestricted &mdash; while a few flagship variants (Mistral Large 2, the latest commercial-tier models) ship under a commercial-research licence. The mix gives you Apache-licensed open weights for production and the flagship-tier for paid hosted access.</p>
+      <p><strong>Qwen</strong> is Alibaba's open-weights family. The Qwen 2.5 (late 2024) and Qwen 3 (2025) generations cover a wide size range &mdash; from Qwen 2.5 0.5B for edge devices up to Qwen 2.5 72B and Qwen 3 235B for frontier-adjacent work. <strong>Qwen 2.5 Coder</strong> is the specialised code variant and is widely considered the strongest open-weights coding model in its size class &mdash; meaningfully better than Llama or Gemma at code generation, refactoring, and software-engineering tasks. The general Qwen models also lead on Asian-language work given Alibaba's training-data emphasis.</p>
+      <p>Both families are widely hosted &mdash; Ollama, Together AI, Fireworks, Hugging Face, vLLM-via-self-host, and (for Qwen) the official Alibaba Cloud Model Studio. Both run anywhere Llama runs, with the same OpenAI-compatible API surface.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Why one combined leaf for two families</h4>
+      <p>This page treats Mistral and Qwen as a complementary pair because that's how they're typically chosen in production: <strong>you don't pick "Mistral or Qwen"; you pick "Mistral for X, Qwen for Y"</strong>. They cover different shapes of work that Llama and Gemma don't fit cleanly. Combining them keeps the comparison logic together and reflects the way teams actually evaluate the open-weights field. If either becomes load-bearing enough to warrant a deeper dedicated leaf in future, the split is straightforward.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 LINEUPS -->
+<section id="lineup">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The lineups</div>
+      <h2 class="section-title">What each family ships, and where it's strongest.</h2>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Mistral &middot; flagship</span>
+        <h4>Mistral Large 2</h4>
+        <p>Top-tier, frontier-adjacent quality. ~123B parameters. Strongest function-calling reliability of any open-weights model. Multilingual including French, German, Italian, Spanish at frontier quality. Commercial-research licence; hosted access via la Plateforme.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Mistral &middot; default</span>
+        <h4>Mistral Small / Nemo</h4>
+        <p>Apache 2.0 licensed. The everyday open-weights pick when function-calling matters. Mistral Nemo (12B) is a particularly strong "small" variant. Runs comfortably on Ollama for dev work.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Mistral &middot; MoE</span>
+        <h4>Mixtral 8x7B / 8x22B</h4>
+        <p>Mixture-of-experts variants. Mixtral 8x22B has 141B total params, ~39B active per token &mdash; punches above its weight on quality vs latency. Apache 2.0. Production-popular when you want strong quality at lower active inference cost.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Qwen &middot; flagship</span>
+        <h4>Qwen 3 235B / Qwen 2.5 72B</h4>
+        <p>Frontier-adjacent quality. Strong reasoning and multilingual including Chinese / Japanese / Korean. Apache 2.0 licensed. The right pick when Asian-language work or Chinese-trained-data alignment is structurally needed.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Qwen &middot; default</span>
+        <h4>Qwen 2.5 14B / 32B</h4>
+        <p>Mid-tier general purpose. Apache 2.0. Strong on Asian languages and code-adjacent tasks. Runs on Ollama, vLLM, Together &mdash; broad hosting support.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Qwen &middot; specialist</span>
+        <h4>Qwen 2.5 Coder &middot; 7B / 14B / 32B</h4>
+        <p>The best open-weights coding model in its size class. Often outperforms Llama and Gemma on code benchmarks at equivalent parameter counts. Apache 2.0. The structural pick when you're building coding agents on open-weights.</p>
+      </div>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>Where each family wins on benchmarks</h4>
+      <p><strong>Mistral Large 2</strong> consistently leads open-weights function-calling benchmarks &mdash; the model was specifically tuned for tool use. <strong>Qwen 2.5 Coder 32B</strong> is competitive with Claude Sonnet and GPT-4 on code-specific benchmarks &mdash; the strongest open-weights coding model below frontier-tier closed models. <strong>Mistral Nemo</strong> and small Qwen variants outperform similarly-sized Llama models on multilingual work for their respective language families. <strong>Llama and Gemma still win on general English benchmarks at most size points</strong>, but the second-tier families fill the niches Llama and Gemma don't.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 vs OTHER MODELS -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs Llama, Gemma, closed-frontier</div>
+      <h2 class="section-title">When Mistral or Qwen is the right pick.</h2>
+      <p class="section-lede">The honest framing: both families are second-tier ecosystems vs Llama. You pick them when their specific strengths matter more than ecosystem reach. Choose Llama by default; choose Mistral or Qwen when their structural advantage matches your use case.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Use case</th><th>Best pick</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><strong>General-purpose open-weights workhorse</strong></td><td>Llama 3.x / 4</td><td>Largest community ecosystem; broadest hosting</td></tr>
+          <tr><td><strong>Frontier-lab safety tuning + multimodal</strong></td><td>Gemma 3</td><td>Google DeepMind training pipeline</td></tr>
+          <tr><td><strong>Function-calling-heavy production agents</strong></td><td>Mistral Large 2 / Mistral Nemo</td><td>Tuned for tool use; most reliable open-weights function-calling</td></tr>
+          <tr><td><strong>European multilingual (FR / DE / IT / ES)</strong></td><td>Mistral Large 2</td><td>Frontier quality on European languages</td></tr>
+          <tr><td><strong>Apache 2.0 strict licence requirement</strong></td><td>Mistral Small / Nemo / Mixtral</td><td>Genuinely open-source vs Llama Community Licence</td></tr>
+          <tr><td><strong>Code-generating agents on open-weights</strong></td><td>Qwen 2.5 Coder</td><td>Strongest open-weights coder; close to closed-frontier on code benchmarks</td></tr>
+          <tr><td><strong>Asian-language work (CN / JA / KO)</strong></td><td>Qwen 2.5 / 3</td><td>Alibaba training-data emphasis</td></tr>
+          <tr><td><strong>Mixture-of-experts inference economics</strong></td><td>Mixtral 8x22B</td><td>Lower active inference cost vs equivalent dense models</td></tr>
+          <tr><td><strong>Frontier reasoning quality</strong></td><td>Claude Opus / GPT-5 / Gemini Ultra</td><td>Closed frontier still leads on hardest reasoning</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Decision guide</div>
+      <h2 class="section-title">Pick Mistral or Qwen when. Skip when.</h2>
+    </div>
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Use Mistral / Qwen when</h4>
+        <ul>
+          <li>Function-calling reliability is load-bearing &mdash; Mistral Large 2 leads open-weights here</li>
+          <li>You're building a coding agent on open-weights &mdash; Qwen 2.5 Coder is the right pick</li>
+          <li>European multilingual matters (Mistral) or Asian multilingual (Qwen)</li>
+          <li>Apache 2.0 strict licensing is non-negotiable &mdash; Mistral has the most variants here</li>
+          <li>You want MoE inference economics &mdash; Mixtral 8x22B is the open-weights MoE leader</li>
+          <li>You want vendor diversity beyond Llama / Gemma in your open-weights routing</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip when</h4>
+        <ul>
+          <li>You want the largest community fine-tune ecosystem &mdash; Llama wins</li>
+          <li>Native multimodal across text / image / video / audio &mdash; Gemma 3 fits better</li>
+          <li>Frontier reasoning quality &mdash; closed frontier (Claude / GPT / Gemini) still leads</li>
+          <li>You need 128k+ context with reliable long-context use &mdash; Gemma 3 / closed frontier are stronger</li>
+          <li>Your hosting provider has limited Mistral / Qwen variant coverage and you don't want to self-host</li>
+          <li>Specifically code-heavy work at frontier scale &mdash; Claude Opus 4.7 / GPT-5 still beat Qwen Coder on the hardest tasks</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; South African context</div>
+      <h2 class="section-title">Where Mistral / Qwen lands in SA delivery work.</h2>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Mistral &middot; the function-calling-on-open-weights pick</h4>
+      <p>For SA studios building production agents on open-weights with function-calling load-bearing &mdash; tool dispatch, structured outputs, multi-step workflows &mdash; Mistral Large 2 is meaningfully more reliable than Llama or Gemma at the tool-use surface. Hosted via Together / Fireworks; self-host via vLLM. The Apache-licensed variants (Nemo, Small, Mixtral) avoid the Llama 700M MAU edge cases entirely and the "Built with Llama" attribution requirement.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Qwen Coder &middot; the open-weights coding agent</h4>
+      <p>For SA studios building internal coding agents (PR review, refactor assistants, codebase Q&amp;A) on open-weights, Qwen 2.5 Coder is the right pick. Runs on Ollama for dev work; production via Together AI or self-hosted vLLM. The structural cost advantage over Claude Code or GPT-driven coding agents matters at high-volume internal usage &mdash; especially when many developers run many agent calls per day.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.09s">
+      <h4>SA hosting reality</h4>
+      <p>Mistral and Qwen variants are less consistently available in <code>africa-south1</code> (Vertex) or <code>af-south-1</code> (Bedrock) than Llama. Most Mistral variants are reachable via Together AI / Fireworks / Mistral's own la Plateforme; most Qwen variants via Together AI / Fireworks / Alibaba Cloud directly. For strict SA-residency requirements, check current cloud provider model availability before committing &mdash; the situation evolves quickly. For development, Ollama on a maxed MacBook handles all three families locally regardless of hosting question.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where Mistral and Qwen link in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. Mistral and Qwen sit in the Models band as the second-tier open-weights option alongside Llama and Gemma.</div>
+      </a>
+      <a href="llama.html" class="connect-node">
+        <span class="tag">agents/llama</span>
+        <div class="skill">Llama</div>
+        <div class="why">The dominant open-weights ecosystem. Mistral / Qwen are the right pick when Llama's strengths don't match your use case.</div>
+      </a>
+      <a href="gemma.html" class="connect-node">
+        <span class="tag">agents/gemma</span>
+        <div class="skill">Gemma</div>
+        <div class="why">The other major open-weights family. Gemma leads on multimodal safety tuning; Mistral / Qwen lead on function-calling and code respectively.</div>
+      </a>
+      <a href="ollama.html" class="connect-node">
+        <span class="tag">agents/ollama</span>
+        <div class="skill">Ollama</div>
+        <div class="why">Default local serving for both. <code>ollama run mistral</code> or <code>ollama run qwen2.5-coder</code> &mdash; one-command access to the canonical variants.</div>
+      </a>
+      <a href="claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude</div>
+        <div class="why">Closed-frontier alternative. Common pattern: Qwen Coder for routine code agents, Claude for complex code-review or architecture tasks.</div>
+      </a>
+      <a href="gpt.html" class="connect-node">
+        <span class="tag">agents/gpt</span>
+        <div class="skill">GPT &middot; OpenAI</div>
+        <div class="why">Closed-frontier alternative. Common pattern: Mistral for high-volume function-calling routing; GPT-5 for the hardest reasoning calls.</div>
+      </a>
+      <a href="langgraph.html" class="connect-node">
+        <span class="tag">agents/langgraph</span>
+        <div class="skill">LangGraph</div>
+        <div class="why">Vendor-neutral framework with native Mistral and Qwen integrations via <code>langchain-mistralai</code> and <code>langchain-community</code>.</div>
+      </a>
+      <a href="../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Workers AI hosts subset of Mistral and Qwen variants for edge-served agents.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 07 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://mistral.ai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site &middot; Mistral</span>
+        <span class="r-title">mistral.ai</span>
+        <span class="r-url">mistral.ai</span>
+      </a>
+      <a href="https://docs.mistral.ai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs &middot; Mistral</span>
+        <span class="r-title">Mistral AI documentation</span>
+        <span class="r-url">docs.mistral.ai</span>
+      </a>
+      <a href="https://huggingface.co/mistralai" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Weights</span>
+        <span class="r-title">Hugging Face &middot; mistralai org</span>
+        <span class="r-url">huggingface.co/mistralai</span>
+      </a>
+      <a href="https://qwenlm.github.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site &middot; Qwen</span>
+        <span class="r-title">Qwen blog &amp; release notes</span>
+        <span class="r-url">qwenlm.github.io</span>
+      </a>
+      <a href="https://huggingface.co/Qwen" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Weights</span>
+        <span class="r-title">Hugging Face &middot; Qwen org</span>
+        <span class="r-url">huggingface.co/Qwen</span>
+      </a>
+      <a href="https://github.com/QwenLM/Qwen2.5-Coder" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source &middot; coder</span>
+        <span class="r-title">QwenLM/Qwen2.5-Coder</span>
+        <span class="r-url">github.com/QwenLM/Qwen2.5-Coder</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://mistral.ai" target="_blank" rel="noopener">Mistral &nearr;</a>
+      <a href="https://qwenlm.github.io" target="_blank" rel="noopener">Qwen &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
