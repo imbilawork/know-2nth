@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agents &mdash; know.2nth.ai</title>
-<meta name="description" content="The Agents domain on know.2nth.ai — the agentic frameworks and protocols that matter in 2026. Six framework leaves (Google ADK live, plus LangGraph, CrewAI, OpenAI Agents SDK, Anthropic Agent SDK, AutoGen coming) and two protocol leaves (A2A, MCP). Built around the principle that agents are software, not prompt soup.">
+<meta name="description" content="The Agents domain on know.2nth.ai — the agentic frameworks, protocols, models, and inference platforms that matter in 2026. Nineteen Live leaves across four bands: six frameworks (Google ADK, LangGraph, CrewAI, OpenAI Agents SDK, Anthropic Agent SDK, AutoGen), three protocols (A2A, MCP, Agent Skills), six models, and four inference platforms. Built around the principle that agents are software, not prompt soup.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="know.2nth.ai">
 <meta property="og:url" content="https://know.2nth.ai/explainers/agents/">
 <meta property="og:title" content="Agents &mdash; know.2nth.ai">
-<meta property="og:description" content="The Agents domain — agentic frameworks and protocols. Google ADK live; LangGraph, CrewAI, OpenAI / Anthropic / AutoGen coming. A2A and MCP as the interop layer.">
+<meta property="og:description" content="The Agents domain — frameworks, protocols, models, inference. 19 Live leaves across four bands. A2A, MCP, and Agent Skills as the open-standards layer.">
 <meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Agents &mdash; know.2nth.ai">
-<meta name="twitter:description" content="The Agents domain — frameworks (ADK live, LangGraph + CrewAI + OpenAI/Anthropic/AutoGen coming) and protocols (A2A, MCP). Agents are software.">
+<meta name="twitter:description" content="The Agents domain — frameworks, protocols (A2A, MCP, Skills), models, inference. 19 Live leaves. Agents are software.">
 <meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -175,10 +175,10 @@
     </p>
     <div class="hub-stats fade-up" style="transition-delay: 0.15s">
       <div class="hub-stat"><div class="num">6</div><div class="label">Frameworks</div></div>
-      <div class="hub-stat"><div class="num">2</div><div class="label">Protocols</div></div>
+      <div class="hub-stat"><div class="num">3</div><div class="label">Protocols</div></div>
       <div class="hub-stat"><div class="num">6</div><div class="label">Models</div></div>
       <div class="hub-stat"><div class="num">4</div><div class="label">Inference</div></div>
-      <div class="hub-stat"><div class="num">18</div><div class="label">Live leaves</div></div>
+      <div class="hub-stat"><div class="num">19</div><div class="label">Live leaves</div></div>
     </div>
   </div>
 </section>
@@ -257,7 +257,7 @@
 
     <!-- Protocols -->
     <div class="category-band fade-up">
-      <span class="c-label">Protocols &middot; 2</span>
+      <span class="c-label">Protocols &middot; 3</span>
       <span class="c-rule"></span>
     </div>
     <div class="svc-grid fade-up" style="transition-delay: 0.03s">
@@ -278,6 +278,15 @@
         </div>
         <span class="svc-path">agents/mcp</span>
         <p>The tool / data protocol. Anthropic-originated, broadly adopted. Lets any framework consume tools and data from any MCP server. ADK's <code>MCPToolset</code>, Claude Desktop's MCP integrations, Cursor's MCP support &mdash; all the same protocol. The lingua franca of agent tooling in 2026.</p>
+      </a>
+
+      <a href="skills.html" class="svc-card">
+        <div class="svc-head">
+          <div class="svc-name">Agent Skills</div>
+          <span class="svc-state live">Live</span>
+        </div>
+        <span class="svc-path">agents/skills</span>
+        <p>Open standard for packaging agent capabilities as folders. Folder + <code>SKILL.md</code> with YAML frontmatter, optional <code>scripts/</code>, <code>references/</code>, <code>assets/</code>. Anthropic-originated, governed via <code>agentskills.io</code>, native in Claude Code, Claude.ai, and the Claude API. Progressive disclosure means hundreds of skills can sit in a workspace without burning context.</p>
       </a>
 
     </div>
@@ -454,6 +463,7 @@
       <a href="../../index.html#domains">All domains</a>
       <a href="https://github.com/a2aproject/A2A" target="_blank" rel="noopener">A2A Protocol &nearr;</a>
       <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP &nearr;</a>
+      <a href="https://agentskills.io" target="_blank" rel="noopener">Agent Skills &nearr;</a>
     </div>
     <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
   </div>
