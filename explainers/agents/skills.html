@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Skills &mdash; know.2nth.ai</title>
+<meta name="description" content="Agent Skills — Anthropic-originated open standard for packaging agent capabilities as folders. SKILL.md frontmatter + markdown, progressive disclosure, hosted at agentskills.io. Native in Claude Code (plugin marketplace), Claude.ai, and the Claude API. ~131k-star anthropics/skills repo as canonical implementation.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/skills">
+<meta property="og:title" content="Agent Skills &mdash; know.2nth.ai">
+<meta property="og:description" content="Agent Skills — open standard for packaging agent capabilities as folders. SKILL.md + progressive disclosure. Native in Claude Code, Claude.ai, the Claude API. Spec at agentskills.io.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent Skills &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Agent Skills — open standard for packaging agent capabilities. Folder + SKILL.md, progressive disclosure. Spec at agentskills.io. Live in Claude Code, Claude.ai, the API.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/skills</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Agent Skills</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; Agent Skills &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      One folder, <span class="gradient">one SKILL.md, every agent learns.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Agent Skills is the open standard for packaging agent capabilities as filesystem folders. A skill is a directory with a <code>SKILL.md</code> file (YAML frontmatter plus markdown instructions) and optional <code>scripts/</code>, <code>references/</code>, and <code>assets/</code>. Anthropic-originated, governed via <code>agentskills.io</code>, native in Claude Code (plugin marketplace), Claude.ai, and the Claude API. The canonical implementation lives at <code>anthropics/skills</code> &mdash; the most-starred AI repository on GitHub at ~131k stars in May 2026.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Live spec</span>
+      <span class="pill indigo">Anthropic origin</span>
+      <span class="pill accent">Folder + SKILL.md</span>
+      <span class="pill">Progressive disclosure</span>
+      <span class="pill">agentskills.io</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A capability format, not a runtime protocol.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>An Agent Skill is a folder containing, at minimum, a <code>SKILL.md</code> file. The file has YAML frontmatter (a <code>name</code> and a <code>description</code>) followed by markdown instructions that tell an agent how to perform a specific task. Optional sub-directories carry the rest of the skill: <code>scripts/</code> for executable code, <code>references/</code> for deeper documentation, <code>assets/</code> for templates and static resources. That's the entire format.</p>
+      <p>The thesis is straightforward: <strong>most agent capabilities are repeatable procedures</strong>. Filling a PDF form. Generating a slide deck with the company brand. Reviewing code against a house style guide. Running a specific test suite. These don't need a live tool server &mdash; they need instructions, maybe a few helper scripts, and a way for the agent to find them when relevant. Skills package that bundle as a directory, version it in git, and let any compatible agent load it on demand.</p>
+      <p>Skills sit alongside MCP and A2A in the agent stack but solve a different problem. <strong>MCP</strong> is a runtime protocol for letting an agent call tools and read data over JSON-RPC. <strong>A2A</strong> is a runtime protocol for letting one agent delegate to another. <strong>Skills</strong> is a static format for shipping reusable instructions and supporting files that the agent reads itself. All three coexist; most production agent systems in 2026 use at least two of them.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The two required fields</h4>
+      <p>The <code>name</code> field (max 64 characters, lowercase alphanumeric and hyphens, must match the parent directory name) and the <code>description</code> field (max 1024 characters, "what it does and when to use it") are the only frontmatter that's required. Optional fields are <code>license</code>, <code>compatibility</code>, <code>metadata</code>, and the experimental <code>allowed-tools</code>. The whole point of keeping the required surface tiny: every skill in a workspace gets its name + description loaded at agent startup, so the agent can match incoming tasks to relevant skills without loading the full body.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How it works</div>
+      <h2 class="section-title">Progressive disclosure: load the metadata, defer the body.</h2>
+      <p class="section-lede">A skill is loaded in three tiers. The metadata is cheap and always loaded. The body is loaded only when the agent activates the skill. The supporting files in <code>scripts/</code>, <code>references/</code>, and <code>assets/</code> are loaded only when the body's instructions point to them. Each tier has a recommended budget &mdash; if you stay inside the budgets, hundreds of skills can coexist without burning context.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Tier 1 &middot; startup</span>
+        <h4>Metadata (~100 tokens)</h4>
+        <p>The <code>name</code> + <code>description</code> from every available skill. Loaded once, kept in context. This is what the agent uses to decide which skill matches a task.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Tier 2 &middot; activation</span>
+        <h4>SKILL.md body (&lt;5000 tokens)</h4>
+        <p>The full markdown instructions. Loaded only when the agent activates the skill. Spec recommends keeping the file under 500 lines and moving deep references out.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Tier 3 &middot; on demand</span>
+        <h4>scripts/ &middot; references/ &middot; assets/</h4>
+        <p>Files loaded only when the body's instructions explicitly point to them. <code>references/REFERENCE.md</code>, <code>scripts/extract.py</code>, brand templates, lookup tables.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>The directory shape</strong> &mdash; everything else in a skill hangs off SKILL.md as an orchestrator:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s">pdf-processing/
+&#9500;&#9472;&#9472; SKILL.md            <span class="c"># required: frontmatter + markdown</span>
+&#9500;&#9472;&#9472; scripts/
+&#9474;   &#9500;&#9472;&#9472; extract.py      <span class="c"># text/table extraction</span>
+&#9474;   &#9492;&#9472;&#9472; fill_form.py    <span class="c"># PDF form filling</span>
+&#9500;&#9472;&#9472; references/
+&#9474;   &#9492;&#9472;&#9472; REFERENCE.md    <span class="c"># field schema, edge cases</span>
+&#9492;&#9472;&#9472; assets/
+    &#9492;&#9472;&#9472; template.pdf    <span class="c"># reusable form template</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.13s">
+      <p><strong>A minimal SKILL.md</strong> &mdash; just the two required fields and a few lines of instructions:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.16s"><span class="h">---</span>
+<span class="k">name</span>: pdf-processing
+<span class="k">description</span>: Extract text and tables from PDFs, fill PDF forms, merge files. Use when handling PDF documents or when the user mentions PDFs, forms, or document extraction.
+<span class="h">---</span>
+
+<span class="h"># PDF Processing</span>
+
+<span class="h">## When to use</span>
+- The user uploads or links a PDF file
+- The user asks to extract data from a form
+- The user asks to merge or split PDFs
+
+<span class="h">## How to extract text</span>
+<span class="k">1.</span> Run `scripts/extract.py &lt;path&gt;` to get the structured output
+<span class="k">2.</span> If the PDF is scanned, fall back to OCR (see references/REFERENCE.md)
+<span class="k">3.</span> Return tables as Markdown tables, prose as plain text</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.19s">
+      <p><strong>A SKILL.md with the optional fields</strong> &mdash; license, environment requirements, custom metadata, and the experimental tool allowlist:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.22s"><span class="h">---</span>
+<span class="k">name</span>: code-review
+<span class="k">description</span>: Review a pull request against the house style guide. Use when the user shares a PR link, runs `/review`, or asks for code feedback.
+<span class="k">license</span>: Apache-2.0
+<span class="k">compatibility</span>: Requires git, gh, and access to the internet
+<span class="k">metadata</span>:
+  <span class="k">author</span>: 2nth.ai
+  <span class="k">version</span>: <span class="s">"1.0"</span>
+<span class="k">allowed-tools</span>: <span class="s">Bash(git:*) Bash(gh:*) Read</span>
+<span class="h">---</span>
+
+<span class="h"># Code Review</span>
+
+<span class="c">[ instructions ... ]</span></pre>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.25s">
+      <h4>Why progressive disclosure matters in practice</h4>
+      <p>An agent surface like Claude Code can ship with dozens of skills installed via the plugin marketplace. If every skill loaded its full body at startup, context would be exhausted before the user typed a prompt. By loading only the ~100-token metadata tier upfront and deferring the rest, hundreds of skills can sit in a workspace doing nothing &mdash; until one matches a task and the agent pulls in just that body. <strong>The format is the budget.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="ecosystem">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; The ecosystem</div>
+      <h2 class="section-title">Where Skills land in 2026.</h2>
+      <p class="section-lede">Skills are consumed natively in three Anthropic surfaces today: Claude Code (via the plugin marketplace), Claude.ai (paid plans, with custom upload), and the Claude API (programmatic via the Skills API). The canonical reference set lives at <code>anthropics/skills</code>, organised in four categories. Partner-shipped skill sets are starting to appear &mdash; Notion's are the first highlighted by Anthropic.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Surface</th><th>How skills are loaded</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Claude Code</strong></td><td>Plugin marketplace</td><td><code>/plugin marketplace add anthropics/skills</code> then install <code>document-skills</code> or <code>example-skills</code>.</td></tr>
+          <tr><td><strong>Claude.ai</strong></td><td>Built-in + custom upload</td><td>The repo's example skills are pre-installed on paid plans. Users can upload their own.</td></tr>
+          <tr><td><strong>Claude API</strong></td><td>Skills API</td><td>Pre-built or upload custom skills programmatically. See the Skills API quickstart.</td></tr>
+          <tr><td><strong>Other agents</strong></td><td>Spec-compliant loaders</td><td>Any agent runtime that implements the agentskills.io spec can load these folders.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p>The <code>anthropics/skills</code> repo is organised in four practical categories &mdash; useful both as a catalogue of what's already shipped and as a template library when authoring your own:</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.1s">
+      <table class="compare">
+        <thead><tr><th>Category</th><th>Examples</th><th>Use case shape</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Creative &amp; Design</strong></td><td><code>algorithmic-art</code>, <code>canvas-design</code>, <code>theme-factory</code>, <code>slack-gif-creator</code></td><td>Generative output bound by aesthetic / brand constraints.</td></tr>
+          <tr><td><strong>Development &amp; Technical</strong></td><td><code>claude-api</code>, <code>frontend-design</code>, <code>mcp-builder</code>, <code>web-artifacts-builder</code>, <code>webapp-testing</code>, <code>skill-creator</code></td><td>Code authoring, scaffolding, testing, meta-skill creation.</td></tr>
+          <tr><td><strong>Enterprise &amp; Communication</strong></td><td><code>brand-guidelines</code>, <code>internal-comms</code>, <code>doc-coauthoring</code></td><td>Voice / format / policy adherence inside an organisation.</td></tr>
+          <tr><td><strong>Document Skills</strong></td><td><code>docx</code>, <code>pdf</code>, <code>pptx</code>, <code>xlsx</code></td><td>Office-format authoring and extraction. <em>Source-available, not Apache 2.0 &mdash; the same skills power Claude.ai's document features in production.</em></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.13s">
+      <h4>The licensing wrinkle</h4>
+      <p>Most skills in <code>anthropics/skills</code> are Apache 2.0. The four document skills (<code>docx</code>, <code>pdf</code>, <code>pptx</code>, <code>xlsx</code>) are <strong>source-available, not open source</strong> &mdash; Anthropic shares them as a reference for sophisticated production skills but reserves rights. If you fork them into a commercial product, read the headers carefully. The spec at <code>agentskills.io</code> is itself open and vendor-neutral; only specific skills in the example repo carry restricted terms.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Skills vs MCP vs tools</div>
+      <h2 class="section-title">Three layers, complementary.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>"Skill" overlaps with "tool" and "MCP server" in casual conversation, but they solve different problems and the differences are load-bearing once you're building anything real:</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.07s">
+      <table class="compare">
+        <thead><tr><th>Concern</th><th>Skills</th><th>MCP</th><th>Function-calling tools</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Format</strong></td><td>Folder + <code>SKILL.md</code></td><td>JSON-RPC server</td><td>JSON Schema in a request</td></tr>
+          <tr><td><strong>Lifetime</strong></td><td>Static; in git, in a folder</td><td>Long-running process, per-session state</td><td>Per-call</td></tr>
+          <tr><td><strong>What it carries</strong></td><td>Instructions, scripts, templates, references</td><td>Live tools, resources, prompts</td><td>One callable function</td></tr>
+          <tr><td><strong>Load model</strong></td><td>Progressive disclosure</td><td>Capability list at handshake</td><td>Sent in the prompt</td></tr>
+          <tr><td><strong>Best fit</strong></td><td>Repeatable procedures and brand / policy adherence</td><td>Live access to data and external systems</td><td>Per-call function dispatch</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.1s">
+      <h4>How they compose</h4>
+      <p>A common 2026 pattern: a skill named <code>internal-comms</code> contains the company's voice rules and a script <code>scripts/draft.py</code>. The script's logic uses an MCP server (say, <code>mcp-server-slack</code>) to fetch the message thread and an MCP server (say, <code>mcp-server-postgres</code>) to look up the project's internal status. The model that ties it together calls function-calling tools for the leaf operations. <strong>Skills frame the procedure, MCP provides the live data, function-calling tools execute the steps.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; South African context</div>
+      <h2 class="section-title">Skills as institutional knowledge, packaged.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The consultancy unlock.</strong> SA delivery teams routinely build the same artefacts &mdash; SARS submissions, BBBEE scorecards, CIPC filings, POPIA assessments, NHBRC documentation &mdash; with subtle per-client variations. Each of those is a skill: a folder with the format spec in <code>SKILL.md</code>, the actual templates in <code>assets/</code>, and any client-specific overrides as separate skills that reference the base. Once authored, every agent surface (Claude Code on a delivery laptop, Claude.ai for a partner, the API for an automation) can use them.</p>
+      <p><strong>POPIA and the data boundary.</strong> Skills are static files; they never reach out to a database or an API on their own. That makes them safe to publish in shared repositories &mdash; the brand voice, the form templates, the procedure documentation. The bits that touch personal data live behind MCP servers or function-calling tools that the skill <em>references</em>, and those servers stay local. The skill says "use the customer-data MCP server"; the server stays on the SA-hosted machine; only the agent's response crosses the boundary.</p>
+      <p><strong>Cost &amp; sovereignty.</strong> Skills themselves are free &mdash; it's a folder format. No per-call cost, no FX exposure, no dependency on a specific cloud. A consultancy can author skills once, version them in a private GitHub repo, and distribute them to client engagements. That separates "where the IP lives" (in the skill folders) from "where the inference runs" (Claude API, local Ollama, hosted Vertex). The skill is the durable asset; the model is the substitutable runtime.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Connections</div>
+      <h2 class="section-title">Where Skills links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">Skills sits in the Protocols band alongside MCP and A2A &mdash; the third member of the open-standards layer.</div>
+      </a>
+      <a href="mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">The runtime tool / data protocol that skills reference. Skills frame the procedure; MCP provides the live access.</div>
+      </a>
+      <a href="a2a.html" class="connect-node">
+        <span class="tag">agents/a2a</span>
+        <div class="skill">A2A Protocol</div>
+        <div class="why">Agent-to-agent delegation. A skill running in one agent can spawn delegated work into another agent over A2A.</div>
+      </a>
+      <a href="claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude</div>
+        <div class="why">The model that loads and reasons about Skills natively across Claude Code, Claude.ai, and the Claude API.</div>
+      </a>
+      <a href="anthropic-agent-sdk.html" class="connect-node">
+        <span class="tag">agents/anthropic-agent-sdk</span>
+        <div class="skill">Anthropic Agent SDK</div>
+        <div class="why">The SDK that ships skill-loading semantics for application code outside the chat surfaces.</div>
+      </a>
+      <a href="../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Common deployment surface for the MCP servers a skill references &mdash; fast cold start, no idle cost.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Resources</div>
+      <h2 class="section-title">Spec, repo, and the surfaces that load it.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://agentskills.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">agentskills.io</span>
+        <span class="r-url">agentskills.io</span>
+      </a>
+      <a href="https://agentskills.io/specification" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec</span>
+        <span class="r-title">Agent Skills specification</span>
+        <span class="r-url">agentskills.io/specification</span>
+      </a>
+      <a href="https://github.com/anthropics/skills" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">anthropics/skills &middot; canonical implementation</span>
+        <span class="r-url">github.com/anthropics/skills</span>
+      </a>
+      <a href="https://github.com/anthropics/skills/tree/main/spec" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec mirror</span>
+        <span class="r-title">anthropics/skills &middot; spec/</span>
+        <span class="r-url">github.com/anthropics/skills/tree/main/spec</span>
+      </a>
+      <a href="https://github.com/anthropics/skills/tree/main/template" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Template</span>
+        <span class="r-title">anthropics/skills &middot; template/SKILL.md</span>
+        <span class="r-url">github.com/anthropics/skills/tree/main/template</span>
+      </a>
+      <a href="https://anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Engineering post</span>
+        <span class="r-title">Equipping agents for the real world with Agent Skills</span>
+        <span class="r-url">anthropic.com/.../agent-skills</span>
+      </a>
+      <a href="https://docs.claude.com/en/api/skills-guide" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">API guide</span>
+        <span class="r-title">Skills API quickstart</span>
+        <span class="r-url">docs.claude.com/en/api/skills-guide</span>
+      </a>
+      <a href="https://support.claude.com/en/articles/12512198-creating-custom-skills" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">How-to</span>
+        <span class="r-title">Creating custom skills</span>
+        <span class="r-url">support.claude.com/.../creating-custom-skills</span>
+      </a>
+      <a href="https://github.com/anthropics/claude-cookbooks" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Cookbook</span>
+        <span class="r-title">anthropics/claude-cookbooks</span>
+        <span class="r-url">github.com/anthropics/claude-cookbooks</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://agentskills.io" target="_blank" rel="noopener">agentskills.io &nearr;</a>
+      <a href="https://github.com/anthropics/skills" target="_blank" rel="noopener">anthropics/skills &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
