@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Postgres vs Microsoft SQL &mdash; know.2nth.ai</title>
+<meta name="description" content="Postgres vs Microsoft SQL Server — the BI-offload play that drops your SQL licence by 35-70% without touching production. Function-by-function comparison, the two-paths framing (BI offload first, full migration second), concrete licence math for a 16-core mid-market SMB, and the week-by-week migration shape. The decision guide for any team currently paying for SQL Server BI Edition / SSRS / Power BI Premium on top of an OLTP licence.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/data/warehousing/postgres-vs-mssql">
+<meta property="og:title" content="Postgres vs Microsoft SQL &mdash; know.2nth.ai">
+<meta property="og:description" content="The BI-offload play that drops your SQL licence by 35-70% without touching production. Two-paths framing, function-by-function comparison, concrete licence math.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Postgres vs Microsoft SQL &mdash; know.2nth.ai">
+<meta name="twitter:description" content="The BI-offload play that drops your SQL licence by 35-70% without touching production. Function comparison, licence math, week-by-week plan.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3Cline x1='16' y1='3' x2='16' y2='7' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='16' y1='25' x2='16' y2='29' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='3' y1='16' x2='7' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3Cline x1='25' y1='16' x2='29' y2='16' stroke='%2338BDF8' stroke-width='1.2'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; } html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); } .crumb-sep { opacity: 0.5; } .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 12px var(--sky); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 17ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.warn { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose p em { color: var(--sky-muted); font-style: italic; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .info-card code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--ink-deep); padding: 1px 5px; border-radius: 4px; color: var(--sky); }
+  [data-theme="light"] .info-card code { background: rgba(15, 23, 42, 0.06); color: var(--blue); }
+  .paths-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: var(--read-w); margin-bottom: 24px; }
+  @media (max-width: 720px) { .paths-grid { grid-template-columns: 1fr; } }
+  .path-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 26px; }
+  .path-card.recommended { border-left: 3px solid var(--green); }
+  .path-card.harder { border-left: 3px solid var(--warm); }
+  .path-card .tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px; }
+  .path-card.recommended .tag { color: var(--green); }
+  .path-card.harder .tag { color: var(--warm-glow); }
+  .path-card h4 { font-size: 19px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.3px; }
+  .path-card .oneliner { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 14px; }
+  .path-card ul { list-style: none; padding: 0; margin: 0; max-width: none; }
+  .path-card li { display: flex; gap: 8px; padding: 5px 0; font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 0; border: none; }
+  .path-card li::before { content: '\2022'; color: var(--sky); font-weight: 700; flex-shrink: 0; }
+  .arch-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 30px; max-width: var(--read-w); margin-bottom: 20px; }
+  .arch-row { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 16px; align-items: center; }
+  @media (max-width: 600px) { .arch-row { grid-template-columns: 1fr; } .arch-arrow { transform: rotate(90deg); margin: 8px auto; } }
+  .arch-box { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
+  [data-theme="light"] .arch-box { background: rgba(15, 23, 42, 0.04); }
+  .arch-box.live { background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(56, 189, 248, 0.18)); border-color: rgba(56, 189, 248, 0.35); }
+  .arch-box .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .arch-box.live .lbl { color: var(--sky); }
+  .arch-box .name { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.2px; }
+  .arch-box .role { font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; }
+  .arch-arrow { text-align: center; color: var(--sky); font-size: 28px; font-weight: 300; }
+  .arch-caption { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; }
+  .arch-caption strong { color: var(--text-primary); font-weight: 600; }
+  .arch-caption code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .feature-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--sky); border-radius: var(--radius-md); padding: 16px 20px; }
+  .feature-cell h4 { font-size: 14.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; letter-spacing: -0.2px; }
+  .feature-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .feature-cell code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td:first-child { font-weight: 600; color: var(--text-primary); width: 36%; }
+  .compare td .yes { color: var(--green); font-weight: 600; }
+  .compare td .partial { color: var(--warm-glow); font-style: italic; }
+  .compare td .no { color: var(--rose); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .cost-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 30px; max-width: var(--read-w); margin-bottom: 20px; }
+  .cost-wrap .cost-h { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 18px; }
+  .cost-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .cost-table th, .cost-table td { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .cost-table th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); text-align: left; }
+  .cost-table th.amt, .cost-table td.amt { text-align: right; font-variant-numeric: tabular-nums; }
+  .cost-table td { color: var(--text-secondary); }
+  .cost-table td:first-child { color: var(--text-primary); }
+  .cost-table td.amt { color: var(--text-primary); font-weight: 500; }
+  .cost-table tr.total td { font-weight: 700; color: var(--text-primary); border-top: 2px solid var(--sky); border-bottom: none; padding-top: 14px; }
+  .cost-table tr.total td.amt { color: var(--sky); font-size: 16px; }
+  .cost-table tr.savings td { font-weight: 700; color: var(--green); border-bottom: none; padding-top: 8px; }
+  .cost-caption { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; }
+  .cost-caption strong { color: var(--text-primary); font-weight: 600; }
+  .cost-caption em { color: var(--sky-muted); font-style: italic; }
+  .timeline { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; max-width: var(--read-w); margin-bottom: 20px; }
+  .timeline-step { display: flex; gap: 16px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .timeline-step:last-child { border-bottom: none; }
+  .timeline-week { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); font-weight: 600; min-width: 70px; flex-shrink: 0; padding-top: 2px; letter-spacing: 1px; }
+  .timeline-text { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+  .timeline-text strong { color: var(--text-primary); font-weight: 600; }
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--read-w); }
+  @media (max-width: 720px) { .decision-grid { grid-template-columns: 1fr; } }
+  .decision-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 24px; }
+  .decision-card.use { border-left: 3px solid var(--green); }
+  .decision-card.skip { border-left: 3px solid var(--rose); }
+  .decision-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .decision-card.use h4 { color: var(--green); }
+  .decision-card.skip h4 { color: var(--rose); }
+  .decision-card ul { list-style: none; padding: 0; margin: 0; }
+  .decision-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .decision-card li:last-child { border-bottom: none; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  .pullquote { background: var(--bg-card); backdrop-filter: blur(10px); border-radius: var(--radius-lg); padding: 32px 36px; border-left: 3px solid var(--sky); max-width: var(--read-w); margin: 28px 0; }
+  .pullquote p { font-size: 19px; line-height: 1.5; color: var(--text-primary); font-weight: 500; letter-spacing: -0.3px; max-width: 56ch; margin: 0; }
+  .pullquote p strong { font-weight: 700; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">data/warehousing/postgres-vs-mssql</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Warehousing</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">Data</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Warehousing</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Postgres vs MSSQL</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> data &middot; warehousing &middot; Postgres vs Microsoft SQL</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Drop the SQL Server licence <span class="gradient">without breaking production.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      If you&apos;re paying Microsoft SQL Server licences for an <strong>OLTP workload</strong> and a <strong>reporting/BI workload</strong> running on top of it, the second one is the easy win. Most of what your BI team does &mdash; dashboards, ad-hoc queries, exports, the data warehouse &mdash; doesn&apos;t need SQL Server. Hand that workload off to Postgres, keep production untouched, and most mid-market teams cut their SQL licence by 35-70% this quarter without anyone noticing.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">Decision guide</span>
+      <span class="pill accent">BI offload first, full migration later</span>
+      <span class="pill indigo">~$34k saving on a 16-core SMB</span>
+      <span class="pill warn">4-6 week typical timeline</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 TWO PATHS -->
+<section id="paths">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; Two ways to play this</div>
+      <h2 class="section-title">Pick by appetite for risk.</h2>
+      <p class="section-lede">Most &quot;should we move off SQL Server?&quot; conversations stall because the team conflates two very different projects. The cheap-and-fast play and the strategic-replacement play have nothing in common except the destination database.</p>
+    </div>
+
+    <div class="paths-grid fade-up" style="transition-delay: 0.05s">
+      <div class="path-card recommended">
+        <div class="tag">// Recommended first move</div>
+        <h4>A. BI offload</h4>
+        <p class="oneliner">Replicate to Postgres. Move all reporting + BI queries off SQL. Cancel the BI-Edition / Power BI / SSRS / SSAS spend. Production stays on SQL.</p>
+        <ul>
+          <li>Production keeps running on SQL Server, unchanged</li>
+          <li>CDC stream replicates to a Postgres warehouse continuously</li>
+          <li>BI tools (Metabase, Superset, Looker, Tableau) read from Postgres</li>
+          <li>Drop the read-replica licence, the BI-edition seats, the Power BI Premium tier</li>
+          <li>Typical timeline: <strong>4-6 weeks</strong>; typical saving: <strong>35-70% of total SQL spend</strong></li>
+          <li>Risk profile: low &mdash; production code path is untouched</li>
+        </ul>
+      </div>
+
+      <div class="path-card harder">
+        <div class="tag">// Bigger play, more work</div>
+        <h4>B. Full migration</h4>
+        <p class="oneliner">Production OLTP migrates from SQL Server to Postgres. Stored procedures rewritten. Application connection strings repointed. Eventually: SQL Server retired entirely.</p>
+        <ul>
+          <li>T-SQL stored procedures + triggers &rarr; PL/pgSQL rewrite</li>
+          <li>Application code review &mdash; connection drivers, query syntax differences</li>
+          <li>Cut-over weekend with parallel run, comparison, sign-off</li>
+          <li>SQL Server licences eventually cancelled entirely</li>
+          <li>Typical timeline: <strong>3-9 months</strong> depending on stored procedure surface area</li>
+          <li>Risk profile: medium &mdash; touches production transactional path</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>The advice almost no consultant gives</h4>
+      <p><strong>Do A first.</strong> Bank the savings, learn the Postgres operational model on a non-production workload, build the team&apos;s confidence. <em>Then</em> decide whether B is worth doing &mdash; and by then the math is much clearer. Companies that try B first often fail B; the team is fighting both an unfamiliar database and an unfamiliar production cutover at once.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; How the BI offload works</div>
+      <h2 class="section-title">A read-side replica nobody else is paying for.</h2>
+      <p class="section-lede">A continuous data stream from SQL Server&apos;s transaction log into a Postgres warehouse, refreshed every few seconds. The BI team&apos;s queries hit Postgres; the operational team&apos;s writes hit SQL. Nobody&apos;s reports go down; nobody&apos;s transactions slow down.</p>
+    </div>
+
+    <div class="arch-card fade-up" style="transition-delay: 0.05s">
+      <div class="arch-row">
+        <div class="arch-box">
+          <div class="lbl">Production OLTP</div>
+          <div class="name">Microsoft SQL Server</div>
+          <div class="role">Application reads + writes. Same as today.</div>
+        </div>
+        <div class="arch-arrow">&rarr;</div>
+        <div class="arch-box live">
+          <div class="lbl">Analytics</div>
+          <div class="name">PostgreSQL warehouse</div>
+          <div class="role">All reporting + BI queries.</div>
+        </div>
+      </div>
+      <div class="arch-caption">
+        <strong>Replication options (commodity now):</strong> Debezium (open-source CDC, connects to SQL Server&apos;s transaction log), Fivetran (managed, ~$0.001 per row), AWS DMS (per-instance pricing), Airbyte (open-source), Striim (enterprise CDC). Most SMBs land on <code>Debezium</code>-into-Postgres or Fivetran for the SaaS convenience. <strong>Replication lag is typically 1-5 seconds.</strong> The BI team will not notice a delay; the SQL Server team will not notice the read load they used to have.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 WHY POSTGRES FOR BI -->
+<section id="why">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Why Postgres is the right BI destination</div>
+      <h2 class="section-title">Not just because it&apos;s free.</h2>
+      <p class="section-lede">The analytical query patterns BI teams run (large aggregations, window functions, time-series rollups, JSON extraction, geospatial joins) are <strong>where Postgres is genuinely strong</strong> &mdash; often stronger than SQL Server, and where the open-source ecosystem has spent the last decade adding extensions that turn Postgres into a credible warehouse.</p>
+    </div>
+
+    <div class="feature-grid fade-up" style="transition-delay: 0.05s">
+      <div class="feature-cell">
+        <h4>Window functions + CTEs</h4>
+        <p>First-class. The bread-and-butter of analytical SQL works the same in Postgres as in any modern engine &mdash; often with subtler optimisations than T-SQL&apos;s.</p>
+      </div>
+      <div class="feature-cell">
+        <h4>JSON / JSONB</h4>
+        <p>Native columnar JSON with operator-based query syntax (<code>-&gt;</code>, <code>@&gt;</code>, <code>jsonb_path_query</code>). MSSQL has JSON-as-string; Postgres has JSON-as-data.</p>
+      </div>
+      <div class="feature-cell">
+        <h4>Materialised views</h4>
+        <p>Pre-computed query results, refreshable on schedule or trigger. The right tool for &quot;run this expensive joined report once an hour, not every time someone opens the dashboard.&quot;</p>
+      </div>
+      <div class="feature-cell">
+        <h4>Partitioning</h4>
+        <p>Native declarative partitioning by range, list, or hash. <code>pg_partman</code> automates the lifecycle (create, archive, drop). Time-series tables stop being a tuning headache.</p>
+      </div>
+      <div class="feature-cell">
+        <h4>TimescaleDB extension</h4>
+        <p>Time-series compression (90%+ reduction), continuous aggregates, hyperfunctions. SAP-grade analytics on append-heavy data without paying SAP-grade prices.</p>
+      </div>
+      <div class="feature-cell">
+        <h4>Citus extension</h4>
+        <p>Horizontally distributed Postgres for warehouse-scale workloads. Scale beyond a single box without leaving the SQL dialect.</p>
+      </div>
+      <div class="feature-cell">
+        <h4>Foreign Data Wrappers</h4>
+        <p>Query other databases <em>from</em> Postgres as if they were tables. <code>tds_fdw</code> reads SQL Server directly; <code>postgres_fdw</code> reads other Postgres; <code>file_fdw</code> reads CSVs.</p>
+      </div>
+      <div class="feature-cell">
+        <h4>PostGIS (geospatial)</h4>
+        <p>The reference open-source GIS database. Spatial joins, indexed geography types, isochrones. Where retail / logistics analytics actually pay attention.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 FUNCTION COMPARISON -->
+<section id="compare">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Function-by-function</div>
+      <h2 class="section-title">Side by side, honestly.</h2>
+      <p class="section-lede">Both databases are mature, ACID-compliant, transactionally serious systems. The interesting differences sit at the edges: licensing, ecosystem, extension surface, and vendor coupling. The table below is the honest cross-product comparison &mdash; everywhere SQL Server is genuinely strong, it&apos;s flagged as such.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Capability</th><th>Microsoft SQL Server</th><th>PostgreSQL</th></tr></thead>
+        <tbody>
+          <tr><td>ACID transactions, MVCC</td><td><span class="yes">Yes</span></td><td><span class="yes">Yes</span></td></tr>
+          <tr><td>Window functions, CTEs, recursive queries</td><td><span class="yes">Yes</span></td><td><span class="yes">Yes</span></td></tr>
+          <tr><td>JSON / JSONB native</td><td><span class="partial">JSON as text &mdash; no native indexed type</span></td><td><span class="yes">JSONB indexed, queryable</span></td></tr>
+          <tr><td>Materialised views</td><td><span class="partial">Indexed views (limited)</span></td><td><span class="yes">Full materialised views</span></td></tr>
+          <tr><td>Declarative partitioning</td><td><span class="yes">Yes</span></td><td><span class="yes">Yes (range / list / hash)</span></td></tr>
+          <tr><td>Geospatial / GIS</td><td><span class="partial">Spatial types, decent</span></td><td><span class="yes">PostGIS &mdash; reference implementation</span></td></tr>
+          <tr><td>Time-series at scale</td><td><span class="partial">Native, manual tuning</span></td><td><span class="yes">TimescaleDB &mdash; best-in-class</span></td></tr>
+          <tr><td>Stored procedures</td><td><span class="yes">T-SQL &mdash; mature, deep ecosystem</span></td><td><span class="yes">PL/pgSQL &mdash; different syntax, same power</span></td></tr>
+          <tr><td>Replication</td><td><span class="yes">Native + Always On AGs</span></td><td><span class="yes">Native + logical replication + extensions</span></td></tr>
+          <tr><td>Read replicas / streaming</td><td><span class="yes">Yes (BI-Edition or AG licence)</span></td><td><span class="yes">Yes &mdash; built-in, zero licence</span></td></tr>
+          <tr><td>BI tool ecosystem</td><td><span class="yes">Power BI, SSRS, Tableau, Looker, all major</span></td><td><span class="yes">Same &mdash; every BI tool reads Postgres</span></td></tr>
+          <tr><td>Data warehousing at TB scale</td><td><span class="yes">Yes (Synapse / SQL DW upgrade)</span></td><td><span class="yes">Yes &mdash; Citus, partitioning, columnar extensions</span></td></tr>
+          <tr><td>Open-source / self-hostable</td><td><span class="no">No &mdash; proprietary, licensed</span></td><td><span class="yes">Yes &mdash; PostgreSQL Licence (BSD-style)</span></td></tr>
+          <tr><td>Per-core licence (commercial use)</td><td>Std ~$3,500/core/yr &middot; Ent ~$15,000/core/yr</td><td><span class="yes">Free</span></td></tr>
+          <tr><td>BI Edition / SSRS / SSAS licence</td><td>Per-server + CAL stack</td><td><span class="yes">Not needed &mdash; open-source BI tools talk to Postgres directly</span></td></tr>
+          <tr><td>Managed cloud option</td><td>Azure SQL / RDS for SQL Server</td><td><span class="yes">RDS Postgres / Aurora / Cloud SQL / Crunchy / Supabase / Neon</span></td></tr>
+          <tr><td>Foreign data wrappers</td><td><span class="partial">Linked servers (PolyBase)</span></td><td><span class="yes">Native FDW &mdash; query MSSQL, MySQL, MongoDB, S3 from inside Postgres</span></td></tr>
+          <tr><td>Vendor lock-in</td><td><span class="no">High &mdash; T-SQL dialect, SSIS pipelines, AD integration</span></td><td><span class="yes">Low &mdash; standard SQL, portable, multi-vendor support</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 05 LICENCE MATH -->
+<section id="math">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; The licence math</div>
+      <h2 class="section-title">A real number on a real workload.</h2>
+      <p class="section-lede">Concrete example for a typical mid-market SA company: 16-core SQL Server Standard for production, BI Edition for reporting, 30-seat Power BI Premium per-user. Annualised, that&apos;s a real number &mdash; the kind that funds whole engineering hires.</p>
+    </div>
+
+    <div class="cost-wrap fade-up" style="transition-delay: 0.05s">
+      <div class="cost-h">Example &middot; 16-core SMB, mixed OLTP + BI, before vs after BI offload</div>
+      <table class="cost-table">
+        <thead><tr><th>Line item</th><th class="amt">Before</th><th class="amt">After offload</th></tr></thead>
+        <tbody>
+          <tr><td>SQL Server Standard 16 cores (production)</td><td class="amt">~$56,000</td><td class="amt">~$56,000</td></tr>
+          <tr><td>SQL Server BI Edition / read-replica licence</td><td class="amt">~$28,000</td><td class="amt">$0</td></tr>
+          <tr><td>Power BI Premium per-user &times; 30</td><td class="amt">~$7,200</td><td class="amt">$0</td></tr>
+          <tr><td>SSRS / SSAS server licences</td><td class="amt">~$8,000</td><td class="amt">$0</td></tr>
+          <tr><td>Postgres warehouse (8-core managed RDS)</td><td class="amt">$0</td><td class="amt">~$4,800</td></tr>
+          <tr><td>CDC tooling (Debezium self-host or Fivetran SMB)</td><td class="amt">$0</td><td class="amt">~$3,000</td></tr>
+          <tr><td>Open-source BI (Metabase / Superset, self-host)</td><td class="amt">$0</td><td class="amt">~$1,200</td></tr>
+          <tr class="total"><td>Annual licence + tooling</td><td class="amt">~$99,200</td><td class="amt">~$65,000</td></tr>
+          <tr class="savings"><td>Annual saving</td><td class="amt"></td><td class="amt">~$34,200 (35%)</td></tr>
+        </tbody>
+      </table>
+      <div class="cost-caption">
+        <strong>This is the conservative version.</strong> Companies that retire SQL BI Edition entirely and hand <em>all</em> BI to Postgres &mdash; including the BI-tool licences, the SSRS infrastructure, the SQL-development time spent on T-SQL stored procedures for reporting &mdash; typically see <strong>50-70% total saving on the SQL line</strong>. The cost-recovery period is one or two quarters; after that it&apos;s a permanent reduction.
+      </div>
+    </div>
+
+    <div class="pullquote fade-up" style="transition-delay: 0.08s">
+      <p>Most SQL Server bills are <strong>60-80% reporting and analytics workload</strong>. Hand that off, and the database under your application is a smaller, cheaper bill that&apos;s easier to migrate later &mdash; if you decide to.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 WEEK BY WEEK -->
+<section id="timeline">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; A typical BI offload, week-by-week</div>
+      <h2 class="section-title">Four weeks to first saving.</h2>
+      <p class="section-lede">The honest shape of a BI-offload project at SMB scale. Longer at enterprise scale (more dashboards = more validation cycles) but the milestones don&apos;t change.</p>
+    </div>
+    <div class="timeline fade-up" style="transition-delay: 0.05s">
+      <div class="timeline-step">
+        <div class="timeline-week">Week 1</div>
+        <div class="timeline-text"><strong>Stand up Postgres warehouse</strong> &mdash; managed (RDS / Cloud SQL / Crunchy / Supabase) or self-hosted. Pick CDC tooling (Debezium self-host or Fivetran). Work out which SQL Server schemas need replicating; usually the OLTP transactional tables, not the SQL-Edition staging tables.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-week">Week 2</div>
+        <div class="timeline-text"><strong>CDC replication live in shadow mode.</strong> Backfill historical data. Verify row counts, check primary-key integrity, run test queries against Postgres versus SQL to confirm the answers match.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-week">Week 3</div>
+        <div class="timeline-text"><strong>Migrate one BI dashboard / report set at a time.</strong> Start with the simplest. Validate against the SQL-side report. Switch BI tool&apos;s connection string. Repeat for the next dashboard.</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-week">Week 4</div>
+        <div class="timeline-text"><strong>All dashboards now on Postgres.</strong> Cancel SQL BI Edition / SSRS / Power BI Premium contracts at next renewal. Production keeps running. The licence saving lands at next renewal date &mdash; and recurs annually.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 DECISION -->
+<section id="decision">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Decision guide</div>
+      <h2 class="section-title">When to do A. When to skip straight to B. When to do nothing.</h2>
+      <p class="section-lede">The honest two-sided framing. The BI-offload play (A) is right for almost every team paying for SQL BI Edition on top of OLTP SQL. The full migration (B) is right for a much smaller set &mdash; and only after A has banked savings and confidence.</p>
+    </div>
+
+    <div class="decision-grid fade-up" style="transition-delay: 0.05s">
+      <div class="decision-card use">
+        <h4>Do the BI offload (A) when</h4>
+        <ul>
+          <li>You currently pay for SQL Server BI Edition, SSRS, SSAS, or Power BI Premium</li>
+          <li>Reporting / BI accounts for &gt;30% of your SQL Server load</li>
+          <li>You want quarterly licence savings without touching production code</li>
+          <li>Your team can take 4-6 weeks of focused work this quarter</li>
+          <li>You need to build Postgres operational confidence before considering B</li>
+          <li>POPIA / data-residency benefits from a separate analytics database surface</li>
+        </ul>
+      </div>
+      <div class="decision-card skip">
+        <h4>Skip / wait when</h4>
+        <ul>
+          <li>You have zero BI/reporting workload &mdash; SQL Server is just OLTP &mdash; offload saves nothing</li>
+          <li>You&apos;re mid-contract on SQL Server licences with no renewal coming &mdash; the savings don&apos;t land</li>
+          <li>You don&apos;t have ops capacity for a Postgres warehouse + CDC pipeline</li>
+          <li>You&apos;re on Azure SQL serverless with low usage &mdash; the bill is already small</li>
+          <li>Your BI workload is genuinely small (single dashboard, &lt;5 users) &mdash; the project overhead exceeds the saving</li>
+          <li>You&apos;re actively considering a full SaaS BI tool (Looker / Sigma / Hex) that brings its own warehouse</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>When path B (full migration) starts making sense</h4>
+      <p><strong>You&apos;ll know in 6-12 months after A.</strong> The signal is: your production SQL Server workload starts looking simpler than the BI workload that&apos;s now running cleanly on Postgres. The team has the operational confidence. The application code&apos;s SQL-Server-specific parts are smaller than you remember. The renewal quote arrives, and the savings on the production licence start exceeding the migration cost.</p>
+      <p>The order matters. Companies that try B first often fail B. The companies that succeed at B almost always did A first, learned Postgres on a no-stakes workload, and went into the production migration with battle-tested ops and confident developers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 SA CONTEXT -->
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; South African context</div>
+      <h2 class="section-title">Why this lands particularly well in SA delivery work.</h2>
+      <p class="section-lede">Microsoft SQL Server is over-represented in SA mid-market &mdash; the legacy of decades of Microsoft-aligned consultancies and Sage / Pastel / Syspro stacks that defaulted to MSSQL as the back end. That same legacy means SA companies typically pay <em>more</em> of their SQL spend on BI Edition and reporting tooling than the global average. The BI-offload arithmetic is correspondingly stronger.</p>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.05s">
+      <h4>Enterprise &middot; banks, insurers, telcos, retailers on legacy SQL stacks</h4>
+      <p>For SA enterprise running material SQL Server estates (often inherited through Sage X3, Syspro, Microsoft Dynamics, or in-house OLTP systems), the BI-offload play converts a multi-currency USD pain point into a one-time engineering investment. Pair Postgres in <strong>AWS Cape Town (<code>af-south-1</code>)</strong> or <strong>Azure South Africa North</strong> for regional residency. Use Debezium self-hosted on the same region for CDC; managed RDS Postgres on AWS supports SA region; Azure Database for PostgreSQL has SA region availability.</p>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.07s">
+      <h4>Studio &middot; mid-market WMS / ERP / commerce builds</h4>
+      <p>For SA studios building or modernising mid-market systems, the BI offload pattern fits cleanly into a typical engagement scope. <strong>Six weeks of focused work landing 35-70% licence saving</strong> is a delivery shape clients understand, and a saving they can show in next quarter&apos;s books. Common starting points: a ScanMan-style WMS, an ERPNext or Frappe modernisation of Sage / Pastel, or a custom logistics / retail system where reporting has overgrown the OLTP database.</p>
+    </div>
+    <div class="info-card green fade-up" style="transition-delay: 0.09s">
+      <h4>FX-resilient stack</h4>
+      <p>SQL Server licences are USD-billed. Postgres is free. CDC tooling like Debezium is free; Fivetran is USD but small. The net effect: a USD-heavy budget line transforms into a (mostly) ZAR-priced engineering line. For SA studios advising clients on technology cost-of-ownership, the BI offload is one of the cleanest demonstrations of an FX-resilient stack &mdash; same outcomes, cheaper budget, no FX exposure on the reporting layer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Connections</div>
+      <h2 class="section-title">Where this links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">data/warehousing</span>
+        <div class="skill">Warehousing hub</div>
+        <div class="why">The sub-tree landing. This leaf sits alongside the PostgreSQL leaf and the Soon stubs (ClickHouse, DuckDB, BigQuery, Snowflake).</div>
+      </a>
+      <a href="postgresql.html" class="connect-node">
+        <span class="tag">data/warehousing/postgresql</span>
+        <div class="skill">PostgreSQL</div>
+        <div class="why">The destination database. Read this leaf for the deeper Postgres story &mdash; extensions, ops, performance, the case for it as a production OLTP and warehouse engine.</div>
+      </a>
+      <a href="../analytics/" class="connect-node">
+        <span class="tag">data/analytics</span>
+        <div class="skill">Analytics hub</div>
+        <div class="why">Where the BI tools live &mdash; Metabase, Superset and others that read from your new Postgres warehouse. The destination for &quot;BI team reads Postgres&quot; in the architecture above.</div>
+      </a>
+      <a href="../engineering/" class="connect-node">
+        <span class="tag">data/engineering</span>
+        <div class="skill">Data engineering</div>
+        <div class="why">CDC pipelines, ELT tooling, the operational layer that keeps replication healthy. LiteParse and similar tools live here.</div>
+      </a>
+      <a href="../../biz/" class="connect-node">
+        <span class="tag">biz</span>
+        <div class="skill">Business systems</div>
+        <div class="why">The OLTP source. Sage X3, ERPNext, Syspro, and Microsoft Dynamics all sit on SQL Server in many SA deployments &mdash; the systems whose reporting load you&apos;re offloading.</div>
+      </a>
+      <a href="../../tech/microsoft/" class="connect-node">
+        <span class="tag">tech/microsoft</span>
+        <div class="skill">Microsoft / Azure</div>
+        <div class="why">If you&apos;re staying Microsoft-aligned: Azure Database for PostgreSQL in <code>South Africa North</code> is a viable warehouse option. Azure SQL stays as the OLTP layer.</div>
+      </a>
+      <a href="../../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Hyperdrive connects Workers to Postgres at the edge. Useful when your application starts reading from the same warehouse for cached read paths.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 10 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">10 &middot; Resources</div>
+      <h2 class="section-title">Primary sources and tooling.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.postgresql.org/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">PostgreSQL</span>
+        <span class="r-url">postgresql.org</span>
+      </a>
+      <a href="https://debezium.io/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CDC (open-source)</span>
+        <span class="r-title">Debezium</span>
+        <span class="r-url">debezium.io</span>
+      </a>
+      <a href="https://www.fivetran.com/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CDC (managed)</span>
+        <span class="r-title">Fivetran</span>
+        <span class="r-url">fivetran.com</span>
+      </a>
+      <a href="https://airbyte.com/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CDC (open-source)</span>
+        <span class="r-title">Airbyte</span>
+        <span class="r-url">airbyte.com</span>
+      </a>
+      <a href="https://www.metabase.com/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">BI (open-source)</span>
+        <span class="r-title">Metabase</span>
+        <span class="r-url">metabase.com</span>
+      </a>
+      <a href="https://superset.apache.org/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">BI (open-source)</span>
+        <span class="r-title">Apache Superset</span>
+        <span class="r-url">superset.apache.org</span>
+      </a>
+      <a href="https://www.timescale.com/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Extension</span>
+        <span class="r-title">TimescaleDB &mdash; time-series</span>
+        <span class="r-url">timescale.com</span>
+      </a>
+      <a href="https://www.citusdata.com/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Extension</span>
+        <span class="r-title">Citus &mdash; distributed Postgres</span>
+        <span class="r-url">citusdata.com</span>
+      </a>
+      <a href="https://postgis.net/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Extension</span>
+        <span class="r-title">PostGIS &mdash; geospatial</span>
+        <span class="r-url">postgis.net</span>
+      </a>
+      <a href="https://learn.microsoft.com/en-us/sql/sql-server/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">Microsoft SQL Server docs</span>
+        <span class="r-url">learn.microsoft.com/.../sql-server</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">Warehousing hub</a>
+      <a href="postgresql.html">PostgreSQL</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
