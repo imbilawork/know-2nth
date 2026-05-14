@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salesforce Data Cloud &mdash; know.2nth.ai</title>
+<meta name="description" content="Salesforce Data Cloud — the unified customer profile and Customer Data Platform that grounds AgentForce. Real-time ingestion, identity resolution, harmonisation across structured and unstructured sources, RAG-ready semantic search. The load-bearing data licence for any serious AgentForce deployment.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/data/data-cloud">
+<meta property="og:title" content="Salesforce Data Cloud &mdash; know.2nth.ai">
+<meta property="og:description" content="Salesforce Data Cloud — unified customer profile and CDP that grounds AgentForce. Real-time ingestion, identity resolution, harmonisation, RAG-ready semantic search.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Salesforce Data Cloud &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Salesforce Data Cloud — unified customer profile and CDP that grounds AgentForce. RAG-ready.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --sky-soft: rgba(56, 189, 248, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(56, 189, 248, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(56, 189, 248, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(56, 189, 248, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.sky { width: 600px; height: 600px; background: var(--sky); top: -200px; right: -100px; }
+  .glow-orb.blue { width: 500px; height: 500px; background: var(--blue); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 12px var(--sky); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--sky), var(--sky-muted), var(--blue-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: var(--sky-soft); color: var(--sky); border-color: rgba(56, 189, 248, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(56, 189, 248, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--sky); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb sky"></div>
+<div class="glow-orb blue"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">data/data-cloud</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Data</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Data</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Salesforce Data Cloud</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> data &middot; Salesforce Data Cloud &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The unified profile <span class="gradient">that grounds AgentForce.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Salesforce Data Cloud is a Customer Data Platform &mdash; not a warehouse, not a data lake, not a CRM table. Its job is to take every source-system record that mentions a customer, unify them into one harmonised profile, resolve identities across sources, and expose the result as queryable, indexable, RAG-ready data. It is the load-bearing piece behind <strong>AgentForce</strong>: without Data Cloud, AgentForce agents only see what's inside the local Salesforce org. With Data Cloud, they reason over a single picture assembled from every system that's been connected.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">CDP &middot; not a warehouse</span>
+      <span class="pill">Real-time ingestion</span>
+      <span class="pill">Identity resolution</span>
+      <span class="pill">RAG-ready</span>
+      <span class="pill indigo">AgentForce dependency</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A CDP, not a CRM table and not a warehouse.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Salesforce Data Cloud is Salesforce's Customer Data Platform. Three properties matter:</p>
+      <ul>
+        <li><strong>Source-system agnostic.</strong> Data Cloud ingests from anywhere &mdash; SAP, Oracle, Mailchimp, Snowflake, S3 buckets, Kafka streams, MuleSoft connectors. The source doesn't have to be Salesforce.</li>
+        <li><strong>Identity-resolved.</strong> The customer record from CRM, the order record from ERP, the support ticket from a help desk, and the marketing engagement from a CDP all reference the same person. Data Cloud resolves them into one unified profile with deterministic and probabilistic matching.</li>
+        <li><strong>Real-time and queryable.</strong> Sub-second ingestion latency; SQL-shaped query layer plus a semantic-search index over both structured tables and unstructured documents. The output is consumable by Tableau, AgentForce, Marketing Cloud, and any external SQL client.</li>
+      </ul>
+      <p>"Customer Data Platform" is the analyst category. Treasure Data, Tealium, Segment, and Adobe Real-Time CDP are peers. Data Cloud's positioning is that it's <em>the CDP that already lives inside Salesforce metadata</em> &mdash; sharing rules, fields, and object relationships are inherited rather than reconstructed.</p>
+      <p>Data Cloud is also the substrate for AgentForce's retrieval-augmented generation. The Atlas Reasoning Engine grounds prompts in Data Cloud's harmonised profile, which is why a Service Agent can answer "what's this customer's recent order history?" without the SI team building a single integration. The integration is upstream &mdash; once SAP-or-equivalent is connected to Data Cloud, every AgentForce agent inherits it.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The "Data 360" branding wrinkle</h4>
+      <p>Salesforce's product naming has moved through several phases. Customer Data Platform → Genie → Data Cloud → "Data 360" (in some 2026 materials). The technical product is the same; the marketing emphasis shifts between "data" and "AI grounding". Don't be confused by the rebrands &mdash; if the conversation is about real-time customer profile, unified data, AgentForce grounding, you're talking about Data Cloud.</p>
+    </div>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The data flow</div>
+      <h2 class="section-title">Ingest, harmonise, resolve, activate.</h2>
+      <p class="section-lede">Every CDP runs roughly the same four stages. Data Cloud's particular shape is "real-time at every stage and tied to Salesforce metadata at the output side".</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Stage 1 &middot; ingest</span>
+        <h4>Ingest</h4>
+        <p>Connectors pull records from source systems in batch or stream. Native connectors for major SaaS, JDBC for databases, MuleSoft for the rest. Sub-second ingestion latency for streaming sources.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Stage 2 &middot; harmonise</span>
+        <h4>Harmonise</h4>
+        <p>Each source schema is mapped onto Data Cloud's standard Data Model (Individual, Account, Engagement, Order). Field-level transforms run during ingest. This is the model-mapping work that determines how good the unified profile becomes.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Stage 3 &middot; resolve</span>
+        <h4>Identity resolve</h4>
+        <p>Deterministic rules (email match, phone match) + probabilistic rules (name + DOB + address proximity) collapse records that point to the same person into one profile. The matching ruleset is configurable; the output is the Unified Individual ID.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Stage 4 &middot; activate</span>
+        <h4>Activate</h4>
+        <p>The unified profile feeds downstream &mdash; AgentForce (RAG), Marketing Cloud (segmentation), Tableau (analytics), external systems via reverse ETL. The same profile is queryable, searchable, and pushable.</p>
+      </div>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>RAG for unstructured content too</h4>
+      <p>Data Cloud's semantic-search index handles unstructured data &mdash; knowledge articles, support transcripts, contract PDFs &mdash; alongside structured records. AgentForce's Atlas Reasoning Engine can retrieve from both in the same query. This is the AgentForce capability claim that comes directly from a Data Cloud feature: the agent doesn't know whether the answer is in a database row or paragraph 4 of a knowledge article. The semantic-search layer abstracts both.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; vs alternatives</div>
+      <h2 class="section-title">Where Data Cloud fits in the data stack.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Data Cloud lives in the same neighbourhood as warehouses, lakes, and other CDPs, but solves a different problem. Quick framing:</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.07s">
+      <table class="compare">
+        <thead><tr><th>Layer</th><th>Job</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Warehouse / Lake</td><td>Analytical storage; "the source of truth for the analysts"</td><td>Snowflake, BigQuery, Databricks, Postgres</td></tr>
+          <tr><td class="name">CDP</td><td>Unified, real-time customer profile across systems</td><td>Data Cloud, Segment, Tealium, Treasure Data</td></tr>
+          <tr><td class="name">Reverse ETL</td><td>Push warehouse data back into operational tools</td><td>Hightouch, Census</td></tr>
+          <tr><td class="name">CRM table</td><td>The system-of-record for sales / service workflow</td><td>Salesforce SObjects, HubSpot CRM</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Why not just use a warehouse?</h4>
+      <p>You can build a unified customer profile in Snowflake or BigQuery &mdash; teams do, and it works. The Data Cloud arguments are: (1) <strong>real-time</strong> ingestion and identity resolution are not warehouse strengths; (2) the activation side &mdash; pushing profile changes into AgentForce, Marketing Cloud, Service Cloud &mdash; is native; (3) the security model inherits Salesforce sharing rules, so a sales rep only sees the unified profile for accounts they own. For a Salesforce-heavy enterprise, Data Cloud is structurally aligned. For everyone else, a warehouse + reverse-ETL stack is often the cheaper path.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; South African context</div>
+      <h2 class="section-title">POPIA, residency, and the unified-profile question.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>POPIA Section 19 evidence.</strong> Data Cloud's role in a unified customer profile is exactly the activity POPIA Section 19 ("appropriate, reasonable technical and organisational measures") asks you to control. The platform's sharing-rule inheritance means the unified profile respects who-can-see-what at the source; the audit log captures access; identity-resolution rules are configurable and reviewable. The compliance argument is well-supported &mdash; provided the residency question (next) is also answered.</p>
+      <p><strong>Hyperforce residency.</strong> Data Cloud runs on Hyperforce. No SA datacenter as of mid-2026; SA orgs typically land in Frankfurt or Dublin. For Section 72 cross-border-transfer compliance, the Salesforce-provided SCC equivalents need to be in the procurement package. If POPIA-strict residency is a hard requirement, Data Cloud is not the right answer until Hyperforce SA lands &mdash; a self-hosted CDP in Cape Town would be the alternative.</p>
+      <p><strong>The "single view of customer" reality.</strong> Many SA businesses run customer data across SAP-or-Oracle (ERP), Salesforce (CRM), an SMS aggregator (campaigns), and a legacy support tool. Data Cloud's unification claim is exactly what those businesses need &mdash; but it's a multi-month integration project, not a configuration toggle. The cost-benefit conversation needs to be honest about the SI hours, not just the licence.</p>
+      <p><strong>Cost model.</strong> Data Cloud is priced on credits consumed during ingestion, processing, and activation &mdash; separate from AgentForce's Flex Credits. For SA businesses budgeting in ZAR against USD-priced credits, the same FX-sensitivity exercise applies as it does for AgentForce. Pre-purchase the credit envelope, monitor consumption, treat it like cloud spend.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Connections</div>
+      <h2 class="section-title">Where Data Cloud links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../agents/agentforce.html" class="connect-node">
+        <span class="tag">agents/agentforce</span>
+        <div class="skill">AgentForce</div>
+        <div class="why">The primary consumer. Atlas Reasoning Engine grounds prompts in the Data Cloud unified profile via RAG and semantic search.</div>
+      </a>
+      <a href="../biz/crm/salesforce.html" class="connect-node">
+        <span class="tag">biz/crm/salesforce</span>
+        <div class="skill">Salesforce platform</div>
+        <div class="why">Data Cloud's host; inherits Salesforce sharing rules, metadata, and the same Hyperforce residency model.</div>
+      </a>
+      <a href="warehousing/postgresql.html" class="connect-node">
+        <span class="tag">data/warehousing/postgresql</span>
+        <div class="skill">PostgreSQL</div>
+        <div class="why">A common source-system for Data Cloud ingestion. The CDP unifies what the warehouse stores.</div>
+      </a>
+      <a href="./" class="connect-node">
+        <span class="tag">data</span>
+        <div class="skill">Data hub</div>
+        <div class="why">Data Cloud is the CDP-shaped leaf in the data domain. Warehouses, analytics, engineering are the other layers around it.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/mulesoft</span>
+        <div class="skill">MuleSoft (soon)</div>
+        <div class="why">The integration layer that wires source systems into Data Cloud. Most non-native sources arrive through MuleSoft connectors.</div>
+      </div>
+      <div class="connect-node soon">
+        <span class="tag">data/analytics/tableau</span>
+        <div class="skill">Tableau (soon)</div>
+        <div class="why">The analytics surface for Data Cloud. The same unified profile drives both AgentForce reasoning and analyst dashboards.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.salesforce.com/data/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">salesforce.com/data &middot; Data Cloud</span>
+        <span class="r-url">salesforce.com/data</span>
+      </a>
+      <a href="https://help.salesforce.com/s/articleView?id=sf.c360_a_data_cloud.htm" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Data Cloud help &amp; reference</span>
+        <span class="r-url">help.salesforce.com/.../c360_a_data_cloud</span>
+      </a>
+      <a href="https://developer.salesforce.com/docs/atlas.en-us.c360a_api.meta/c360a_api/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">API</span>
+        <span class="r-title">Data Cloud API developer guide</span>
+        <span class="r-url">developer.salesforce.com/.../c360a_api</span>
+      </a>
+      <a href="https://www.salesforce.com/news/stories/how-data-cloud-powers-agentforce/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Architecture</span>
+        <span class="r-title">How Data Cloud fuels AgentForce</span>
+        <span class="r-url">salesforce.com/news/.../how-data-cloud-powers-agentforce</span>
+      </a>
+      <a href="https://www.salesforce.com/news/press-releases/2024/09/17/data-cloud-unstructured-data-announcement/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Launch</span>
+        <span class="r-title">Data Cloud unstructured-data support announcement</span>
+        <span class="r-url">salesforce.com/news/.../data-cloud-unstructured-data</span>
+      </a>
+      <a href="https://trailhead.salesforce.com/content/learn/trails/get-started-with-data-cloud" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Learning</span>
+        <span class="r-title">Trailhead &middot; Get started with Data Cloud</span>
+        <span class="r-url">trailhead.salesforce.com/.../data-cloud</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Data hub</a>
+      <a href="https://www.salesforce.com/data/" target="_blank" rel="noopener">Data Cloud &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>

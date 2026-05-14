@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentForce &mdash; know.2nth.ai</title>
+<meta name="description" content="AgentForce — Salesforce's agent platform. Atlas Reasoning Engine (ReAct + hybrid graph reasoning), five-attribute agents (Role / Data / Actions / Guardrails / Channel), Flex Credits pricing ($0.10/credit). Built on the Salesforce Platform, grounded in Data Cloud, wrapped by the Einstein Trust Layer. The vendor-bound first-party agent platform for Salesforce-shaped enterprises.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/agents/agentforce">
+<meta property="og:title" content="AgentForce &mdash; know.2nth.ai">
+<meta property="og:description" content="AgentForce — Salesforce's agent platform. Atlas Reasoning Engine, five-attribute agents, Flex Credits. Grounded in Data Cloud, wrapped by the Einstein Trust Layer.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AgentForce &mdash; know.2nth.ai">
+<meta name="twitter:description" content="AgentForce — Salesforce's agent platform. Atlas Reasoning Engine + five-attribute agents + Flex Credits. Grounded in Data Cloud.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--indigo); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); box-shadow: 0 0 12px var(--indigo); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue-glow), var(--sky), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">agents/agentforce</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Agents</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Agents</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">AgentForce</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> agents &middot; AgentForce &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The agent platform <span class="gradient">welded to Salesforce.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      AgentForce is Salesforce's agent platform &mdash; GA October 2024, now branded <strong>AgentForce 360</strong>. Atlas Reasoning Engine for the loop, five-attribute model (Role / Data / Actions / Guardrails / Channel) for the agent definition, Data Cloud for the data substrate, Einstein Trust Layer for the security wrapper. Pre-built agents ship for Service and Sales; custom agents are built in a low-code builder against Salesforce metadata. Flex Credits ($0.10 / credit) is the consumption price &mdash; not a per-seat licence. This is the vendor-bound first-party agent platform for businesses already on Salesforce; not a framework you'd choose otherwise.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill green">GA &middot; Oct 2024</span>
+      <span class="pill indigo">Salesforce-bound</span>
+      <span class="pill accent">Atlas Reasoning Engine</span>
+      <span class="pill">Five-attribute agents</span>
+      <span class="pill">Flex Credits &middot; $0.10</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">An agent runtime native to the Salesforce platform.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>AgentForce is a closed, Salesforce-hosted runtime for building and running agents that act on Salesforce data and adjacent systems. It is not a Python library you import. It is a configured product, built and deployed inside a Salesforce org, that exposes agents to humans through Slack, the Salesforce UI, voice channels, websites embedded in Experience Cloud, and APIs. Pre-built first-party agents ship for the common Salesforce workflows: <strong>Service Agent</strong> (Service Cloud case deflection and resolution), <strong>Sales Coach</strong> (rep coaching during deals), <strong>SDR Agent</strong> (lead engagement), and <strong>Personal Shopper</strong> (Commerce Cloud). Custom agents are built in the AgentForce Builder, a low-code graph editor that defines the agent's behaviour, the actions it can take, and the data it has access to.</p>
+      <p>The product GA'd at Dreamforce in October 2024. The current generation is <strong>AgentForce 360</strong>, with AgentForce 3 introducing MCP-server interop and the AWS partnership ("AgentForce 360 for AWS") deepening the AWS-hosted deployment path. The marketing pitch is "digital labour" &mdash; agents as headcount on a per-action consumption basis rather than per-seat licensing.</p>
+      <p>The technical claim to attend to is the Atlas Reasoning Engine. Salesforce describes it as the "brain" of AgentForce: a Reason-Act-Observe (ReAct) loop combined with a graph-based deterministic engine. The LLM provides flexible reasoning; <strong>AgentForce Script</strong> (the deterministic flow layer) ensures predictable behaviour on the parts that must not vary. Hybrid reasoning is the term Salesforce uses for the combination.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>Where AgentForce sits in the agent landscape</h4>
+      <p>The Frameworks band on this hub holds open-source SDKs (ADK, LangGraph, CrewAI, AutoGen) and first-party vendor SDKs (OpenAI Agents SDK, Anthropic Agent SDK). AgentForce is a different shape: it is a <em>vendor-bound platform</em>, not a library or SDK. You don't import it; you configure it inside a Salesforce org. That binding is the constraint and the strength &mdash; it ships with Salesforce metadata, security, audit trail, and the entire Customer 360 data graph as table stakes. If you are not on Salesforce, AgentForce is not a credible option. If you are on Salesforce, the alternative path (build an ADK or LangGraph agent against the Salesforce REST API) loses every "deep integration with the platform" advantage AgentForce starts with.</p>
+    </div>
+  </div>
+</section>
+
+<section id="atlas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The Atlas Reasoning Engine</div>
+      <h2 class="section-title">ReAct in a loop, graph for the predictable bits.</h2>
+      <p class="section-lede">The Atlas Reasoning Engine is Salesforce's name for the agent runtime that drives every AgentForce agent. The published architecture is a ReAct loop &mdash; <em>reason</em>, <em>act</em>, <em>observe</em>, repeat &mdash; combined with a graph-based deterministic engine that lets the builder pin certain parts of the conversation to fixed flows. This is the "hybrid reasoning" Salesforce talks about: LLM flexibility for the open-ended parts, deterministic flow for the parts where unpredictability is not acceptable.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Step 1 &middot; reason</span>
+        <h4>Reason</h4>
+        <p>The model considers the user's intent against the agent's role, available actions, and the data it can access. It picks a next step (call an action, ask for clarification, hand off).</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Step 2 &middot; act</span>
+        <h4>Act</h4>
+        <p>The agent invokes an action &mdash; an Apex method, a Flow, a Data Cloud query, an MCP tool exposed via MuleSoft, or a handoff to a human or another agent.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Step 3 &middot; observe</span>
+        <h4>Observe</h4>
+        <p>The result of the action comes back as new context. The loop checks whether the goal is reached or whether more steps are needed. The model may ask the user a mid-task clarifying question.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p>"Reinforcement learning and feedback loops" appear in the Atlas marketing copy. In practice the production behaviour comes from three things working together: a foundation model picked at the org level (OpenAI / Anthropic / Google or Salesforce's own models), the agent definition (the five attributes, below), and AgentForce Script &mdash; the graph layer where the builder explicitly defines flow steps that don't go through the LLM. The agent definition + the graph + the model are what make a particular agent behave the way it does.</p>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.1s">
+      <h4>Hybrid reasoning &mdash; why graph + LLM beats LLM alone</h4>
+      <p>An LLM asked to "process a return request and refund the customer" is great at understanding intent and writing the email but unpredictable at the policy boundary. Salesforce's argument is that this boundary &mdash; "Did this customer's policy allow a refund?" &mdash; should be a deterministic flow step, not a model judgement. The AgentForce Builder lets you assemble agents where the model handles conversation and reasoning, but specific decision points are fixed graph nodes that always execute the same logic. <strong>Determinism where it matters; flexibility where it doesn't.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="attributes">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; The five agent attributes</div>
+      <h2 class="section-title">Role, Data, Actions, Guardrails, Channel.</h2>
+      <p class="section-lede">Every AgentForce agent is defined by five attributes. Together they specify what the agent is supposed to do, what it can access, what it can do, what it must not do, and where it operates. The five-attribute model is the unit of agent definition in AgentForce; everything else is configuration.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Attribute</th><th>What it specifies</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Role</td><td>The agent's job or purpose. Service Agent. Sales Coach. SDR. A natural-language statement that frames every model call.</td></tr>
+          <tr><td class="name">Data</td><td>What knowledge and records the agent can read &mdash; Salesforce objects, Data Cloud profiles, knowledge articles, external sources via MuleSoft.</td></tr>
+          <tr><td class="name">Actions</td><td>The capabilities the agent can invoke &mdash; existing Apex methods, Flows, prompt templates, MCP tools, REST callouts. Each is registered as an action the agent can pick during the ReAct loop.</td></tr>
+          <tr><td class="name">Guardrails</td><td>Boundaries and restrictions &mdash; never escalate without approval, never quote a price outside this range, hand off to a human if the user mentions specific keywords.</td></tr>
+          <tr><td class="name">Channel</td><td>Where and how the agent operates &mdash; Slack, Salesforce UI, voice (phone), website embed, MuleSoft-exposed API endpoint.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>The Einstein Trust Layer wraps every call</h4>
+      <p>Before any prompt leaves the Salesforce platform for a model provider, the Einstein Trust Layer applies <strong>dynamic grounding</strong> (retrieves the right Data Cloud records for context), <strong>secure data retrieval</strong> (enforces user-level Salesforce sharing rules so the model only sees data the calling user could see), <strong>data masking</strong> (PII can be tokenised before transmission), and <strong>zero data retention</strong> (the model provider commits not to retain or train on the prompt or completion). On the way back, the response is checked for toxicity. This is the contractual basis on which a POPIA Information Officer or a SOC 2 auditor signs off on AgentForce processing customer data.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Pricing</div>
+      <h2 class="section-title">Flex Credits &mdash; the per-action consumption model.</h2>
+      <p class="section-lede">AgentForce moved from per-conversation pricing to Flex Credits in May 2025. Each credit is $0.10 USD. An AgentForce action is 20 credits ($2.00). An AgentForce Voice action is 30 credits ($3.00). You pay for what you use; there's no per-seat licence for the agent itself. This is the "digital labour priced like a contractor" pitch.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Unit</th><th>Cost (USD)</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="name">1 Flex Credit</td><td>$0.10</td><td>The base unit.</td></tr>
+          <tr><td class="name">AgentForce action</td><td>20 credits &middot; $2.00</td><td>One agent execution that performs an action.</td></tr>
+          <tr><td class="name">AgentForce Voice action</td><td>30 credits &middot; $3.00</td><td>Voice channel; higher cost reflects the synthesis + recognition surface.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p>Three payment models layer over Flex Credits:</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.1s">
+      <table class="compare">
+        <thead><tr><th>Mode</th><th>How it works</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Pay-as-you-go</td><td>No upfront commitment. Pay monthly based on credits consumed.</td><td>Pilots, testing new use cases, unpredictable workloads.</td></tr>
+          <tr><td class="name">Pre-commit</td><td>Commit to an annual usage; unlock discounted per-credit pricing.</td><td>Steady-state production workloads with known volume.</td></tr>
+          <tr><td class="name">Pre-purchase</td><td>Buy credits upfront, draw down through the contract term.</td><td>Budget envelopes; mitigating mid-year price risk.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.12s">
+      <h4>The Digital Wallet</h4>
+      <p>AgentForce ships with a "Digital Wallet" usage monitor &mdash; near real-time credit consumption, threshold alerts, usage trends. For an SA business worried about FX-driven cost surprises on a USD-priced consumption product, the Digital Wallet is the operational guard rail. Set thresholds, set alerts, treat AgentForce credits like a cloud-cost line item rather than a SaaS subscription.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; AgentForce vs the open frameworks</div>
+      <h2 class="section-title">When the platform binding is an asset, when it's a liability.</h2>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Concern</th><th>AgentForce</th><th>ADK / LangGraph / Anthropic SDK</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Shape</strong></td><td>Hosted platform inside Salesforce</td><td>Open-source library you import</td></tr>
+          <tr><td><strong>Where it runs</strong></td><td>Salesforce-managed (Hyperforce)</td><td>Anywhere you host it</td></tr>
+          <tr><td><strong>Pricing</strong></td><td>Flex Credits ($0.10) + Salesforce licence + Data Cloud licence</td><td>Open source. You pay only for the model.</td></tr>
+          <tr><td><strong>Data integration</strong></td><td>Salesforce + Data Cloud out of the box; MuleSoft for the rest</td><td>Wire it up yourself</td></tr>
+          <tr><td><strong>Compliance</strong></td><td>Einstein Trust Layer ships with audit, masking, zero-retention</td><td>You build the trust layer yourself</td></tr>
+          <tr><td><strong>Model flexibility</strong></td><td>Model-pluggable (OpenAI / Anthropic / Google / Salesforce xGen)</td><td>Model-pluggable (any provider)</td></tr>
+          <tr><td><strong>Lock-in</strong></td><td>High &mdash; the agent definition is metadata only inside Salesforce</td><td>Low &mdash; the agent is your code</td></tr>
+          <tr><td><strong>Best fit</strong></td><td>Salesforce-heavy enterprise; agents acting on CRM data</td><td>Anything else, especially multi-vendor stacks</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Rule of thumb</h4>
+      <p>If &gt;60% of the data and actions an agent needs to touch live inside Salesforce, AgentForce is usually the right pick &mdash; you inherit the platform's data graph, identity model, audit trail, and trust layer for free. If &lt;30%, you're better off with an open framework that doesn't pretend to be a system of record. The middle is where it gets interesting: a MuleSoft-shaped enterprise can extend AgentForce reach via MCP servers, but the more reach you push outside the org, the less of AgentForce's value proposition you're actually using.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; South African context</div>
+      <h2 class="section-title">FX, POPIA, and the integrator question.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>FX exposure is the operational reality.</strong> Flex Credits are USD-priced. Every AgentForce action costs ZAR-times-the-spot-rate. For SA businesses, the unit-economics conversation needs an FX model: "AgentForce digital labour is cheaper than human labour at R18/USD" becomes a different conversation at R22/USD. Pre-commit pricing locks in a discount but not the exchange rate; pre-purchase locks in the credit balance but charges in USD up front. Build the FX sensitivity into the business case before sign-off.</p>
+      <p><strong>POPIA via the Trust Layer.</strong> The Einstein Trust Layer's "zero data retention" guarantee with foundation-model providers is the contractual claim that lets an SA Information Officer sign off on AgentForce processing personal information &mdash; OpenAI / Anthropic / Google commit not to retain or train on Salesforce-sent prompts and completions. The Trust Layer also enforces user-level Salesforce sharing rules at retrieval time, which means an agent acting on behalf of a service rep cannot see records that the service rep cannot see. POPIA Section 19 ("appropriate, reasonable technical and organisational measures") has a clean evidence trail.</p>
+      <p><strong>Data residency is a Hyperforce question.</strong> AgentForce runs inside Hyperforce. There is no Hyperforce datacenter in South Africa as of mid-2026 &mdash; SA orgs typically land in the Frankfurt or Ireland clusters. Section 72 cross-border-transfer questions need to be raised at contract time, and the SCC equivalents that Salesforce offers should be part of the procurement package. The Trust Layer's masking and zero-retention guarantees are the supporting controls, but residency itself is upstream.</p>
+      <p><strong>The SI partner conversation.</strong> AgentForce setup &mdash; especially a useful one, with Data Cloud connected and the right agent guardrails &mdash; is partner-led work, not a self-serve sign-up. The SI partner ecosystem in SA is substantial; the right conversation up front is "scope and time to value", not "platform cost". Most poorly-performing AgentForce deployments fail at the agent-design step, not the platform-cost step.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Connections</div>
+      <h2 class="section-title">Where AgentForce links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="./" class="connect-node">
+        <span class="tag">agents</span>
+        <div class="skill">Agents hub</div>
+        <div class="why">The sub-tree landing. AgentForce sits in Frameworks as the vendor-platform entry alongside the open SDKs.</div>
+      </a>
+      <a href="../biz/crm/salesforce.html" class="connect-node">
+        <span class="tag">biz/crm/salesforce</span>
+        <div class="skill">Salesforce platform</div>
+        <div class="why">AgentForce's host. The SObject + SOQL + Apex + Flow stack is where actions execute. Without Salesforce there is no AgentForce.</div>
+      </a>
+      <a href="../data/data-cloud.html" class="connect-node">
+        <span class="tag">data/data-cloud</span>
+        <div class="skill">Salesforce Data Cloud</div>
+        <div class="why">The unified profile that grounds AgentForce reasoning. The load-bearing licence for any serious AgentForce deployment.</div>
+      </a>
+      <a href="mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">AgentForce 3 added MCP-server consumption via MuleSoft. Any MuleSoft-exposed API can be an MCP tool the agent calls.</div>
+      </a>
+      <a href="claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude (foundation model)</div>
+        <div class="why">One of the model options behind the Atlas Reasoning Engine. The Trust Layer's zero-retention contract sits between AgentForce and Anthropic.</div>
+      </a>
+      <a href="gpt.html" class="connect-node">
+        <span class="tag">agents/gpt</span>
+        <div class="skill">GPT (foundation model)</div>
+        <div class="why">The default model option for many AgentForce deployments. Same Trust-Layer wrapping; different model-provider contract.</div>
+      </a>
+      <a href="gemini.html" class="connect-node">
+        <span class="tag">agents/gemini</span>
+        <div class="skill">Gemini (foundation model)</div>
+        <div class="why">Available via the AgentForce model picker. Pairs naturally with Vertex AI for orgs already on Google Cloud.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/mulesoft</span>
+        <div class="skill">MuleSoft (soon)</div>
+        <div class="why">The integration layer that gives AgentForce reach beyond Salesforce. As of AgentForce 3, also the "API-as-MCP-server" path.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.salesforce.com/agentforce/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">salesforce.com/agentforce</span>
+        <span class="r-url">salesforce.com/agentforce</span>
+      </a>
+      <a href="https://www.salesforce.com/agentforce/how-it-works/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Overview</span>
+        <span class="r-title">How AgentForce works</span>
+        <span class="r-url">salesforce.com/agentforce/how-it-works</span>
+      </a>
+      <a href="https://www.salesforce.com/agentforce/what-is-a-reasoning-engine/atlas/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Architecture</span>
+        <span class="r-title">Atlas Reasoning Engine</span>
+        <span class="r-url">salesforce.com/agentforce/.../atlas</span>
+      </a>
+      <a href="https://engineering.salesforce.com/inside-the-brain-of-agentforce-revealing-the-atlas-reasoning-engine/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Engineering</span>
+        <span class="r-title">Inside Agentforce: Revealing the Atlas Reasoning Engine</span>
+        <span class="r-url">engineering.salesforce.com/inside-the-brain-of-agentforce</span>
+      </a>
+      <a href="https://architect.salesforce.com/docs/architect/fundamentals/guide/enterprise-agentic-architecture" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Architecture</span>
+        <span class="r-title">Enterprise Agentic Architecture &amp; Design Patterns</span>
+        <span class="r-url">architect.salesforce.com/.../enterprise-agentic-architecture</span>
+      </a>
+      <a href="https://www.salesforce.com/agentforce/pricing/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Pricing</span>
+        <span class="r-title">AgentForce pricing &middot; Flex Credits</span>
+        <span class="r-url">salesforce.com/agentforce/pricing</span>
+      </a>
+      <a href="https://www.salesforce.com/en-us/wp-content/uploads/sites/4/documents/white-papers/Rate-Card-Flex-Credits.pdf" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Rate card</span>
+        <span class="r-title">Flex Credits rate card (PDF)</span>
+        <span class="r-url">salesforce.com/.../Rate-Card-Flex-Credits.pdf</span>
+      </a>
+      <a href="https://www.salesforce.com/news/press-releases/2024/10/29/agentforce-general-availability-announcement/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Launch</span>
+        <span class="r-title">AgentForce GA announcement (Oct 2024)</span>
+        <span class="r-url">salesforce.com/news/.../agentforce-general-availability</span>
+      </a>
+      <a href="https://www.salesforce.com/news/stories/how-data-cloud-powers-agentforce/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Architecture</span>
+        <span class="r-title">How Data Cloud fuels AgentForce</span>
+        <span class="r-url">salesforce.com/news/.../how-data-cloud-powers-agentforce</span>
+      </a>
+      <a href="https://www.salesforce.com/news/stories/mulesoft-agent-orchestration-capabilities/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Integration</span>
+        <span class="r-title">MuleSoft for AgentForce orchestration (incl. MCP-server path)</span>
+        <span class="r-url">salesforce.com/news/.../mulesoft-agent-orchestration</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Agents hub</a>
+      <a href="https://www.salesforce.com/agentforce/" target="_blank" rel="noopener">AgentForce &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
