@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salesforce &mdash; know.2nth.ai</title>
+<meta name="description" content="Salesforce — the enterprise CRM platform. SObject + SOQL + Apex + Flow on the Lightning Platform, with AgentForce, Data Cloud, Einstein Trust Layer, MuleSoft, Slack, and Tableau wrapped around it. The system of record most large SA businesses run sales, service, and customer data on.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/biz/crm/salesforce">
+<meta property="og:title" content="Salesforce &mdash; know.2nth.ai">
+<meta property="og:description" content="Salesforce — the enterprise CRM platform. SObject + SOQL + Apex + Flow, with AgentForce, Data Cloud, Einstein, MuleSoft, Slack, and Tableau wrapped around it.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Salesforce &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Salesforce — the enterprise CRM. SObject + SOQL + Apex + Flow, wrapped by AgentForce, Data Cloud, Einstein, MuleSoft, Slack, Tableau.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --sky-soft: rgba(56, 189, 248, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(56, 189, 248, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(56, 189, 248, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(56, 189, 248, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.sky { width: 600px; height: 600px; background: var(--sky); top: -200px; right: -100px; }
+  .glow-orb.blue { width: 500px; height: 500px; background: var(--blue); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--sky); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--sky); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--sky); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 12px var(--sky); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue), var(--blue-glow), var(--sky-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: var(--sky-soft); color: var(--sky); border-color: rgba(56, 189, 248, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sky); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  pre.code .n { color: #FCD34D; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare-wrap.wide { max-width: none; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--sky); background: rgba(56, 189, 248, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--sky); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--sky); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node.soon:hover { border-color: var(--border); background: var(--bg-card); }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sky); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .nav-link { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb sky"></div>
+<div class="glow-orb blue"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand">
+      <span class="nav-brand-mark">know.2nth.ai</span>
+      <span class="nav-brand-sub">biz/crm/salesforce</span>
+    </a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; CRM</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Business</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">biz</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">crm</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">salesforce</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/crm &middot; Salesforce &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The enterprise CRM &mdash; <span class="gradient">platform first, apps second.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Salesforce isn't a CRM; it's a metadata-driven platform that ships sales, service, marketing, commerce, and analytics apps on top of one object model. The SObject + SOQL + Apex + Flow stack is the foundation. <strong>AgentForce</strong>, <strong>Data Cloud</strong>, <strong>Einstein Trust Layer</strong>, <strong>MuleSoft</strong>, <strong>Slack</strong>, and <strong>Tableau</strong> are the ecosystem that wraps it. The system of record most large SA businesses run sales and service on &mdash; and now the substrate the AgentForce digital-labour pitch rides on.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Enterprise CRM</span>
+      <span class="pill">SObject &middot; SOQL &middot; Apex</span>
+      <span class="pill">Lightning Platform</span>
+      <span class="pill indigo">AgentForce 360</span>
+      <span class="pill">Data Cloud</span>
+      <span class="pill">MuleSoft / Slack / Tableau</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 WHAT -->
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A metadata-driven platform &mdash; with CRM as the first app.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Salesforce is the largest CRM by revenue, but the part that matters technically is the <strong>Lightning Platform</strong> beneath it. Everything is an SObject &mdash; <code>Account</code>, <code>Contact</code>, <code>Opportunity</code>, <code>Case</code>, plus custom objects you define. Queries run in SOQL (the SQL-shaped, relationship-traversing query language). Server-side logic runs in Apex (Java-shaped, with declarative governor limits). Low-code automation runs in Flow. The user interface is built from Lightning components. The same metadata declaration drives the API, the UI, the report builder, and the AI prompts.</p>
+      <p><strong>The product surfaces ("Clouds") layer on top of the platform:</strong> Sales Cloud, Service Cloud, Marketing Cloud, Commerce Cloud, Experience Cloud. They're not separate products in the architectural sense &mdash; they're packaged combinations of objects, page layouts, flows, and reports configured for a function. You can build any of them yourself if you know the platform; that's what makes Salesforce both expensive and infinitely customisable.</p>
+      <p><strong>The AI fabric is newer and runs across all of it.</strong> AgentForce is the agent runtime. Data Cloud is the unified customer profile (a CDP, in lay terms). The Einstein Trust Layer wraps every model call with secure data retrieval, zero data retention, and toxicity detection. MuleSoft is the integration layer (and the bridge to MCP). Slack is the conversational surface. Tableau is the analytics surface. They are all branded as a single Customer 360 picture; technically they are distinct products that depend on each other and on the core platform's metadata.</p>
+    </div>
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The stack, top to bottom</h4>
+      <p><strong>AgentForce + Tableau + Slack</strong> &mdash; the experience layer. Conversational, visual, and channel surfaces. <strong>Data Cloud + Einstein Trust Layer</strong> &mdash; the data and governance layer. Unified profile, RAG-grounded retrieval, model-routing with masking. <strong>MuleSoft</strong> &mdash; the integration layer; the bridge from internal Salesforce APIs to the rest of the enterprise, including the new "API as MCP server" path. <strong>Lightning Platform</strong> &mdash; SObject + SOQL + Apex + Flow + Lightning components. Underneath: Hyperforce, the multi-tenant public-cloud infrastructure (AWS, GCP, Azure) that hosts modern Salesforce orgs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 DATA MODEL -->
+<section id="data-model">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The data model</div>
+      <h2 class="section-title">SObject, SOQL, Apex, Flow &mdash; the four primitives.</h2>
+      <p class="section-lede">Everything you build on Salesforce is some combination of these four. Get them right and the platform is a productivity superpower. Get them wrong and you'll spend a year fighting governor limits, mixed-DML errors, and SOQL row caps.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Data &middot; objects</span>
+        <h4>SObject</h4>
+        <p>Every table is an SObject. Standard (<code>Account</code>, <code>Contact</code>, <code>Opportunity</code>) or Custom (<code>Project__c</code>). Fields are typed; relationships are lookup or master-detail; record-level access is governed by Sharing Rules.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Data &middot; query</span>
+        <h4>SOQL</h4>
+        <p>SQL-shaped but relationship-traversing. <code>SELECT Name, Account.Industry FROM Contact</code> joins automatically. Governor-limit aware: 50k rows per transaction, 100 queries per execution.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Logic &middot; code</span>
+        <h4>Apex</h4>
+        <p>Java-shaped server-side language. Triggers run on DML events. Schedulable, Batchable, Queueable patterns. Every Apex transaction operates inside governor limits &mdash; bulkify or fail.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Logic &middot; low-code</span>
+        <h4>Flow</h4>
+        <p>The declarative automation engine that replaced Workflow Rules and Process Builder. Screen Flows, Auto-launched Flows, Record-Triggered Flows. Same metadata, low-code authoring &mdash; and AgentForce can invoke a Flow as an action.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>A typical SOQL query</strong> &mdash; relationship traversal in one go, the thing SQL can't do without joins:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.12s"><span class="c">// Find open opportunities with their owner and account industry</span>
+<span class="h">SELECT</span> Id, Name, Amount, CloseDate,
+       Owner.Name, Owner.Email,
+       Account.Name, Account.Industry, Account.AnnualRevenue
+<span class="h">FROM</span>   Opportunity
+<span class="h">WHERE</span>  IsClosed = <span class="k">false</span>
+  <span class="h">AND</span>  Amount &gt; <span class="n">100000</span>
+  <span class="h">AND</span>  CloseDate = <span class="s">THIS_QUARTER</span>
+<span class="h">ORDER BY</span> Amount <span class="h">DESC</span>
+<span class="h">LIMIT</span>  <span class="n">200</span></pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.14s">
+      <p><strong>A trigger-friendly Apex pattern</strong> &mdash; bulkified, governor-safe, the shape every Salesforce dev learns the hard way once:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.16s"><span class="h">trigger</span> OpportunityHealthCheck <span class="h">on</span> Opportunity (<span class="h">after</span> update) {
+    <span class="k">Set</span>&lt;Id&gt; ids = <span class="k">new</span> <span class="k">Set</span>&lt;Id&gt;();
+    <span class="h">for</span> (Opportunity opp : Trigger.new) {
+        <span class="h">if</span> (opp.StageName != Trigger.oldMap.get(opp.Id).StageName) {
+            ids.add(opp.Id);
+        }
+    }
+    <span class="h">if</span> (!ids.isEmpty()) {
+        <span class="c">// One SOQL, one DML — bulkified for thousands of records</span>
+        OpportunityHealthService.recompute(ids);
+    }
+}</pre>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.18s">
+      <h4>Governor limits are the platform</h4>
+      <p>Apex is a multi-tenant runtime. To stop one customer's runaway code from starving everyone else, every transaction caps SOQL queries (100), DML statements (150), CPU time (10s sync), heap (6 MB sync), callouts (100), and rows queried (50,000). Bulkified code stays under all of these for thousands of records; non-bulkified code dies at 200. <strong>"Bulkify everything"</strong> is the single most important phrase in Salesforce engineering.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 AI FABRIC -->
+<section id="ai-fabric">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; The AI fabric</div>
+      <h2 class="section-title">AgentForce, Data Cloud, Einstein &mdash; how they stack.</h2>
+      <p class="section-lede">The 2024&ndash;26 evolution: Einstein was the brand for predictive AI features baked into clouds; that brand still exists but has been subsumed by AgentForce (the agent runtime) and the Einstein Trust Layer (the security wrapper around every model call). Data Cloud is the unifying data plane that makes any of it useful.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Layer</th><th>What it is</th><th>Depends on</th></tr></thead>
+        <tbody>
+          <tr><td class="name">AgentForce 360</td><td>The agent platform. Atlas Reasoning Engine, five-attribute agents (Role / Data / Actions / Guardrails / Channel), Flex Credits pricing.</td><td>Data Cloud, Einstein Trust Layer, Lightning Platform</td></tr>
+          <tr><td class="name">Data Cloud</td><td>Unified customer profile. Real-time ingestion, identity resolution, harmonisation across structured + unstructured data. RAG source for AgentForce.</td><td>Hyperforce, source-system connectors</td></tr>
+          <tr><td class="name">Einstein Trust Layer</td><td>The security wrapper. Zero data retention with model providers, dynamic grounding, toxicity detection, secure data retrieval, audit trail.</td><td>Every model call AgentForce or a Flow makes</td></tr>
+          <tr><td class="name">MuleSoft</td><td>API integration. Anypoint Platform, API Catalog, Topic Center. As of AgentForce 3, can expose any API as an MCP server consumable by AgentForce agents.</td><td>Source systems (SAP, Oracle, etc.)</td></tr>
+          <tr><td class="name">Slack</td><td>The conversational surface. AgentForce agents respond in Slack channels and DMs; Data Cloud notifications fire to Slack in sub-second.</td><td>AgentForce, Data Cloud</td></tr>
+          <tr><td class="name">Tableau</td><td>The analytics surface. Data Cloud feeds Tableau Pulse and dashboards; AgentForce can query Tableau for the answer to a sales rep's "how are we tracking?".</td><td>Data Cloud, source systems</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>The dependency that matters most: AgentForce needs Data Cloud</h4>
+      <p>AgentForce agents reason via the Atlas Reasoning Engine, which uses retrieval-augmented generation (RAG) over Data Cloud's harmonised data. Without Data Cloud, AgentForce agents only see what's directly inside the Salesforce org and a few connected systems. With Data Cloud, they reason over a single profile assembled from every system that's been ingested &mdash; orders from SAP, support history from Zendesk, marketing engagement from Mailchimp. <strong>The Data Cloud licence is the load-bearing one for any serious AgentForce deployment.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 AUTH -->
+<section id="auth">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Authentication</div>
+      <h2 class="section-title">OAuth 2.0, Connected Apps, JWT bearer.</h2>
+      <p class="section-lede">Salesforce auth is OAuth 2.0 in every modern flow, mediated by a <strong>Connected App</strong> in the org. Pick the flow that matches your topology: JWT bearer for server-to-server, Web Server flow for user-context apps, the User-Agent flow for SPAs. The legacy Username-Password flow is deprecated for new use and disabled in many orgs.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Flow</th><th>Use when</th><th>Token type</th></tr></thead>
+        <tbody>
+          <tr><td class="name">JWT bearer</td><td>Server-to-server integration. Cert-based, no user interaction. The default for AgentForce / MuleSoft / backend automations.</td><td>Access token (no refresh)</td></tr>
+          <tr><td class="name">Web Server (auth code)</td><td>User-context apps. Standard authorisation-code flow with refresh tokens.</td><td>Access + refresh</td></tr>
+          <tr><td class="name">Client Credentials</td><td>System-to-system OAuth where a service user is acceptable. Simpler than JWT for low-risk integrations.</td><td>Access (short-lived)</td></tr>
+          <tr><td class="name">Username-Password</td><td>Legacy. Disabled by default in new orgs; do not use in new code.</td><td>Access (deprecated)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c">// JWT bearer flow — the server-to-server default</span>
+<span class="c">// 1. Build a JWT signed with your Connected App's private key</span>
+<span class="c">// 2. POST it to the token endpoint</span>
+<span class="c">// 3. Receive an access_token, use it as Bearer for the REST / SOQL APIs</span>
+
+POST https://login.salesforce.com/services/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&amp;
+assertion=eyJhbGciOiJSUzI1NiIs...   <span class="c">// the signed JWT</span>
+
+<span class="c">// Response</span>
+{
+  <span class="s">"access_token"</span>: <span class="s">"00DXX...!AQ..."</span>,
+  <span class="s">"instance_url"</span>: <span class="s">"https://yourorg.my.salesforce.com"</span>,
+  <span class="s">"token_type"</span>: <span class="s">"Bearer"</span>
+}</pre>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c">// Then call REST or SOQL with the access token</span>
+GET https://yourorg.my.salesforce.com/services/data/v60.0/query/
+    ?q=<span class="s">SELECT+Id,Name,Industry+FROM+Account+LIMIT+10</span>
+Authorization: Bearer 00DXX...!AQ...
+
+<span class="c">// SObject CRUD endpoints — pattern is identical for every object</span>
+GET    /services/data/v60.0/sobjects/Account/{id}
+POST   /services/data/v60.0/sobjects/Account
+PATCH  /services/data/v60.0/sobjects/Account/{id}
+DELETE /services/data/v60.0/sobjects/Account/{id}
+
+<span class="c">// Composite API — batch multiple operations in one round trip</span>
+POST   /services/data/v60.0/composite</pre>
+
+    <div class="info-card fade-up" style="transition-delay: 0.12s">
+      <h4>Connected App scopes are real</h4>
+      <p>A Connected App declares OAuth scopes (<code>api</code>, <code>refresh_token</code>, <code>full</code>, <code>chatter_api</code>, <code>web</code>, and the AgentForce-specific scopes for agent actions). Each scope unlocks a class of API calls. Create one Connected App per integration use case rather than one all-powerful app &mdash; a leaked AgentForce token should not have <code>full</code> access to your org's SOQL endpoint. Rotate the signing certificate annually.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 VS HUBSPOT -->
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Salesforce vs HubSpot</div>
+      <h2 class="section-title">Two CRMs, different shaped customers.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The 2nth CRM sub-domain holds both. They cover the same use case (customer graph + GTM ops) but they're built for different sizes of business and have different ceilings:</p>
+    </div>
+    <div class="compare-wrap fade-up" style="transition-delay: 0.07s">
+      <table class="compare">
+        <thead><tr><th>Concern</th><th>Salesforce</th><th>HubSpot</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Sweet spot</strong></td><td>Enterprise, complex sales, regulated industries</td><td>Mid-market, marketing-led, simpler ops</td></tr>
+          <tr><td><strong>Customisation</strong></td><td>Unlimited via Apex + Flow + Lightning</td><td>Bounded; you bend HubSpot, not extend it</td></tr>
+          <tr><td><strong>Data model</strong></td><td>Custom objects + complex relationships</td><td>Fixed objects + custom properties</td></tr>
+          <tr><td><strong>Query</strong></td><td>SOQL (relationship-traversing)</td><td>Search API (filter-groups, capped at 10k)</td></tr>
+          <tr><td><strong>AI layer</strong></td><td>AgentForce + Einstein + Data Cloud</td><td>Breeze (HubSpot's AI brand)</td></tr>
+          <tr><td><strong>Price floor</strong></td><td>~$25 / user / mo (Starter), real deployments &gt; $100</td><td>Free tier + $20+ / user / mo for paid hubs</td></tr>
+          <tr><td><strong>Implementation</strong></td><td>Partner-led, 3&ndash;12 months to production</td><td>DIY-friendly, weeks to live</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>The 2nth pattern: same role model, different runtime</h4>
+      <p>The six-role partnering model (Revenue Leader, Sales Rep, Marketing Manager, Service Lead, RevOps Engineer, Executive) maps cleanly onto Salesforce, just like it does onto HubSpot. The objects shift: <code>Opportunity</code> in Salesforce replaces <code>Deal</code> in HubSpot; <code>Case</code> replaces <code>Ticket</code>; <code>Lead</code> is a Salesforce-specific concept that HubSpot folds into contacts. The decisions stay with humans; the AI surfaces the next-best action.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 GOTCHAS -->
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Gotchas</div>
+      <h2 class="section-title">Things that only bite in production.</h2>
+      <p class="section-lede">Six failure modes that show up the first time a Salesforce integration goes from sandbox to live.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Governor limits hit at scale, not in unit tests</strong>
+        <p>A trigger that works on 10 records will fail at 200 if it isn't bulkified. The platform won't warn you until production data volumes hit. Always run loops outside DML; always query before the loop, not inside.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Sandbox refresh doesn't include Data Cloud</strong>
+        <p>Standard sandbox refresh copies the core CRM org but Data Cloud has its own provisioning flow and doesn't follow sandbox refresh cycles. Plan AgentForce-touching test data separately.</p>
+      </div>
+      <div class="gotcha">
+        <strong>SOQL row cap is per query, not per call</strong>
+        <p>One query: 50,000 rows max. But aggregate queries with <code>GROUP BY</code> cap at 2,000 grouped results. If you need everything, use the Bulk API 2.0, which has its own async semantics.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Connected App propagation is slow</strong>
+        <p>A new Connected App can take 5&ndash;10 minutes to be ready for OAuth across all Salesforce datacenter routes. CI pipelines that create + immediately use an App will get 401s that disappear on a retry.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Flow vs Apex DML order is not what you think</strong>
+        <p>A Record-Triggered Flow on an Account update can fire before, after, or both, depending on the configuration. Mixing Apex triggers and Flows on the same object frequently produces "ghost updates" the first time around. Pick one automation tier per object; don't mix.</p>
+      </div>
+      <div class="gotcha">
+        <strong>API versions are pinned per Connected App</strong>
+        <p>Salesforce's REST API is versioned (<code>v60.0</code>, <code>v61.0</code>, ...). A Connected App declares a default version. New SObject fields only show up in the version they were introduced. Always pin and bump deliberately.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 SA CONTEXT -->
+<section id="sa">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; South African context</div>
+      <h2 class="section-title">Hyperforce, POPIA, and the GAR question.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Hyperforce in South Africa.</strong> Salesforce's <code>Hyperforce</code> is the multi-region public-cloud infrastructure that hosts modern Salesforce orgs (AWS, GCP, Azure). As of mid-2026 there is no Hyperforce datacenter in South Africa &mdash; SA-based orgs typically land in <code>eu-central-1</code> (Frankfurt) or <code>eu-west-1</code> (Ireland). Data residency for POPIA Section 72 analysis happens at the cluster level; you'll want a Salesforce-provided data-residency commitment in writing as part of any enterprise agreement.</p>
+      <p><strong>POPIA and the Einstein Trust Layer.</strong> The Trust Layer's "zero data retention" guarantee with model providers is the load-bearing claim for POPIA-sensitive workloads &mdash; OpenAI, Anthropic, and Google don't retain Salesforce-sent prompts or completions on their side. That's the contractual basis on which an SA Information Officer can sign off on AgentForce processing customer data. Without that guarantee, the same workflow would need a local-inference or air-gapped setup.</p>
+      <p><strong>FX and the digital-labour pitch.</strong> AgentForce's Flex Credits are USD-priced ($0.10 per credit). For SA businesses, every AgentForce action carries an FX-translated cost in rand &mdash; budget envelope planning needs to model ZAR depreciation. A "digital labour is cheaper than human labour" claim that pencils at R18/USD looks different at R22/USD. Pre-commit pricing is worth the discount for predictability.</p>
+      <p><strong>The BBBEE / GAR question.</strong> Salesforce's SA presence has expanded since the mid-2020s but it remains a US-headquartered vendor. For B-BBEE scorecards and government tenders that require local technology spend, a Salesforce licence rarely counts. Local System Integrator partners that hold the Salesforce licence on behalf of clients can change that calculus; budget for that conversation early in any procurement cycle.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 CONNECTIONS -->
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Connections</div>
+      <h2 class="section-title">Where Salesforce links in the tree.</h2>
+      <p class="section-lede">Salesforce is at the centre of the GTM data fabric. Most of the AI value comes from the layers wrapped around it.</p>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../../agents/agentforce.html" class="connect-node">
+        <span class="tag">agents/agentforce</span>
+        <div class="skill">AgentForce</div>
+        <div class="why">The agent runtime built on the Salesforce platform. AgentForce agents call into SObjects via SOQL, run Apex actions, and trigger Flows.</div>
+      </a>
+      <a href="../../data/data-cloud.html" class="connect-node">
+        <span class="tag">data/data-cloud</span>
+        <div class="skill">Salesforce Data Cloud</div>
+        <div class="why">The unified customer profile that AgentForce reasons over. CDP layer on top of the core Salesforce CRM and external sources.</div>
+      </a>
+      <a href="./hubspot.html" class="connect-node">
+        <span class="tag">biz/crm/hubspot</span>
+        <div class="skill">HubSpot (sibling)</div>
+        <div class="why">The other half of biz/crm. Same role model, different platform &mdash; HubSpot for mid-market and marketing-led, Salesforce for enterprise and complex sales.</div>
+      </a>
+      <a href="../../agents/mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">MuleSoft can expose any Salesforce API (or any other system MuleSoft is connected to) as an MCP server. AgentForce 3+ consumes MCP natively.</div>
+      </a>
+      <a href="../../tech/cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">The runtime SA teams use for the lightweight integration layer around Salesforce &mdash; webhook receivers, sync workers, SA-region edge that holds POPIA-bound transformations.</div>
+      </a>
+      <div class="connect-node soon">
+        <span class="tag">tech/mulesoft</span>
+        <div class="skill">MuleSoft (soon)</div>
+        <div class="why">The integration layer that bridges Salesforce to SAP, Oracle, Workday, and the rest of the enterprise fabric. Now also the "API-as-MCP-server" surface for AgentForce.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Go deeper.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.salesforce.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">salesforce.com</span>
+        <span class="r-url">salesforce.com</span>
+      </a>
+      <a href="https://developer.salesforce.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Developer</span>
+        <span class="r-title">Salesforce Developers</span>
+        <span class="r-url">developer.salesforce.com</span>
+      </a>
+      <a href="https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">SOQL &amp; SOSL reference</span>
+        <span class="r-url">developer.salesforce.com/.../soql_sosl</span>
+      </a>
+      <a href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">Apex Developer Guide</span>
+        <span class="r-url">developer.salesforce.com/.../apexcode</span>
+      </a>
+      <a href="https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">REST API Developer Guide</span>
+        <span class="r-url">developer.salesforce.com/.../api_rest</span>
+      </a>
+      <a href="https://architect.salesforce.com/docs/architect/fundamentals/guide/enterprise-agentic-architecture" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Architecture</span>
+        <span class="r-title">Enterprise Agentic Architecture &amp; Design Patterns</span>
+        <span class="r-url">architect.salesforce.com/.../enterprise-agentic-architecture</span>
+      </a>
+      <a href="https://trailhead.salesforce.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Learning</span>
+        <span class="r-title">Trailhead &middot; official training</span>
+        <span class="r-url">trailhead.salesforce.com</span>
+      </a>
+      <a href="https://github.com/forcedotcom" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">forcedotcom GitHub org</span>
+        <span class="r-url">github.com/forcedotcom</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">CRM sub-hub</a>
+      <a href="https://www.salesforce.com" target="_blank" rel="noopener">Salesforce &nearr;</a>
+      <a href="https://developer.salesforce.com" target="_blank" rel="noopener">Developers &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
