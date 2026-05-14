@@ -1170,46 +1170,62 @@
       <p class="section-desc">Recently published skill nodes — each one making the tree more connected and every agent more capable.</p>
     </div>
     <div class="explainer-grid fade-up" style="transition-delay: 0.1s">
-      <a href="explainers/tech/cloudflare/workers.html" class="explainer-card">
+      <a href="sa-llm-residency-validation.md" class="explainer-card" target="_blank" rel="noopener" style="border-left: 3px solid var(--rose);">
         <div class="explainer-meta">
-          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Technology</span>
+          <span class="explainer-domain-tag" style="background: var(--rose-soft); color: var(--rose);">Validation</span>
+          <span class="explainer-tier-tag">Update &middot; 2026-05-14</span>
+        </div>
+        <h4>SA LLM Residency &mdash; Validation Memo</h4>
+        <p>Cross-page audit correcting three overstated SA-residency claims: Claude on Bedrock <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--sky);">af-south-1</code> (endpoint + logs only, inference routes globally), Azure OpenAI in <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--sky);">southafricanorth</code> (Regional PTU only, not Global Standard), and the "only major LLM vendor" framing (Vertex AI <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--sky);">africa-south1</code> also present). Memo with primary sources.</p>
+      </a>
+      <a href="explainers/agents/agentforce.html" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: rgba(99, 102, 241, 0.12); color: var(--indigo);">Agents</span>
           <span class="explainer-tier-tag">Free</span>
         </div>
-        <h4>Cloudflare Workers &amp; Pages</h4>
-        <p>Edge compute, deployment patterns, and the operational model for serverless at the edge.</p>
+        <h4>AgentForce</h4>
+        <p>Salesforce's agent platform. Atlas Reasoning Engine, five-attribute agents, Flex Credits at $0.10. Grounded in Data Cloud, wrapped by the Einstein Trust Layer.</p>
       </a>
-      <a href="explainers/tech/frappe/framework.html" class="explainer-card">
-        <div class="explainer-meta">
-          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Technology</span>
-          <span class="explainer-tier-tag">Free</span>
-        </div>
-        <h4>Frappe Framework</h4>
-        <p>The metadata-driven Python full-stack underneath ERPNext, HRMS, CRM, Helpdesk, LMS, and the rest of the Frappe ecosystem. Doctypes, hooks, REST + RPC, Bench.</p>
-      </a>
-      <a href="explainers/tech/cloudflare/edge-africa-me.html" class="explainer-card">
-        <div class="explainer-meta">
-          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Technology</span>
-          <span class="explainer-tier-tag">Free</span>
-        </div>
-        <h4>Cloudflare Edge: Africa &amp; Middle East</h4>
-        <p>Regional PoP map — twenty-plus African cities, seventeen across the Middle East. Where Workers actually execute when the user is in Nairobi, Cairo, or Riyadh.</p>
-      </a>
-      <div class="explainer-card soon">
-        <div class="explainer-meta">
-          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Technology</span>
-          <span class="explainer-tier-tag">Coming soon</span>
-        </div>
-        <h4>Tech · Architecture</h4>
-        <p>ADRs, C4 diagrams, trade-off matrices, anti-pattern detection — the skill every 2nth build draws on.</p>
-      </div>
-      <div class="explainer-card soon">
+      <a href="explainers/biz/crm/salesforce.html" class="explainer-card">
         <div class="explainer-meta">
           <span class="explainer-domain-tag" style="background: var(--warm-soft); color: var(--warm);">Business</span>
-          <span class="explainer-tier-tag">Coming soon</span>
+          <span class="explainer-tier-tag">Free</span>
         </div>
-        <h4>Sage X3 Integration</h4>
-        <p>Enterprise ERP via GraphQL — the Syracuse API, authentication patterns, and AI-ready data flows.</p>
-      </div>
+        <h4>Salesforce</h4>
+        <p>The enterprise CRM platform &mdash; SObject + SOQL + Apex + Flow on Lightning, with AgentForce, Data Cloud, Einstein, MuleSoft, Slack, and Tableau wrapped around it.</p>
+      </a>
+      <a href="explainers/data/data-cloud.html" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: rgba(56, 189, 248, 0.12); color: var(--sky);">Data</span>
+          <span class="explainer-tier-tag">Free</span>
+        </div>
+        <h4>Salesforce Data Cloud</h4>
+        <p>The Customer Data Platform behind AgentForce. Real-time ingestion, identity resolution, harmonisation across structured + unstructured sources, RAG-ready semantic search.</p>
+      </a>
+      <a href="explainers/tech/mulesoft.html" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: rgba(37, 99, 235, 0.1); color: var(--blue-glow);">Technology</span>
+          <span class="explainer-tier-tag">Free</span>
+        </div>
+        <h4>MuleSoft</h4>
+        <p>Anypoint Platform plus the AgentForce-era overlay &mdash; API Catalog, MuleSoft MCP Server, Agent Fabric. The path that turns existing enterprise APIs into MCP servers.</p>
+      </a>
+      <a href="explainers/data/analytics/tableau.html" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: rgba(56, 189, 248, 0.12); color: var(--sky);">Data</span>
+          <span class="explainer-tier-tag">Free</span>
+        </div>
+        <h4>Tableau</h4>
+        <p>Salesforce's BI platform. Tableau Cloud / Pulse / Next. Zero-copy with Data Cloud; MCP-callable from AgentForce via Tableau Next.</p>
+      </a>
+      <a href="explainers/agents/skills.html" class="explainer-card">
+        <div class="explainer-meta">
+          <span class="explainer-domain-tag" style="background: rgba(99, 102, 241, 0.12); color: var(--indigo);">Agents</span>
+          <span class="explainer-tier-tag">Free</span>
+        </div>
+        <h4>Agent Skills</h4>
+        <p>Anthropic-originated open standard for packaging agent capabilities as folders. <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--sky);">SKILL.md</code> + progressive disclosure. Native in Claude Code, Claude.ai, and the API.</p>
+      </a>
     </div>
   </div>
 </section>
