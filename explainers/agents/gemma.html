@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gemma &mdash; know.2nth.ai</title>
-<meta name="description" content="Gemma — Google's open-weights model family from the Gemini research line. Gemma 3 is the current generation (270M / 1B / 4B / 12B / 27B variants), multimodal vision-text, 128k context window, available under a permissive licence and runnable on Ollama, vLLM, Hugging Face. The local-first option for teams that want frontier-quality inference without cloud dependency.">
+<meta name="description" content="Gemma — Google's open-weights model family from the Gemini research line. Gemma 4 is the current generation, shipping in four sizes (E2B / E4B / 31B dense / 26B A4B MoE), multimodal across text + image + video + audio, 128k context on small models / 256k on medium, with native function-calling and configurable thinking modes. Permissive licence; runs on Ollama, vLLM, Hugging Face. The local-first option for teams that want frontier-quality inference without cloud dependency.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="know.2nth.ai">
 <meta property="og:url" content="https://know.2nth.ai/explainers/agents/gemma">
 <meta property="og:title" content="Gemma &mdash; know.2nth.ai">
-<meta property="og:description" content="Gemma — Google's open-weights model family. Gemma 3 (270M-27B), multimodal, 128k context. Runs on Ollama, vLLM, Hugging Face. Local-first frontier-quality inference.">
+<meta property="og:description" content="Gemma — Google's open-weights family. Gemma 4 (E2B / E4B / 31B / 26B A4B MoE), text + image + video + audio, 128k–256k context, function-calling, thinking modes. Runs on Ollama, vLLM, Hugging Face. Local-first frontier-quality inference.">
 <meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Gemma &mdash; know.2nth.ai">
-<meta name="twitter:description" content="Gemma — Google's open-weights family. Gemma 3 multimodal, 128k context, runs locally. Frontier quality without cloud dependency.">
+<meta name="twitter:description" content="Gemma — Google's open-weights family. Gemma 4 (E2B / E4B / 31B / 26B A4B MoE), multimodal text + image + video + audio, 128k–256k context, runs locally.">
 <meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -151,14 +151,14 @@
       Gemini's research, <span class="gradient">in open weights you can run.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      Gemma is Google's open-weights model family, built from the same research line that produces Gemini. Gemma 3 (the current generation, March 2025) ships in five sizes &mdash; 270M / 1B / 4B / 12B / 27B &mdash; with multimodal vision-text understanding, a 128k-token context window, and a permissive licence allowing commercial use. Available on Ollama, Hugging Face, and Vertex AI Model Garden. The local-first option for teams that want frontier-quality inference without the cloud dependency.
+      Gemma is Google's open-weights model family, built from the same research line that produces Gemini. <strong>Gemma 4</strong> (current generation) ships in four sizes &mdash; <strong>E2B</strong> and <strong>E4B</strong> for ultra-mobile / edge / browser, a <strong>31B dense</strong> model for server-grade single-host inference, and a <strong>26B A4B Mixture-of-Experts</strong> for high-throughput reasoning. Multimodal across text, image, video, and audio (audio is native on E2B and E4B); 128k context on the small models, 256k on the medium. Native function-calling and configurable thinking modes. Permissive licence; runs on Ollama, Hugging Face, and Vertex AI Model Garden. The local-first option for teams that want frontier-quality inference without the cloud dependency.
     </p>
     <div class="hero-meta fade-up" style="transition-delay: 0.15s">
-      <span class="pill green">Gemma 3 &middot; Mar 2025</span>
+      <span class="pill green">Gemma 4 &middot; current</span>
       <span class="pill indigo">Open weights</span>
-      <span class="pill accent">270M &middot; 1B &middot; 4B &middot; 12B &middot; 27B</span>
-      <span class="pill">128k context</span>
-      <span class="pill warn">Multimodal &middot; vision-text</span>
+      <span class="pill accent">E2B &middot; E4B &middot; 31B &middot; 26B A4B</span>
+      <span class="pill">128k &mdash; 256k context</span>
+      <span class="pill warn">Multimodal &middot; text + image + video + audio</span>
     </div>
   </div>
 </section>
@@ -170,13 +170,13 @@
       <h2 class="section-title">Open weights from the team that makes Gemini.</h2>
     </div>
     <div class="prose fade-up" style="transition-delay: 0.05s">
-      <p><strong>Gemma is a family of open-weights models from Google DeepMind</strong>, distilled from the research and training infrastructure that produces Gemini. The first release was Gemma 1 (February 2024) at 2B and 7B sizes; Gemma 2 added 9B and 27B; <strong>Gemma 3 (March 2025)</strong> is the current generation and the one most teams should default to.</p>
-      <p>Gemma 3 ships in five sizes (270M, 1B, 4B, 12B, 27B), all multimodal vision-text capable, with a 128k-token context window. The licence is permissive enough for commercial deployments &mdash; Google's <em>Gemma Terms of Use</em> grants free use including for commercial work, with restrictions on harmful applications. Not a fully open-source licence (e.g. Apache 2.0) but practically permissive for almost every business case.</p>
-      <p><strong>What "Gemma 4" looks like.</strong> As of mid-2026, Gemma 3 is the current line and Google has signalled the next generation in research papers but not shipped it. Treat any "Gemma 4" mention as forward-looking until Google confirms; this leaf will refresh when it does. The cadence so far has been ~12 months between major versions, so a follow-up generation is plausible in 2026.</p>
+      <p><strong>Gemma is a family of open-weights models from Google DeepMind</strong>, distilled from the research and training infrastructure that produces Gemini. The first release was Gemma 1 (February 2024) at 2B and 7B sizes; Gemma 2 added 9B and 27B; Gemma 3 (March 2025) shipped at 270M / 1B / 4B / 12B / 27B with vision-text multimodality; <strong>Gemma 4</strong> is the current generation and the one most teams should default to.</p>
+      <p>Gemma 4 ships in four sizes &mdash; <strong>E2B</strong> and <strong>E4B</strong> (small, effective-parameter naming for the mobile / edge / browser class), a <strong>31B</strong> dense model, and a <strong>26B A4B</strong> Mixture-of-Experts. Multimodal across text + image (object detection, document / PDF parsing, OCR including multilingual, handwriting, pointing) + video (frame-sequence understanding) + audio (native on the E2B and E4B models). Context window is 128k on the small models and 256k on the medium. Native function-calling support is built in, and all four sizes are designed as capable reasoners with configurable thinking modes. Google's <em>Gemma Terms of Use</em> is the licence &mdash; not Apache 2.0, but permissive enough for almost every commercial case.</p>
+      <p><strong>Why the rename in the small range.</strong> The "E2B" / "E4B" naming replaces Gemma 3's 270M / 1B / 4B / 12B grading. The <em>E</em> stands for "effective" &mdash; the parameter count that determines runtime behaviour on a phone or browser, rather than the raw parameter count of the underlying model. The shift signals Gemma 4's deliberate design for ultra-mobile and edge deployment alongside the server-grade 31B and 26B-A4B options.</p>
     </div>
     <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
       <h4>Why "open weights from a frontier lab" matters</h4>
-      <p>Most open-weights families are either research-lab (academic-quality benchmarks but production-rough deployment), or post-frontier (the lab's earlier-generation models released after the frontier moves on). Gemma is closer to the latter &mdash; not the same as Gemini Pro 2.5, but produced by the team that ships Gemini, with the production-grade tokeniser, training data curation, and safety tuning that comes from a frontier-lab pipeline. The size-for-size quality is competitive with Llama 3.x and meaningfully ahead of Mistral / Qwen for most multimodal benchmarks.</p>
+      <p>Most open-weights families are either research-lab (academic-quality benchmarks but production-rough deployment), or post-frontier (the lab's earlier-generation models released after the frontier moves on). Gemma is closer to the latter &mdash; not the same as Gemini Pro on the closed side, but produced by the team that ships Gemini, with the production-grade tokeniser, training data curation, and safety tuning that comes from a frontier-lab pipeline. Gemma 4's additions &mdash; native audio on the small models, function-calling, configurable thinking modes, MoE at the 26B point &mdash; are the same operational features Gemini ships on the closed side, brought into open weights with about a generation of lag.</p>
     </div>
   </div>
 </section>
@@ -184,27 +184,26 @@
 <section id="lineup">
   <div class="container">
     <div class="fade-up">
-      <div class="section-label">02 &middot; The Gemma 3 line</div>
-      <h2 class="section-title">Five sizes, one quality curve.</h2>
-      <p class="section-lede">The Gemma 3 family covers a deliberate range &mdash; from edge devices (270M, 1B) to laptops (4B, 12B) to small servers (27B). The breakpoints map roughly to which hardware you'd actually deploy on. All five share the same multimodal capability and 128k context window; the difference is parameter count, throughput, and quality-on-hard-tasks.</p>
+      <div class="section-label">02 &middot; The Gemma 4 line</div>
+      <h2 class="section-title">Four sizes, two quality curves.</h2>
+      <p class="section-lede">Gemma 4 splits into two ranges. The <strong>small</strong> models (E2B, E4B) are built for ultra-mobile, edge, and browser deployment &mdash; 128k context, native audio, on-device practical. The <strong>medium</strong> models (31B dense, 26B A4B MoE) are server-grade and 256k context; the MoE option gives high throughput for advanced reasoning at lower active-parameter cost than the dense 31B.</p>
     </div>
 
     <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
       <table class="compare">
         <thead><tr><th>Size</th><th>Hardware</th><th>Best at</th></tr></thead>
         <tbody>
-          <tr><td><strong>Gemma 3 270M</strong></td><td>Phones, embedded, Raspberry Pi 5</td><td>On-device assistants, classification, basic chat</td></tr>
-          <tr><td><strong>Gemma 3 1B</strong></td><td>16GB RAM laptops, edge devices</td><td>Lightweight RAG, summarisation, simple agents</td></tr>
-          <tr><td><strong>Gemma 3 4B</strong></td><td>32GB MacBook, mid-tier laptops</td><td>The default "good local model" — agents, chat, RAG</td></tr>
-          <tr><td><strong>Gemma 3 12B</strong></td><td>64GB MacBook Pro, single GPU 12GB+ VRAM</td><td>Where Gemma starts feeling like Claude Haiku</td></tr>
-          <tr><td><strong>Gemma 3 27B</strong></td><td>64GB+ MacBook, RTX 4090, single H100</td><td>Frontier-grade open-weights tasks; reasoning, code</td></tr>
+          <tr><td><strong>Gemma 4 E2B</strong></td><td>Phones, embedded, browser (Chrome), Pixel</td><td>On-device assistants, classification, basic chat. Audio in / out native.</td></tr>
+          <tr><td><strong>Gemma 4 E4B</strong></td><td>Laptops (16&ndash;32GB RAM), edge devices, mid-tier mobile</td><td>The default "good local model" &mdash; agents, chat, RAG, multimodal including audio</td></tr>
+          <tr><td><strong>Gemma 4 31B (dense)</strong></td><td>64GB+ MacBook Pro, single GPU 24GB+ VRAM (RTX 4090, H100)</td><td>Frontier-grade open-weights tasks; reasoning, code, server-side multimodal</td></tr>
+          <tr><td><strong>Gemma 4 26B A4B (MoE)</strong></td><td>Same server class as 31B but lower active params per token</td><td>High-throughput inference; advanced reasoning at a fraction of the 31B compute cost per token</td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="info-card green fade-up" style="transition-delay: 0.08s">
       <h4>The default pick for most workloads</h4>
-      <p><strong>Gemma 3:4b is the local-LLM default for 2026.</strong> Fits on a 32GB MacBook, runs at chat speed (15-30 tokens/sec on M3), handles multimodal input, supports 128k context. Quality is comparable to GPT-3.5 / Claude Haiku from a year or two ago &mdash; good enough for the vast majority of internal tooling and agent use cases. <code>ollama run gemma3:4b</code> is the canonical "try it now" command.</p>
+      <p><strong>Gemma 4 E4B is the local-LLM default in 2026.</strong> Fits on a 16&ndash;32GB MacBook, runs at chat speed on Apple Silicon, handles full multimodal input including audio, supports 128k context, and has native function-calling for agent use. Quality is competitive with the previous closed-frontier mid-tier &mdash; good enough for the vast majority of internal tooling and agent use cases. <code>ollama run gemma4</code> is the canonical "try it now" command; <code>ollama run gemma4:26b</code> for the MoE on a server.</p>
     </div>
   </div>
 </section>
@@ -214,16 +213,16 @@
     <div class="fade-up">
       <div class="section-label">03 &middot; vs Llama, Qwen, Mistral, and Gemini Pro</div>
       <h2 class="section-title">When Gemma is the right open-weights pick &mdash; and when it isn't.</h2>
-      <p class="section-lede">Gemma has direct open-weights competitors at every size point. The honest comparison: Llama 3.3 dominates the long tail of community fine-tunes; Qwen 2.5 leads on coding-specific work; Mistral Large 2 has stronger function-calling. Gemma 3 leads on multimodal vision and is the most consistently safety-tuned for general business use.</p>
+      <p class="section-lede">Gemma has direct open-weights competitors at every size point. The honest comparison: Llama dominates the long tail of community fine-tunes; Qwen leads on coding-specific work; Mistral has stronger European-language depth. Gemma 4 leads on full multimodal coverage (text + image + video + audio) and on first-party safety tuning and function-calling for general business use.</p>
     </div>
 
     <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
       <table class="compare">
         <thead><tr><th>Family</th><th>Strengths</th><th>Watch out for</th></tr></thead>
         <tbody>
-          <tr><td><strong>Gemma 3</strong></td><td>Multimodal vision, safety tuning, 128k context, broad licence</td><td>Smaller community fine-tune ecosystem than Llama; not as code-strong as Qwen-coder</td></tr>
-          <tr><td><strong>Llama 3.3</strong></td><td>Largest community ecosystem, best fine-tunes, best instruction-following at 70B</td><td>Meta licence has commercial restrictions over 700M MAU; vision support uneven</td></tr>
-          <tr><td><strong>Qwen 2.5</strong></td><td>Best for code (Qwen Coder), strong multilingual</td><td>Chinese training emphasis means English-only benchmarks lag slightly</td></tr>
+          <tr><td><strong>Gemma 4</strong></td><td>Full multimodal (text + image + video + audio), native function-calling, configurable thinking modes, 256k context on medium, broad licence, MoE option</td><td>Smaller community fine-tune ecosystem than Llama; not as code-strong as Qwen-coder</td></tr>
+          <tr><td><strong>Llama 4 / 3.3</strong></td><td>Largest community ecosystem, best fine-tunes, best instruction-following at 70B+</td><td>Meta licence has commercial restrictions over 700M MAU; vision support uneven</td></tr>
+          <tr><td><strong>Qwen 2.5 / 3</strong></td><td>Best for code (Qwen Coder), strong multilingual</td><td>Chinese training emphasis means English-only benchmarks lag slightly</td></tr>
           <tr><td><strong>Mistral Large 2</strong></td><td>Function-calling reliability, French/European multilingual</td><td>Smaller, less open ecosystem</td></tr>
           <tr><td><strong>Phi-4</strong></td><td>Smallest credible reasoning model; runs on phones</td><td>Limited context, no multimodal</td></tr>
           <tr><td><strong>Gemini 2.5 Pro (closed)</strong></td><td>1M+ context, frontier reasoning, native search grounding</td><td>Cloud-only, USD per-token billing, data leaves device</td></tr>
@@ -232,8 +231,8 @@
     </div>
 
     <div class="info-card amber fade-up" style="transition-delay: 0.08s">
-      <h4>Gemma 3 vs Gemini 2.5 Pro &mdash; not the same model</h4>
-      <p>It's tempting to read "Gemma 3 27B" as "smaller Gemini." It isn't. Gemini 2.5 Pro is a much larger, much more capable closed model with proprietary training data and post-training. Gemma 3 is a deliberate distillation that runs locally; the gap to Gemini 2.5 Pro on hard reasoning, long context, or specialist domains is real. <strong>Use Gemma 3 for tasks that don't need frontier; use Gemini 2.5 Pro (or Claude Opus, GPT-5) when they do.</strong> Both running side-by-side via the same agent framework is increasingly the production pattern.</p>
+      <h4>Gemma 4 vs Gemini Pro &mdash; not the same model</h4>
+      <p>It's tempting to read "Gemma 4 31B" as "smaller Gemini." It isn't. Gemini Pro on the closed side is a much larger, much more capable model with proprietary training data and post-training. Gemma 4 is a deliberate distillation that runs locally; the gap to closed Gemini on hard reasoning, long context, or specialist domains is real. <strong>Use Gemma 4 for tasks that don't need frontier; use closed Gemini (or Claude, GPT) when they do.</strong> Both running side-by-side via the same agent framework is increasingly the production pattern.</p>
     </div>
   </div>
 </section>
@@ -250,7 +249,7 @@
       <div class="stack-cell">
         <span class="layer">Local &middot; dev</span>
         <h4>Ollama</h4>
-        <p><code>ollama run gemma3:4b</code>. The simplest path. OpenAI-compatible API at <code>localhost:11434</code>. Full quantisation options. Default for development.</p>
+        <p><code>ollama run gemma4</code>. The simplest path. OpenAI-compatible API at <code>localhost:11434</code>. Full quantisation options. Default for development.</p>
       </div>
       <div class="stack-cell">
         <span class="layer">Server &middot; prod</span>
@@ -270,20 +269,22 @@
     </div>
 
     <div class="prose fade-up" style="transition-delay: 0.08s">
-      <p>The "try Gemma 3 in five minutes" path:</p>
+      <p>The "try Gemma 4 in five minutes" path:</p>
     </div>
 
     <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># Install Ollama (macOS / Linux)</span>
 curl -fsSL https://ollama.com/install.sh | sh
 
-<span class="c"># Pull and run Gemma 3 4B</span>
-<span class="k">ollama run</span> gemma3:4b
+<span class="c"># Pull and run Gemma 4 (E4B by default; tags for E2B, 31B dense, 26B MoE)</span>
+<span class="k">ollama run</span> gemma4
+<span class="c"># or the MoE on a server-class host:</span>
+<span class="k">ollama run</span> gemma4:26b
 
 <span class="c"># Or via the OpenAI-compatible API</span>
 curl http://localhost:11434/v1/chat/completions \
   -H <span class="s">"Content-Type: application/json"</span> \
   -d <span class="s">'{
-    "model": "gemma3:4b",
+    "model": "gemma4",
     "messages": [
       {"role": "user", "content": "Summarise the last 18 months of SA reserve bank policy in 3 bullets."}
     ]
@@ -298,9 +299,9 @@ curl http://localhost:11434/v1/chat/completions \
       <h2 class="section-title">Open weights solve the cross-border problem.</h2>
     </div>
     <div class="prose fade-up" style="transition-delay: 0.05s">
-      <p><strong>POPIA + cross-border.</strong> A SA bank running customer-data summarisation on Claude or GPT-4 is making a Section 72 cross-border transfer. Same workload on a locally-hosted Gemma 3 is no transfer at all. For PII-bearing automation (loan summary, claim triage, complaint classification) where frontier-model quality isn't required, Gemma 3 27B running on a SA-resident GPU is genuinely the regulatory-clean answer.</p>
-      <p><strong>Cost vs Vertex AI.</strong> If your data residency story doesn't require local inference, Vertex AI Model Garden hosts Gemma in <code>africa-south1</code> (Johannesburg). Per-token costs are billed in USD and depend on the variant; for high-volume workloads, hosting on dedicated Vertex AI endpoints can be more cost-effective than per-token API consumption, but worse than self-hosted on Hetzner Frankfurt with regional latency tolerance.</p>
-      <p><strong>Load-shedding fit.</strong> Same as Ollama in general &mdash; a maxed MacBook running Gemma 3 4B on battery is genuinely productive during stage 6. The "your AI dev tooling works through outages" story is a real differentiator for SA teams.</p>
+      <p><strong>POPIA + cross-border.</strong> A SA bank running customer-data summarisation on Claude or GPT is making a Section 72 cross-border transfer. The same workload on a locally-hosted Gemma 4 is no transfer at all. For PII-bearing automation (loan summary, claim triage, complaint classification) where frontier-model quality isn't required, Gemma 4 31B (dense) or 26B A4B (MoE) running on a SA-resident GPU is genuinely the regulatory-clean answer.</p>
+      <p><strong>Cost vs Vertex AI.</strong> If the data residency story doesn't require local inference, Vertex AI Model Garden hosts Gemma in <code>africa-south1</code> (Johannesburg). Per-token costs are billed in USD and depend on the variant; for high-volume workloads, hosting on dedicated Vertex AI endpoints can be more cost-effective than per-token API consumption, but worse than self-hosted on Hetzner Frankfurt with regional latency tolerance.</p>
+      <p><strong>Load-shedding fit.</strong> Same as Ollama in general &mdash; a MacBook running Gemma 4 E4B on battery is genuinely productive during stage 6. The "AI dev tooling works through outages" story is a real differentiator for SA teams. And the native audio support on E2B / E4B means voice-driven local agents become practical without a cloud round-trip.</p>
     </div>
   </div>
 </section>
@@ -320,12 +321,12 @@ curl http://localhost:11434/v1/chat/completions \
       <a href="ollama.html" class="connect-node">
         <span class="tag">agents/ollama</span>
         <div class="skill">Ollama</div>
-        <div class="why">The default local serving path for Gemma. <code>ollama run gemma3:4b</code> is the canonical "try it" command.</div>
+        <div class="why">The default local serving path for Gemma. <code>ollama run gemma4</code> is the canonical "try it" command.</div>
       </a>
       <a href="google-adk.html" class="connect-node">
         <span class="tag">agents/google-adk</span>
         <div class="skill">Google ADK</div>
-        <div class="why">Same Google research lineage. ADK + Gemma 3 is the all-Google open-weights stack, useful when you want the framework and model to share assumptions.</div>
+        <div class="why">Same Google research lineage. ADK + Gemma 4 is the all-Google open-weights stack, useful when the framework and model should share assumptions.</div>
       </a>
       <a href="../tech/google/" class="connect-node">
         <span class="tag">tech/google</span>
@@ -358,15 +359,30 @@ curl http://localhost:11434/v1/chat/completions \
         <span class="r-title">Gemma official site</span>
         <span class="r-url">ai.google.dev/gemma</span>
       </a>
-      <a href="https://huggingface.co/google/gemma-3-27b-it" class="resource" target="_blank" rel="noopener">
-        <span class="r-kind">Weights</span>
-        <span class="r-title">Gemma 3 27B IT (Hugging Face)</span>
-        <span class="r-url">huggingface.co/google/gemma-3-27b-it</span>
+      <a href="https://ai.google.dev/gemma/docs/core/model_card_4" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Model card</span>
+        <span class="r-title">Gemma 4 model card</span>
+        <span class="r-url">ai.google.dev/gemma/docs/core/model_card_4</span>
       </a>
-      <a href="https://ollama.com/library/gemma3" class="resource" target="_blank" rel="noopener">
+      <a href="https://huggingface.co/google/gemma-4-31B" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Weights</span>
+        <span class="r-title">Gemma 4 31B (Hugging Face)</span>
+        <span class="r-url">huggingface.co/google/gemma-4-31B</span>
+      </a>
+      <a href="https://huggingface.co/google/gemma-4-26B-A4B" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Weights &middot; MoE</span>
+        <span class="r-title">Gemma 4 26B A4B (Hugging Face)</span>
+        <span class="r-url">huggingface.co/google/gemma-4-26B-A4B</span>
+      </a>
+      <a href="https://huggingface.co/google/gemma-4-E4B-it" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Weights &middot; mobile</span>
+        <span class="r-title">Gemma 4 E4B-IT (Hugging Face)</span>
+        <span class="r-url">huggingface.co/google/gemma-4-E4B-it</span>
+      </a>
+      <a href="https://ollama.com/library/gemma4" class="resource" target="_blank" rel="noopener">
         <span class="r-kind">Local serve</span>
-        <span class="r-title">Gemma 3 on Ollama</span>
-        <span class="r-url">ollama.com/library/gemma3</span>
+        <span class="r-title">Gemma 4 on Ollama</span>
+        <span class="r-url">ollama.com/library/gemma4</span>
       </a>
       <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/open-models/use-gemma" class="resource" target="_blank" rel="noopener">
         <span class="r-kind">Managed serve</span>
