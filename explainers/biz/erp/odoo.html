@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odoo &mdash; know.2nth.ai</title>
+<meta name="description" content="Odoo — Belgian-origin open-source ERP. Python + PostgreSQL, modular architecture, three editions (Community / Enterprise / Odoo.sh). Latest is Odoo 18 with 19 emerging. Native XML-RPC and JSON-RPC APIs; the Odoo Apps Store now hosts multiple MCP server modules that expose the ERP as natural-language-CRUD to Claude, ChatGPT, and Cursor agents. The most code-friendly ERP in the open-source field and the strongest agentic story among open-source ERPs in 2026.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/biz/erp/odoo">
+<meta property="og:title" content="Odoo &mdash; know.2nth.ai">
+<meta property="og:description" content="Odoo — Belgian-origin open-source ERP. Python + PostgreSQL, three editions, native XML-RPC / JSON-RPC, and a growing roster of MCP server modules on the Apps Store for AI-agent integration.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Odoo &mdash; know.2nth.ai">
+<meta name="twitter:description" content="Odoo — open-source ERP, Python + Postgres, three editions, native MCP integrations via the Apps Store.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(245, 158, 11, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(245, 158, 11, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; --domain: var(--warm); --domain-glow: var(--warm-glow); }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(245, 158, 11, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(245, 158, 11, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.warm { width: 600px; height: 600px; background: var(--warm); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--warm-glow); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--warm-glow); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--warm-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 64px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warm-glow); box-shadow: 0 0 12px var(--warm-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 14ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--warm), var(--warm-glow), #FDE047); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .pill.indigo { background: var(--indigo-soft); color: var(--indigo); border-color: rgba(99, 102, 241, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  section { padding: 52px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow); margin-bottom: 14px; }
+  .section-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 700; letter-spacing: -0.8px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 32px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--warm-glow); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .n { color: #FCD34D; }
+  pre.code .h { color: var(--warm-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card.rose { border-left: 3px solid var(--rose); }
+  .info-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .info-card code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--ink-deep); border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px; color: var(--warm-glow); }
+  [data-theme="light"] .info-card code { background: rgba(15, 23, 42, 0.06); }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare-wrap.wide { max-width: none; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--warm-glow); background: rgba(245, 158, 11, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--warm-glow); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--warm); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .gotcha-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .gotcha { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--rose); border-radius: var(--radius-md); padding: 18px 22px; }
+  .gotcha strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .gotcha p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warm-glow); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--warm-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb warm"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">biz/erp/odoo</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; ERP</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Business</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">biz</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">erp</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">odoo</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/erp &middot; Odoo &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      Modular ERP, <span class="gradient">built like Lego.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Odoo is the Belgian-origin open-source ERP that grew from a small accounting tool into the largest open-source ERP app marketplace in the world. Python + PostgreSQL stack, modular by design, three editions: <strong>Community</strong> (free), <strong>Enterprise</strong> (per-user + per-app subscription), and <strong>Odoo.sh</strong> (managed PaaS). Latest is Odoo 18; Odoo 19 modules are already appearing in the Apps Store. Native XML-RPC and JSON-RPC; the Apps Store now hosts a growing roster of <strong>MCP server modules</strong> that expose the ERP as natural-language CRUD for Claude, ChatGPT, and Cursor. The most code-friendly ERP in the open-source field &mdash; and the strongest agentic story among open-source ERPs in 2026.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Odoo 18 / 19</span>
+      <span class="pill">Python &middot; PostgreSQL</span>
+      <span class="pill">Community / Enterprise / Odoo.sh</span>
+      <span class="pill indigo">Apps Store MCP modules</span>
+      <span class="pill green">Open source &middot; LGPLv3 (core)</span>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What it is</div>
+      <h2 class="section-title">A modular ERP platform &mdash; with the core ERP as the default app.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Odoo started as TinyERP in 2005, was renamed OpenERP, then Odoo in 2014. The underlying architecture is a Python web server (long called "OpenObject", now just the Odoo runtime) running on PostgreSQL, with a modular plugin system that lets every business function live as a separately-installable app. The "ERP" most people refer to is actually a curated bundle of standard apps &mdash; Sales, CRM, Inventory, Accounting, Manufacturing, HR, Purchase, Project, and so on &mdash; built on top of the same platform any third-party module uses.</p>
+      <p>The same platform supports three editions, three hosting modes, and one extension model. Apps from the Odoo Apps Store install identically whether the org runs Community on a Hetzner VM, Enterprise on a self-managed server, or Odoo.sh as a managed PaaS. That portability is the platform's competitive moat &mdash; very few enterprise ERPs offer a credible self-hosted-to-managed continuum without a forklift migration.</p>
+    </div>
+
+    <div class="compare-wrap fade-up" style="transition-delay: 0.08s">
+      <table class="compare">
+        <thead><tr><th>Edition</th><th>Cost model</th><th>What's included</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Community</td><td>Free (LGPLv3); pay for hosting + implementation only</td><td>Core ERP: CRM, Sales, Inventory, Purchase, basic Accounting, Project, Manufacturing (community modules). No Studio, no IoT, no advanced accounting, no payroll.</td></tr>
+          <tr><td class="name">Enterprise</td><td>Per-user + per-app subscription (USD)</td><td>Everything in Community plus full Accounting, Payroll, Field Service, Sign, Subscriptions, IoT, <strong>Studio</strong> (drag-and-drop customisation), polished dashboards, support contract.</td></tr>
+          <tr><td class="name">Odoo.sh</td><td>Enterprise subscription + per-worker hosting</td><td>Enterprise feature set, hosted as a managed PaaS by Odoo S.A. Daily backups on two continents, staging environments per branch, Git integration, mailgun-style email built in.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.1s">
+      <h4>Community-to-Enterprise is not a click</h4>
+      <p>The official path from Community to Enterprise is documented and supported, but it's not trivial. Some apps replace their community counterparts entirely (Accounting is the classic example). Data migrations have to be done in the right order, and any community-only modules need replacements or rewrites against the Enterprise data model. Plan it as a project, not an upgrade.</p>
+    </div>
+  </div>
+</section>
+
+<section id="data-model">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The data model</div>
+      <h2 class="section-title">Model, Field, Recordset, ORM.</h2>
+      <p class="section-lede">Everything you build on Odoo is some combination of these four. Every record in the database is an instance of a Model; every column is a Field; every query returns a Recordset; the ORM is what makes those primitives feel like Python objects instead of SQL.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Schema</span>
+        <h4>Model</h4>
+        <p>A Python class that inherits from <code>models.Model</code>. Becomes a Postgres table; gets a CRUD API, a default form view, and access-control hooks for free.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Schema</span>
+        <h4>Field</h4>
+        <p>Typed column attribute. <code>Char</code>, <code>Integer</code>, <code>Many2one</code>, <code>One2many</code>, <code>Many2many</code>. Computed fields with <code>@api.depends</code>.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Query</span>
+        <h4>Recordset</h4>
+        <p>A set-like collection of records. Operations like <code>filtered()</code>, <code>mapped()</code>, <code>sorted()</code> return new recordsets. Single records are just length-1 recordsets.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Logic</span>
+        <h4>ORM</h4>
+        <p>The layer between Python recordsets and SQL. Handles permissions, multi-company filters, computed-field dependencies, and the access-rights and record-rules system.</p>
+      </div>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.08s">
+      <p><strong>A custom Model definition</strong> &mdash; the canonical shape of any Odoo module's models file:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.1s"><span class="c"># models/project_milestone.py</span>
+<span class="h">from</span> odoo <span class="h">import</span> models, fields, api
+
+<span class="h">class</span> ProjectMilestone(models.Model):
+    _name = <span class="s">'project.milestone'</span>
+    _description = <span class="s">'Project Milestone'</span>
+    _order = <span class="s">'date_due asc, name'</span>
+
+    name      = fields.<span class="k">Char</span>(<span class="s">'Milestone'</span>, required=<span class="k">True</span>)
+    project_id = fields.<span class="k">Many2one</span>(<span class="s">'project.project'</span>, required=<span class="k">True</span>)
+    date_due  = fields.<span class="k">Date</span>(<span class="s">'Due'</span>)
+    state     = fields.<span class="k">Selection</span>([
+        (<span class="s">'open'</span>, <span class="s">'Open'</span>), (<span class="s">'done'</span>, <span class="s">'Done'</span>), (<span class="s">'cancelled'</span>, <span class="s">'Cancelled'</span>),
+    ], default=<span class="s">'open'</span>)
+    invoice_count = fields.<span class="k">Integer</span>(compute=<span class="s">'_compute_invoice_count'</span>)
+
+    <span class="h">@api.depends</span>(<span class="s">'project_id.invoice_ids'</span>)
+    <span class="h">def</span> _compute_invoice_count(self):
+        <span class="h">for</span> milestone <span class="h">in</span> self:
+            milestone.invoice_count = <span class="k">len</span>(milestone.project_id.invoice_ids)</pre>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.12s">
+      <h4>Record rules and multi-company</h4>
+      <p>Odoo's access-control story has three layers. <strong>Groups</strong> grant users membership in roles. <strong>Access Rights</strong> (<code>ir.model.access</code>) say which groups can read / write / create / delete which models. <strong>Record Rules</strong> (<code>ir.rule</code>) apply row-level filters per group, including the multi-company filter that scopes every query to the user's allowed company set. Multi-company is built into the platform &mdash; not a paid add-on.</p>
+    </div>
+  </div>
+</section>
+
+<section id="api">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Core API patterns</div>
+      <h2 class="section-title">XML-RPC, JSON-RPC, and the API key (since 14).</h2>
+      <p class="section-lede">Odoo has exposed an external API since the OpenERP days. The original surface is XML-RPC; JSON-RPC arrived in 8.0; API keys (so production integrations don't have to send the user password) became GA in 14.0 and are the default for any non-interactive integration in 18.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Authentication &mdash; two-step.</strong> First authenticate against the common endpoint to get a <code>uid</code>; then use that <code>uid</code> + an API key (or password, in dev) for actual object operations. The API key is created per-user in the Odoo UI and replaces the user's password for external API calls only.</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.08s"><span class="c"># Python — XML-RPC client, the canonical Odoo integration shape</span>
+<span class="h">import</span> xmlrpc.client
+
+URL    = <span class="s">'https://example.odoo.com'</span>
+DB     = <span class="s">'example-production'</span>
+USER   = <span class="s">'integration@example.co.za'</span>
+KEY    = <span class="s">'pk_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'</span>  <span class="c"># API key, not password</span>
+
+<span class="c"># 1. Authenticate</span>
+common = xmlrpc.client.<span class="k">ServerProxy</span>(<span class="s">f'{URL}/xmlrpc/2/common'</span>)
+uid    = common.authenticate(DB, USER, KEY, {})
+
+<span class="c"># 2. Call object methods</span>
+models = xmlrpc.client.<span class="k">ServerProxy</span>(<span class="s">f'{URL}/xmlrpc/2/object'</span>)
+partners = models.execute_kw(
+    DB, uid, KEY,
+    <span class="s">'res.partner'</span>, <span class="s">'search_read'</span>,
+    [[[<span class="s">'is_company'</span>, <span class="s">'='</span>, <span class="k">True</span>], [<span class="s">'country_id.code'</span>, <span class="s">'='</span>, <span class="s">'ZA'</span>]]],
+    {<span class="s">'fields'</span>: [<span class="s">'name'</span>, <span class="s">'vat'</span>, <span class="s">'email'</span>, <span class="s">'phone'</span>], <span class="s">'limit'</span>: <span class="n">100</span>}
+)</pre>
+
+    <div class="prose fade-up" style="transition-delay: 0.1s">
+      <p><strong>The same call over JSON-RPC</strong> &mdash; same semantics, JSON wire format, easier to call from JavaScript / Workers / curl:</p>
+    </div>
+
+    <pre class="code fade-up" style="transition-delay: 0.12s"><span class="c">// JSON-RPC call to search_read SA partners</span>
+<span class="k">await</span> fetch(<span class="s">'https://example.odoo.com/jsonrpc'</span>, {
+  method: <span class="s">'POST'</span>,
+  headers: { <span class="s">'Content-Type'</span>: <span class="s">'application/json'</span> },
+  body: <span class="k">JSON</span>.<span class="k">stringify</span>({
+    jsonrpc: <span class="s">'2.0'</span>, method: <span class="s">'call'</span>,
+    params: {
+      service: <span class="s">'object'</span>, method: <span class="s">'execute_kw'</span>,
+      args: [
+        <span class="s">'example-production'</span>, uid, <span class="s">'pk_...'</span>,
+        <span class="s">'res.partner'</span>, <span class="s">'search_read'</span>,
+        [[[<span class="s">'is_company'</span>, <span class="s">'='</span>, <span class="k">true</span>], [<span class="s">'country_id.code'</span>, <span class="s">'='</span>, <span class="s">'ZA'</span>]]],
+        { fields: [<span class="s">'name'</span>, <span class="s">'vat'</span>, <span class="s">'email'</span>], limit: <span class="n">100</span> }
+      ],
+    },
+  }),
+});</pre>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.14s">
+      <h4>API keys, not passwords</h4>
+      <p>Production integrations should never carry a user password. Create a dedicated <em>integration user</em> in Odoo (with the minimum group memberships needed), generate an API key under that user, and use the key. Rotate the key when the integration's secret store rotates. Revoke the key, not the user, if the credential leaks.</p>
+    </div>
+  </div>
+</section>
+
+<section id="mcp">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; The MCP / agent layer</div>
+      <h2 class="section-title">Odoo as natural-language CRUD &mdash; via the Apps Store.</h2>
+      <p class="section-lede">The Odoo Apps Store hosts an active and growing roster of <strong>MCP server modules</strong> &mdash; both free and paid, for both Odoo 18 and 19 &mdash; that expose the ERP's models as Model Context Protocol tools consumable by Claude Code, ChatGPT, Cursor, and Gemini-based agents. The pattern is: install the module on the Odoo side, run a small Python client that bridges to the MCP transport, point an MCP-aware agent at the bridge.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The common feature set across the credible MCP modules:</p>
+      <ul>
+        <li><strong>Full CRUD</strong> on any installed model &mdash; create, read, update, delete records by typing in plain English.</li>
+        <li><strong>ORM-aware</strong> &mdash; the module respects Odoo's access rights, record rules, and multi-company filters. The agent sees what the calling user is allowed to see; nothing more.</li>
+        <li><strong>Advanced queries</strong> &mdash; aggregation, joining across <code>Many2one</code> relationships, time-window filters, all expressible in natural language and translated to <code>search_read</code> / <code>read_group</code> calls.</li>
+        <li><strong>Action execution</strong> &mdash; not just data; the agent can call business methods (post an invoice, confirm a sale, send a quotation).</li>
+      </ul>
+      <p>The reference shape on the agent side is dead simple &mdash; once the MCP server is reachable, the agent's prompt is "list all open SA quotations over R500k due this quarter, and send a follow-up reminder to the salesperson on each one." The agent reasons about which Odoo models to touch, the MCP server enforces access rules, the operations execute through the standard Odoo ORM. No bespoke integration code on either end.</p>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>How this changes the ERP-integration economics</h4>
+      <p>Pre-MCP, every "AI on top of our ERP" project was bespoke: someone wrote a wrapper service that exposed Odoo's API as agent tools, then plumbed it through an LLM. The MCP module pattern collapses that to a configuration step &mdash; install on the Odoo side, register on the agent side. Custom logic only enters when business rules need to live outside Odoo's record rules. For SA SIs running on Odoo, this is the single biggest 2025&ndash;26 platform shift to be ready for.</p>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.1s">
+      <h4>The Apps Store wrinkle &mdash; many modules, varying quality</h4>
+      <p>Searching the Apps Store for "MCP" returns more than a dozen modules from different publishers, at price points from free to several hundred USD. The quality varies; some are thin wrappers around <code>execute_kw</code>, others ship genuine MCP-server transport implementations with tool descriptions, error mapping, and structured introspection. Before adopting one in production, evaluate the publisher, read the module source (modules are typically Python and inspectable), and check that it exposes only the models you intend an agent to touch &mdash; not the whole ORM by default.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vs-erpnext">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Odoo vs ERPNext</div>
+      <h2 class="section-title">Two open-source ERPs, different shaped customers.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The 2nth ERP sub-tree carries both Odoo and ERPNext as leaves. They solve the same overall problem &mdash; open-source ERP for businesses that don't want a SAP / Oracle / NetSuite licence &mdash; but the trade-offs are clean enough to be decision-grade:</p>
+    </div>
+    <div class="compare-wrap wide fade-up" style="transition-delay: 0.07s">
+      <table class="compare">
+        <thead><tr><th>Concern</th><th>Odoo</th><th>ERPNext</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Origin</strong></td><td>Belgian (Odoo S.A., 2005)</td><td>Indian (Frappe Technologies, 2008)</td></tr>
+          <tr><td><strong>Stack</strong></td><td>Python + PostgreSQL</td><td>Python + MariaDB (Frappe framework)</td></tr>
+          <tr><td><strong>Licence</strong></td><td>LGPLv3 (Community) / OEE proprietary (Enterprise)</td><td>GPLv3 / MIT (Frappe)</td></tr>
+          <tr><td><strong>Editions</strong></td><td>Community (free) / Enterprise (sub) / Odoo.sh (PaaS)</td><td>Self-host (free) / Frappe Cloud (managed)</td></tr>
+          <tr><td><strong>Pricing pressure</strong></td><td>Enterprise = per-user + per-app, scales fast at headcount</td><td>Frappe Cloud = flat infra cost, no per-user</td></tr>
+          <tr><td><strong>App marketplace</strong></td><td>~36,000 apps (community + paid)</td><td>Smaller, growing &mdash; tighter quality bar</td></tr>
+          <tr><td><strong>Visual customisation</strong></td><td>Studio (Enterprise) &mdash; drag-and-drop</td><td>Bench + developer mode &mdash; code-first</td></tr>
+          <tr><td><strong>AI / MCP</strong></td><td>Multiple Apps Store MCP modules in 2026</td><td>No native MCP yet; integration via API + custom wrapper</td></tr>
+          <tr><td><strong>Best fit</strong></td><td>Mid-market + enterprise; teams that need a large app library</td><td>SMB and dev-led teams; doctype-as-code workflow</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card fade-up" style="transition-delay: 0.1s">
+      <h4>Rule of thumb</h4>
+      <p>If the team's strongest asset is developers who want everything-as-code and a clean self-hosted story, ERPNext is the better cultural fit. If the team needs a polished editor experience, a deep marketplace of paid apps, and a credible managed-hosting offering from the vendor, Odoo is the better fit. The MCP / agent integration story is currently stronger on Odoo &mdash; not because the protocol prefers Python (both stacks are Python), but because the Odoo Apps Store has accumulated multiple production-ready MCP modules and the ERPNext ecosystem hasn't shipped equivalent.</p>
+    </div>
+  </div>
+</section>
+
+<section id="gotchas">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Gotchas</div>
+      <h2 class="section-title">Things that only bite in production.</h2>
+      <p class="section-lede">Six failure modes that show up the first time an Odoo project moves from sandbox to live.</p>
+    </div>
+    <div class="gotcha-list fade-up" style="transition-delay: 0.05s">
+      <div class="gotcha">
+        <strong>Enterprise pricing escalates per internal user</strong>
+        <p>Enterprise is priced per "internal user" (full ERP access) plus per app. Portal users (limited self-service) are cheaper, but the line between "this is internal" and "this is portal" matters at the contract negotiation, not after. Model the seat count for a 3-year horizon before signing.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Studio modules don't always survive major upgrades</strong>
+        <p>Drag-and-drop Studio customisations are stored as data, not code. Major version upgrades (17 &rarr; 18 &rarr; 19) sometimes require Studio modules to be re-applied because field semantics change. Treat Studio for prototyping; promote to custom modules for anything that must survive multiple upgrade cycles.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Compute fields with <code>store=False</code> are not searchable by default</strong>
+        <p>A <code>compute=</code> field without <code>store=True</code> is recalculated on every access and isn't indexed. Filtering on it in a <code>search()</code> call either fails or scans the whole table. If a computed field needs to be filterable, store it &mdash; and write a proper <code>search</code> method as the escape hatch.</p>
+      </div>
+      <div class="gotcha">
+        <strong>The XML-RPC <code>execute_kw</code> args/kwargs split is positional</strong>
+        <p>The third argument to <code>execute_kw</code> is a list of positional args; the fourth is a dict of keyword args. Mixing them up is the #1 reason new Odoo integrations fail silently &mdash; the call returns an empty list instead of an error.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Multi-company filters apply to API calls too</strong>
+        <p>An integration user's company set determines what records the API returns. An integration that "doesn't see all the data" is usually a multi-company filter, not a permission bug. Either include the integration user in all companies or pass <code>context: {allowed_company_ids: [...]}</code> on the call.</p>
+      </div>
+      <div class="gotcha">
+        <strong>Apps Store updates are not synchronous with Odoo releases</strong>
+        <p>A new Odoo version drops; the Apps Store catches up over weeks. Modules listed as 18.0-compatible may have rough edges; 19.0-compatible may be a single publisher's port. Don't upgrade production to a new major on day one of a third-party-module-critical workload.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sa">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; South African context</div>
+      <h2 class="section-title">SARS, POPIA, and the partner conversation.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>SARS localisation.</strong> Odoo ships an <code>l10n_za</code> (and <code>l10n_za_*</code> companion) module set covering the SA chart of accounts, the standard VAT codes (15% standard, 0% zero-rated, exempt), and the SARS-aligned tax report. Several SA partners maintain additional modules for PAYE / UIF / SDL on the Payroll side (Enterprise only) and for the standard SA invoice / quote layouts. EFT integration with Standard Bank, FNB, ABSA, and Nedbank is partner-supplied; quality varies.</p>
+      <p><strong>Self-hosted is the POPIA-clean option.</strong> Community or Enterprise running on a SA-resident server (Hetzner Cape Town, Teraco, or an internal datacentre) keeps all personal data inside the country &mdash; the easiest Section 19 / Section 72 evidence trail. Odoo.sh is a managed PaaS hosted in regions Odoo S.A. selects; SA-resident hosting is not a default. For POPIA-sensitive deployments, self-hosted is the path of least friction; Odoo.sh is the speed-of-implementation play.</p>
+      <p><strong>The partner conversation.</strong> Odoo's SA partner ecosystem is mature &mdash; multiple Gold and Silver partners with dedicated implementation teams. Day-rate pricing is in line with the SAP / Microsoft Dynamics partner field; net cost over a 3-year horizon often comes out lower because the licence cost is meaningfully smaller. The questions to ask any partner: how many Enterprise implementations have they shipped in the relevant industry, how do they handle the Community-to-Enterprise migration, and what's their position on Odoo.sh vs self-hosting for SA clients.</p>
+      <p><strong>FX exposure.</strong> Enterprise pricing is USD per user per month. At R18/USD, a 25-user Enterprise + 5 apps deployment is in the order of R150k+ per year just in licences. The same workload on Community is just hosting + implementation, which has different FX dynamics (server cost in EUR / ZAR; implementation in ZAR). Model both options before locking the architecture.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Connections</div>
+      <h2 class="section-title">Where Odoo links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="erpnext.html" class="connect-node">
+        <span class="tag">biz/erp/erpnext</span>
+        <div class="skill">ERPNext (sibling)</div>
+        <div class="why">The other open-source ERP in the sub-tree. Same Python core; different ORM philosophy; different licence and pricing posture. Pick the cultural-fit one.</div>
+      </a>
+      <a href="sage-x3.html" class="connect-node">
+        <span class="tag">biz/erp/sage-x3</span>
+        <div class="skill">Sage X3 (sibling)</div>
+        <div class="why">The mid-market commercial ERP comparator. Sage X3 wins on accounting depth and SA partner mass; Odoo wins on customisation and the open-source escape hatch.</div>
+      </a>
+      <a href="../../tech/frappe/framework.html" class="connect-node">
+        <span class="tag">tech/frappe/framework</span>
+        <div class="skill">Frappe Framework</div>
+        <div class="why">The framework underneath ERPNext. Architectural cousin to the Odoo ORM &mdash; both are metadata-driven Python full-stacks. Worth studying for context.</div>
+      </a>
+      <a href="../../agents/mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">The integration surface the Odoo Apps Store MCP modules use. Standard MCP; any compatible agent can call into Odoo through these wrappers.</div>
+      </a>
+      <a href="../../agents/claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude</div>
+        <div class="why">The model behind several of the named Apps Store MCP modules. Claude Code is the most-cited MCP client for natural-language CRUD into Odoo.</div>
+      </a>
+      <a href="../crm/salesforce.html" class="connect-node">
+        <span class="tag">biz/crm/salesforce</span>
+        <div class="skill">Salesforce</div>
+        <div class="why">The enterprise comparator at the platform level. Salesforce + AgentForce is the vendor-locked agentic enterprise stack; Odoo + Apps Store MCP is the open-source equivalent.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.odoo.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Site</span>
+        <span class="r-title">odoo.com</span>
+        <span class="r-url">odoo.com</span>
+      </a>
+      <a href="https://www.odoo.com/documentation/18.0/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Odoo 18 documentation</span>
+        <span class="r-url">odoo.com/documentation/18.0</span>
+      </a>
+      <a href="https://www.odoo.com/page/editions" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Reference</span>
+        <span class="r-title">Community vs Enterprise editions</span>
+        <span class="r-url">odoo.com/page/editions</span>
+      </a>
+      <a href="https://www.odoo.com/pricing" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Pricing</span>
+        <span class="r-title">Odoo pricing</span>
+        <span class="r-url">odoo.com/pricing</span>
+      </a>
+      <a href="https://www.odoo.com/documentation/18.0/developer/reference/external_api.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">API</span>
+        <span class="r-title">External API &middot; XML-RPC / JSON-RPC reference</span>
+        <span class="r-url">odoo.com/documentation/18.0/developer/.../external_api</span>
+      </a>
+      <a href="https://www.odoo.com/odoo-18-release-notes" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Release</span>
+        <span class="r-title">Odoo 18 release notes</span>
+        <span class="r-url">odoo.com/odoo-18-release-notes</span>
+      </a>
+      <a href="https://apps.odoo.com/apps/modules/browse?search=mcp" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Apps Store</span>
+        <span class="r-title">MCP server modules on the Odoo Apps Store</span>
+        <span class="r-url">apps.odoo.com/apps/modules/browse?search=mcp</span>
+      </a>
+      <a href="https://github.com/odoo/odoo" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">odoo/odoo &middot; main repository</span>
+        <span class="r-url">github.com/odoo/odoo</span>
+      </a>
+      <a href="https://www.odoo.com/documentation/18.0/administration/on_premise/community_to_enterprise.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Migration</span>
+        <span class="r-title">Switch from Community to Enterprise</span>
+        <span class="r-url">odoo.com/.../community_to_enterprise</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="./">ERP sub-hub</a>
+      <a href="https://www.odoo.com" target="_blank" rel="noopener">Odoo &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>

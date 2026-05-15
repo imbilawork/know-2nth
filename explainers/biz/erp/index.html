@@ -181,6 +181,7 @@
   .leaf-card[data-ish="rest"] { --card-accent: var(--sky); }
   .leaf-card[data-ish="hybrid"] { --card-accent: var(--warm); }
   .leaf-card[data-ish="php"] { --card-accent: var(--rose); }
+  .leaf-card[data-ish="rpc"] { --card-accent: var(--indigo); }
   .leaf-head {
     display: flex; align-items: flex-start; justify-content: space-between;
     gap: 16px; margin-bottom: 14px;
@@ -325,7 +326,7 @@
       Five ERPs.<br><span class="gradient">One pattern.</span>
     </h1>
     <p class="sub fade-up" style="transition-delay: 0.1s">
-      Enterprise resource planning integrations. All five production skills in this sub-domain follow the same shape — authenticate, introspect, query, write, webhook — wired so AI agents can act on orders, invoices, and stock without a human in the loop. 2nth is middleware, not the system of record: read from the ERP, enrich with AI, write results back.
+      Enterprise resource planning integrations. All six production skills in this sub-domain follow the same shape — authenticate, introspect, query, write, webhook — wired so AI agents can act on orders, invoices, and stock without a human in the loop. 2nth is middleware, not the system of record: read from the ERP, enrich with AI, write results back.
     </p>
     <div class="hub-stats fade-up" style="transition-delay: 0.15s">
       <div class="hub-stat"><div class="num">5</div><div class="label">Production leaves</div></div>
@@ -340,7 +341,7 @@
   <div class="container">
     <div class="fade-up">
       <div class="hub-label">01 · Skill leaves</div>
-      <h2 class="hub-title">The five ERPs, by API shape</h2>
+      <h2 class="hub-title">The six ERPs, by API shape</h2>
       <p class="hub-lede">Each card is a full production skill in the canonical 2nth-ai/skills repo — with working code, rate limits, and the gotchas that only show up in real deployments. Click any to drill in.</p>
     </div>
     <div class="leaf-grid fade-up" style="transition-delay: 0.05s">
@@ -374,6 +375,22 @@
           <span class="m">Frappe</span>
           <span class="m">Manufacturing</span>
           <span class="m">BOMs</span>
+        </div>
+      </a>
+
+      <a href="odoo.html" class="leaf-card" data-ish="rpc">
+        <div class="leaf-head">
+          <div class="leaf-emoji">🧩</div>
+          <span class="leaf-state">Production</span>
+        </div>
+        <h3>Odoo</h3>
+        <span class="path">biz/erp/odoo</span>
+        <p>Belgian-origin open-source ERP. Python + PostgreSQL, modular by design, three editions (Community / Enterprise / Odoo.sh). Native XML-RPC and JSON-RPC; the Apps Store now hosts a growing roster of MCP server modules that expose the ERP as natural-language CRUD for Claude / ChatGPT / Cursor.</p>
+        <div class="leaf-meta">
+          <span class="m">XML-RPC + JSON-RPC</span>
+          <span class="m">Python + Postgres</span>
+          <span class="m">Apps Store</span>
+          <span class="m">MCP modules</span>
         </div>
       </a>
 
@@ -435,7 +452,7 @@
     <div class="fade-up">
       <div class="hub-label">02 · Side by side</div>
       <h2 class="hub-title">Pick the right leaf for the job</h2>
-      <p class="hub-lede">All four follow the same high-level pattern, but the shapes differ. Use this to match your workload to the integration that actually fits.</p>
+      <p class="hub-lede">All six follow the same high-level pattern, but the shapes differ. Use this to match the workload to the integration that actually fits.</p>
     </div>
     <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
       <table class="compare">
@@ -496,7 +513,7 @@
     <div class="fade-up">
       <div class="hub-label">03 · The shared shape</div>
       <h2 class="hub-title">Every ERP skill follows this loop</h2>
-      <p class="hub-lede">It's not an accident that the four skills feel the same once you open the hood. They're all built on a deliberate 2nth pattern: middleware between the ERP and the AI agents using it.</p>
+      <p class="hub-lede">It's not an accident that all of these skills feel the same once the hood is open. They share a deliberate 2nth pattern: middleware between the ERP and the AI agents using it.</p>
     </div>
     <div class="compare-wrap fade-up" style="transition-delay: 0.05s">
       <table class="compare">
