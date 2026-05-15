@@ -124,10 +124,87 @@ Per PR #15, **all content is open**. `gate.js` is loaded on every leaf (~95 file
 Same voice system as imbila.ai:
 - Sharp, experienced colleague — not a corporate brochure
 - Anti-hype: no "cutting-edge", "revolutionary", "paradigm shift"
-- Honest decision guides — tell people when NOT to use the technology
+- Honest decision guides — surface when a technology is the wrong choice, not just when it's the right one
 - South African voice — natural, not performative
 - Technical depth without jargon gatekeeping
 - Sources-validated: cite primary sources only in the Resources section
+
+### Third-person, impersonal — no "you / we / I"
+
+All user-facing HTML content (leaves, hubs, root index, validation memos) is written in **third-person, impersonal voice**. Don't use `you`, `your`, `yours`, `we`, `our`, `ours`, `us`, `I`, `i'm`, `i've`, `i'll` in any rendered body copy. Code comments inside `<pre class="code">` blocks count as content — same rule.
+
+Exempt: commit messages, PR bodies, `CLAUDE.md`, the `*.md` source-of-truth files at the repo root (e.g. `sa-llm-residency-validation.md`, `google-adk-explainer.md`). Those are working documents, not site content.
+
+How to rephrase the common patterns:
+
+| ❌ Don't write | ✅ Write |
+|---|---|
+| If you're on Salesforce... | For teams on Salesforce... / Salesforce-bound deployments... |
+| You'll want to... | The right pattern is... / Production deployments typically... |
+| We recommend... | The 2nth recommendation is... / The 2nth default for new builds is... |
+| We've found... | Production evidence suggests... / The pattern from PRs #17–#25 is... |
+| Your business... | A business... / The business... / The customer org... |
+| Confirm with your team... | Confirm with the team that owns the workload... |
+
+Some leaves cover topics where second-person feels structurally natural — typology / coaching / personality frameworks (`people/typologies/enneagram` is the obvious case). The rule still applies: rephrase as "the person being typed" / "the reader" / "the practitioner" rather than dropping into "you". The friction is intentional — it forces tighter writing.
+
+When auditing an existing leaf for compliance:
+
+```bash
+grep -ciE "\b(you|your|yours|we|our|ours|us)\b" explainers/<path>/<leaf>.html
+```
+
+Non-zero count means there's work to do.
+
+## Content review cycle
+
+Every leaf carries a **`Last reviewed`** stamp in its footer and is tagged into one of three cadence tiers. Stale-content drift (the kind that produced the SA residency corrections) becomes visible instead of silent.
+
+### The footer stamp
+
+Just before `</footer>`, every leaf includes:
+
+```html
+<p class="footer-meta">
+  Last reviewed: <time datetime="2026-05-15">2026-05-15</time> · Tier: hot
+</p>
+```
+
+Three tiers, three cadences. Each tier has typical members; assign new leaves at authoring time.
+
+| Tier | Cadence | Typical members |
+|---|---|---|
+| **hot** | quarterly | AI vendors with fast-moving products — Claude, GPT, Gemini, ADK, AgentForce, MCP, Skills, A2A, Bedrock, Azure OpenAI, vLLM, Ollama, OpenRouter, anything frontier-model-touching |
+| **warm** | semi-annual | Platforms moving at quarterly cadence — Salesforce, HubSpot, Tableau, Data Cloud, MuleSoft, Cloudflare services, BigQuery, ClickHouse, Postgres at the SaaS layer |
+| **cool** | annual | Mature foundational tech — Frappe framework, Postgres at the DB layer, design patterns, openBIM, Enneagram, NHBRC documentation patterns |
+
+### Trigger events that force an out-of-cycle review
+
+A leaf must be reviewed (and its `Last reviewed` date bumped) when any of these happen, regardless of where it sits in its cadence:
+
+- Major vendor announcement — new SKU, GA, pricing change, region launch, deprecation
+- User-flagged inaccuracy
+- Major version bump on a referenced product (e.g. AgentForce 3 → 4)
+- New leaf authoring that contradicts an existing one — fix both, then bump both stamps
+
+### When a review surfaces corrections
+
+Corrections worth surfacing publicly become **validation memos** following the `sa-llm-residency-validation` pattern:
+
+1. Author a markdown source at the repo root: `<topic>-validation.md`
+2. Render as a styled HTML page at the repo root: `<topic>-validation.html` (rose accent, "Validation" eyebrow, diff-card pattern for before/after replacements)
+3. Apply the line edits to the affected leaves and bump their `Last reviewed` dates
+4. Feature on root `index.html` "From the tree" with the Validation card pattern (rose left-border, `Update · YYYY-MM-DD` tier-tag, link to the rendered HTML)
+
+Minor corrections (typos, broken links, model-version refresh) just bump the leaf's `Last reviewed` date — no memo, no home-page card.
+
+### What's deferred (not built yet)
+
+- A `/changelog.html` page that lists recent reviews + validation memos chronologically
+- A script (`npm run review-due` or similar) that scans every leaf's `Last reviewed` date and flags leaves overdue for their tier
+- A pre-commit / CI hook that warns when a touched leaf hasn't been reviewed inside its cadence window
+
+These belong to a future Phase D once the per-leaf stamps are in place site-wide.
 
 ## Daily workflow
 
