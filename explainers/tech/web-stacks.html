@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern web stacks &middot; 2026 &mdash; know.2nth.ai</title>
+<meta name="description" content="The modern web stack in 2026 — the structured-content CMS layer (Sanity, Payload, Directus, Strapi), the islands-first framework layer (Astro, Next, SvelteKit), edge-rendered hosting (Cloudflare Pages, Vercel), and MCP as the agent-integration surface every credible CMS now ships natively. Why WordPress is being replaced (11,334 new CVEs in 2025) and what the top 5 MCP-ready web surfaces look like.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/tech/web-stacks">
+<meta property="og:title" content="Modern web stacks &middot; 2026 &mdash; know.2nth.ai">
+<meta property="og:description" content="The 2026 modern web stack — structured-content CMS + islands framework + edge hosting + MCP-native agent integration. The top 5 MCP-ready web surfaces, and why WordPress is being replaced.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Modern web stacks &middot; 2026">
+<meta name="twitter:description" content="Structured-content CMS + islands framework + edge hosting + MCP. The top 5 MCP-ready web surfaces, and why WordPress is being replaced.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --sky-soft: rgba(56, 189, 248, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(37, 99, 235, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(56, 189, 248, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(37, 99, 235, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(37, 99, 235, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.blue { width: 600px; height: 600px; background: var(--blue); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--blue-glow); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--blue-glow); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--blue-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 56px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--blue-glow); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-glow); box-shadow: 0 0 12px var(--blue-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 66px); font-weight: 800; line-height: 1.04; letter-spacing: -2px; margin-bottom: 22px; max-width: 16ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--blue), var(--blue-glow), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 720px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: rgba(37, 99, 235, 0.12); color: var(--blue-glow); border-color: rgba(37, 99, 235, 0.25); }
+  .pill.rose { background: var(--rose-soft); color: var(--rose); border-color: rgba(244, 63, 94, 0.25); }
+  .pill.sky { background: var(--sky-soft); color: var(--sky); border-color: rgba(56, 189, 248, 0.25); }
+  section { padding: 48px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--blue-glow); margin-bottom: 14px; }
+  .section-title { font-size: clamp(24px, 3vw, 32px); font-weight: 700; letter-spacing: -0.6px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 28px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--sky); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  pre.code { background: var(--ink-deep); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 22px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.65; color: var(--mist); margin: 0 0 20px; max-width: var(--read-w); }
+  [data-theme="light"] pre.code { background: #0F172A; color: #E2E8F0; }
+  pre.code .k { color: var(--sky); }
+  pre.code .s { color: #A5F3B8; }
+  pre.code .c { color: var(--text-muted); font-style: italic; }
+  pre.code .h { color: var(--blue-glow); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.rose { border-left: 3px solid var(--rose); }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .info-card code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--ink-deep); border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px; color: var(--sky); }
+  [data-theme="light"] .info-card code { background: rgba(15, 23, 42, 0.06); }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare-wrap.wide { max-width: none; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--blue-glow); background: rgba(37, 99, 235, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--blue-glow); }
+  .compare td strong { color: var(--text-primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--blue-glow); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .surface-grid { display: grid; grid-template-columns: 1fr; gap: 16px; max-width: var(--read-w); margin-bottom: 20px; }
+  .surface { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 26px; }
+  .surface .s-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .surface h4 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .surface .s-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--blue-glow); background: rgba(37, 99, 235, 0.08); padding: 4px 10px; border-radius: var(--radius-pill); border: 1px solid rgba(37, 99, 235, 0.2); }
+  .surface .s-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .surface .s-meta a { color: var(--sky); text-decoration: none; }
+  .surface .s-meta a:hover { text-decoration: underline; }
+  .surface p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 10px; }
+  .surface p:last-child { margin-bottom: 0; }
+  .surface .s-pillset { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .surface .s-pillset .s-pill { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-muted); }
+  .surface .s-pillset .s-pill.mcp { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--sky); word-break: break-all; }
+  footer { padding: 60px 0 40px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--blue-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } pre.code { font-size: 11px; padding: 14px 16px; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb blue"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">tech/web-stacks</span></a>
+    <div class="nav-right">
+      <a href="./" class="nav-link">&larr; Tech</a>
+      <a href="../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="./">Tech</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">Modern web stacks &middot; 2026</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> tech &middot; Modern web stacks &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      The web stack, <span class="gradient">rebuilt for agents.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      The 2024&ndash;26 reshuffle of the modern web: the monolith split into a structured-content CMS layer (Sanity, Payload, Directus, Strapi), an islands-first framework layer (Astro, Next, SvelteKit), and edge-rendered hosting (Cloudflare Pages, Vercel, Netlify). MCP became the integration surface every credible CMS now ships natively. WordPress logged <strong>11,334 new CVEs in 2025</strong> (up 42% YoY, mostly in plugins) and is being replaced for performance, security, and agent-readiness reasons that compound. This leaf maps the new baseline and the top 5 MCP-ready web surfaces.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">Modern web 2026</span>
+      <span class="pill">Three-layer stack</span>
+      <span class="pill sky">MCP-native</span>
+      <span class="pill rose">Post-WordPress</span>
+    </div>
+  </div>
+</section>
+
+<section id="wordpress">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; What's wrong with WordPress</div>
+      <h2 class="section-title">The plugin attack surface caught up with the platform.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>WordPress still powers a sizeable share of the public web. The 2026 problem is not the core, which is mature and well-maintained &mdash; it is the plugin ecosystem that the platform's success was built on. Patchstack's <em>2026 State of WordPress Security</em> report logged 11,334 new vulnerabilities in 2025, up 42% year-over-year, with the overwhelming majority originating in plugins rather than core. Highly exploitable vulnerabilities climbed 113%. The weighted median time from public disclosure to first exploitation in the wild is now <strong>five hours</strong>.</p>
+      <p>The architectural story matches the security story. Traditional WordPress generates HTML on every request from PHP against MySQL; modern web stacks pre-build pages as static HTML or render them at the edge, delivering sub-100ms response times globally. Astro's homepage cites Core Web Vitals pass rates of <strong>66% for Astro sites vs. 48% for WordPress and 30% for Next.js</strong> &mdash; numbers that should be checked against current Chrome UX Report data, but that direction-of-travel is correct.</p>
+      <p>The third problem is multi-channel. A WordPress install ships one website. A modern stack assembles content once in a structured CMS and renders it across web, mobile, kiosk, voice, and now agent surfaces &mdash; including via Model Context Protocol so an AI agent can read or update the same content store.</p>
+    </div>
+    <div class="info-card rose fade-up" style="transition-delay: 0.08s">
+      <h4>Headless WordPress is the bridge, not the destination</h4>
+      <p>Many teams in 2026 sit in headless WordPress &mdash; running WP-as-CMS behind an Astro or Next.js front-end. This reduces the public attack surface (the admin is isolated from the rendered site) and recovers most of the performance gap. It does not solve the structured-content or agent-readiness problem &mdash; WordPress's post-and-page model and lack of native MCP support remain limits. Headless WP is a sensible migration step; not an endpoint.</p>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; The modern web stack</div>
+      <h2 class="section-title">Three layers, separately replaced.</h2>
+      <p class="section-lede">The 2024&ndash;26 evolution split the WordPress monolith into three clear layers, each with multiple credible options. Each layer can be swapped without touching the others. This is the structural shift &mdash; not a single replacement product, but a re-architecture into composable parts.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Layer 1 &middot; content</span>
+        <h4>Structured CMS</h4>
+        <p>Schema-as-code, JSON-document store, API-first. Editors get a custom Studio; developers query structured fields, not HTML. Sanity, Payload, Directus, Strapi.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Layer 2 &middot; rendering</span>
+        <h4>Islands framework</h4>
+        <p>Server-renders HTML, ships minimal JS, hydrates only the interactive bits. Astro is the reference; Next.js / Remix / SvelteKit / Qwik are the alternatives.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Layer 3 &middot; delivery</span>
+        <h4>Edge hosting</h4>
+        <p>Static assets to edge POPs; SSR at the edge for dynamic routes. Cloudflare Pages, Vercel, Netlify. Sub-100ms TTFB globally; auto-scaled per request.</p>
+      </div>
+    </div>
+
+    <div class="info-card indigo fade-up" style="transition-delay: 0.08s">
+      <h4>MCP is the fourth (cross-cutting) layer</h4>
+      <p>The Model Context Protocol is not a separate layer of the stack &mdash; it is the integration surface that every credible CMS now ships natively. <strong>Sanity</strong> exposes content via an MCP server consumable from Claude Code, Cursor, and v0. <strong>Astro</strong> ships an official MCP server with context files for AI tools. <strong>Directus</strong> has native MCP built in. <strong>Payload</strong>, <strong>Strapi</strong>, and <strong>NomaCMS</strong> all have MCP integrations or wrappers. "MCP-ready" is the 2026 baseline for new builds.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sanity">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; Sanity</div>
+      <h2 class="section-title">The Content OS for the AI era.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Sanity positions itself as <em>"the Content Operating System for the AI era"</em> &mdash; not a traditional headless CMS, but a structured-content platform built for programmatic operations at scale. The underlying technical claims:</p>
+      <ul>
+        <li><strong>Content Lake</strong> &mdash; a JSON-document store with schemas defined in code rather than enforced at the database layer. Allows flexible content modelling without database migrations.</li>
+        <li><strong>GROQ</strong> &mdash; Sanity's proprietary query language for filtering and joining structured content. SQL-shaped semantics; JSON-document target.</li>
+        <li><strong>Sanity Studio</strong> &mdash; a customisable, multiplayer-capable editorial interface built on React. Same Studio binary; per-customer custom workflows.</li>
+        <li><strong>API-first architecture</strong> &mdash; every operation goes through HTTP APIs, supporting real-time listening and webhook-driven automation.</li>
+      </ul>
+      <p>The 2026 AI / agent positioning is the bigger story. Sanity ships <strong>Content Agent</strong> (transforms source materials into structured content; audits and edits at scale; supports visual editing via natural language), <strong>Agent Actions</strong> (schema-aware AI automations triggered by content mutations), and <strong>Agent Context</strong> (surfaces structured data for agentic reasoning). The <strong>Sanity MCP server</strong> integrates with Claude Code, Cursor, and v0 &mdash; an agent can read or write Sanity content through standard MCP without bespoke integration code.</p>
+    </div>
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>What makes Sanity structurally different from WordPress</h4>
+      <p>WordPress's data model is "posts and pages with custom fields bolted on." Sanity's data model is "schemas you define in TypeScript, with arbitrary nested structures, references, and validation, queryable by GROQ." When an agent (or a human) wants the "list of all case studies tagged AgentForce, with their associated services, ordered by published date," Sanity answers that in one query. WordPress answers it after three plugins, two custom hooks, and a partial cache rebuild.</p>
+    </div>
+  </div>
+</section>
+
+<section id="astro">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Astro</div>
+      <h2 class="section-title">Islands architecture, zero JS by default.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>Astro is a JavaScript web framework optimised for fast, content-driven sites. Components render on the server and ship lightweight HTML to the browser with zero unnecessary JavaScript overhead. The defining feature is <strong>Islands Architecture</strong> &mdash; pages are static HTML by default, with hydration applied only to the interactive components ("islands") that need it. The rest of the page never ships its rendering JS to the client.</p>
+      <p>Key technical traits:</p>
+      <ul>
+        <li><strong>Framework-agnostic UI</strong> &mdash; React, Vue, Preact, Svelte, and Solid all work in the same project. "Zero lock-in" is the positioning.</li>
+        <li><strong>Content Collections</strong> &mdash; type-safe Markdown / MDX organisation with frontmatter validation. Schema in code; types flow through to the templates.</li>
+        <li><strong>File-based routing</strong>, server-side endpoints, view transitions, image optimisation built in.</li>
+        <li><strong>Actions</strong> &mdash; type-safe backend functions callable from frontend code, no separate API surface required.</li>
+        <li><strong>Hosting adapters</strong> for Vercel, Netlify, Cloudflare, AWS, and Deno &mdash; same code, different deploy target.</li>
+      </ul>
+      <p>The 2026 MCP story: Astro ships an <strong>official MCP server</strong> and context files for AI development tools. Cursor / Windsurf / Claude Code agents can introspect an Astro project's routes, content collections, and components through standard MCP. The combination of structured content (in a CMS like Sanity) and structured project metadata (via Astro's MCP) is what makes the modern stack genuinely agent-readable.</p>
+    </div>
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>Core Web Vitals as the headline pitch</h4>
+      <p>Astro's homepage claims <strong>66% of Astro sites pass Core Web Vitals</strong>, versus 48% for WordPress and 30% for Next.js. Direction-of-travel matches the architecture: less shipped JS &rarr; lower TBT and INP &rarr; more sites pass CWV. The specific numbers should be checked against the current Chrome UX Report before being quoted in a sales context &mdash; they shift quarterly &mdash; but the ranking is consistent: islands frameworks beat full-hydration frameworks on the metrics Google rewards.</p>
+    </div>
+  </div>
+</section>
+
+<section id="top5">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; The top 5 MCP-ready web surfaces</div>
+      <h2 class="section-title">What the modern stack ships through.</h2>
+      <p class="section-lede">Five distinct shapes of web surface, each MCP-ready in 2026. The list mixes CMS and framework deliberately &mdash; the right combination depends on whether content workflow or front-end DX is the bottleneck.</p>
+    </div>
+
+    <div class="surface-grid fade-up" style="transition-delay: 0.05s">
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>1. Sanity</h4>
+          <span class="s-tag">CMS &middot; content OS</span>
+        </div>
+        <span class="s-meta">Structured content, GROQ queries, Content Lake &middot; <a href="https://www.sanity.io" target="_blank" rel="noopener">sanity.io</a></span>
+        <p>The structured-content platform with the strongest agent positioning. Content Agent for natural-language editing, Agent Actions for schema-aware automation, Agent Context for agent-reasoning surfaces. MCP server integrates with Claude Code, Cursor, v0. Pairs naturally with Astro or Next.js on the front end.</p>
+        <p><strong>Pick when:</strong> the editorial workflow matters more than the framework. Marketing / content-heavy / multi-locale.</p>
+        <div class="s-pillset">
+          <span class="s-pill mcp">MCP native</span>
+          <span class="s-pill">GROQ</span>
+          <span class="s-pill">Content Agent</span>
+          <span class="s-pill">Studio (React)</span>
+        </div>
+      </div>
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>2. Astro</h4>
+          <span class="s-tag">Framework &middot; islands</span>
+        </div>
+        <span class="s-meta">Server-first, islands hydration, framework-agnostic &middot; <a href="https://astro.build" target="_blank" rel="noopener">astro.build</a></span>
+        <p>The reference islands-architecture framework. Zero-JS default, content collections with TypeScript validation, official MCP server with project-introspection context files. Hosting adapters for every major edge / serverless provider. The 2nth default front-end framework for content-driven sites.</p>
+        <p><strong>Pick when:</strong> the site is content-led, performance is a buyer criterion, and the team can author in Markdown / MDX or query a headless CMS.</p>
+        <div class="s-pillset">
+          <span class="s-pill mcp">MCP native</span>
+          <span class="s-pill">Islands</span>
+          <span class="s-pill">Zero JS default</span>
+          <span class="s-pill">React / Vue / Svelte / Solid</span>
+        </div>
+      </div>
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>3. Payload CMS</h4>
+          <span class="s-tag">CMS &middot; code-first</span>
+        </div>
+        <span class="s-meta">TypeScript-native, Postgres / MongoDB, Next-friendly &middot; <a href="https://payloadcms.com" target="_blank" rel="noopener">payloadcms.com</a></span>
+        <p>Code-first headless CMS that runs in the same Next.js app as the front-end. TypeScript config, Postgres / MongoDB backends, full admin UI built in. MCP integration via community wrappers. The top choice for Next.js teams that want the CMS and the app deployed as one unit.</p>
+        <p><strong>Pick when:</strong> the team is Next.js-native and wants a single deployable. Avoids the headless-API-as-network-call latency.</p>
+        <div class="s-pillset">
+          <span class="s-pill mcp">MCP integrations</span>
+          <span class="s-pill">TypeScript</span>
+          <span class="s-pill">Postgres / Mongo</span>
+          <span class="s-pill">Next.js-bundled</span>
+        </div>
+      </div>
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>4. Directus</h4>
+          <span class="s-tag">CMS &middot; SQL-first</span>
+        </div>
+        <span class="s-meta">Any SQL database, native MCP server, AI assistant &middot; <a href="https://directus.io" target="_blank" rel="noopener">directus.io</a></span>
+        <p>Connects to any existing SQL database (Postgres, MySQL, MS SQL, SQLite) and exposes it as a content API + admin app. Built-in AI Assistant; native MCP server; structured data layer that any agent or model can work with. The "uncompromising data ownership" pitch &mdash; the database stays where it lives; Directus wraps it.</p>
+        <p><strong>Pick when:</strong> the data already lives in a SQL warehouse / OLTP store and the requirement is to expose it as a CMS without migrating.</p>
+        <div class="s-pillset">
+          <span class="s-pill mcp">MCP native</span>
+          <span class="s-pill">SQL-first</span>
+          <span class="s-pill">AI Assistant</span>
+          <span class="s-pill">Self-hostable</span>
+        </div>
+      </div>
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>5. Strapi</h4>
+          <span class="s-tag">CMS &middot; OSS default</span>
+        </div>
+        <span class="s-meta">Open-source Node.js headless CMS, largest plugin ecosystem &middot; <a href="https://strapi.io" target="_blank" rel="noopener">strapi.io</a></span>
+        <p>The open-source headless CMS with the broadest plugin ecosystem and the most mature self-hosting story. Node.js runtime; Postgres / MySQL / MongoDB backends; REST and GraphQL out of the box. MCP integration via the Strapi MCP wrapper; deep plugin coverage for auth, i18n, drafts, and more.</p>
+        <p><strong>Pick when:</strong> open-source self-hosting is the hard requirement, and the team can absorb operating the CMS infra themselves.</p>
+        <div class="s-pillset">
+          <span class="s-pill mcp">MCP wrapper</span>
+          <span class="s-pill">Open source</span>
+          <span class="s-pill">REST + GraphQL</span>
+          <span class="s-pill">Plugin ecosystem</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Honourable mentions, not yet on the top 5</h4>
+      <p><strong>Storyblok</strong> for visual editing of marketing pages; <strong>Contentful</strong> as the legacy enterprise option (mature but expensive, MCP support via partners); <strong>Builder.io</strong> for AI-native visual building (Builder Composable + Visual Copilot); <strong>Webstudio</strong> as the open-source visual builder; <strong>NomaCMS</strong> as the AI-first newcomer with native Claude Code / Cursor MCP. <strong>EmDash</strong> &mdash; Cloudflare's open-source WordPress challenger &mdash; is architecturally aligned but the ecosystem is still empty (early 2026).</p>
+    </div>
+  </div>
+</section>
+
+<section id="decisions">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; Decision guide</div>
+      <h2 class="section-title">Which combination for which job.</h2>
+    </div>
+
+    <div class="compare-wrap wide fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Workload</th><th>CMS pick</th><th>Front-end pick</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Marketing site, multi-locale, content-heavy</strong></td>
+            <td>Sanity</td>
+            <td>Astro</td>
+            <td>Sanity's editorial workflow + Astro's CWV story is the strongest content-site combination available.</td>
+          </tr>
+          <tr>
+            <td><strong>App with content + interactive features</strong></td>
+            <td>Payload</td>
+            <td>Next.js</td>
+            <td>Single deployable. Payload runs in the Next.js app; no separate CMS service to operate.</td>
+          </tr>
+          <tr>
+            <td><strong>Internal tool over existing SQL data</strong></td>
+            <td>Directus</td>
+            <td>Astro or SvelteKit</td>
+            <td>Database stays put; Directus wraps it; front-end framework is a style choice.</td>
+          </tr>
+          <tr>
+            <td><strong>Self-hosted, open-source-only requirement</strong></td>
+            <td>Strapi</td>
+            <td>Astro / Nuxt</td>
+            <td>Both are OSS; both run self-hosted; the operating burden lives with the team.</td>
+          </tr>
+          <tr>
+            <td><strong>Visual editing for non-technical authors</strong></td>
+            <td>Storyblok or Builder.io</td>
+            <td>Next.js / Astro</td>
+            <td>Marketing teams that need in-place visual editing over a rendered page; not a code-first workflow.</td>
+          </tr>
+          <tr>
+            <td><strong>Existing WordPress, no time for full rebuild</strong></td>
+            <td>WordPress (as CMS only)</td>
+            <td>Astro / Next.js</td>
+            <td>Headless WP is the bridge pattern. Recovers most of the perf gap; reduces attack surface; doesn't solve agent-readiness.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="sa-context">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; South African context</div>
+      <h2 class="section-title">FX, POPIA, and the agency-landscape question.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>The WordPress install base is large &mdash; and creaking.</strong> Most SA SMB and mid-market websites are on WordPress. Many were built by agencies that no longer exist or no longer maintain them. The plugin-vulnerability surface is the most common single source of incidents the SA cybersecurity community sees. Replacing or hardening these sites is real work &mdash; budget the migration as a 4&ndash;12 week engagement, not a weekend.</p>
+      <p><strong>POPIA fits modern stacks better than it fits WordPress.</strong> A headless CMS at <code>africa-south1</code> or <code>eu-west</code> + a static front-end deployed to Cloudflare's African edge means personal data (form submissions, user accounts) lives in one residency-controlled store and the public site never holds it. WordPress's "everything is in one MySQL on one host" model makes Section 19 evidence harder to assemble.</p>
+      <p><strong>Edge hosting and FX.</strong> Cloudflare Pages, Vercel, and Netlify are USD-priced; Cloudflare's free tier covers most small sites end-to-end. Bandwidth-sensitive workloads benefit from Cloudflare's African POPs (Cape Town, Johannesburg, Lagos, Nairobi, Cairo, Casablanca and others &mdash; see <a href="cloudflare/edge-africa-me.html" style="color: var(--sky); text-decoration: none; border-bottom: 1px dotted rgba(56, 189, 248, 0.4);">tech/cloudflare/edge-africa-me</a>) over US-only Vercel routing for SA-resident readers.</p>
+      <p><strong>Agency landscape shift.</strong> SA agencies that used to ship WordPress sites are migrating to "WordPress for editorial + Astro for the front-end" as the path of least client disruption. The Sanity / Payload / Directus conversation is happening with the technical-buyer cohort first; mainstream marketing teams catch up over the following 12&ndash;18 months.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Connections</div>
+      <h2 class="section-title">Where modern web stacks link in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../agents/mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">The integration surface every modern CMS now ships natively. Agent-readable content + agent-readable project metadata is what defines "modern" in 2026.</div>
+      </a>
+      <a href="cloudflare/pages.html" class="connect-node">
+        <span class="tag">tech/cloudflare/pages</span>
+        <div class="skill">Cloudflare Pages</div>
+        <div class="why">The edge-hosting layer the rest of the stack deploys to. Free tier covers most small sites; Workers integration for SSR routes.</div>
+      </a>
+      <a href="cloudflare/workers.html" class="connect-node">
+        <span class="tag">tech/cloudflare/workers</span>
+        <div class="skill">Cloudflare Workers</div>
+        <div class="why">Where Astro / Next adapters land for SSR routes. Same edge runtime that hosts the MCP servers exposed by Sanity, Directus, and others.</div>
+      </a>
+      <a href="cloudflare/edge-africa-me.html" class="connect-node">
+        <span class="tag">tech/cloudflare/edge-africa-me</span>
+        <div class="skill">Cloudflare African edge</div>
+        <div class="why">Where these sites actually serve from for SA-resident readers. The latency / POPIA story benefits from in-region edge.</div>
+      </a>
+      <a href="../design/" class="connect-node">
+        <span class="tag">design</span>
+        <div class="skill">Design domain</div>
+        <div class="why">The design-system + component-library work that pairs with the framework layer. Astro's component-agnostic approach plays well with any design system.</div>
+      </a>
+      <a href="../agents/claude.html" class="connect-node">
+        <span class="tag">agents/claude</span>
+        <div class="skill">Claude</div>
+        <div class="why">The model behind Claude Code, the most-cited MCP client for these CMS integrations. The "agent reads or writes Sanity content" story routes through Claude.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">09 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.sanity.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CMS</span>
+        <span class="r-title">Sanity &middot; Content OS for the AI era</span>
+        <span class="r-url">sanity.io</span>
+      </a>
+      <a href="https://astro.build" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Framework</span>
+        <span class="r-title">Astro &middot; islands-first framework</span>
+        <span class="r-url">astro.build</span>
+      </a>
+      <a href="https://payloadcms.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CMS</span>
+        <span class="r-title">Payload &middot; code-first TypeScript headless CMS</span>
+        <span class="r-url">payloadcms.com</span>
+      </a>
+      <a href="https://directus.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CMS</span>
+        <span class="r-title">Directus &middot; SQL-first headless platform</span>
+        <span class="r-url">directus.io</span>
+      </a>
+      <a href="https://strapi.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CMS</span>
+        <span class="r-title">Strapi &middot; open-source Node.js headless CMS</span>
+        <span class="r-url">strapi.io</span>
+      </a>
+      <a href="https://patchstack.com/whitepaper/state-of-wordpress-security/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Security</span>
+        <span class="r-title">Patchstack &middot; State of WordPress Security 2026</span>
+        <span class="r-url">patchstack.com/whitepaper/state-of-wordpress-security</span>
+      </a>
+      <a href="https://modelcontextprotocol.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Protocol</span>
+        <span class="r-title">Model Context Protocol &middot; the integration surface</span>
+        <span class="r-url">modelcontextprotocol.io</span>
+      </a>
+      <a href="https://www.storyblok.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">CMS</span>
+        <span class="r-title">Storyblok &middot; visual editing for marketing</span>
+        <span class="r-url">storyblok.com</span>
+      </a>
+      <a href="https://www.builder.io" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Visual + AI</span>
+        <span class="r-title">Builder.io &middot; Visual Copilot, AI-native</span>
+        <span class="r-url">builder.io</span>
+      </a>
+      <a href="https://webstudio.is" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Visual</span>
+        <span class="r-title">Webstudio &middot; open-source visual builder</span>
+        <span class="r-url">webstudio.is</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../index.html">Skills tree</a>
+      <a href="./">Tech hub</a>
+      <a href="https://www.sanity.io" target="_blank" rel="noopener">Sanity &nearr;</a>
+      <a href="https://astro.build" target="_blank" rel="noopener">Astro &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
