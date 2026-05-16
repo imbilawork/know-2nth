@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open-source ECM &middot; 2026 &mdash; know.2nth.ai</title>
+<meta name="description" content="Open-source Enterprise Content Management in 2026 — the credible replacements for IBM FileNet and OpenText Documentum. Alfresco Community, Nuxeo, Mayan EDMS, Paperless-ngx, OpenKM, NemakiWare. Mindshare for FileNet has dropped from 10.2% to 5.8% and Documentum from 12.3% to 6.4% YoY. The top 5 open-source ECM platforms, the migration patterns, the CMIS-standard story, and the honest cost comparison.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="know.2nth.ai">
+<meta property="og:url" content="https://know.2nth.ai/explainers/biz/ecm/open-source-ecm">
+<meta property="og:title" content="Open-source ECM &middot; 2026 &mdash; know.2nth.ai">
+<meta property="og:description" content="Open-source ECM in 2026 — Alfresco, Nuxeo, Mayan EDMS, Paperless-ngx, OpenKM as replacements for IBM FileNet and OpenText Documentum. Migration patterns + CMIS story + honest cost comparison.">
+<meta property="og:image" content="https://know.2nth.ai/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="know.2nth.ai &mdash; The Knowledge Tree">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Open-source ECM &middot; 2026">
+<meta name="twitter:description" content="Open-source ECM in 2026 — Alfresco, Nuxeo, Mayan EDMS, Paperless-ngx, OpenKM. Replacing IBM FileNet and OpenText Documentum, honestly.">
+<meta name="twitter:image" content="https://know.2nth.ai/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%233B82F6' stroke-width='1.6'/%3E%3Crect x='3.5' y='3.5' width='25' height='25' fill='none' stroke='%2338BDF8' stroke-width='1.3'/%3E%3C/svg%3E">
+<style>
+  :root { --ink: #0B1120; --ink-deep: #060A14; --navy: #121D33; --blue: #2563EB; --blue-glow: #3B82F6; --sky: #38BDF8; --sky-muted: #7DD3FC; --paper: #F8FAFC; --mist: #E2E8F0; --slate: #94A3B8; --warm: #F59E0B; --warm-glow: #FBBF24; --warm-soft: rgba(245, 158, 11, 0.12); --green: #10B981; --green-soft: rgba(16, 185, 129, 0.12); --violet: #8B5CF6; --violet-soft: rgba(139, 92, 246, 0.12); --rose: #F43F5E; --rose-soft: rgba(244, 63, 94, 0.12); --indigo: #6366F1; --indigo-soft: rgba(99, 102, 241, 0.12); --bg: var(--ink); --bg-raised: var(--navy); --bg-card: rgba(18, 29, 51, 0.7); --bg-card-hover: rgba(245, 158, 11, 0.06); --text-primary: var(--paper); --text-secondary: var(--slate); --text-muted: #64748B; --border: rgba(148, 163, 184, 0.1); --border-hover: rgba(245, 158, 11, 0.3); --max-w: 1200px; --read-w: 760px; --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 100px; --domain: var(--warm); --domain-glow: var(--warm-glow); }
+  [data-theme="light"] { --bg: #F1F5F9; --bg-raised: #FFFFFF; --bg-card: rgba(255, 255, 255, 0.85); --bg-card-hover: rgba(245, 158, 11, 0.04); --text-primary: var(--ink); --text-secondary: #475569; --text-muted: #94A3B8; --border: rgba(15, 23, 42, 0.08); --border-hover: rgba(245, 158, 11, 0.25); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.08; pointer-events: none; z-index: 0; }
+  .glow-orb.warm { width: 600px; height: 600px; background: var(--warm); top: -200px; right: -100px; }
+  .glow-orb.sky { width: 500px; height: 500px; background: var(--sky); bottom: 20%; left: -150px; }
+  [data-theme="light"] .glow-orb { opacity: 0.04; }
+  nav { position: sticky; top: 0; z-index: 100; padding: 0 24px; backdrop-filter: blur(20px) saturate(1.4); background: rgba(11, 17, 32, 0.75); border-bottom: 1px solid var(--border); }
+  [data-theme="light"] nav { background: rgba(241, 245, 249, 0.8); }
+  .nav-inner { max-width: var(--max-w); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+  .nav-brand-mark { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 15px; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+  .nav-brand-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; padding-left: 10px; border-left: 1px solid var(--border); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--warm-glow); }
+  .theme-toggle { background: none; border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: all 0.2s; }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--warm-glow); }
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .read { max-width: var(--read-w); }
+  .crumb { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; padding: 28px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .crumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .crumb a:hover { color: var(--warm-glow); }
+  .crumb-sep { opacity: 0.5; }
+  .crumb-current { color: var(--text-secondary); }
+  .hero { padding: 48px 0 56px; }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow); margin-bottom: 24px; display: inline-flex; align-items: center; gap: 10px; }
+  .hero .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warm-glow); box-shadow: 0 0 12px var(--warm-glow); }
+  .hero h1 { font-size: clamp(40px, 6vw, 60px); font-weight: 800; line-height: 1.05; letter-spacing: -2px; margin-bottom: 22px; max-width: 18ch; }
+  .hero h1 .gradient { background: linear-gradient(135deg, var(--warm), var(--warm-glow), #FDE047); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero .sub { font-size: 18px; color: var(--text-secondary); max-width: 720px; line-height: 1.65; font-weight: 300; margin-bottom: 28px; }
+  .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-secondary); letter-spacing: 0.5px; }
+  .pill.accent { background: var(--warm-soft); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .pill.rose { background: var(--rose-soft); color: var(--rose); border-color: rgba(244, 63, 94, 0.25); }
+  .pill.green { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  section { padding: 48px 0; position: relative; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--warm-glow); margin-bottom: 14px; }
+  .section-title { font-size: clamp(24px, 3vw, 32px); font-weight: 700; letter-spacing: -0.6px; margin-bottom: 18px; line-height: 1.2; }
+  .section-lede { font-size: 16px; color: var(--text-secondary); max-width: var(--read-w); line-height: 1.75; font-weight: 300; margin-bottom: 28px; }
+  .prose p { font-size: 16px; color: var(--text-secondary); line-height: 1.75; max-width: var(--read-w); margin-bottom: 18px; }
+  .prose p strong { color: var(--text-primary); font-weight: 600; }
+  .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--bg-card); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--warm-glow); }
+  .prose ul, .prose ol { padding-left: 24px; margin-bottom: 18px; max-width: var(--read-w); }
+  .prose li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 8px; }
+  .prose li strong { color: var(--text-primary); font-weight: 600; }
+  .info-card { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; max-width: var(--read-w); margin-bottom: 20px; }
+  .info-card.amber { border-left: 3px solid var(--warm); }
+  .info-card.green { border-left: 3px solid var(--green); }
+  .info-card.indigo { border-left: 3px solid var(--indigo); }
+  .info-card.rose { border-left: 3px solid var(--rose); }
+  .info-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.2px; }
+  .info-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .info-card p:last-child { margin-bottom: 0; }
+  .info-card code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: var(--ink-deep); border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px; color: var(--warm-glow); }
+  [data-theme="light"] .info-card code { background: rgba(15, 23, 42, 0.06); }
+  .compare-wrap { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; max-width: var(--read-w); margin-bottom: 20px; }
+  .compare-wrap.wide { max-width: none; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .compare thead th { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--warm-glow); background: rgba(245, 158, 11, 0.04); }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare td { color: var(--text-secondary); }
+  .compare td.name { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+  .compare td code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; color: var(--warm-glow); }
+  .compare td strong { color: var(--text-primary); }
+  .compare td .drop { color: var(--rose); font-weight: 600; }
+  .compare td .gain { color: var(--green); font-weight: 600; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: var(--read-w); margin-bottom: 20px; }
+  .stack-cell { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 3px solid var(--warm); border-radius: var(--radius-md); padding: 18px 22px; }
+  .stack-cell .layer { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .stack-cell h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .stack-cell p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .surface-grid { display: grid; grid-template-columns: 1fr; gap: 16px; max-width: var(--read-w); margin-bottom: 20px; }
+  .surface { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 26px; }
+  .surface .s-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .surface h4 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .surface .s-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--warm-glow); background: rgba(245, 158, 11, 0.08); padding: 4px 10px; border-radius: var(--radius-pill); border: 1px solid rgba(245, 158, 11, 0.2); }
+  .surface .s-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 10px; display: block; }
+  .surface .s-meta a { color: var(--sky); text-decoration: none; }
+  .surface .s-meta a:hover { text-decoration: underline; }
+  .surface p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 10px; }
+  .surface p:last-child { margin-bottom: 0; }
+  .surface .s-pillset { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .surface .s-pillset .s-pill { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-muted); }
+  .surface .s-pillset .s-pill.oss { background: var(--green-soft); color: var(--green); border-color: rgba(16, 185, 129, 0.25); }
+  .surface .s-pillset .s-pill.cmis { background: rgba(245, 158, 11, 0.12); color: var(--warm-glow); border-color: rgba(245, 158, 11, 0.25); }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .connect-node { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+  .connect-node:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .connect-node.soon { cursor: default; opacity: 0.72; }
+  .connect-node .tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .connect-node .skill { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .connect-node .why { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .resource { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px 22px; text-decoration: none; transition: all 0.3s; display: flex; flex-direction: column; gap: 4px; }
+  .resource:hover { border-color: var(--border-hover); }
+  .resource .r-kind { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .resource .r-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .resource .r-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warm-glow); word-break: break-all; }
+  footer { padding: 56px 0 36px; border-top: 1px solid var(--border); text-align: center; margin-top: 40px; }
+  .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, var(--blue), var(--sky)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .footer-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--warm-glow); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  @media (max-width: 768px) { .nav-brand-sub { display: none; } .compare { font-size: 12px; } .compare th, .compare td { padding: 10px 12px; } }
+  *, *::before, *::after { transition-property: background-color, border-color, color, box-shadow; transition-duration: 0.3s; transition-timing-function: ease; }
+</style>
+</head>
+<body>
+
+<div class="glow-orb warm"></div>
+<div class="glow-orb sky"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="../../../index.html" class="nav-brand"><span class="nav-brand-mark">know.2nth.ai</span><span class="nav-brand-sub">biz/ecm/open-source-ecm</span></a>
+    <div class="nav-right">
+      <a href="../" class="nav-link">&larr; Business</a>
+      <a href="../../../index.html#domains" class="nav-link">Tree</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#x1F319;</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="crumb">
+    <a href="../../../index.html">know.2nth.ai</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../../../index.html#domains">Business</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="../">biz</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">ecm &middot; open-source-ecm</span>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow fade-up"><span class="dot"></span> biz/ecm &middot; Open-source ECM &middot; Skill Leaf</div>
+    <h1 class="fade-up" style="transition-delay: 0.05s">
+      ECM after FileNet <span class="gradient">and Documentum.</span>
+    </h1>
+    <p class="sub fade-up" style="transition-delay: 0.1s">
+      Enterprise Content Management spent two decades dominated by <strong>IBM FileNet</strong> and <strong>EMC Documentum</strong> (now OpenText Documentum). Both are in steady decline &mdash; mindshare for FileNet dropped from 10.2% to 5.8% YoY, Documentum from 12.3% to 6.4% (PeerSpot, April 2026). The space hasn't gone away; the centre of gravity has shifted to a layered open-source stack &mdash; <strong>Alfresco Community</strong> and <strong>Nuxeo</strong> at the enterprise tier, <strong>Mayan EDMS</strong> and <strong>OpenKM</strong> at the mid-market, <strong>Paperless-ngx</strong> for digitisation-first deployments. The top 5 by capability + maturity, the migration patterns, and the honest cost picture below.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay: 0.15s">
+      <span class="pill accent">ECM landscape 2026</span>
+      <span class="pill rose">Legacy in decline</span>
+      <span class="pill green">5 OSS picks</span>
+      <span class="pill">CMIS standard</span>
+    </div>
+  </div>
+</section>
+
+<section id="decline">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">01 &middot; The legacy decline</div>
+      <h2 class="section-title">FileNet and Documentum are losing buyers, slowly.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p>The IBM FileNet Content Manager and EMC Documentum (acquired by OpenText in 2017) defined the enterprise ECM category through the 2000s and 2010s. As of April 2026, both have lost roughly half their analyst-tracked mindshare in twelve months &mdash; FileNet from 10.2% to 5.8%, Documentum from 12.3% to 6.4%. Neither product is going away; both still anchor critical workloads in banking, insurance, government, and healthcare globally. What has changed is the new-deployment calculus: a green-field ECM decision in 2026 increasingly lands on either Microsoft SharePoint, Hyland OnBase, or an open-source platform &mdash; not on the legacy two.</p>
+      <p>Three structural pressures explain the drift:</p>
+      <ul>
+        <li><strong>Total cost of ownership.</strong> A mid-sized FileNet or Documentum deployment is six-figure USD per year in licensing alone, before the SI implementation cost. The same workload on Alfresco Community + a competent platform team often lands at 30&ndash;50% of TCO over a 5-year horizon, with the saving inverted to internal capacity.</li>
+        <li><strong>Modernisation friction.</strong> The legacy stacks were built on database / J2EE patterns that pre-date REST, cloud-native deployment, and API-first integration. Modern open-source ECMs ship REST + CMIS + cloud-native containerisation as table stakes.</li>
+        <li><strong>Agent-readiness.</strong> Document repositories that an AI agent can read, search, and act on are the 2026 baseline for content workflows. FileNet and Documentum have API surfaces, but the LLM/MCP integration story is bespoke; the open-source platforms increasingly ship REST + CMIS interfaces that any agent can consume without custom code.</li>
+      </ul>
+    </div>
+    <div class="info-card rose fade-up" style="transition-delay: 0.08s">
+      <h4>This is "replace gradually," not "lift and shift"</h4>
+      <p>FileNet and Documentum installations are typically 10&ndash;20 years old and carry tens of millions of records bound by retention, hold, and audit policies. The credible migration shape is <strong>strangler-pattern</strong> &mdash; new content lands in the open-source platform; existing records stay where they are and migrate by retention-eligibility cohort. Most successful migrations span 2&ndash;5 years and the cost saving compounds across years, not quarters. Plan honestly.</p>
+    </div>
+  </div>
+</section>
+
+<section id="capabilities">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">02 &middot; What an ECM actually delivers</div>
+      <h2 class="section-title">Eight capabilities, then the rest is wrapping.</h2>
+      <p class="section-lede">Every credible ECM platform &mdash; legacy or open-source &mdash; is some implementation of the same eight capabilities. The differences between platforms are how each capability is implemented, how it scales, and how easy it is to extend. Use this list to evaluate any platform on like-for-like terms.</p>
+    </div>
+
+    <div class="stack-grid fade-up" style="transition-delay: 0.05s">
+      <div class="stack-cell">
+        <span class="layer">Storage</span>
+        <h4>Document store + versioning</h4>
+        <p>Binary storage with version history. Modern stacks back this with S3 / MinIO / Azure Blob; legacy stacks use proprietary filestore.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Schema</span>
+        <h4>Metadata + types</h4>
+        <p>Custom document types with typed fields, taxonomies, classification. The difference between "files in folders" and "a content database."</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Search</span>
+        <h4>Full-text + faceted</h4>
+        <p>OCR for scanned content, Elasticsearch / Solr / Postgres FTS for the index, metadata facets for filtering.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Process</span>
+        <h4>Workflow engine</h4>
+        <p>BPMN-shaped multi-step approvals, routing, parallel + serial tasks, user assignment. Activiti / Flowable / Camunda are the open-source norms.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Compliance</span>
+        <h4>Records management</h4>
+        <p>Retention rules, legal holds, defensible disposition, audit trail. The capability most legacy customers actually pay for.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Access</span>
+        <h4>Permissions + ACLs</h4>
+        <p>Group / role / record-level access. SSO integration (SAML / OIDC) and LDAP / Entra ID sync.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Integration</span>
+        <h4>API + CMIS</h4>
+        <p>REST + CMIS as the standard wire-protocol. Webhooks for reactive flows. CMIS is the OASIS-standardised ECM API that lets clients work across vendors.</p>
+      </div>
+      <div class="stack-cell">
+        <span class="layer">Surface</span>
+        <h4>Office / desktop integration</h4>
+        <p>Drag-and-drop from Outlook / Office, scan-to-ECM workflows, MS Office check-in/check-out, mobile capture.</p>
+      </div>
+    </div>
+
+    <div class="info-card amber fade-up" style="transition-delay: 0.08s">
+      <h4>CMIS is the under-recognised standard</h4>
+      <p>The <strong>Content Management Interoperability Services</strong> (CMIS) spec is an OASIS standard for ECM APIs. Alfresco, Nuxeo, OpenKM, NemakiWare, FileNet, and Documentum all implement CMIS to some degree. The practical implication: a client that speaks CMIS can talk to multiple ECMs without bespoke per-vendor code. For organisations running mixed estates (legacy + new open-source platform during a strangler migration), CMIS is the bridge that makes "two ECMs feel like one" possible.</p>
+    </div>
+  </div>
+</section>
+
+<section id="top5">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">03 &middot; The top 5 open-source ECM platforms</div>
+      <h2 class="section-title">Five credible replacements, by tier.</h2>
+      <p class="section-lede">The five platforms below cover the realistic open-source ECM market for 2026. Two enterprise-tier options (Alfresco, Nuxeo) for FileNet / Documentum replacement scope; three mid-market / digitisation options (Mayan EDMS, OpenKM, Paperless-ngx) for smaller deployments or document-flow-first use cases.</p>
+    </div>
+
+    <div class="surface-grid fade-up" style="transition-delay: 0.05s">
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>1. Alfresco Community Edition</h4>
+          <span class="s-tag">Enterprise tier</span>
+        </div>
+        <span class="s-meta">Java / Spring stack, LGPL Community edition, Hyland-owned commercial offering &middot; <a href="https://github.com/Alfresco/acs-deployment" target="_blank" rel="noopener">github.com/Alfresco</a></span>
+        <p>The most credible direct replacement for IBM FileNet at the enterprise tier. Alfresco Content Services covers the full ECM capability matrix &mdash; document store with versioning, custom content models, Activiti workflow engine, Solr-backed full-text search, records management module, CMIS + REST APIs, Office / Outlook integration. Container-deployable, ships Helm charts. Community Edition is free under LGPL; Enterprise adds support, advanced governance, and clustering.</p>
+        <p><strong>Pick when:</strong> the replacement target is FileNet or Documentum and the organisation needs feature parity at the records-management / compliance-audit level.</p>
+        <div class="s-pillset">
+          <span class="s-pill oss">LGPL Community</span>
+          <span class="s-pill cmis">CMIS</span>
+          <span class="s-pill">Activiti workflow</span>
+          <span class="s-pill">Records mgmt</span>
+          <span class="s-pill">Helm / Docker</span>
+        </div>
+      </div>
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>2. Nuxeo Platform</h4>
+          <span class="s-tag">Enterprise tier &middot; modern stack</span>
+        </div>
+        <span class="s-meta">Java + REST-first, cloud-native, Apache 2.0 core, Hyland-owned commercial offering &middot; <a href="https://github.com/nuxeo/nuxeo" target="_blank" rel="noopener">github.com/nuxeo</a></span>
+        <p>The modern-stack alternative to Alfresco. Nuxeo's positioning is "content services platform" rather than "ECM" &mdash; designed to be composable, REST-first, deployed as containers in Kubernetes, integrating with object storage (S3 / Azure / GCS) directly. Strong on digital asset management workloads and document-centric applications where the UI is custom-built rather than out-of-the-box. CMIS supported; the more idiomatic API is the Nuxeo REST API. Both Alfresco and Nuxeo are now Hyland-owned &mdash; the Community editions remain, but the commercial roadmaps are increasingly aligned.</p>
+        <p><strong>Pick when:</strong> the target is a custom content application (DAM, regulated-document workflow) and the team wants a modern API surface rather than a CMS-shaped admin UI.</p>
+        <div class="s-pillset">
+          <span class="s-pill oss">Apache 2.0 core</span>
+          <span class="s-pill cmis">CMIS</span>
+          <span class="s-pill">REST-first</span>
+          <span class="s-pill">Cloud-native</span>
+          <span class="s-pill">S3 / Azure / GCS</span>
+        </div>
+      </div>
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>3. Mayan EDMS</h4>
+          <span class="s-tag">Mid-market &middot; pipeline-first</span>
+        </div>
+        <span class="s-meta">Python / Django, Apache 2.0, REST API + webhook-driven &middot; <a href="https://gitlab.com/mayan-edms/mayan-edms" target="_blank" rel="noopener">gitlab.com/mayan-edms</a></span>
+        <p>The pipeline-strong option for mid-market and document-heavy operational workloads. Built-in OCR (Tesseract), automated metadata extraction, multi-step workflows for approvals and review, REST API for every operation. Python / Django stack &mdash; easy to extend with custom workflow steps and integrations. Less feature-complete than Alfresco / Nuxeo at the records-management end, more capable than Paperless at the workflow end. Self-hostable via Docker / Kubernetes; no commercial editions.</p>
+        <p><strong>Pick when:</strong> the workload is "ingest + classify + route + archive" at scale; the buyer values automation depth over admin polish.</p>
+        <div class="s-pillset">
+          <span class="s-pill oss">Apache 2.0</span>
+          <span class="s-pill">Python / Django</span>
+          <span class="s-pill">Tesseract OCR</span>
+          <span class="s-pill">Workflow engine</span>
+          <span class="s-pill">REST + webhooks</span>
+        </div>
+      </div>
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>4. OpenKM Community Edition</h4>
+          <span class="s-tag">Mid-market &middot; classic DMS</span>
+        </div>
+        <span class="s-meta">Java, GPLv2 Community, commercial Professional / Cloud tiers &middot; <a href="https://www.openkm.com" target="_blank" rel="noopener">openkm.com</a></span>
+        <p>Traditional document-management with workflow and OCR. Free Community Edition under GPLv2 includes the core DMS, versioning, full-text search, OCR, and a workflow engine; Professional adds enterprise auth, advanced clustering, and commercial support. Mature codebase &mdash; the project predates many newer alternatives. CMIS-compliant.</p>
+        <p><strong>Pick when:</strong> the requirement is a self-hosted DMS with a polished admin UI and workflow, sitting between Mayan's pipeline focus and Alfresco's enterprise scope.</p>
+        <div class="s-pillset">
+          <span class="s-pill oss">GPLv2 Community</span>
+          <span class="s-pill cmis">CMIS</span>
+          <span class="s-pill">Java</span>
+          <span class="s-pill">OCR + workflow</span>
+        </div>
+      </div>
+
+      <div class="surface">
+        <div class="s-head">
+          <h4>5. Paperless-ngx</h4>
+          <span class="s-tag">Digitisation-first</span>
+        </div>
+        <span class="s-meta">Python, GPLv3, OCR-led, single-team scale &middot; <a href="https://github.com/paperless-ngx/paperless-ngx" target="_blank" rel="noopener">github.com/paperless-ngx</a></span>
+        <p>The fastest-rising open-source document manager for individual / small-team scale. Self-hosted, modern UX, automatic OCR + tagging + correspondent extraction, full-text search via Whoosh or Solr. Not a full ECM &mdash; no enterprise records-management or BPMN workflow &mdash; but the "scan and never lose a document again" use-case is solved better here than anywhere. Active community fork of the original Paperless project; the most popular self-hosted DMS in the homelab / SME segment.</p>
+        <p><strong>Pick when:</strong> the requirement is digitisation of paper-heavy small / SME workflows, not enterprise records management.</p>
+        <div class="s-pillset">
+          <span class="s-pill oss">GPLv3</span>
+          <span class="s-pill">Python</span>
+          <span class="s-pill">OCR-led</span>
+          <span class="s-pill">Single-team scale</span>
+          <span class="s-pill">Self-host</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-card fade-up" style="transition-delay: 0.08s">
+      <h4>Honourable mentions</h4>
+      <p><strong>LogicalDOC Community</strong> &mdash; Java-based DMS, free Community + commercial Enterprise. <strong>SeedDMS</strong> &mdash; PHP-based DMS, simpler than OpenKM, smaller community. <strong>NemakiWare</strong> &mdash; CMIS-focused open-source DMS, useful as a CMIS reference implementation. <strong>Plone</strong> &mdash; Python CMS that can do enterprise content if stretched (records management via add-ons). <strong>BookStack / Outline / AppFlowy</strong> &mdash; knowledge-management adjacencies; not ECM but often paired with one for the unstructured / collaborative content surface.</p>
+    </div>
+  </div>
+</section>
+
+<section id="vs">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">04 &middot; Open-source vs FileNet / Documentum</div>
+      <h2 class="section-title">Head-to-head on the capability matrix.</h2>
+    </div>
+    <div class="compare-wrap wide fade-up" style="transition-delay: 0.05s">
+      <table class="compare">
+        <thead><tr><th>Concern</th><th>IBM FileNet</th><th>OpenText Documentum</th><th>Alfresco Community</th><th>Nuxeo Platform</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Licence cost</strong></td><td>USD per-user + per-CPU; six-figure floor</td><td>Same shape; six-figure floor</td><td>Free (LGPL); pay for support</td><td>Free (Apache 2.0); pay for support</td></tr>
+          <tr><td><strong>Records management</strong></td><td>Native; DoD 5015.2 certified</td><td>Native; DoD 5015.2 certified</td><td>Records Management module (free)</td><td>Available as add-on / custom build</td></tr>
+          <tr><td><strong>BPMN workflow</strong></td><td>FileNet BPM (paid)</td><td>xCP (paid)</td><td>Activiti (built-in)</td><td>Nuxeo Studio + custom</td></tr>
+          <tr><td><strong>CMIS API</strong></td><td>Yes</td><td>Yes</td><td>Yes (reference implementation)</td><td>Yes</td></tr>
+          <tr><td><strong>Cloud-native deploy</strong></td><td>Containerised; not k8s-native</td><td>Containerised; not k8s-native</td><td>Helm charts, k8s-native</td><td>Helm charts, k8s-native</td></tr>
+          <tr><td><strong>Mindshare trajectory (Apr 2026)</strong></td><td><span class="drop">5.8% (was 10.2%)</span></td><td><span class="drop">6.4% (was 12.3%)</span></td><td><span class="gain">Stable / growing</span></td><td><span class="gain">Stable / growing</span></td></tr>
+          <tr><td><strong>Vendor lock-in</strong></td><td>High &mdash; proprietary content model</td><td>High &mdash; proprietary content model</td><td>Low &mdash; CMIS-exportable</td><td>Low &mdash; CMIS-exportable</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="migration">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">05 &middot; Migration patterns</div>
+      <h2 class="section-title">Strangler, dual-write, scoped cutover.</h2>
+      <p class="section-lede">Three credible migration shapes from FileNet / Documentum to an open-source ECM. None is fast; all are doable. The right pick depends on how much legacy content is bound by retention, how stable the existing workflows are, and whether the source platform's vendor contract has natural break points.</p>
+    </div>
+
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>1. Strangler (most common for FileNet / Documentum).</strong> New content classes land in the open-source platform from day one. Existing records stay where they are and migrate cohort by cohort &mdash; usually keyed off retention eligibility ("when this batch is past its hold period, archive it to the new system and decommission the old folder"). Both ECMs coexist for the migration window (often 2&ndash;5 years). The legacy licence cost drops only when entire FileNet / Documentum object stores are decommissioned, so cohort sizing matters for cost realisation.</p>
+      <p><strong>2. Dual-write (for active workflows).</strong> During a planned cutover window, new documents are written to both ECMs simultaneously via a small middleware service (CMIS-to-CMIS). Reads still hit the legacy ECM. When the new ECM has reached parity on retention rules and integrations, reads flip and the dual-write turns off. Shorter window than strangler (months, not years); higher operational risk during the dual-write period.</p>
+      <p><strong>3. Scoped cutover (for departmental scope).</strong> A single business unit's content is migrated in a one-shot ETL load, all integrations rewritten to point at the new ECM, and the legacy footprint for that unit is decommissioned. Works only when the scope is genuinely self-contained and retention obligations end with the source system. Most realistic at the level of a single subsidiary, joint venture, or recently-divested business unit.</p>
+    </div>
+
+    <div class="info-card green fade-up" style="transition-delay: 0.08s">
+      <h4>CMIS as the migration substrate</h4>
+      <p>FileNet, Documentum, Alfresco, and Nuxeo all expose CMIS. A CMIS-to-CMIS pipeline (open-source tools like <code>cmislib</code> for Python or the Apache Chemistry projects for Java/JS) can move content + metadata + ACLs across vendors without proprietary connectors. CMIS is not exhaustive &mdash; some Documentum aspects map awkwardly &mdash; but it's the single biggest reason cross-vendor migrations are feasible at all.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sa">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">06 &middot; South African context</div>
+      <h2 class="section-title">Banking, POPIA, and the partner conversation.</h2>
+    </div>
+    <div class="prose fade-up" style="transition-delay: 0.05s">
+      <p><strong>Banking and insurance are the SA install base.</strong> Most of the country's major banks and insurers run FileNet or Documentum &mdash; some both, courtesy of historical acquisitions. The retention obligations (FAIS, FICA, NCA, SARS records) anchor those installations; ripping out a 15-year-old FileNet store carrying 80 million records is a multi-year project regardless of the target. The open-source conversation in SA banking is therefore almost always strangler-pattern: new lines of business land on Alfresco or Nuxeo, the legacy estate stays put until its retention horizon clears.</p>
+      <p><strong>POPIA-friendly residency.</strong> Self-hosted open-source ECM on SA-resident infrastructure (Hetzner Cape Town, Teraco, internal datacentre) keeps personal data in country with a clean Section 19 / Section 72 evidence trail. FileNet and Documentum can also be self-hosted in country &mdash; this isn't an open-source advantage per se &mdash; but the open-source platforms give clearer control over the deployment topology because there's no commercial-cloud default to opt out of.</p>
+      <p><strong>SA partner ecosystem.</strong> Hyland (which owns both Alfresco and Nuxeo) has an active SA partner network. Independent Alfresco specialists exist for organisations that want to avoid the Hyland commercial path. Mayan EDMS and Paperless-ngx are typically self-implemented; the partner ecosystem is smaller because the platforms are smaller. For a six-figure project, the partner-availability question is genuinely a platform-selection factor.</p>
+      <p><strong>FX exposure.</strong> Legacy ECM licences are USD-priced and a meaningful chunk of TCO. At R18/USD, a $250k / year Documentum bill is R4.5m; at R22/USD, R5.5m. The same workload on Alfresco Community + a SA platform team has materially lower FX exposure &mdash; the support contract (if purchased) is the main USD line; infrastructure and labour are ZAR. For SA banks managing rand depreciation on operating costs, open-source ECM is an FX hedge as well as a feature decision.</p>
+    </div>
+  </div>
+</section>
+
+<section id="connect">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">07 &middot; Connections</div>
+      <h2 class="section-title">Where ECM links in the tree.</h2>
+    </div>
+    <div class="connect-grid fade-up" style="transition-delay: 0.05s">
+      <a href="../erp/odoo.html" class="connect-node">
+        <span class="tag">biz/erp/odoo</span>
+        <div class="skill">Odoo (sibling pattern)</div>
+        <div class="why">Same open-source-replacing-enterprise-vendor pattern as ECM. Odoo replaces SAP / Oracle in ERP; Alfresco / Nuxeo replaces FileNet / Documentum in ECM.</div>
+      </a>
+      <a href="../erp/erpnext.html" class="connect-node">
+        <span class="tag">biz/erp/erpnext</span>
+        <div class="skill">ERPNext</div>
+        <div class="why">Architectural cousin &mdash; metadata-driven, REST-first, self-hostable. ERP-shaped equivalent of the Alfresco-shaped ECM argument.</div>
+      </a>
+      <a href="../../tech/web-stacks.html" class="connect-node">
+        <span class="tag">tech/web-stacks</span>
+        <div class="skill">Modern web stacks</div>
+        <div class="why">The neighbouring conversation about content infrastructure. ECM is enterprise records; web-stacks is marketing-site content. Different shapes, same "replace the monolith" trajectory.</div>
+      </a>
+      <a href="../../agents/mcp.html" class="connect-node">
+        <span class="tag">agents/mcp</span>
+        <div class="skill">Model Context Protocol</div>
+        <div class="why">The integration surface that lets agents read and act on ECM content. CMIS-to-MCP wrappers are an emerging pattern for ECM-as-agent-tool.</div>
+      </a>
+      <a href="../../tech/cloudflare/r2.html" class="connect-node">
+        <span class="tag">tech/cloudflare/r2</span>
+        <div class="skill">Cloudflare R2</div>
+        <div class="why">Object storage option for self-hosted Alfresco / Nuxeo deployments. Egress-free S3 alternative; sub-region in JNB / CPT for SA residency.</div>
+      </a>
+      <a href="../../tech/google/" class="connect-node">
+        <span class="tag">tech/google</span>
+        <div class="skill">Google Cloud</div>
+        <div class="why">GCS object storage backing for Nuxeo cloud-native deployments. Compute Engine / GKE for the application tier in <code>africa-south1</code>.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">08 &middot; Resources</div>
+      <h2 class="section-title">Primary sources only.</h2>
+    </div>
+    <div class="resource-grid fade-up" style="transition-delay: 0.05s">
+      <a href="https://www.hyland.com/en/solutions/products/alfresco-platform" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Platform</span>
+        <span class="r-title">Alfresco Platform (Hyland)</span>
+        <span class="r-url">hyland.com/.../alfresco-platform</span>
+      </a>
+      <a href="https://docs.alfresco.com/content-services/community/" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Alfresco Community Edition documentation</span>
+        <span class="r-url">docs.alfresco.com/content-services/community</span>
+      </a>
+      <a href="https://github.com/Alfresco/acs-deployment" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">Alfresco Content Services deployment</span>
+        <span class="r-url">github.com/Alfresco/acs-deployment</span>
+      </a>
+      <a href="https://www.hyland.com/en/solutions/products/nuxeo-platform" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Platform</span>
+        <span class="r-title">Nuxeo Platform (Hyland)</span>
+        <span class="r-url">hyland.com/.../nuxeo-platform</span>
+      </a>
+      <a href="https://github.com/nuxeo/nuxeo" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Source</span>
+        <span class="r-title">Nuxeo on GitHub</span>
+        <span class="r-url">github.com/nuxeo/nuxeo</span>
+      </a>
+      <a href="https://docs.mayan-edms.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Mayan EDMS documentation</span>
+        <span class="r-url">docs.mayan-edms.com</span>
+      </a>
+      <a href="https://www.openkm.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Platform</span>
+        <span class="r-title">OpenKM</span>
+        <span class="r-url">openkm.com</span>
+      </a>
+      <a href="https://docs.paperless-ngx.com" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Docs</span>
+        <span class="r-title">Paperless-ngx documentation</span>
+        <span class="r-url">docs.paperless-ngx.com</span>
+      </a>
+      <a href="https://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Spec</span>
+        <span class="r-title">CMIS 1.1 specification (OASIS)</span>
+        <span class="r-url">docs.oasis-open.org/cmis/CMIS/v1.1</span>
+      </a>
+      <a href="https://www.peerspot.com/products/ibm-filenet-alternatives-and-competitors" class="resource" target="_blank" rel="noopener">
+        <span class="r-kind">Market</span>
+        <span class="r-title">PeerSpot IBM FileNet alternatives (mindshare data)</span>
+        <span class="r-url">peerspot.com/.../ibm-filenet-alternatives</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand">know.2nth.ai</div>
+    <p class="footer-tagline">The operational intelligence layer for the modern stack.</p>
+    <div class="footer-links">
+      <a href="../../../index.html">Skills tree</a>
+      <a href="../">Business hub</a>
+      <a href="https://www.hyland.com/en/solutions/products/alfresco-platform" target="_blank" rel="noopener">Alfresco &nearr;</a>
+      <a href="https://github.com/nuxeo/nuxeo" target="_blank" rel="noopener">Nuxeo &nearr;</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 2nth.ai &middot; Built in Johannesburg, South Africa</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme(){const html=document.documentElement;const current=html.getAttribute('data-theme');const next=current==='dark'?'light':'dark';html.setAttribute('data-theme',next);document.querySelector('.theme-toggle').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('theme',next);}
+  const saved=localStorage.getItem('theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.querySelector('.theme-toggle').textContent=saved==='dark'?'☀️':'🌙';}
+  const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+<script src="/gate.js" defer></script>
+</body>
+</html>
